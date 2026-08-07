@@ -29,4 +29,11 @@ MonoBehaviour:
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
   uiMappings:
-    keyValue: []
+    keyValue:
+    - key: MainMenuUi
+      value:
+        m_AssetGUID: 5a87cfbe26c6da4428432314b12700a5
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0

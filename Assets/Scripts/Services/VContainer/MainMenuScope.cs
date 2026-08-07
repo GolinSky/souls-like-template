@@ -1,4 +1,6 @@
-﻿using VContainer;
+﻿using SoulsLike.Orchestrators.MainMenu;
+using SoulsLike.Ui.MainMenu;
+using VContainer;
 using VContainer.Unity;
 
 namespace SoulsLike
@@ -7,7 +9,8 @@ namespace SoulsLike
     {
         protected override void Configure(IContainerBuilder builder)
         {
-           
+            builder.Register<MainMenuUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.RegisterEntryPoint<MainMenuOrchestrator>();
         }
     }
 }
