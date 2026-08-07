@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Settings
+  m_Name: Services
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Settings
-  m_GUID: 7c1de6864dc9a134d90f6d78a2f545ad
+  m_GroupName: Services
+  m_GUID: 5e62aff92c0d1a744bab37fcc0539af3
   m_SerializeEntries:
-  - m_GUID: c681047155822da458b703285a33ecba
-    m_Address: AssetMappingData
+  - m_GUID: 26fc29c57ecf3f44f9a7c258c30bc1e3
+    m_Address: UiService
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -24,5 +24,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: b190c9b4e7781224aa9823b8f4e1f863, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 252c68a50e5e72e4f911da52e0b3c02f, type: 2}
-    - {fileID: 11400000, guid: f011a99d5553ec54ca475115cf588bcc, type: 2}
+    - {fileID: 11400000, guid: e0b1652647239124b89271a2897fae8b, type: 2}
+    - {fileID: 11400000, guid: c7da327c9c2155e4495b928076fb92dd, type: 2}
