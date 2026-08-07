@@ -28,6 +28,27 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: MovementData
+      value:
+        m_AssetGUID: 9b78f912b3080fa44bfac6fa1de80eae
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: HealthData
+      value:
+        m_AssetGUID: a97370572ad588f4c838302528fe6672
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: InventoryData
+      value:
+        m_AssetGUID: 37b7fa18bdfae0b42a14e161199a98d6
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
   uiMappings:
     keyValue:
     - key: MainMenuUi
