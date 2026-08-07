@@ -13,6 +13,20 @@ MonoBehaviour:
   m_Name: AssetMappingData
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.AssetMappingData
   scriptableObjectMappings:
-    keyValue: []
+    keyValue:
+    - key: LayerData
+      value:
+        m_AssetGUID: 84dc0f3e47d560e4b9ebd5cc56ef7150
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: SceneData
+      value:
+        m_AssetGUID: 18802c4d91d7f9943b0bd9f4db66c7da
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
   uiMappings:
     keyValue: []

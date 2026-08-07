@@ -7,10 +7,10 @@ namespace SoulsLike
     public class AssetMappingData : ScriptableObject
     {
         [Tooltip("Maps C# class name (e.g. 'SceneData') to its Addressable AssetReference. If missing, defaults to class name.")]
-        [SerializeField] private SerializedDictionary<string, AssetReference> scriptableObjectMappings = new SerializedDictionary<string, AssetReference>();
+        [SerializeField] private SerializedDictionary<string, AssetReference> scriptableObjectMappings = new();
         
         [Tooltip("Maps C# UI component name (e.g. 'InventoryUi') to its Addressable prefab AssetReference. If missing, defaults to class name.")]
-        [SerializeField] private SerializedDictionary<string, AssetReferenceGameObject> uiMappings = new SerializedDictionary<string, AssetReferenceGameObject>();
+        [SerializeField] private SerializedDictionary<string, AssetReferenceGameObject> uiMappings = new();
 
         public string GetScriptableObjectKey(string className)
         {
