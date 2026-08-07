@@ -37,3 +37,10 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: PauseMenuUi
+      value:
+        m_AssetGUID: 0f164e7c417f3cb4da63de4dd337277e
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0

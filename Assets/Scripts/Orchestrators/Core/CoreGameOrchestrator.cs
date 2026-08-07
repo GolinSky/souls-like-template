@@ -1,28 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using SoulsLike.Services.Scenes.Data;
 using UnityEngine;
 using VContainer.Unity;
 
 namespace SoulsLike.Services
 {
-    //TODO: MOVE IPauseMenuPresenter OUT OF HERE - CREATE UI CONTROLLER FOR THAT 
-    public class CoreGameOrchestrator: IInitializable, IStartable, IDisposable, IPauseMenuPresenter, ITickable, IGameStateNotifier
+    public interface ICoreGameOrchestrator
     {
-        private readonly IUiService _uiService;
-        private readonly IInputService _inputService;
+        GameState CurrentGameState { get; }
+        void ResumeGame();
+        void PauseGame();
+        void OpenOptions();
+        void QuitGame();
+    }
 
-        // private PauseMenuUi _pauseMenuUi;
-        
+    public class CoreGameOrchestrator: IInitializable, IStartable, IDisposable, IGameStateNotifier, ICoreGameOrchestrator
+    {
+        private readonly IGameOrchestrator _gameOrchestrator;
         public GameState CurrentGameState { get; private set; }
         
         private readonly List<IGameStateObserver> _observers = new();
 
-        public CoreGameOrchestrator(IUiService uiService, IInputService inputService)
+        public CoreGameOrchestrator(IGameOrchestrator gameOrchestrator)
         {
-            _uiService = uiService;
-            _inputService = inputService;
+            _gameOrchestrator = gameOrchestrator;
         }
-
+        
         public void Initialize()
         {
             SetGameState(GameState.Initialized);
@@ -35,9 +39,6 @@ namespace SoulsLike.Services
 
         public void Start()
         {
-            // _pauseMenuUi = _uiService.CreateUi<PauseMenuUi>();
-            // _pauseMenuUi.Initialize(this);
-            
             SetGameState(GameState.Idle);
         }
 
@@ -55,13 +56,11 @@ namespace SoulsLike.Services
 
         public void ResumeGame()
         {
-            // _pauseMenuUi.Hide();
             SetGameState(GameState.Idle);
         }
         
-        private void PauseGame()
+        public void PauseGame()
         {
-            // _pauseMenuUi.Show();
             SetGameState(GameState.Paused);
         }
 
@@ -72,22 +71,7 @@ namespace SoulsLike.Services
 
         public void QuitGame()
         {
-            
-        }
-
-        public void Tick()
-        {
-            if (_inputService.CharacterActions.Pause.WasPressedThisFrame())
-            {
-                if (CurrentGameState == GameState.Idle)
-                {
-                    PauseGame();
-                }
-                else if (CurrentGameState == GameState.Paused)
-                {
-                    ResumeGame();
-                }
-            }
+            _gameOrchestrator.LoadLevel(SceneType.MainMenu);
         }
 
         public void RegisterObserver(IGameStateObserver observer)

@@ -19,13 +19,13 @@ MonoBehaviour:
         m_SceneAsset: {fileID: 102900000, guid: 8e78d87b7d4f00549997b35045848a8c, type: 3}
         m_IsDirty: 0
         m_ScenePath: Assets/Scenes/MainMenu/MainMenu.unity
-    - key: 2
-      value:
-        m_SceneAsset: {fileID: 102900000, guid: e1e3c7572dbb88649b71d17c69aa6429, type: 3}
-        m_IsDirty: 0
-        m_ScenePath: Assets/Scenes/DefaultLocation/DefaultLocaiton.unity
     - key: 1
       value:
         m_SceneAsset: {fileID: 102900000, guid: 32fc1e9958cfb81459eb7b6f3e270bca, type: 3}
         m_IsDirty: 0
         m_ScenePath: Assets/Scenes/Loading/Loading.unity
+    - key: 2
+      value:
+        m_SceneAsset: {fileID: 102900000, guid: e1e3c7572dbb88649b71d17c69aa6429, type: 3}
+        m_IsDirty: 0
+        m_ScenePath: Assets/Scenes/DefaultLocation/DefaultLocaiton.unity

@@ -12,11 +12,10 @@ namespace SoulsLike
         
         protected override void Configure(IContainerBuilder builder)
         {
+            Debug.Log("CoreScope Configure");
             builder.RegisterComponent(cameraService).AsSelf().As<ICameraService>();
-            builder.UseEntryPoints(Lifetime.Singleton, pointsBuilder =>
-            {
-                pointsBuilder.Add<CoreGameOrchestrator>();
-            });
+            builder.Register<PauseMenuUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.RegisterEntryPoint<CoreGameOrchestrator>();
         }
     }
 }

@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Settings
   m_GUID: 7c1de6864dc9a134d90f6d78a2f545ad
   m_SerializeEntries:
+  - m_GUID: 0f164e7c417f3cb4da63de4dd337277e
+    m_Address: PauseMenuUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5a87cfbe26c6da4428432314b12700a5
     m_Address: MainMenuUi
     m_ReadOnly: 0
