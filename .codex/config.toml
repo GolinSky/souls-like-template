@@ -5,5 +5,5 @@ startup_timeout_sec = 60
 env = { SystemRoot = "C:\\WINDOWS" }
 
 [mcp_servers.obsidian]
-url = "https://127.0.0.1:27124/mcp/"
+url = "http://127.0.0.1:27123/mcp/"
 headers = { Authorization = "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e19342ae1cc0304271a68257e4cc43" }
