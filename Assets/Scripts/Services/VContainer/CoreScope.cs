@@ -1,10 +1,10 @@
-using MultiPlayerTemplate.Services;
-using MultiPlayerTemplate.Services.CameraService;
+﻿using SoulsLike.Services;
+using SoulsLike.Services.CameraService;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     public class CoreScope : LifetimeScope
     {

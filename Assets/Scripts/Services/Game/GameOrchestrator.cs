@@ -1,11 +1,11 @@
-using System;
+﻿using System;
 using Cysharp.Threading.Tasks;
-using MultiPlayerTemplate.Services.Scenes;
-using MultiPlayerTemplate.Services.Scenes.Data;
+using SoulsLike.Services.Scenes;
+using SoulsLike.Services.Scenes.Data;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate.Services
+namespace SoulsLike.Services
 {
     public class GameOrchestrator: IGameOrchestrator, ITickable
     {

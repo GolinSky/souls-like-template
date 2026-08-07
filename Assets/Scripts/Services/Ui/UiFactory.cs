@@ -1,11 +1,11 @@
-using MultiPlayerTemplate.Factory;
-using MultiPlayerTemplate.Ui.Base;
+﻿using SoulsLike.Factory;
+using SoulsLike.Ui.Base;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 using Exception = System.Exception;
 
-namespace MultiPlayerTemplate.Services
+namespace SoulsLike.Services
 {
     public class UiFactory: BaseFactory
     {

@@ -1,8 +1,8 @@
-﻿using MultiPlayerTemplate.Services.Repository;
+﻿using SoulsLike.Services.Repository;
 using VContainer;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate.Factory
+namespace SoulsLike.Factory
 {
     public abstract class BaseFactory
     {

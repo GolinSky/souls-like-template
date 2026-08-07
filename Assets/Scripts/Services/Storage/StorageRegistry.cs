@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace MultiPlayerTemplate.Services.Storage
+namespace SoulsLike.Services.Storage
 {
     public class StorageRegistry : IStorageRegistry
     {

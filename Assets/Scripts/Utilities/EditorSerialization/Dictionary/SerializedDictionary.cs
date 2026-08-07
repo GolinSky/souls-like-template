@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     [Serializable]
     public class SerializedDictionary<TKey, TValue>

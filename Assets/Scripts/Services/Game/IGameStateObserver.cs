@@ -1,4 +1,4 @@
-﻿namespace MultiPlayerTemplate.Services
+﻿namespace SoulsLike.Services
 {
     public interface IGameStateObserver
     {

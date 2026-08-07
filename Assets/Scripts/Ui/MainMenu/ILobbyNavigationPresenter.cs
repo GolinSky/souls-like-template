@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MultiPlayerTemplate.Ui.MainMenu
+namespace SoulsLike.Ui.MainMenu
 {
     public interface ILobbyNavigationPresenter
     {

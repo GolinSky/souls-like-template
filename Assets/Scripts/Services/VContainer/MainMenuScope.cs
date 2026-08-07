@@ -1,7 +1,7 @@
-using VContainer;
+﻿using VContainer;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     public class MainMenuScope : LifetimeScope
     {

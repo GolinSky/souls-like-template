@@ -1,7 +1,7 @@
 ﻿using System;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate.Services
+namespace SoulsLike.Services
 {
     public interface IInputService
     {

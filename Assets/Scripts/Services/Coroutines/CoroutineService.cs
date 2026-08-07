@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace MultiPlayerTemplate.Services.Coroutines
+namespace SoulsLike.Services.Coroutines
 {
     public interface ICoroutineService
     {

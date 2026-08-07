@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MultiPlayerTemplate.Model
+namespace SoulsLike.Model
 {
     public class Data: ScriptableObject
     {

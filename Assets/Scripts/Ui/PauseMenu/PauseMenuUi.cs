@@ -1,8 +1,8 @@
-using UnityEngine;
-using MultiPlayerTemplate.Ui.Base;
+﻿using UnityEngine;
+using SoulsLike.Ui.Base;
 using System.Ui.Base;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     public class PauseMenuUi : BaseUi
     {

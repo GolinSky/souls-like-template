@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate.Services
+namespace SoulsLike.Services
 {
     //TODO: MOVE IPauseMenuPresenter OUT OF HERE - CREATE UI CONTROLLER FOR THAT 
     public class CoreGameOrchestrator: IInitializable, IStartable, IDisposable, IPauseMenuPresenter, ITickable, IGameStateNotifier

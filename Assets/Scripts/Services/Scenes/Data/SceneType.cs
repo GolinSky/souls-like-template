@@ -1,4 +1,4 @@
-﻿namespace MultiPlayerTemplate.Services.Scenes.Data
+﻿namespace SoulsLike.Services.Scenes.Data
 {
     public enum SceneType
     {

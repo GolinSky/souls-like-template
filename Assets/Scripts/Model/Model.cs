@@ -1,4 +1,4 @@
-﻿namespace MultiPlayerTemplate.Model
+﻿namespace SoulsLike.Model
 {
     public class Model
     {

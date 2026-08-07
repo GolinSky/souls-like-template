@@ -1,7 +1,7 @@
-using Cysharp.Threading.Tasks;
-using MultiPlayerTemplate.Services.Scenes.Data;
+﻿using Cysharp.Threading.Tasks;
+using SoulsLike.Services.Scenes.Data;
 
-namespace MultiPlayerTemplate.Services
+namespace SoulsLike.Services
 {
     /// <summary>
     /// Main Orchestrator

@@ -1,10 +1,10 @@
-using System;
+﻿using System;
 using Cysharp.Threading.Tasks;
-using MultiPlayerTemplate.Services.Scenes.Data;
+using SoulsLike.Services.Scenes.Data;
 using UnityEngine.SceneManagement;
 
 
-namespace MultiPlayerTemplate.Services.Scenes
+namespace SoulsLike.Services.Scenes
 {
     public class SceneService : ISceneService 
     {

@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace MultiPlayerTemplate.Services.Scenes.Data
+namespace SoulsLike.Services.Scenes.Data
 {
     public class SceneModel: Model.Model
     {

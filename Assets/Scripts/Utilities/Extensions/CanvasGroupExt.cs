@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace MultiPlayerTemplate.Extensions
+namespace SoulsLike.Extensions
 {
     public static class CanvasGroupExt
     {

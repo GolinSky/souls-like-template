@@ -1,8 +1,8 @@
-using MultiPlayerTemplate.Services.Layer;
+﻿using SoulsLike.Services.Layer;
 using UnityEngine;
 using VContainer;
 
-namespace MultiPlayerTemplate.Services
+namespace SoulsLike.Services
 {
     public class PreviewRenderService : MonoBehaviour, IPreviewRenderService
     {

@@ -1,7 +1,7 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace MultiPlayerTemplate.Services.Layer.Data
+namespace SoulsLike.Services.Layer.Data
 {
     [CreateAssetMenu(fileName = "LayerData", menuName = "Data/LayerData")]
     public class LayerData : Model.Data

@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace MultiPlayerTemplate.Services.Storage
+namespace SoulsLike.Services.Storage
 {
     public interface IStorageRegistry
     {

@@ -1,4 +1,4 @@
-namespace MultiPlayerTemplate
+﻿namespace SoulsLike
 {
     public interface IPauseMenuPresenter
     {

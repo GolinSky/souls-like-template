@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace MultiPlayerTemplate.Services.Scenes.Data
+namespace SoulsLike.Services.Scenes.Data
 {
     [CreateAssetMenu(fileName = "SceneData", menuName = "Data/SceneData")]
     public class SceneData : Model.Data

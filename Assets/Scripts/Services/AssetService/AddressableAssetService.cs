@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace MultiPlayerTemplate.Services.Repository
+namespace SoulsLike.Services.Repository
 {
     public interface IAssetService
     {

@@ -1,7 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     [CreateAssetMenu(fileName = "AssetMappingData", menuName = "Data/AssetMappingData")]
     public class AssetMappingData : ScriptableObject

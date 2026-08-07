@@ -1,10 +1,10 @@
-using System;
-using MultiPlayerTemplate.Ui.Base;
+﻿using System;
+using SoulsLike.Ui.Base;
 using UI.Base;
 using UnityEngine;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate.Ui.MainMenu
+namespace SoulsLike.Ui.MainMenu
 {
     public class LobbyNavigationUi: BaseUi, IStartable, IDisposable
     {

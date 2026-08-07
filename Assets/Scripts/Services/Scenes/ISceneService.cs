@@ -1,8 +1,8 @@
 ﻿using System;
 using Cysharp.Threading.Tasks;
-using MultiPlayerTemplate.Services.Scenes.Data;
+using SoulsLike.Services.Scenes.Data;
 
-namespace MultiPlayerTemplate.Services.Scenes
+namespace SoulsLike.Services.Scenes
 {
     public interface ISceneService 
     {

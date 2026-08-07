@@ -9,7 +9,7 @@ using UnityEditor.SceneManagement;
 #endif
 using UnityEngine;
 
-namespace MultiPlayerTemplate.Services.Scenes.Data
+namespace SoulsLike.Services.Scenes.Data
 {
 	/// <summary>
 	/// Keeps reference to a scene asset and tracks it's path, so it can be used in the game runtime.

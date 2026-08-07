@@ -1,10 +1,10 @@
-using MultiPlayerTemplate.Services.Repository;
-using MultiPlayerTemplate.Services;
+﻿using SoulsLike.Services.Repository;
+using SoulsLike.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     public class SharedSceneScope : LifetimeScope
     {

@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace MultiPlayerTemplate.Services.Save
+namespace SoulsLike.Services.Save
 {
     public class FileService 
     {

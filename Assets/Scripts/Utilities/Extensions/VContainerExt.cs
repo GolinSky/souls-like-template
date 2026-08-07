@@ -1,8 +1,8 @@
-using MultiPlayerTemplate.Services.Repository;
+﻿using SoulsLike.Services.Repository;
 using UnityEngine;
 using VContainer;
 
-namespace MultiPlayerTemplate.Extensions
+namespace SoulsLike.Extensions
 {
     public static class VContainerExt
     {

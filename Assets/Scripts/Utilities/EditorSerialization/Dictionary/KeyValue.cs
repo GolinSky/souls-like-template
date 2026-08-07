@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     [Serializable]
     public class KeyValue<TKey, TValue>:IKeyValue<TKey, TValue>

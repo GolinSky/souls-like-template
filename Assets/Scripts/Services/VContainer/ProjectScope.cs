@@ -1,15 +1,15 @@
-using MultiPlayerTemplate.Extensions;
-using MultiPlayerTemplate.Services;
-using MultiPlayerTemplate.Services.Repository;
-using MultiPlayerTemplate.Services.Scenes;
-using MultiPlayerTemplate.Services.Scenes.Data;
-using MultiPlayerTemplate.Services.Storage;
-using MultiPlayerTemplate.Services.Layer;
-using MultiPlayerTemplate.Services.Layer.Data;
+﻿using SoulsLike.Extensions;
+using SoulsLike.Services;
+using SoulsLike.Services.Repository;
+using SoulsLike.Services.Scenes;
+using SoulsLike.Services.Scenes.Data;
+using SoulsLike.Services.Storage;
+using SoulsLike.Services.Layer;
+using SoulsLike.Services.Layer.Data;
 using VContainer;
 using VContainer.Unity;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     public class ProjectScope: LifetimeScope
     {

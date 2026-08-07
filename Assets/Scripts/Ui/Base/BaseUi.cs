@@ -1,7 +1,7 @@
-﻿using MultiPlayerTemplate.Extensions;
+﻿using SoulsLike.Extensions;
 using UnityEngine;
 
-namespace MultiPlayerTemplate.Ui.Base
+namespace SoulsLike.Ui.Base
 {
     public interface IBaseUi
     {

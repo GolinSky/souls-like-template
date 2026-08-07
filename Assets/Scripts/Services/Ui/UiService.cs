@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using MultiPlayerTemplate.Ui.Base;
+using SoulsLike.Ui.Base;
 using UnityEngine;
 using VContainer;
 
-namespace MultiPlayerTemplate.Services
+namespace SoulsLike.Services
 {
     public interface IUiService
     {

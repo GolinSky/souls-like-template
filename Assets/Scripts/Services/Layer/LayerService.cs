@@ -1,7 +1,7 @@
-using MultiPlayerTemplate.Services.Layer.Data;
+﻿using SoulsLike.Services.Layer.Data;
 using UnityEngine;
 
-namespace MultiPlayerTemplate.Services.Layer
+namespace SoulsLike.Services.Layer
 {
     public class LayerService : ILayerService
     {

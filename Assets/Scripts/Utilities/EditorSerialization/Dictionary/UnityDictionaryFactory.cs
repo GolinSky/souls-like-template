@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MultiPlayerTemplate
+namespace SoulsLike
 {
     public static class UnityDictionaryFactory
     {

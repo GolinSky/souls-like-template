@@ -1,8 +1,8 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 using Unity.Cinemachine;
 
-namespace MultiPlayerTemplate.Services.CameraService
+namespace SoulsLike.Services.CameraService
 {
     public interface ICameraService
     {

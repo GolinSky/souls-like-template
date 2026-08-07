@@ -1,6 +1,6 @@
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace MultiPlayerTemplate.Services.Layer
+namespace SoulsLike.Services.Layer
 {
     public interface ILayerService
     {
