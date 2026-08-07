@@ -1,5 +1,6 @@
 ﻿using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
+using SoulsLike.Entities.Character;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -15,6 +16,7 @@ namespace SoulsLike
             Debug.Log("CoreScope Configure");
             builder.RegisterComponent(cameraService).AsSelf().As<ICameraService>();
             builder.Register<PauseMenuUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.Register<CharacterFactory>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CoreGameOrchestrator>();
         }
     }
