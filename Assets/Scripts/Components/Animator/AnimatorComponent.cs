@@ -16,6 +16,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int _animIdRoll = Animator.StringToHash("Roll");
         private static readonly int _animIdCrouch = Animator.StringToHash("Crouch");
         private static readonly int _animIdTurn = Animator.StringToHash("Turn");
+        private static readonly int _animIdMoving = Animator.StringToHash("Moving");
         
         [SerializeField] private Animator _animator;
         [Header("Aim Target")]
@@ -119,6 +120,9 @@ namespace SoulsLike.Entities.Character.Components
             _currentLocomotion = Vector2.Lerp(_currentLocomotion, _targetLocomotion, dt * _locomotionSmoothSpeed);
             _animator.SetFloat(_animIdHorizontal, _currentLocomotion.x);
             _animator.SetFloat(_animIdVertical, _currentLocomotion.y);
+
+            bool isMoving = _targetLocomotion.sqrMagnitude > 0.0001f || _currentLocomotion.sqrMagnitude > 0.0001f;
+            _animator.SetBool(_animIdMoving, isMoving);
         }
         
         private float _targetTurnAmount;
