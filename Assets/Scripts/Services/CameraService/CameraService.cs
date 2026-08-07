@@ -41,17 +41,17 @@ namespace SoulsLike.Services.CameraService
         [Tooltip("How far in degrees can you move the camera up")]
         public float topClamp = 70.0f;
 
-    [Tooltip("How far in degrees can you move the camera down")]
+        [Tooltip("How far in degrees can you move the camera down")]
         public float bottomClamp = -30.0f;
 
-[Tooltip("Additional degress to override the camera. Useful for fine tuning camera position when locked")]
+        [Tooltip("Additional degress to override the camera. Useful for fine tuning camera position when locked")]
         public float cameraAngleOverride = 0.0f;
 
-[Tooltip("For locking the camera position on all axis")]
+        [Tooltip("For locking the camera position on all axis")]
         public bool lockCameraPosition = false;
         
-        [SerializeField] private float mouseSensitivityY;
-        [SerializeField] private float mouseSensitivityX;
+        [Range(0.1f,10.0f)] [SerializeField] private float mouseSensitivityY = 1.0f;
+        [Range(0.1f,10.0f)] [SerializeField] private float mouseSensitivityX = 1.0f;
         
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
