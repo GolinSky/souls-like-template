@@ -55,11 +55,23 @@ Material:
         m_Texture: {fileID: 2800000, guid: f8542fce10ebfb74ebaa68110181f85b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_9250a6bea12d4dee974ec6760fbf38c9_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: f8542fce10ebfb74ebaa68110181f85b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_e245a77afc034060b3d77c4051a74a23_Texture_1:
         m_Texture: {fileID: 2800000, guid: 0998fac953312fb4c88c3e771b3a1483, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_e245a77afc034060b3d77c4051a74a23_Texture_1_Texture2D:
+        m_Texture: {fileID: 2800000, guid: 0998fac953312fb4c88c3e771b3a1483, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SampleTexture2D_fbb90a38fb794ba7858fde19665eda4c_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 08c237e2cbc3a8440a93219937ddb92b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_fbb90a38fb794ba7858fde19665eda4c_Texture_1_Texture2D:
         m_Texture: {fileID: 2800000, guid: 08c237e2cbc3a8440a93219937ddb92b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -108,10 +120,15 @@ Material:
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 1
     - _DstBlend: 10
+    - _DstBlend2: 10
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
+    - _ExcludeFromTUAndAA: 0
     - _Intensity: 0.5
+    - _MaterialID: 1
+    - _MaterialTypeMask: 2
     - _OpaqueCullMode: 2
+    - _PerPixelSorting: 0
     - _QueueControl: 1
     - _QueueOffset: 0
     - _RayTracing: 0
@@ -129,13 +146,14 @@ Material:
     - _StencilRefGBuffer: 2
     - _StencilRefMV: 32
     - _StencilWriteMask: 6
-    - _StencilWriteMaskDepth: 8
+    - _StencilWriteMaskDepth: 9
     - _StencilWriteMaskDistortionVec: 4
-    - _StencilWriteMaskGBuffer: 14
-    - _StencilWriteMaskMV: 40
+    - _StencilWriteMaskGBuffer: 15
+    - _StencilWriteMaskMV: 41
     - _SupportDecals: 1
     - _Surface: 1
     - _SurfaceType: 1
+    - _TransmissionEnable: 1
     - _TransparentBackfaceEnable: 0
     - _TransparentCullMode: 2
     - _TransparentDepthPostpassEnable: 0
