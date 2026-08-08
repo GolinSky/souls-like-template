@@ -487,17 +487,6 @@ public partial class @ProjectInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""f1a27549-467e-40d8-ac22-f0fbd56ef15a"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KeyboardMouse"",
-                    ""action"": ""Jump"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""afc091e8-21bd-44fb-bae1-c21f19cac32b"",
                     ""path"": ""<Keyboard>/x"",
                     ""interactions"": """",

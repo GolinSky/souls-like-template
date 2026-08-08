@@ -51,10 +51,10 @@ MonoBehaviour:
   <TerminalVelocity>k__BackingField: 0
   <GroundLayers>k__BackingField:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   <RollSpeed>k__BackingField: 6
-  <RollDuration>k__BackingField: 0.8
-  <RollCooldown>k__BackingField: 1
+  <RollDuration>k__BackingField: 0.4
+  <RollCooldown>k__BackingField: 0.2
   <SlideSpeed>k__BackingField: 8
   <SlideDuration>k__BackingField: 0.8
   <CrouchSpeed>k__BackingField: 2
