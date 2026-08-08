@@ -33,7 +33,7 @@ namespace SoulsLike.Entities.Character
         [Inject]
         public void InjectDependencies(ICameraService cameraService)
         {
-            _cameraService = cameraService ?? throw new ArgumentNullException(nameof(cameraService));
+            _cameraService = cameraService;
         }
 
         public void Initialize()

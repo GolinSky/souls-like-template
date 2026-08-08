@@ -48,10 +48,10 @@ namespace SoulsLike.Ui.PlayerHud.Editor
             layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
 
-            // Create individual bars
-            var hpRefs = CreateBar(barsContainer.transform, "HpBar", 200f, 18f, new Color(0.784f, 0.137f, 0.137f), new Color(1f, 0.647f, 0f));
-            var fpRefs = CreateBar(barsContainer.transform, "FpBar", 150f, 14f, new Color(0.118f, 0.384f, 0.784f), new Color(0.529f, 0.808f, 0.98f));
-            var staminaRefs = CreateBar(barsContainer.transform, "StaminaBar", 180f, 14f, new Color(0.18f, 0.545f, 0.341f), new Color(0.565f, 0.933f, 0.565f));
+            // Create individual bars with dark atmospheric tones
+            var hpRefs = CreateBar(barsContainer.transform, "HpBar", 200f, 18f, HexToColor("#801414"), HexToColor("#B85C00"));
+            var fpRefs = CreateBar(barsContainer.transform, "FpBar", 150f, 14f, HexToColor("#134488"), HexToColor("#3B72A8"));
+            var staminaRefs = CreateBar(barsContainer.transform, "StaminaBar", 180f, 14f, HexToColor("#1E5E3A"), HexToColor("#4D9E6E"));
 
             SerializedObject so = new SerializedObject(playerHudUi);
             so.FindProperty("canvasGroup").objectReferenceValue = canvasGroup;
@@ -66,6 +66,15 @@ namespace SoulsLike.Ui.PlayerHud.Editor
 
             AssetDatabase.Refresh();
             Debug.Log($"Successfully generated PlayerHudUi prefab at {prefabPath}");
+        }
+
+        private static Color HexToColor(string hex)
+        {
+            if (ColorUtility.TryParseHtmlString(hex, out Color color))
+            {
+                return color;
+            }
+            return Color.white;
         }
 
         private static void BindStatBar(SerializedProperty barProp, RectTransform container, MPImage primary, MPImage buffer)
@@ -98,7 +107,7 @@ namespace SoulsLike.Ui.PlayerHud.Editor
             bgRect.anchorMax = Vector2.one;
             bgRect.sizeDelta = Vector2.zero;
             MPImage bgImage = bgObj.AddComponent<MPImage>();
-            bgImage.color = new Color(0.1f, 0.1f, 0.1f, 0.75f);
+            bgImage.color = new Color(0.04f, 0.04f, 0.05f, 0.85f);
             bgImage.DrawShape = DrawShape.Rectangle;
             bgImage.Rectangle = new Rectangle { CornerRadius = new Vector4(4f, 4f, 4f, 4f) };
 

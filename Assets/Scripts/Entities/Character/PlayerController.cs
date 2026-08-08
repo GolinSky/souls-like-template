@@ -24,11 +24,11 @@ namespace SoulsLike.Entities.Character
             ITargetingService targetingService,
             IGameStateNotifier gameStateNotifier)
         {
-            _inputService = inputService ?? throw new ArgumentNullException(nameof(inputService));
-            _character = character ?? throw new ArgumentNullException(nameof(character));
-            _cameraService = cameraService ?? throw new ArgumentNullException(nameof(cameraService));
-            _targetingService = targetingService ?? throw new ArgumentNullException(nameof(targetingService));
-            _gameStateNotifier = gameStateNotifier ?? throw new ArgumentNullException(nameof(gameStateNotifier));
+            _inputService = inputService;
+            _character = character;
+            _cameraService = cameraService;
+            _targetingService = targetingService;
+            _gameStateNotifier = gameStateNotifier;
         }
 
         public void Initialize()

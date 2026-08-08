@@ -152,13 +152,13 @@ namespace SoulsLike.Ui.PlayerHud
         private float _inactivityTimer = 0f;
         private float _targetAlpha = 1f;
 
-        // Color Token Constants
-        private static readonly Color HpPrimaryColor = HexToColor("#C82323"); // Crimson Red
-        private static readonly Color HpBufferColor = HexToColor("#FFA500");  // Orange
-        private static readonly Color FpPrimaryColor = HexToColor("#1E62C8"); // Cerulean Blue
-        private static readonly Color FpBufferColor = HexToColor("#87CEFA");  // Light Sky Blue
-        private static readonly Color StaminaPrimaryColor = HexToColor("#2E8B57"); // Sea Green
-        private static readonly Color StaminaBufferColor = HexToColor("#90EE90"); // Light Green
+        // Dark Atmospheric Color Token Constants
+        private static readonly Color HpPrimaryColor = HexToColor("#801414"); // Dark Crimson Red
+        private static readonly Color HpBufferColor = HexToColor("#B85C00");  // Dark Burnt Amber
+        private static readonly Color FpPrimaryColor = HexToColor("#134488"); // Dark Royal Blue
+        private static readonly Color FpBufferColor = HexToColor("#3B72A8");  // Dark Muted Blue
+        private static readonly Color StaminaPrimaryColor = HexToColor("#1E5E3A"); // Dark Forest Green
+        private static readonly Color StaminaBufferColor = HexToColor("#4D9E6E"); // Dark Muted Sage Green
 
         private void Awake()
         {
@@ -179,7 +179,7 @@ namespace SoulsLike.Ui.PlayerHud
             Presenter = presenter;
         }
 
-        public void UpdateStats(HealthStats stats, bool isLockedOn, bool isEnemyAggro)
+        public void UpdateStats(HealthStats stats)
         {
             // Dynamic bar scaling
             hpBar.UpdateScaling(stats.MaxHealth);
@@ -191,26 +191,7 @@ namespace SoulsLike.Ui.PlayerHud
             fpBar.UpdateValue(stats.CurrentFocus, stats.MaxFocus);
             staminaBar.UpdateValue(stats.CurrentStamina, stats.MaxStamina);
 
-            // Check if stats are damaged/depleted
-            bool isStatsDepleted = stats.CurrentHealth < stats.MaxHealth ||
-                                   stats.CurrentFocus < stats.MaxFocus ||
-                                   stats.CurrentStamina < stats.MaxStamina;
-
-            bool isActive = isLockedOn || isEnemyAggro || isStatsDepleted;
-
-            if (isActive)
-            {
-                _inactivityTimer = 0f;
-                _targetAlpha = 1f;
-            }
-            else
-            {
-                _inactivityTimer += Time.deltaTime;
-                if (_inactivityTimer >= autoHideDelay)
-                {
-                    _targetAlpha = 0f;
-                }
-            }
+            _targetAlpha = 1f;
         }
 
         private void Update()
@@ -222,14 +203,10 @@ namespace SoulsLike.Ui.PlayerHud
             fpBar.TickAnimation(dt);
             staminaBar.TickAnimation(dt);
 
-            // Smooth HUD opacity transition
-            if (canvasGroup != null)
+            // HUD is active all the time (100% opacity)
+            if (canvasGroup != null && !Mathf.Approximately(canvasGroup.alpha, 1f))
             {
-                float currentAlpha = canvasGroup.alpha;
-                if (!Mathf.Approximately(currentAlpha, _targetAlpha))
-                {
-                    canvasGroup.alpha = Mathf.MoveTowards(currentAlpha, _targetAlpha, dt / Mathf.Max(0.01f, fadeDuration));
-                }
+                canvasGroup.alpha = 1f;
             }
         }
 

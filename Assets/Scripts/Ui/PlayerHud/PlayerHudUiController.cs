@@ -1,9 +1,7 @@
 using System;
-using SoulsLike;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Services;
 using SoulsLike.Services.Targeting;
-using UnityEngine;
 using VContainer.Unity;
 
 namespace SoulsLike.Ui.PlayerHud
@@ -20,7 +18,7 @@ namespace SoulsLike.Ui.PlayerHud
             HealthModel healthModel,
             ITargetingService targetingService = null) : base(uiService)
         {
-            _healthModel = healthModel ?? throw new ArgumentNullException(nameof(healthModel));
+            _healthModel = healthModel;
             _targetingService = targetingService;
         }
 
@@ -50,10 +48,7 @@ namespace SoulsLike.Ui.PlayerHud
         {
             if (_playerHudUi == null) return;
 
-            bool isLockedOn = _targetingService != null && _targetingService.IsLockedOn;
-            bool isEnemyAggro = false; // Aggro system flag placeholder
-
-            _playerHudUi.UpdateStats(_healthStats, isLockedOn, isEnemyAggro);
+            _playerHudUi.UpdateStats(_healthStats);
         }
 
         public void Dispose()
