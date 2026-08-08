@@ -52,10 +52,6 @@ namespace SoulsLike.Entities.Character
             }
 
             _character.UpdateBehaviour(_inputService.CharacterActions);
-            if (_inputService.CharacterActions.SwitchCameraAngle.WasPressedThisFrame())
-            {
-                _cameraService.SwitchAngle();
-            }
         }
 
         public void LateTick()
