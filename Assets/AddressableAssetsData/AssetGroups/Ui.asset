@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Ui
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Ui
+  m_GUID: c14872aedb987b9408f342ffa1cd89fe
+  m_SerializeEntries:
+  - m_GUID: 0f164e7c417f3cb4da63de4dd337277e
+    m_Address: PauseMenuUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a87cfbe26c6da4428432314b12700a5
+    m_Address: MainMenuUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e518bb335d3d04547bfcb38405fd043f
+    m_Address: PlayerHudUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: b190c9b4e7781224aa9823b8f4e1f863, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 028727921f090fd438c48b14bd026577, type: 2}
+    - {fileID: 11400000, guid: bafa7e66222d91b48a5ab17eccfa8e58, type: 2}

@@ -210,7 +210,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
             else
             {
                 Mediator.NotifyLocomotion(_animationBlend, _animationBlendDirection);
-                Mediator.NotifyLockOn(_isLockedOn);
                 Mediator.NotifyTurn(_turnAmount);
             }
         }

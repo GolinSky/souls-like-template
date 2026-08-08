@@ -65,3 +65,10 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: PlayerHudUi
+      value:
+        m_AssetGUID: e518bb335d3d04547bfcb38405fd043f
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0

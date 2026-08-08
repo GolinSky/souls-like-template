@@ -10,5 +10,17 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         public bool SetCurrentHealth;
         public float CurrentHealth;
+
+        public bool SetMaxFocus;
+        public float MaxFocus;
+
+        public bool SetCurrentFocus;
+        public float CurrentFocus;
+
+        public bool SetMaxStamina;
+        public float MaxStamina;
+
+        public bool SetCurrentStamina;
+        public float CurrentStamina;
     }
 }

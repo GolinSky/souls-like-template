@@ -11,7 +11,7 @@ using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character
 {
-    public class Character : MonoBehaviour, IInitializable, IComponentMediator, IDisposable
+    public class Character : MonoBehaviour, IInitializable, IComponentMediator
     {
         [SerializeField] private MovementComponent _movementComponent;
         [SerializeField] private AnimatorComponent _animatorComponent;
@@ -42,17 +42,7 @@ namespace SoulsLike.Entities.Character
             _movementComponent.SetMediator(this);
             _equipmentComponent.SetMediator(this);
             _healthComponent.SetMediator(this);
-            _healthComponent.OnStatsChanged += NotifyHealthStatsChanged;
-            _healthComponent.OnDamageApplied += NotifyDamageApplied;
-            _healthComponent.OnDied += NotifyDeath;
             Cursor.lockState = CursorLockMode.Locked;
-        }
-
-        public void Dispose()
-        {
-            _healthComponent.OnStatsChanged -= NotifyHealthStatsChanged;
-            _healthComponent.OnDamageApplied -= NotifyDamageApplied;
-            _healthComponent.OnDied -= NotifyDeath;
         }
 
         public void UpdateBehaviour(ProjectInputActions.CharacterActions actions)
@@ -105,14 +95,17 @@ namespace SoulsLike.Entities.Character
 
         public void NotifyHealthStatsChanged(HealthStats stats)
         {
+            _healthComponent.Model.ApplyStats(stats);
         }
 
         public void NotifyDamageApplied(DamageResult result)
         {
+            _healthComponent.Model.NotifyDamageApplied(result);
         }
 
         public void NotifyDeath()
         {
+            _healthComponent.Model.NotifyDeath();
         }
 
         public void NotifyLocomotion(float speed, Vector2 blendDirection)
@@ -144,9 +137,10 @@ namespace SoulsLike.Entities.Character
         {
             _animatorComponent.SetAimTarget(targetPosition);
         }
-
-        public void NotifyLockOn(bool isLockedOn)
+        
+        public void SetLockOnTarget(bool isLockedOn, Transform lockOnTarget)
         {
+            _movementComponent.SetLockOnTarget(isLockedOn, lockOnTarget);
             _animatorComponent.SetLockOn(isLockedOn);
         }
 

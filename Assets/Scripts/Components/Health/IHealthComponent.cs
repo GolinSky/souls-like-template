@@ -1,13 +1,7 @@
-using System;
-
 namespace SoulsLike.Entities.Character.Components.Health
 {
     public interface IHealthComponent
     {
-        event Action<HealthStats> OnStatsChanged;
-        event Action<DamageResult> OnDamageApplied;
-        event Action OnDied;
-
         HealthStats Stats { get; }
 
         void SetMediator(IComponentMediator mediator);
@@ -16,6 +10,10 @@ namespace SoulsLike.Entities.Character.Components.Health
         DamageResult CalculateDamage(DamageRequest request, HealthStats currentStats);
         HealthStats CalculateHeal(HealthStats currentStats, float amount);
         HealthStats CalculateRevive(HealthStats currentStats, float health);
+        void ConsumeFocus(float amount);
+        void RestoreFocus(float amount);
+        void ConsumeStamina(float amount);
+        void RestoreStamina(float amount);
         void ApplyAuthoritativeStats(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
     }

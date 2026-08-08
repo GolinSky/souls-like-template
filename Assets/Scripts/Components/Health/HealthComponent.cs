@@ -8,13 +8,8 @@ namespace SoulsLike.Entities.Character.Components.Health
     public class HealthComponent : BaseComponent<HealthModel>, IHealthComponent, IInitializable
     {
         private IComponentMediator _mediator;
-        private HealthStats _stats;
 
-        public event Action<HealthStats> OnStatsChanged;
-        public event Action<DamageResult> OnDamageApplied;
-        public event Action OnDied;
-
-        public HealthStats Stats => _stats;
+        public HealthStats Stats => Model.Stats;
 
         public void Initialize()
         {
@@ -35,10 +30,19 @@ namespace SoulsLike.Entities.Character.Components.Health
 
             float maxHealth = Mathf.Max(1f, Model.MaxHealth);
             float currentHealth = Mathf.Clamp(Model.StartingHealth, 0f, maxHealth);
+            float maxFocus = Mathf.Max(1f, Model.MaxFocus);
+            float currentFocus = Mathf.Clamp(Model.StartingFocus, 0f, maxFocus);
+            float maxStamina = Mathf.Max(1f, Model.MaxStamina);
+            float currentStamina = Mathf.Clamp(Model.StartingStamina, 0f, maxStamina);
+
             return new HealthStats
             {
                 CurrentHealth = currentHealth,
                 MaxHealth = maxHealth,
+                CurrentFocus = currentFocus,
+                MaxFocus = maxFocus,
+                CurrentStamina = currentStamina,
+                MaxStamina = maxStamina,
                 IsAlive = currentHealth > 0f
             };
         }
@@ -56,6 +60,28 @@ namespace SoulsLike.Entities.Character.Components.Health
             if (update.SetCurrentHealth)
             {
                 stats.CurrentHealth = Mathf.Clamp(update.CurrentHealth, 0f, stats.MaxHealth);
+            }
+
+            if (update.SetMaxFocus)
+            {
+                stats.MaxFocus = Mathf.Max(1f, update.MaxFocus);
+                stats.CurrentFocus = Mathf.Clamp(stats.CurrentFocus, 0f, stats.MaxFocus);
+            }
+
+            if (update.SetCurrentFocus)
+            {
+                stats.CurrentFocus = Mathf.Clamp(update.CurrentFocus, 0f, stats.MaxFocus);
+            }
+
+            if (update.SetMaxStamina)
+            {
+                stats.MaxStamina = Mathf.Max(1f, update.MaxStamina);
+                stats.CurrentStamina = Mathf.Clamp(stats.CurrentStamina, 0f, stats.MaxStamina);
+            }
+
+            if (update.SetCurrentStamina)
+            {
+                stats.CurrentStamina = Mathf.Clamp(update.CurrentStamina, 0f, stats.MaxStamina);
             }
 
             stats.IsAlive = stats.CurrentHealth > 0f;
@@ -117,27 +143,63 @@ namespace SoulsLike.Entities.Character.Components.Health
             return stats;
         }
 
+        public void ConsumeFocus(float amount)
+        {
+            if (amount <= 0f) return;
+            HealthStats stats = Stats;
+            stats.CurrentFocus = Mathf.Clamp(stats.CurrentFocus - amount, 0f, stats.MaxFocus);
+            ApplyAuthoritativeStats(stats);
+        }
+
+        public void RestoreFocus(float amount)
+        {
+            if (amount <= 0f) return;
+            HealthStats stats = Stats;
+            stats.CurrentFocus = Mathf.Clamp(stats.CurrentFocus + amount, 0f, stats.MaxFocus);
+            ApplyAuthoritativeStats(stats);
+        }
+
+        public void ConsumeStamina(float amount)
+        {
+            if (amount <= 0f) return;
+            HealthStats stats = Stats;
+            stats.CurrentStamina = Mathf.Clamp(stats.CurrentStamina - amount, 0f, stats.MaxStamina);
+            ApplyAuthoritativeStats(stats);
+        }
+
+        public void RestoreStamina(float amount)
+        {
+            if (amount <= 0f) return;
+            HealthStats stats = Stats;
+            stats.CurrentStamina = Mathf.Clamp(stats.CurrentStamina + amount, 0f, stats.MaxStamina);
+            ApplyAuthoritativeStats(stats);
+        }
+
         public void ApplyAuthoritativeStats(HealthStats stats)
         {
-            bool died = _stats.IsAlive && !stats.IsAlive;
-            _stats = NormalizeStats(stats);
-            OnStatsChanged?.Invoke(_stats);
+            HealthStats normalizedStats = NormalizeStats(stats);
+            bool died = Stats.IsAlive && !normalizedStats.IsAlive;
+            _mediator.NotifyHealthStatsChanged(normalizedStats);
 
             if (died)
             {
-                OnDied?.Invoke();
+                _mediator.NotifyDeath();
             }
         }
 
         public void NotifyDamageApplied(DamageResult result)
         {
-            OnDamageApplied?.Invoke(result);
+            _mediator.NotifyDamageApplied(result);
         }
 
         private HealthStats NormalizeStats(HealthStats stats)
         {
             stats.MaxHealth = Mathf.Max(1f, stats.MaxHealth);
             stats.CurrentHealth = Mathf.Clamp(stats.CurrentHealth, 0f, stats.MaxHealth);
+            stats.MaxFocus = Mathf.Max(1f, stats.MaxFocus);
+            stats.CurrentFocus = Mathf.Clamp(stats.CurrentFocus, 0f, stats.MaxFocus);
+            stats.MaxStamina = Mathf.Max(1f, stats.MaxStamina);
+            stats.CurrentStamina = Mathf.Clamp(stats.CurrentStamina, 0f, stats.MaxStamina);
             stats.IsAlive = stats.CurrentHealth > 0f;
             return stats;
         }
