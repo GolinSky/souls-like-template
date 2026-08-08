@@ -19,6 +19,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         // Locomotion state
         private float _speed;
+        private float _animationBlend;
+        private float _targetRotation;
         private Vector2 _animationBlendDirection;
         private float _rotationVelocity;
         private float _verticalVelocity;
@@ -219,7 +221,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             }
             else
             {
-                Mediator.NotifyLocomotion(_animationBlendDirection);
+                Mediator.NotifyLocomotion(_animationBlend, _animationBlendDirection);
                 Mediator.NotifyTurn(_turnAmount);
             }
         }
@@ -403,62 +405,41 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 _speed = targetSpeed;
             }
 
-            // --- Arc Raiders-style character rotation ---
-            // Character rotates toward camera yaw to keep body aligned with aiming.
-            // Rotation is smoothed for a weighted, momentum-based feel.
-            _turnAmount = 0f;
-            float currentYaw = transform.eulerAngles.y;
-            float angleDiff = Mathf.DeltaAngle(currentYaw, cameraYaw);
-            
-            if (moveInput != Vector2.zero || Mathf.Abs(angleDiff) > 0.5f)
-            {
-                float smoothTime = moveInput != Vector2.zero ? Model.RotationSmoothTime : Model.RotationSmoothTime * 1.5f;
-                float smoothedYaw = Mathf.SmoothDampAngle(currentYaw, cameraYaw, ref _rotationVelocity, smoothTime);
-                transform.rotation = Quaternion.Euler(0.0f, smoothedYaw, 0.0f);
-                
-                if (moveInput == Vector2.zero)
-                {
-                    // Map velocity to [-1, 1] loop for the Animator turn BlendTree
-                    _turnAmount = Mathf.Clamp(_rotationVelocity / 120f, -1f, 1f);
-                }
-            }
+            // Smooth the 1D FreeLocomotion animation blend (Speed parameter value)
+            float blendRate = moveInput == Vector2.zero ? Model.StoppingAnimationBlendRate : currentRate;
+            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed * inputMagnitude, MovementDeltaTime * blendRate);
+            if (_animationBlend < 0.01f) _animationBlend = 0f;
 
-            // --- Compute world-space movement direction (camera-relative) ---
+            // --- FreeLocomotion ThirdPerson character rotation ---
+            // Rotate character body towards movement direction relative to camera only when moving
+            _turnAmount = 0f;
             horizontalMotion = Vector3.zero;
             Vector3 worldMoveDirection = Vector3.zero;
 
             if (moveInput != Vector2.zero)
             {
-                Vector3 cameraForward = Quaternion.Euler(0.0f, cameraYaw, 0.0f) * Vector3.forward;
-                Vector3 cameraRight = Quaternion.Euler(0.0f, cameraYaw, 0.0f) * Vector3.right;
-                worldMoveDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
+                Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
+                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cameraYaw;
+                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, Model.RotationSmoothTime);
+                
+                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+
+                Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+                worldMoveDirection = targetDirection.normalized;
                 horizontalMotion = worldMoveDirection * _speed;
             }
 
-            // --- Animation blend: compute in character-local space ---
-            // This determines which blend tree clip plays (strafe, forward, backward)
-            // based on the movement direction relative to where the character is *currently* facing.
-            float blendMagnitude = 0f;
-            if (moveInput != Vector2.zero)
-            {
-                blendMagnitude = sprinting ? 1f : 0.5f;
-            }
-
+            // --- Animation blend: compute local direction for future LockOn state ---
+            float localBlendMagnitude = moveInput != Vector2.zero ? (sprinting ? 1f : 0.5f) : 0f;
             Vector2 targetBlendDirection = Vector2.zero;
+
             if (moveInput != Vector2.zero && worldMoveDirection.sqrMagnitude > 0.001f)
             {
-                // Project world movement direction into character-local space
                 Vector3 localDir = transform.InverseTransformDirection(worldMoveDirection);
-                // localDir.x = right/left, localDir.z = forward/backward
-                targetBlendDirection = new Vector2(localDir.x, localDir.z).normalized * blendMagnitude;
+                targetBlendDirection = new Vector2(localDir.x, localDir.z).normalized * localBlendMagnitude;
             }
 
-            // Smooth the blend tree animation params
-            float blendRate = moveInput == Vector2.zero 
-                ? Model.StoppingAnimationBlendRate 
-                : currentRate;
             _animationBlendDirection = Vector2.Lerp(_animationBlendDirection, targetBlendDirection, MovementDeltaTime * blendRate);
-
             if (_animationBlendDirection.magnitude < 0.01f) _animationBlendDirection = Vector2.zero;
         }
 

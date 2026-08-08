@@ -17,6 +17,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int _animIdCrouch = Animator.StringToHash("Crouch");
         private static readonly int _animIdTurn = Animator.StringToHash("Turn");
         private static readonly int _animIdMoving = Animator.StringToHash("Moving");
+        private static readonly int _animIdSpeed = Animator.StringToHash("Speed");
         
         [SerializeField] private Animator _animator;
         [Header("Aim Target")]
@@ -34,6 +35,8 @@ namespace SoulsLike.Entities.Character.Components
 
     
         private float _currentTurnAmount;
+        private float _targetSpeed;
+        private float _currentSpeed;
         private Vector2 _targetLocomotion;
         private Vector2 _currentLocomotion;
         private Vector3 _targetAimPosition;
@@ -83,9 +86,9 @@ namespace SoulsLike.Entities.Character.Components
             }
         }
 
-        public void SetLocomotion(Vector2 blendDirection)
+        public void SetLocomotion(float speed, Vector2 blendDirection)
         {
-            _currentLocomotion = blendDirection;
+            _targetSpeed = speed;
             _targetLocomotion = blendDirection;
         }
         
@@ -117,11 +120,15 @@ namespace SoulsLike.Entities.Character.Components
             _currentTurnAmount = Mathf.Lerp(_currentTurnAmount, _targetTurnAmount, dt * _turnSmoothSpeed);
             _animator.SetFloat(_animIdTurn, _currentTurnAmount);
 
+            _currentSpeed = Mathf.Lerp(_currentSpeed, _targetSpeed, dt * _locomotionSmoothSpeed);
+            if (_currentSpeed < 0.01f) _currentSpeed = 0f;
+            _animator.SetFloat(_animIdSpeed, _currentSpeed);
+
             _currentLocomotion = Vector2.Lerp(_currentLocomotion, _targetLocomotion, dt * _locomotionSmoothSpeed);
             _animator.SetFloat(_animIdHorizontal, _currentLocomotion.x);
             _animator.SetFloat(_animIdVertical, _currentLocomotion.y);
 
-            bool isMoving = _targetLocomotion.sqrMagnitude > 0.0001f || _currentLocomotion.sqrMagnitude > 0.0001f;
+            bool isMoving = _targetSpeed > 0.01f || _targetLocomotion.sqrMagnitude > 0.0001f || _currentLocomotion.sqrMagnitude > 0.0001f;
             _animator.SetBool(_animIdMoving, isMoving);
         }
         
@@ -137,6 +144,8 @@ namespace SoulsLike.Entities.Character.Components
             
             _currentTurnAmount = source._currentTurnAmount;
             _targetTurnAmount = source._targetTurnAmount;
+            _targetSpeed = source._targetSpeed;
+            _currentSpeed = source._currentSpeed;
             _targetLocomotion = source._targetLocomotion;
             _currentLocomotion = source._currentLocomotion;
             _targetAimPosition = source._targetAimPosition;

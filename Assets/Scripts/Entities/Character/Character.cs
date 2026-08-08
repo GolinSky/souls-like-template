@@ -115,9 +115,9 @@ namespace SoulsLike.Entities.Character
         {
         }
 
-        public void NotifyLocomotion(Vector2 blendDirection)
+        public void NotifyLocomotion(float speed, Vector2 blendDirection)
         {
-            _animatorComponent.SetLocomotion(blendDirection);
+            _animatorComponent.SetLocomotion(speed, blendDirection);
         }
 
         public void NotifyJump()

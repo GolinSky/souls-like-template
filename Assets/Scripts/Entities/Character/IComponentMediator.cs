@@ -5,7 +5,7 @@ namespace SoulsLike.Entities.Character
 {
     public interface IComponentMediator
     {
-        void NotifyLocomotion(Vector2 blendDirection);
+        void NotifyLocomotion(float speed, Vector2 blendDirection);
         void NotifyJump();
         void NotifyRoll();
         void NotifyCrouch(bool isCrouching);
