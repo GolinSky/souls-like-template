@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69af129e542ad9f418f9c1381974aad1, type: 3}
   m_Name: MovementData
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Movement.MovementData
-  <MoveSpeed>k__BackingField: 2
-  <SprintSpeed>k__BackingField: 5.335
+  <MoveSpeed>k__BackingField: 3
+  <SprintSpeed>k__BackingField: 6
   <RotationSmoothTime>k__BackingField: 0.12
   <SpeedChangeRate>k__BackingField:
     serializedVersion: 2
