@@ -1,4 +1,4 @@
-﻿using DG.Tweening;
+using DG.Tweening;
 using UnityEngine;
 using Unity.Cinemachine;
 
@@ -13,6 +13,9 @@ namespace SoulsLike.Services.CameraService
         void SwitchAngle();
         Ray GetRay();
         void SetZoom(bool isZoomed);
+        void SetLockOnTarget(Transform lockNodeTarget);
+        void ClearLockOnTarget();
+        void RecenterCamera();
     }
     
     public class CameraService: MonoBehaviour, ICameraService
@@ -53,15 +56,12 @@ namespace SoulsLike.Services.CameraService
         [Range(0.1f,10.0f)] [SerializeField] private float mouseSensitivityY = 1.0f;
         [Range(0.1f,10.0f)] [SerializeField] private float mouseSensitivityX = 1.0f;
         
+        private Transform _lockOnTarget;
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
 
-
-
         public void SetTarget(Transform target)
         {
-            // targetCamera.transform.SetParent(target);
-            // targetCamera.transform.localPosition = Vector3.zero;
             cinemachineCamera.Follow = target;
         }
         
@@ -91,7 +91,6 @@ namespace SoulsLike.Services.CameraService
 
         public Ray GetRay()
         {
-            // get camera ray - crosshair like ray (center of screen)
             return targetCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         }
 
@@ -113,13 +112,55 @@ namespace SoulsLike.Services.CameraService
             ).SetEase(zoomEase);
         }
 
+        public void SetLockOnTarget(Transform lockNodeTarget)
+        {
+            _lockOnTarget = lockNodeTarget;
+        }
+
+        public void ClearLockOnTarget()
+        {
+            _lockOnTarget = null;
+        }
+
+        public void RecenterCamera()
+        {
+            if (cinemachineCamera.Follow != null)
+            {
+                _cinemachineTargetYaw = cinemachineCamera.Follow.eulerAngles.y;
+                _cinemachineTargetPitch = 0f;
+            }
+        }
+
         public void UpdateRotation(Vector2 look)
         {
-            // if there is an input and camera position is not fixed
-            if (look.sqrMagnitude >= THRESHOLD && !lockCameraPosition)
+            if (_lockOnTarget != null && cinemachineCamera.Follow != null)
             {
-                _cinemachineTargetYaw += look.x * Time.deltaTime * mouseSensitivityX;
-                _cinemachineTargetPitch += look.y * Time.deltaTime * mouseSensitivityY;
+                // Lock-On Mode: Continuously rotate camera to track target
+                Vector3 followPos = cinemachineCamera.Follow.position;
+                Vector3 targetPos = _lockOnTarget.position;
+                Vector3 toTarget = targetPos - followPos;
+
+                if (toTarget.sqrMagnitude > 0.01f)
+                {
+                    float targetYaw = Mathf.Atan2(toTarget.x, toTarget.z) * Mathf.Rad2Deg;
+                    
+                    // Dynamic pitch based on distance and height elevation
+                    float horizontalDistance = new Vector2(toTarget.x, toTarget.z).magnitude;
+                    float heightDiff = toTarget.y;
+                    float targetPitch = -Mathf.Atan2(heightDiff, horizontalDistance) * Mathf.Rad2Deg;
+
+                    _cinemachineTargetYaw = Mathf.LerpAngle(_cinemachineTargetYaw, targetYaw, Time.deltaTime * 10f);
+                    _cinemachineTargetPitch = Mathf.LerpAngle(_cinemachineTargetPitch, targetPitch, Time.deltaTime * 10f);
+                }
+            }
+            else
+            {
+                // Unlocked Mode: Manual camera stick/mouse input
+                if (look.sqrMagnitude >= THRESHOLD && !lockCameraPosition)
+                {
+                    _cinemachineTargetYaw += look.x * Time.deltaTime * mouseSensitivityX;
+                    _cinemachineTargetPitch += look.y * Time.deltaTime * mouseSensitivityY;
+                }
             }
 
             // clamp our rotations so our values are limited 360 degrees
@@ -127,9 +168,11 @@ namespace SoulsLike.Services.CameraService
             _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, bottomClamp, topClamp);
 
             // Cinemachine will follow this target
-            cinemachineCamera.Follow.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + cameraAngleOverride,
-                _cinemachineTargetYaw, 0.0f);
-            
+            if (cinemachineCamera.Follow != null)
+            {
+                cinemachineCamera.Follow.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + cameraAngleOverride,
+                    _cinemachineTargetYaw, 0.0f);
+            }
         }
         
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)

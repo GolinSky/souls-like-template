@@ -145,6 +145,11 @@ namespace SoulsLike.Entities.Character
             _animatorComponent.SetAimTarget(targetPosition);
         }
 
+        public void NotifyLockOn(bool isLockedOn)
+        {
+            _animatorComponent.SetLockOn(isLockedOn);
+        }
+
         public void NotifyTurn(float turnAmount)
         {
             _animatorComponent.SetTurn(turnAmount);

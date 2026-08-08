@@ -16,6 +16,7 @@ namespace SoulsLike.Entities.Character
         void NotifyDeath();
         void NotifyZoom(bool isZoomed);
         void NotifyAimTarget(Vector3 targetPosition);
+        void NotifyLockOn(bool isLockedOn);
         void NotifyTurn(float turnAmount);
         void SetSpeedMultiplier(SpeedMultiplierKey key, float multiplier);
         void RemoveSpeedMultiplier(SpeedMultiplierKey key);

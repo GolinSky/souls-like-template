@@ -1,4 +1,4 @@
-﻿namespace SoulsLike.Services.Layer
+namespace SoulsLike.Services.Layer
 {
     public enum LayerName
     {

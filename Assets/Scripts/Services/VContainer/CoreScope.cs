@@ -1,4 +1,4 @@
-﻿using SoulsLike.Services;
+using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
 using SoulsLike.Entities.Character;
 using UnityEngine;

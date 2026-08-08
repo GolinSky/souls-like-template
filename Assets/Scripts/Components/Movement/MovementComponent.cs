@@ -114,18 +114,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
             return total;
         }
 
-        private float GetDirectionSpeedMultiplier(Vector2 moveInput)
-        {
-            if (moveInput.magnitude < 0.1f) return 1f;
-            var dir = moveInput.normalized;
-            
-            // Forward is faster, backward is slower, sidestepping is medium
-            float zMult = dir.y > 0 ? 1.0f : 0.6f;
-            float xMult = 0.8f;
-            
-            // Interpolate using squared components since x^2 + y^2 = 1
-            return (dir.x * dir.x * xMult) + (dir.y * dir.y * zMult);
-        }
         
         public void Move(Vector2 direction, float cameraYaw, bool sprint, bool jumpRequested, bool rollRequested, bool crouchActionHeld)
         {
@@ -222,6 +210,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             else
             {
                 Mediator.NotifyLocomotion(_animationBlend, _animationBlendDirection);
+                Mediator.NotifyLockOn(_isLockedOn);
                 Mediator.NotifyTurn(_turnAmount);
             }
         }
@@ -360,6 +349,29 @@ namespace SoulsLike.Entities.Character.Components.Movement
             }
         }
 
+        private bool _isLockedOn;
+        private Transform _lockOnTarget;
+
+        public void SetLockOnTarget(bool isLockedOn, Transform lockOnTarget)
+        {
+            _isLockedOn = isLockedOn;
+            _lockOnTarget = lockOnTarget;
+        }
+
+        private float GetDirectionSpeedMultiplier(Vector2 moveInput)
+        {
+            if (_isLockedOn && moveInput.sqrMagnitude > 0.01f)
+            {
+                var dir = moveInput.normalized;
+                // Backward speed penalty 0.7x, Lateral speed penalty 0.85x
+                float zMult = dir.y >= 0 ? 1.0f : 0.7f;
+                float xMult = 0.85f;
+                return (dir.x * dir.x * xMult) + (dir.y * dir.y * zMult);
+            }
+
+            return 1.0f;
+        }
+
         private void CalculateHorizontalMovement(Vector2 moveInput, float cameraYaw, bool sprinting, out Vector3 horizontalMotion)
         {
             if (_isCrouching) sprinting = false;
@@ -405,42 +417,90 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 _speed = targetSpeed;
             }
 
-            // Smooth the 1D FreeLocomotion animation blend (Speed parameter value)
+            // Smooth animation blend values
             float blendRate = moveInput == Vector2.zero ? Model.StoppingAnimationBlendRate : currentRate;
             _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed * inputMagnitude, MovementDeltaTime * blendRate);
             if (_animationBlend < 0.01f) _animationBlend = 0f;
 
-            // --- FreeLocomotion ThirdPerson character rotation ---
-            // Rotate character body towards movement direction relative to camera only when moving
             _turnAmount = 0f;
             horizontalMotion = Vector3.zero;
             Vector3 worldMoveDirection = Vector3.zero;
 
-            if (moveInput != Vector2.zero)
+            if (_isLockedOn && _lockOnTarget != null)
             {
-                Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
-                _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cameraYaw;
-                float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, Model.RotationSmoothTime);
-                
-                transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
+                // --- Locked-On Mode Logic ---
+                Vector3 toTarget = _lockOnTarget.position - transform.position;
+                toTarget.y = 0f;
 
-                Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
-                worldMoveDirection = targetDirection.normalized;
-                horizontalMotion = worldMoveDirection * _speed;
+                if (toTarget.sqrMagnitude > 0.001f)
+                {
+                    transform.rotation = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
+                }
+
+                if (moveInput != Vector2.zero)
+                {
+                    Vector3 cameraForward = Quaternion.Euler(0.0f, cameraYaw, 0.0f) * Vector3.forward;
+                    Vector3 cameraRight = Quaternion.Euler(0.0f, cameraYaw, 0.0f) * Vector3.right;
+                    Vector3 desiredWorldDir = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
+
+                    if (sprinting && toTarget.sqrMagnitude > 0.001f)
+                    {
+                        float angleDivergence = Vector3.Angle(desiredWorldDir, toTarget.normalized);
+                        if (angleDivergence <= 120f)
+                        {
+                            // Orbital sprint arc around target
+                            Vector3 tangent = Vector3.Cross(Vector3.up, toTarget.normalized);
+                            if (Vector3.Dot(desiredWorldDir, tangent) < 0) tangent = -tangent;
+                            worldMoveDirection = tangent;
+                        }
+                        else
+                        {
+                            // Linear escape sprint
+                            worldMoveDirection = desiredWorldDir;
+                        }
+                    }
+                    else
+                    {
+                        worldMoveDirection = desiredWorldDir;
+                    }
+
+                    horizontalMotion = worldMoveDirection * _speed;
+                }
+
+                // 2D blend parameters for LockedLocomotionTree (Horizontal/Vertical)
+                float blendMag = moveInput != Vector2.zero ? (sprinting ? 1.0f : 0.5f) : 0f;
+                Vector2 targetBlendDirection = moveInput.normalized * blendMag;
+                _animationBlendDirection = Vector2.Lerp(_animationBlendDirection, targetBlendDirection, MovementDeltaTime * blendRate);
+                if (_animationBlendDirection.magnitude < 0.01f) _animationBlendDirection = Vector2.zero;
             }
-
-            // --- Animation blend: compute local direction for future LockOn state ---
-            float localBlendMagnitude = moveInput != Vector2.zero ? (sprinting ? 1f : 0.5f) : 0f;
-            Vector2 targetBlendDirection = Vector2.zero;
-
-            if (moveInput != Vector2.zero && worldMoveDirection.sqrMagnitude > 0.001f)
+            else
             {
-                Vector3 localDir = transform.InverseTransformDirection(worldMoveDirection);
-                targetBlendDirection = new Vector2(localDir.x, localDir.z).normalized * localBlendMagnitude;
-            }
+                // --- FreeLocomotion Unlocked Mode Logic ---
+                if (moveInput != Vector2.zero)
+                {
+                    Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
+                    _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cameraYaw;
+                    float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, Model.RotationSmoothTime);
+                    
+                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
 
-            _animationBlendDirection = Vector2.Lerp(_animationBlendDirection, targetBlendDirection, MovementDeltaTime * blendRate);
-            if (_animationBlendDirection.magnitude < 0.01f) _animationBlendDirection = Vector2.zero;
+                    Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
+                    worldMoveDirection = targetDirection.normalized;
+                    horizontalMotion = worldMoveDirection * _speed;
+                }
+
+                float localBlendMagnitude = moveInput != Vector2.zero ? (sprinting ? 1f : 0.5f) : 0f;
+                Vector2 targetBlendDirection = Vector2.zero;
+
+                if (moveInput != Vector2.zero && worldMoveDirection.sqrMagnitude > 0.001f)
+                {
+                    Vector3 localDir = transform.InverseTransformDirection(worldMoveDirection);
+                    targetBlendDirection = new Vector2(localDir.x, localDir.z).normalized * localBlendMagnitude;
+                }
+
+                _animationBlendDirection = Vector2.Lerp(_animationBlendDirection, targetBlendDirection, MovementDeltaTime * blendRate);
+                if (_animationBlendDirection.magnitude < 0.01f) _animationBlendDirection = Vector2.zero;
+            }
         }
 
         public void SetMediator(IComponentMediator mediator)

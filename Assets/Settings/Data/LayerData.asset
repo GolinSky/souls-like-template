@@ -18,3 +18,11 @@ MonoBehaviour:
       value:
         serializedVersion: 2
         m_Bits: 0
+    - key: 7
+      value:
+        serializedVersion: 2
+        m_Bits: 4294967295
+    - key: 8
+      value:
+        serializedVersion: 2
+        m_Bits: 4294967295

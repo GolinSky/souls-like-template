@@ -18,6 +18,12 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int _animIdTurn = Animator.StringToHash("Turn");
         private static readonly int _animIdMoving = Animator.StringToHash("Moving");
         private static readonly int _animIdSpeed = Animator.StringToHash("Speed");
+        private static readonly int _animIdLockOn = Animator.StringToHash("LockOn");
+
+        public void SetLockOn(bool isLockedOn)
+        {
+            _animator.SetBool(_animIdLockOn, isLockedOn);
+        }
         
         [SerializeField] private Animator _animator;
         [Header("Aim Target")]
