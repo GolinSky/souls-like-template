@@ -29,6 +29,9 @@ namespace SoulsLike.Entities.Character
         private ICameraService _cameraService;
         private float _sprintPressedAt;
         private bool _sprintHoldQualified;
+        private bool _manualMovementBlocked;
+        private bool _animationMovementBlocked;
+        private bool _animationRootMotionEnabled;
 
         public Transform CameraTarget => _cameraTarget;
         public InventoryComponent InventoryComponent => _inventoryComponent;
@@ -44,6 +47,7 @@ namespace SoulsLike.Entities.Character
         {
             ValidateDependencies();
             _movementComponent.SetMediator(this);
+            _animatorComponent.SetMediator(this);
             _equipmentComponent.SetMediator(this);
             _healthComponent.SetMediator(this);
             Cursor.lockState = CursorLockMode.Locked;
@@ -143,9 +147,9 @@ namespace SoulsLike.Entities.Character
             _animatorComponent.SetJump();
         }
 
-        public void NotifyRoll()
+        public void NotifyRoll(Vector2 direction)
         {
-            _animatorComponent.TriggerRoll();
+            _animatorComponent.TriggerRoll(direction);
         }
 
         public void NotifyCrouch(bool isCrouching)
@@ -174,6 +178,27 @@ namespace SoulsLike.Entities.Character
             _animatorComponent.SetTurn(turnAmount);
         }
 
+        public void SetMovementBlocked(bool blocked)
+        {
+            _manualMovementBlocked = blocked;
+            SynchronizeMovementBlock();
+        }
+
+        public void NotifyAnimationMovement(Vector3 deltaPosition, Quaternion deltaRotation)
+        {
+            if (_animationRootMotionEnabled)
+            {
+                _movementComponent.ApplyAnimationMovement(deltaPosition, deltaRotation);
+            }
+        }
+
+        public void SetAnimationMovementContract(bool movementBlocked, bool useRootMotion)
+        {
+            _animationMovementBlocked = movementBlocked;
+            _animationRootMotionEnabled = useRootMotion;
+            SynchronizeMovementBlock();
+        }
+
         public void SetSpeedMultiplier(SpeedMultiplierKey key, float multiplier)
         {
             _movementComponent.SetSpeedMultiplier(key, multiplier);
@@ -182,6 +207,11 @@ namespace SoulsLike.Entities.Character
         public void RemoveSpeedMultiplier(SpeedMultiplierKey key)
         {
             _movementComponent.RemoveSpeedMultiplier(key);
+        }
+
+        private void SynchronizeMovementBlock()
+        {
+            _movementComponent.SetMovementBlocked(_manualMovementBlocked || _animationMovementBlocked);
         }
 
         private void ValidateDependencies()

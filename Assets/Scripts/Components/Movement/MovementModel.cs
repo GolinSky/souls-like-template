@@ -13,6 +13,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public float StoppingAnimationBlendRate { get; }
         public float JumpHeight { get; }
         public float Gravity { get; }
+        public float AirControl { get; }
+        public float AirAcceleration { get; }
         public float JumpTimeout { get; }
         public float FallTimeout { get; }
         public bool Grounded { get; set; }
@@ -20,8 +22,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public float GroundedRadius { get; }
         public LayerMask GroundLayers { get; }
         public float TerminalVelocity { get; set; }
-        public float RollSpeed { get; }
-        public float RollDuration { get; }
         public float RollCooldown { get; }
         public float SlideSpeed { get; }
         public float SlideDuration { get; }
@@ -45,6 +45,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
             StoppingAnimationBlendRate = movementData.StoppingAnimationBlendRate;
             JumpHeight = movementData.JumpHeight;
             Gravity = movementData.Gravity;
+            AirControl = movementData.AirControl;
+            AirAcceleration = movementData.AirAcceleration;
             JumpTimeout = movementData.JumpTimeout;
             FallTimeout = movementData.FallTimeout;
             Grounded = movementData.Grounded;
@@ -52,8 +54,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
             GroundedRadius = movementData.GroundedRadius;
             GroundLayers = movementData.GroundLayers;
             TerminalVelocity = movementData.TerminalVelocity;
-            RollSpeed = movementData.RollSpeed;
-            RollDuration = movementData.RollDuration;
             RollCooldown = movementData.RollCooldown;
             SlideSpeed = movementData.SlideSpeed;
             SlideDuration = movementData.SlideDuration;

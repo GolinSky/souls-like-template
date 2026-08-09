@@ -43,6 +43,8 @@ MonoBehaviour:
   <StoppingAnimationBlendRate>k__BackingField: 8
   <JumpHeight>k__BackingField: 1.2
   <Gravity>k__BackingField: -15
+  <AirControl>k__BackingField: 0.25
+  <AirAcceleration>k__BackingField: 8
   <JumpTimeout>k__BackingField: 0.5
   <FallTimeout>k__BackingField: 0.15
   <Grounded>k__BackingField: 1
@@ -52,8 +54,6 @@ MonoBehaviour:
   <GroundLayers>k__BackingField:
     serializedVersion: 2
     m_Bits: 4294967295
-  <RollSpeed>k__BackingField: 6
-  <RollDuration>k__BackingField: 0.4
   <RollCooldown>k__BackingField: 0.2
   <SlideSpeed>k__BackingField: 8
   <SlideDuration>k__BackingField: 0.8

@@ -7,7 +7,7 @@ namespace SoulsLike.Entities.Character
     {
         void NotifyLocomotion(float speed, Vector2 blendDirection);
         void NotifyJump();
-        void NotifyRoll();
+        void NotifyRoll(Vector2 direction);
         void NotifyCrouch(bool isCrouching);
         void NotifyGrounded(bool isGrounded);
         void NotifyWeaponFire();
@@ -17,6 +17,8 @@ namespace SoulsLike.Entities.Character
         void NotifyZoom(bool isZoomed);
         void NotifyAimTarget(Vector3 targetPosition);
         void NotifyTurn(float turnAmount);
+        void NotifyAnimationMovement(Vector3 deltaPosition, Quaternion deltaRotation);
+        void SetAnimationMovementContract(bool movementBlocked, bool useRootMotion);
         void SetSpeedMultiplier(SpeedMultiplierKey key, float multiplier);
         void RemoveSpeedMultiplier(SpeedMultiplierKey key);
     }

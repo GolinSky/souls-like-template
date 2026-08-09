@@ -1,97 +1,108 @@
-using SoulsLike.Entities.Character.Components;
 using System;
 using System.Collections.Generic;
-using Prospector.Utility.Timer;
 using UnityEngine;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character.Components.Movement
 {
-    public class MovementComponent : BaseComponent<MovementModel>, IInitializable, IMovementComponent 
+    public class MovementComponent : BaseComponent<MovementModel>, IInitializable, IMovementComponent
     {
         private const float MAX_MOVEMENT_DELTA_TIME = 0.05f;
+        private const float INPUT_DEAD_ZONE = 0.01f;
+        private const float GROUNDED_VERTICAL_VELOCITY = -2.0f;
+        private const float DEFAULT_TERMINAL_VELOCITY = 53.0f;
 
         [SerializeField] private CharacterController _controller;
 
         private readonly Dictionary<SpeedMultiplierKey, float> _speedMultipliers = new Dictionary<SpeedMultiplierKey, float>();
 
-        private MovementState _currentState = MovementState.Normal;
-
-        // Locomotion state
-        private float _speed;
-        private float _animationBlend;
-        private float _targetRotation;
+        private IComponentMediator _mediator;
+        private MovementMode _movementMode = MovementMode.Free;
+        private Transform _lockOnTarget;
+        private Vector3 _horizontalVelocity;
+        private Vector3 _groundNormal = Vector3.up;
         private Vector2 _animationBlendDirection;
-        private float _rotationVelocity;
+        private float _animationBlend;
         private float _verticalVelocity;
-        
+        private float _rotationVelocity;
         private float _speedChangeTime;
-        private float _lastTargetSpeed;
+        private float _lastTargetSpeed = -1.0f;
+        private float _jumpCooldownRemaining;
+        private float _rollCooldownRemaining;
+        private float _fallGraceRemaining;
         private float _turnAmount;
-        
-        // Timers
-        private float _jumpTimeoutDelta;
-        private float _fallTimeoutDelta;
-        private ITimer _rollTimer;
-        private ITimer _rollCooldownTimer;
-        private Vector3 _rollDirection;
-        
-        // Crouch state
+        private bool _movementBlocked;
+        private bool _isRisingFromJump;
         private bool _isCrouching;
+        private bool? _lastNotifiedGrounded;
         private float _defaultControllerHeight;
         private Vector3 _defaultControllerCenter;
 
-        private IComponentMediator Mediator { get; set; } 
-
-
         public void Initialize()
         {
-            if (Model == null)
-            {
-                throw new InvalidOperationException($"{name} requires a MovementModel.");
-            }
+            ValidateDependencies();
 
-            if (_controller == null)
-            {
-                throw new InvalidOperationException($"{name} requires a CharacterController.");
-            }
-
-            _jumpTimeoutDelta = Model.JumpTimeout;
-            _fallTimeoutDelta = Model.FallTimeout;
-            
-            _rollTimer = TimerFactory.ConstructTimer(Mathf.Max(0.01f, Model.RollDuration));
-            _rollCooldownTimer = TimerFactory.ConstructTimer(Mathf.Max(0.01f, Model.RollCooldown));
-            
-            // To ensure they are considered "Complete" from the start before being triggered
-            _rollTimer.Start();
-            _rollCooldownTimer.Start();
-
+            _fallGraceRemaining = Model.FallTimeout;
             _defaultControllerHeight = _controller.height;
             _defaultControllerCenter = _controller.center;
-        }
-        
-        public void SetPosition(Vector3 position)
-        {
-            // Specifically disable controller safely for hard teleports via transform
-            if (_controller != null)
-                _controller.enabled = false;
-                
-            transform.position = position;
-            
-            if (_controller != null)
-                _controller.enabled = true;
+            SynchronizeGroundedState();
         }
 
-        public void ChangeState(MovementState newState)
+        public void SetMediator(IComponentMediator mediator)
         {
-            if (_currentState != newState)
+            ValidateDependencies();
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            SynchronizeGroundedState();
+        }
+
+        public void SetPosition(Vector3 position)
+        {
+            bool controllerWasEnabled = _controller.enabled;
+            _controller.enabled = false;
+            transform.position = position;
+            _controller.enabled = controllerWasEnabled;
+
+            _horizontalVelocity = Vector3.zero;
+            _verticalVelocity = 0.0f;
+        }
+
+        public void SetMovementBlocked(bool blocked)
+        {
+            _movementBlocked = blocked;
+
+            if (blocked && Model.Grounded)
             {
-                if (newState == MovementState.Normal)
-                {
-                    _lastTargetSpeed = -1f; // Force speed rate evaluation to reset
-                }
-                _currentState = newState;
+                _horizontalVelocity = Vector3.zero;
             }
+        }
+
+        public void ApplyAnimationMovement(Vector3 deltaPosition, Quaternion deltaRotation)
+        {
+            Vector3 planarDelta = new Vector3(deltaPosition.x, 0.0f, deltaPosition.z);
+            if (Model.Grounded)
+            {
+                planarDelta = Vector3.ProjectOnPlane(planarDelta, _groundNormal);
+            }
+
+            _controller.Move(planarDelta + Vector3.up * deltaPosition.y);
+
+            Vector3 rotatedForward = deltaRotation * transform.forward;
+            rotatedForward.y = 0.0f;
+            if (rotatedForward.sqrMagnitude > INPUT_DEAD_ZONE)
+            {
+                transform.rotation = Quaternion.LookRotation(rotatedForward.normalized, Vector3.up);
+            }
+        }
+
+        public void SetLockOnTarget(bool isLockedOn, Transform lockOnTarget)
+        {
+            if (isLockedOn && lockOnTarget == null)
+            {
+                throw new ArgumentNullException(nameof(lockOnTarget), "Locked-on movement requires a target.");
+            }
+
+            _movementMode = isLockedOn ? MovementMode.LockedOn : MovementMode.Free;
+            _lockOnTarget = isLockedOn ? lockOnTarget : null;
         }
 
         public void SetSpeedMultiplier(SpeedMultiplierKey key, float multiplier)
@@ -104,400 +115,441 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _speedMultipliers.Remove(key);
         }
 
-        private float GetExternalSpeedMultiplier()
+        public void Move(
+            Vector2 direction,
+            float cameraYaw,
+            bool sprint,
+            bool jumpRequested,
+            bool rollRequested,
+            bool crouchActionHeld)
         {
-            float total = 1.0f;
-            foreach (var mult in _speedMultipliers.Values)
+            float deltaTime = MovementDeltaTime;
+            Vector2 moveInput = Vector2.ClampMagnitude(direction, 1.0f);
+
+            UpdateActionCooldowns(deltaTime);
+            UpdateGroundedState(deltaTime);
+
+            if (!_movementBlocked)
             {
-                total *= mult; // multiplicative scaling
+                SetCrouchState(Model.Grounded && crouchActionHeld);
             }
-            return total;
-        }
-
-        
-        public void Move(Vector2 direction, float cameraYaw, bool sprint, bool jumpRequested, bool rollRequested, bool crouchActionHeld)
-        {
-            switch (_currentState)
+            else if (!Model.Grounded)
             {
-                case MovementState.Normal:
-                    HandleNormalState(direction, cameraYaw, sprint, jumpRequested, rollRequested, crouchActionHeld);
-                    break;
-                case MovementState.Rolling:
-                    HandleRollingState(direction, cameraYaw, sprint, jumpRequested, rollRequested, crouchActionHeld);
-                    break;
-                case MovementState.LedgeGrabbing:
-                    // Future implementation: hang onto ledge, wait for climb-up or drop
-                    break;
-            }
-            
-        }
-
-        private void HandleNormalState(Vector2 moveInput, float cameraYaw, bool sprinting, bool jumpRequested, bool rollRequested, bool crouchActionHeld)
-        {
-            // 1. Check if we are physically on the ground
-            UpdateGroundedState();
-
-            // Handle Roll
-            if (rollRequested && Model.Grounded && _rollCooldownTimer.IsComplete)
-            {
-                ChangeState(MovementState.Rolling);
-                _rollTimer.ChangeDuration(Model.RollDuration);
-                _rollTimer.Start();
-
-                if (moveInput.sqrMagnitude < 0.01f)
-                {
-                    _rollDirection = -transform.forward;
-                }
-                else
-                {
-                    Vector3 cameraForward = Quaternion.Euler(0.0f, cameraYaw, 0.0f) * Vector3.forward;
-                    Vector3 cameraRight = Quaternion.Euler(0.0f, cameraYaw, 0.0f) * Vector3.right;
-                    _rollDirection = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
-                }
-                
-                // Immediately align body to roll direction
-                if (_rollDirection.sqrMagnitude > 0.001f)
-                {
-                    transform.rotation = Quaternion.LookRotation(_rollDirection, Vector3.up);
-                }
-
-                // Notify animations & clear blend tree briefly so animator doesn't loop locomotion badly internally if needed
-                if (Mediator == null)
-                {
-                    Debug.LogError($"[MovementComponent] {name}: Mediator is missing!");
-                }
-                else
-                {
-                    Mediator.NotifyRoll();
-                }
-                return;
-            }
-
-            // Handle  Crouch
-            if (Model.Grounded)
-            {
-                // Handle crouch state (hold)
-                SetCrouchState(crouchActionHeld);
-            }
-            else
-            {
-                // If not grounded, force stand up
                 SetCrouchState(false);
             }
 
-            // 2. Perform gravity integration and jumps
-            CalculateVerticalVelocity(jumpRequested);
+            TryStartRoll(moveInput, cameraYaw, rollRequested);
+            TryStartJump(jumpRequested);
+            UpdateVerticalVelocity(deltaTime);
 
-            // 3. Perform input translation, acceleration, and rotation handling (Air control allowed)
-            CalculateHorizontalMovement(moveInput, cameraYaw, sprinting, out Vector3 horizontalMotion);
+            Vector3 horizontalMotion = CalculateHorizontalMovement(moveInput, cameraYaw, sprint, deltaTime);
+            CollisionFlags collisionFlags = _controller.Move((horizontalMotion + Vector3.up * _verticalVelocity) * deltaTime);
 
-            // 4. Combine into final movement delta for the frame
-            Vector3 finalMotion = horizontalMotion + (Vector3.up * _verticalVelocity);
-            _controller.Move(finalMotion * MovementDeltaTime);
-
-            // 5. Update remote systems
-            if (Mediator == null)
+            if ((collisionFlags & CollisionFlags.Below) != 0 && _verticalVelocity <= 0.0f)
             {
-                Debug.LogError($"[MovementComponent] {name}: Mediator is missing!");
+                _isRisingFromJump = false;
+                _fallGraceRemaining = Model.FallTimeout;
+                SetGrounded(true);
+                _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
             }
-            else
-            {
-                Mediator.NotifyLocomotion(_animationBlend, _animationBlendDirection);
-                Mediator.NotifyTurn(_turnAmount);
-            }
+
+            RequireMediator().NotifyLocomotion(_animationBlend, _animationBlendDirection);
+            RequireMediator().NotifyTurn(_turnAmount);
         }
 
-        private void HandleRollingState(Vector2 moveInput, float cameraYaw, bool sprinting, bool jumpRequested, bool rollRequested, bool crouchActionHeld)
+        private void TryStartRoll(Vector2 moveInput, float cameraYaw, bool rollRequested)
         {
-            // Keep evaluating grounded
-            UpdateGroundedState();
-
-            // Gravity must still apply!
-            CalculateVerticalVelocity(false);
-
-            if (_rollTimer.IsComplete)
+            if (!rollRequested || _movementBlocked || !Model.Grounded || _rollCooldownRemaining > 0.0f)
             {
-                _rollCooldownTimer.ChangeDuration(Model.RollCooldown);
-                _rollCooldownTimer.Start();
-                
-                // Revert duplicate gravity since HandleNormalState will calculate it again this frame
-                _verticalVelocity -= Model.Gravity * MovementDeltaTime;
-                
-                ChangeState(MovementState.Normal);
-                HandleNormalState(moveInput, cameraYaw, sprinting, jumpRequested, false, crouchActionHeld);
                 return;
             }
 
-            Vector3 rollMotion = _rollDirection * Model.RollSpeed;
-            Vector3 finalMotion = rollMotion + (Vector3.up * _verticalVelocity);
-            _controller.Move(finalMotion * MovementDeltaTime);
-        }
-
-        private void UpdateGroundedState()
-        {
-            Vector3 spherePosition = new Vector3(
-                transform.position.x, 
-                transform.position.y - Model.GroundedOffset, 
-                transform.position.z
-            );
-            
-            bool previousGroundedState = Model.Grounded;
-            Model.Grounded = Physics.CheckSphere(spherePosition, Model.GroundedRadius, Model.GroundLayers, QueryTriggerInteraction.Ignore);
-
-            if (previousGroundedState != Model.Grounded)
+            Vector2 rollDirection;
+            if (moveInput.sqrMagnitude <= INPUT_DEAD_ZONE)
             {
-                if (Mediator == null)
+                rollDirection = Vector2.down;
+            }
+            else
+            {
+                Vector3 worldDirection = ResolveWorldDirection(moveInput, cameraYaw);
+
+                if (_movementMode == MovementMode.Free)
                 {
-                    Debug.LogError($"[MovementComponent] {name}: Mediator is missing!");
+                    transform.rotation = Quaternion.LookRotation(worldDirection, Vector3.up);
+                    rollDirection = Vector2.up;
                 }
                 else
                 {
-                    Mediator.NotifyGrounded(Model.Grounded);
+                    rollDirection = moveInput.normalized;
                 }
             }
+
+            _rollCooldownRemaining = Model.RollCooldown;
+            RequireMediator().NotifyRoll(rollDirection);
+        }
+
+        private void TryStartJump(bool jumpRequested)
+        {
+            if (!jumpRequested || _movementBlocked || !Model.Grounded || _jumpCooldownRemaining > 0.0f)
+            {
+                return;
+            }
+
+            SetCrouchState(false);
+            _verticalVelocity = Mathf.Sqrt(Model.JumpHeight * 2.0f * Mathf.Abs(Model.Gravity));
+            _jumpCooldownRemaining = Model.JumpTimeout;
+            _isRisingFromJump = true;
+            _fallGraceRemaining = 0.0f;
+            SetGrounded(false);
+            RequireMediator().NotifyJump();
+        }
+
+        private void UpdateActionCooldowns(float deltaTime)
+        {
+            _jumpCooldownRemaining = Mathf.Max(0.0f, _jumpCooldownRemaining - deltaTime);
+            _rollCooldownRemaining = Mathf.Max(0.0f, _rollCooldownRemaining - deltaTime);
+        }
+
+        private void UpdateGroundedState(float deltaTime)
+        {
+            if (_isRisingFromJump)
+            {
+                if (_verticalVelocity > 0.0f)
+                {
+                    SetGrounded(false);
+                    return;
+                }
+
+                _isRisingFromJump = false;
+            }
+
+            if (HasWalkableGroundContact())
+            {
+                _fallGraceRemaining = Model.FallTimeout;
+                SetGrounded(true);
+                return;
+            }
+
+            if (!Model.Grounded)
+            {
+                return;
+            }
+
+            _fallGraceRemaining = Mathf.Max(0.0f, _fallGraceRemaining - deltaTime);
+            if (_fallGraceRemaining <= 0.0f)
+            {
+                SetGrounded(false);
+            }
+        }
+
+        private void SynchronizeGroundedState()
+        {
+            bool grounded = HasWalkableGroundContact();
+            if (grounded)
+            {
+                _fallGraceRemaining = Model.FallTimeout;
+                if (_verticalVelocity <= 0.0f)
+                {
+                    _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
+                }
+            }
+
+            SetGrounded(grounded);
+        }
+
+        private bool HasWalkableGroundContact()
+        {
+            Vector3 groundCheckPosition = transform.position + Vector3.up * Model.GroundedOffset;
+            bool hasGroundContact = Physics.CheckSphere(
+                groundCheckPosition,
+                Model.GroundedRadius,
+                Model.GroundLayers,
+                QueryTriggerInteraction.Ignore);
+            return hasGroundContact && TryUpdateGroundNormal();
+        }
+
+        private bool TryUpdateGroundNormal()
+        {
+            float castRadius = Model.GroundedRadius * 0.9f;
+            Vector3 castOrigin = transform.position + Vector3.up * (Model.GroundedRadius + 0.1f);
+            float castDistance = Model.GroundedRadius + Mathf.Abs(Model.GroundedOffset) + 0.2f;
+
+            if (Physics.SphereCast(
+                    castOrigin,
+                    castRadius,
+                    Vector3.down,
+                    out RaycastHit hit,
+                    castDistance,
+                    Model.GroundLayers,
+                    QueryTriggerInteraction.Ignore))
+            {
+                _groundNormal = hit.normal;
+                return Vector3.Angle(_groundNormal, Vector3.up) <= _controller.slopeLimit;
+            }
+
+            _groundNormal = Vector3.up;
+            return false;
+        }
+
+        private void SetGrounded(bool grounded)
+        {
+            Model.Grounded = grounded;
+            if (_mediator == null || _lastNotifiedGrounded == grounded)
+            {
+                return;
+            }
+
+            _lastNotifiedGrounded = grounded;
+            _mediator.NotifyGrounded(grounded);
+        }
+
+        private void UpdateVerticalVelocity(float deltaTime)
+        {
+            if (Model.Grounded && _verticalVelocity <= 0.0f)
+            {
+                _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
+                return;
+            }
+
+            _verticalVelocity += Model.Gravity * deltaTime;
+            float terminalVelocity = Mathf.Abs(Model.TerminalVelocity) > 0.1f
+                ? Mathf.Abs(Model.TerminalVelocity)
+                : DEFAULT_TERMINAL_VELOCITY;
+            _verticalVelocity = Mathf.Max(_verticalVelocity, -terminalVelocity);
+        }
+
+        private Vector3 CalculateHorizontalMovement(Vector2 moveInput, float cameraYaw, bool sprinting, float deltaTime)
+        {
+            bool hasMovementInput = moveInput.sqrMagnitude > INPUT_DEAD_ZONE;
+            Vector3 worldDirection = hasMovementInput ? ResolveWorldDirection(moveInput, cameraYaw) : Vector3.zero;
+            float targetSpeed = ResolveTargetSpeed(moveInput, sprinting);
+            Vector3 desiredVelocity = worldDirection * targetSpeed;
+
+            if (Model.Grounded)
+            {
+                if (_movementBlocked)
+                {
+                    _horizontalVelocity = Vector3.zero;
+                }
+                else
+                {
+                    UpdateGroundVelocity(desiredVelocity, targetSpeed, deltaTime);
+                }
+
+                _horizontalVelocity = Vector3.ProjectOnPlane(_horizontalVelocity, _groundNormal);
+            }
+            else if (!_movementBlocked && hasMovementInput)
+            {
+                float airAcceleration = Model.AirAcceleration * Model.AirControl;
+                _horizontalVelocity = Vector3.MoveTowards(_horizontalVelocity, desiredVelocity, airAcceleration * deltaTime);
+            }
+
+            UpdateFacing(worldDirection, hasMovementInput, deltaTime);
+            UpdateAnimationBlend(worldDirection, hasMovementInput, targetSpeed, sprinting, deltaTime);
+            return _horizontalVelocity;
+        }
+
+        private void UpdateGroundVelocity(Vector3 desiredVelocity, float targetSpeed, float deltaTime)
+        {
+            if (Mathf.Abs(targetSpeed - _lastTargetSpeed) > 0.01f)
+            {
+                _speedChangeTime = 0.0f;
+                _lastTargetSpeed = targetSpeed;
+            }
+
+            _speedChangeTime += deltaTime;
+            float changeRate = desiredVelocity.sqrMagnitude > INPUT_DEAD_ZONE
+                ? Model.SpeedChangeRate.Evaluate(_speedChangeTime) * Model.SpeedChangeMultiplier
+                : Model.StoppingAnimationBlendRate;
+            float interpolation = 1.0f - Mathf.Exp(-Mathf.Max(0.0f, changeRate) * deltaTime);
+            _horizontalVelocity = Vector3.Lerp(_horizontalVelocity, desiredVelocity, interpolation);
+
+            if (_horizontalVelocity.sqrMagnitude < INPUT_DEAD_ZONE * INPUT_DEAD_ZONE)
+            {
+                _horizontalVelocity = Vector3.zero;
+            }
+        }
+
+        private float ResolveTargetSpeed(Vector2 moveInput, bool sprinting)
+        {
+            if (_movementBlocked || moveInput.sqrMagnitude <= INPUT_DEAD_ZONE)
+            {
+                return 0.0f;
+            }
+
+            if (_isCrouching)
+            {
+                sprinting = false;
+            }
+
+            float targetSpeed = sprinting
+                ? Model.SprintSpeed
+                : _isCrouching
+                    ? Model.CrouchSpeed
+                    : Model.MoveSpeed;
+
+            if (_movementMode == MovementMode.LockedOn)
+            {
+                Vector2 normalizedInput = moveInput.normalized;
+                float forwardMultiplier = normalizedInput.y >= 0.0f ? 1.0f : 0.72f;
+                targetSpeed *= normalizedInput.x * normalizedInput.x * 0.85f
+                    + normalizedInput.y * normalizedInput.y * forwardMultiplier;
+            }
+
+            return targetSpeed * moveInput.magnitude * GetExternalSpeedMultiplier();
+        }
+
+        private Vector3 ResolveWorldDirection(Vector2 moveInput, float cameraYaw)
+        {
+            if (_movementMode == MovementMode.LockedOn)
+            {
+                Vector3 forward = GetLockOnForward();
+                Vector3 right = Vector3.Cross(Vector3.up, forward);
+                return (right * moveInput.x + forward * moveInput.y).normalized;
+            }
+
+            Quaternion cameraRotation = Quaternion.Euler(0.0f, cameraYaw, 0.0f);
+            return (cameraRotation * new Vector3(moveInput.x, 0.0f, moveInput.y)).normalized;
+        }
+
+        private void UpdateFacing(Vector3 worldDirection, bool hasMovementInput, float deltaTime)
+        {
+            _turnAmount = 0.0f;
+            if (_movementBlocked)
+            {
+                return;
+            }
+
+            Vector3 facingDirection;
+            if (_movementMode == MovementMode.LockedOn)
+            {
+                facingDirection = GetLockOnForward();
+            }
+            else if (hasMovementInput)
+            {
+                facingDirection = worldDirection;
+            }
+            else
+            {
+                return;
+            }
+
+            float targetYaw = Mathf.Atan2(facingDirection.x, facingDirection.z) * Mathf.Rad2Deg;
+            float currentYaw = transform.eulerAngles.y;
+            float nextYaw = Mathf.SmoothDampAngle(currentYaw, targetYaw, ref _rotationVelocity, Model.RotationSmoothTime, Mathf.Infinity, deltaTime);
+            _turnAmount = Mathf.DeltaAngle(currentYaw, nextYaw) / 180.0f;
+            transform.rotation = Quaternion.Euler(0.0f, nextYaw, 0.0f);
+        }
+
+        private void UpdateAnimationBlend(
+            Vector3 worldDirection,
+            bool hasMovementInput,
+            float targetSpeed,
+            bool sprinting,
+            float deltaTime)
+        {
+            float blendRate = hasMovementInput
+                ? Model.SpeedChangeRate.Evaluate(_speedChangeTime) * Model.SpeedChangeMultiplier
+                : Model.StoppingAnimationBlendRate;
+            float interpolation = 1.0f - Mathf.Exp(-Mathf.Max(0.0f, blendRate) * deltaTime);
+            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed, interpolation);
+
+            Vector2 targetBlendDirection = Vector2.zero;
+            if (!_movementBlocked && hasMovementInput)
+            {
+                float blendMagnitude = sprinting && !_isCrouching ? 1.0f : 0.5f;
+                if (_movementMode == MovementMode.LockedOn)
+                {
+                    Vector3 localDirection = transform.InverseTransformDirection(worldDirection);
+                    targetBlendDirection = new Vector2(localDirection.x, localDirection.z).normalized * blendMagnitude;
+                }
+                else
+                {
+                    targetBlendDirection = Vector2.up * blendMagnitude;
+                }
+            }
+
+            _animationBlendDirection = Vector2.Lerp(_animationBlendDirection, targetBlendDirection, interpolation);
+            if (_animationBlend < 0.01f)
+            {
+                _animationBlend = 0.0f;
+            }
+
+            if (_animationBlendDirection.sqrMagnitude < INPUT_DEAD_ZONE * INPUT_DEAD_ZONE)
+            {
+                _animationBlendDirection = Vector2.zero;
+            }
+        }
+
+        private Vector3 GetLockOnForward()
+        {
+            if (_lockOnTarget == null)
+            {
+                throw new InvalidOperationException("Locked-on movement has no target.");
+            }
+
+            Vector3 toTarget = _lockOnTarget.position - transform.position;
+            toTarget.y = 0.0f;
+            if (toTarget.sqrMagnitude <= INPUT_DEAD_ZONE)
+            {
+                return transform.forward;
+            }
+
+            return toTarget.normalized;
         }
 
         private void SetCrouchState(bool crouched)
         {
-            if (_isCrouching == crouched) return;
+            if (_isCrouching == crouched)
+            {
+                return;
+            }
+
             _isCrouching = crouched;
-            
-            if (_isCrouching)
+            if (crouched)
             {
                 _controller.height = Model.CrouchHeight;
-                _controller.center = new Vector3(_defaultControllerCenter.x, Model.CrouchHeight / 2.0f, _defaultControllerCenter.z);
+                _controller.center = new Vector3(
+                    _defaultControllerCenter.x,
+                    Model.CrouchHeight * 0.5f,
+                    _defaultControllerCenter.z);
             }
             else
             {
                 _controller.height = _defaultControllerHeight;
                 _controller.center = _defaultControllerCenter;
             }
-            
-            if (Mediator == null)
-            {
-                Debug.LogError($"[MovementComponent] {name}: Mediator is missing!");
-            }
-            else
-            {
-                Mediator.NotifyCrouch(_isCrouching);
-            }
+
+            RequireMediator().NotifyCrouch(crouched);
         }
 
-        private void CalculateVerticalVelocity(bool jumpRequested)
+        private float GetExternalSpeedMultiplier()
         {
-            if (Model.Grounded)
+            float total = 1.0f;
+            foreach (float multiplier in _speedMultipliers.Values)
             {
-                // Constantly refresh fall delays while on solid ground
-                _fallTimeoutDelta = Model.FallTimeout;
-
-                // Retain a tiny negative velocity to stick us reliably against downward slopes
-                if (_verticalVelocity < 0.0f)
-                {
-                    _verticalVelocity = -2f;
-                }
-
-                if (jumpRequested && _jumpTimeoutDelta <= 0.0f)
-                {
-                    SetCrouchState(false); // Uncrouch on jump
-
-                    // Basic physics kinematic equation for jump height
-                    float gravityAbs = Mathf.Abs(Model.Gravity);
-                    _verticalVelocity = Mathf.Sqrt(Model.JumpHeight * 2f * gravityAbs);
-                    
-                    if (Mediator == null)
-                    {
-                        Debug.LogError($"[MovementComponent] {name}: Mediator is missing!");
-                    }
-                    else
-                    {
-                        Mediator.NotifyJump();
-                    }
-                }
-
-                if (_jumpTimeoutDelta > 0.0f)
-                {
-                    _jumpTimeoutDelta -= MovementDeltaTime;
-                }
-            }
-            else
-            {
-                // Reset jump cooldown mid-air
-                _jumpTimeoutDelta = Model.JumpTimeout;
-
-                if (_fallTimeoutDelta > 0.0f)
-                {
-                    _fallTimeoutDelta -= MovementDeltaTime;
-                }
+                total *= multiplier;
             }
 
-            // Unconditionally apply continuous gravity (even on ground, to hold onto slopes)
-            _verticalVelocity += Model.Gravity * MovementDeltaTime;
-
-            // Terminal falling velocity secure clamp
-            float terminalVelocity = Mathf.Abs(Model.TerminalVelocity) > 0.1f ? Mathf.Abs(Model.TerminalVelocity) : 53.0f;
-            if (_verticalVelocity < -terminalVelocity)
-            {
-                _verticalVelocity = -terminalVelocity;
-            }
+            return total;
         }
 
-        private bool _isLockedOn;
-        private Transform _lockOnTarget;
-
-        public void SetLockOnTarget(bool isLockedOn, Transform lockOnTarget)
+        private IComponentMediator RequireMediator()
         {
-            _isLockedOn = isLockedOn;
-            _lockOnTarget = lockOnTarget;
+            return _mediator ?? throw new InvalidOperationException($"{name} requires an IComponentMediator.");
         }
 
-        private float GetDirectionSpeedMultiplier(Vector2 moveInput)
+        private void ValidateDependencies()
         {
-            if (_isLockedOn && moveInput.sqrMagnitude > 0.01f)
+            if (Model == null)
             {
-                var dir = moveInput.normalized;
-                // Backward speed penalty 0.7x, Lateral speed penalty 0.85x
-                float zMult = dir.y >= 0 ? 1.0f : 0.7f;
-                float xMult = 0.85f;
-                return (dir.x * dir.x * xMult) + (dir.y * dir.y * zMult);
+                throw new InvalidOperationException($"{name} requires a MovementModel.");
             }
 
-            return 1.0f;
-        }
-
-        private void CalculateHorizontalMovement(Vector2 moveInput, float cameraYaw, bool sprinting, out Vector3 horizontalMotion)
-        {
-            if (_isCrouching) sprinting = false;
-
-            float targetSpeed = sprinting ? Model.SprintSpeed : (_isCrouching ? Model.CrouchSpeed : Model.MoveSpeed);
-            if (moveInput == Vector2.zero) 
+            if (_controller == null)
             {
-                targetSpeed = 0.0f;
+                throw new InvalidOperationException($"{name} requires a CharacterController.");
             }
-            else
-            {
-                // Apply modifiers gracefully
-                targetSpeed *= GetDirectionSpeedMultiplier(moveInput);
-                targetSpeed *= GetExternalSpeedMultiplier();
-            }
-
-            if (Mathf.Abs(targetSpeed - _lastTargetSpeed) > 0.01f)
-            {
-                _speedChangeTime = 0f;
-                _lastTargetSpeed = targetSpeed;
-            }
-            _speedChangeTime += MovementDeltaTime;
-            
-            float currentRate = Model.SpeedChangeRate.Evaluate(_speedChangeTime) * Model.SpeedChangeMultiplier;
-
-            // Get current planar speed
-            float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
-            float inputMagnitude = moveInput.magnitude;
-
-            // Ease horizontally over time
-            float speedOffset = 0.1f;
-            if (moveInput == Vector2.zero)
-            {
-                _speed = 0f;
-            }
-            else if (currentHorizontalSpeed < targetSpeed - speedOffset || currentHorizontalSpeed > targetSpeed + speedOffset)
-            {
-                _speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed * inputMagnitude, MovementDeltaTime * currentRate);
-                _speed = Mathf.Round(_speed * 1000f) / 1000f;
-            }
-            else
-            {
-                _speed = targetSpeed;
-            }
-
-            // Smooth animation blend values
-            float blendRate = moveInput == Vector2.zero ? Model.StoppingAnimationBlendRate : currentRate;
-            _animationBlend = Mathf.Lerp(_animationBlend, targetSpeed * inputMagnitude, MovementDeltaTime * blendRate);
-            if (_animationBlend < 0.01f) _animationBlend = 0f;
-
-            _turnAmount = 0f;
-            horizontalMotion = Vector3.zero;
-            Vector3 worldMoveDirection = Vector3.zero;
-
-            if (_isLockedOn && _lockOnTarget != null)
-            {
-                // --- Locked-On Mode Logic ---
-                Vector3 toTarget = _lockOnTarget.position - transform.position;
-                toTarget.y = 0f;
-
-                if (toTarget.sqrMagnitude > 0.001f)
-                {
-                    transform.rotation = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
-                }
-
-                if (moveInput != Vector2.zero)
-                {
-                    Vector3 cameraForward = Quaternion.Euler(0.0f, cameraYaw, 0.0f) * Vector3.forward;
-                    Vector3 cameraRight = Quaternion.Euler(0.0f, cameraYaw, 0.0f) * Vector3.right;
-                    Vector3 desiredWorldDir = (cameraForward * moveInput.y + cameraRight * moveInput.x).normalized;
-
-                    if (sprinting && toTarget.sqrMagnitude > 0.001f)
-                    {
-                        float angleDivergence = Vector3.Angle(desiredWorldDir, toTarget.normalized);
-                        if (angleDivergence <= 120f)
-                        {
-                            // Orbital sprint arc around target
-                            Vector3 tangent = Vector3.Cross(Vector3.up, toTarget.normalized);
-                            if (Vector3.Dot(desiredWorldDir, tangent) < 0) tangent = -tangent;
-                            worldMoveDirection = tangent;
-                        }
-                        else
-                        {
-                            // Linear escape sprint
-                            worldMoveDirection = desiredWorldDir;
-                        }
-                    }
-                    else
-                    {
-                        worldMoveDirection = desiredWorldDir;
-                    }
-
-                    horizontalMotion = worldMoveDirection * _speed;
-                }
-
-                // 2D blend parameters for LockedLocomotionTree (Horizontal/Vertical)
-                float blendMag = moveInput != Vector2.zero ? (sprinting ? 1.0f : 0.5f) : 0f;
-                Vector2 targetBlendDirection = moveInput.normalized * blendMag;
-                _animationBlendDirection = Vector2.Lerp(_animationBlendDirection, targetBlendDirection, MovementDeltaTime * blendRate);
-                if (_animationBlendDirection.magnitude < 0.01f) _animationBlendDirection = Vector2.zero;
-            }
-            else
-            {
-                // --- FreeLocomotion Unlocked Mode Logic ---
-                if (moveInput != Vector2.zero)
-                {
-                    Vector3 inputDirection = new Vector3(moveInput.x, 0.0f, moveInput.y).normalized;
-                    _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + cameraYaw;
-                    float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, _targetRotation, ref _rotationVelocity, Model.RotationSmoothTime);
-                    
-                    transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-
-                    Vector3 targetDirection = Quaternion.Euler(0.0f, _targetRotation, 0.0f) * Vector3.forward;
-                    worldMoveDirection = targetDirection.normalized;
-                    horizontalMotion = worldMoveDirection * _speed;
-                }
-
-                float localBlendMagnitude = moveInput != Vector2.zero ? (sprinting ? 1f : 0.5f) : 0f;
-                Vector2 targetBlendDirection = Vector2.zero;
-
-                if (moveInput != Vector2.zero && worldMoveDirection.sqrMagnitude > 0.001f)
-                {
-                    Vector3 localDir = transform.InverseTransformDirection(worldMoveDirection);
-                    targetBlendDirection = new Vector2(localDir.x, localDir.z).normalized * localBlendMagnitude;
-                }
-
-                _animationBlendDirection = Vector2.Lerp(_animationBlendDirection, targetBlendDirection, MovementDeltaTime * blendRate);
-                if (_animationBlendDirection.magnitude < 0.01f) _animationBlendDirection = Vector2.zero;
-            }
-        }
-
-        public void SetMediator(IComponentMediator mediator)
-        {
-            Mediator = mediator;
         }
 
         private static float MovementDeltaTime => Mathf.Min(Time.deltaTime, MAX_MOVEMENT_DELTA_TIME);

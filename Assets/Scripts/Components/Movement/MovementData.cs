@@ -13,6 +13,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
         float StoppingAnimationBlendRate { get; }
         float JumpHeight { get; }
         float Gravity { get; }
+        float AirControl { get; }
+        float AirAcceleration { get; }
         float JumpTimeout { get; }
         float FallTimeout { get; }
         bool Grounded { get; }
@@ -20,8 +22,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
         float GroundedRadius { get; }
         float TerminalVelocity { get; set; }
         LayerMask GroundLayers { get; }
-        float RollSpeed { get; }
-        float RollDuration { get; }
         float RollCooldown { get; }
         float SlideSpeed { get; }
         float SlideDuration { get; }
@@ -67,6 +67,15 @@ namespace SoulsLike.Entities.Character.Components.Movement
         [field: SerializeField]
         public float Gravity { get; private set; } = -15.0f;
 
+        [Tooltip("Fraction of ground steering authority available while airborne")]
+        [Range(0.0f, 1.0f)]
+        [field: SerializeField]
+        public float AirControl { get; private set; } = 0.25f;
+
+        [Tooltip("Maximum horizontal acceleration used by airborne steering")]
+        [field: SerializeField]
+        public float AirAcceleration { get; private set; } = 8.0f;
+
         [field:Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
         [field: SerializeField]
@@ -96,14 +105,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public LayerMask GroundLayers { get; private set; }
 
         [Header("Rolling")]
-        [Tooltip("Speed while rolling")]
-        [field: SerializeField]
-        public float RollSpeed { get; private set; } = 6.0f;
-
-        [Tooltip("Duration of the roll animation/action")]
-        [field: SerializeField]
-        public float RollDuration { get; private set; } = 0.8f;
-
         [Tooltip("Time required to pass before being able to roll again")]
         [field: SerializeField]
         public float RollCooldown { get; private set; } = 1.0f;

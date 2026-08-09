@@ -14,6 +14,8 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int _animIdGrounded = Animator.StringToHash("Grounded");
         private static readonly int _animIdJump = Animator.StringToHash("Jump");
         private static readonly int _animIdRoll = Animator.StringToHash("Roll");
+        private static readonly int _animIdRollHorizontal = Animator.StringToHash("RollHorizontal");
+        private static readonly int _animIdRollVertical = Animator.StringToHash("RollVertical");
         private static readonly int _animIdCrouch = Animator.StringToHash("Crouch");
         private static readonly int _animIdTurn = Animator.StringToHash("Turn");
         private static readonly int _animIdMoving = Animator.StringToHash("Moving");
@@ -48,6 +50,7 @@ namespace SoulsLike.Entities.Character.Components
         private Vector3 _targetAimPosition;
         private float _targetRiffleLayerWeight;
         private bool _aimTargetInitialized;
+        private AnimatorRootMotionRelay _rootMotionRelay;
         public Animator Animator => _animator;
 
         public void Initialize()
@@ -56,6 +59,23 @@ namespace SoulsLike.Entities.Character.Components
             {
                 throw new InvalidOperationException($"{name} requires an Animator.");
             }
+        }
+
+        public void SetMediator(IComponentMediator mediator)
+        {
+            if (mediator == null)
+            {
+                throw new ArgumentNullException(nameof(mediator));
+            }
+
+            _rootMotionRelay = _animator.GetComponent<AnimatorRootMotionRelay>();
+            if (_rootMotionRelay == null)
+            {
+                _rootMotionRelay = _animator.gameObject.AddComponent<AnimatorRootMotionRelay>();
+            }
+
+            _rootMotionRelay.Initialize(mediator);
+            _animator.applyRootMotion = true;
         }
 
         public void SetGrounded(bool modelGrounded)
@@ -69,8 +89,16 @@ namespace SoulsLike.Entities.Character.Components
             _animator.SetTrigger(_animIdJump);
         }
         
-        public void TriggerRoll()
+        public void TriggerRoll(Vector2 direction)
         {
+            _animator.SetFloat(_animIdRollHorizontal, direction.x);
+            _animator.SetFloat(_animIdRollVertical, direction.y);
+            if (_rootMotionRelay == null)
+            {
+                throw new InvalidOperationException($"{name} requires an AnimatorRootMotionRelay.");
+            }
+
+            _rootMotionRelay.BeginRootMotionContract();
             _animator.SetTrigger(_animIdRoll);
         }
         
@@ -136,6 +164,7 @@ namespace SoulsLike.Entities.Character.Components
 
             bool isMoving = _targetSpeed > 0.01f || _targetLocomotion.sqrMagnitude > 0.0001f || _currentLocomotion.sqrMagnitude > 0.0001f;
             _animator.SetBool(_animIdMoving, isMoving);
+
         }
         
         private float _targetTurnAmount;
