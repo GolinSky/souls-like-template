@@ -9,6 +9,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
     {
         private const float MAX_MOVEMENT_DELTA_TIME = 0.05f;
         private const float INPUT_DEAD_ZONE = 0.01f;
+        private const float MIN_LOCK_ON_ROLL_RADIUS = 0.01f;
         private const float GROUNDED_VERTICAL_VELOCITY = -2.0f;
         private const float DEFAULT_TERMINAL_VELOCITY = 53.0f;
 
@@ -19,6 +20,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private IComponentMediator _mediator;
         private MovementMode _movementMode = MovementMode.Free;
         private Transform _lockOnTarget;
+        private Transform _activeRollTarget;
+        private Vector2 _activeRollDirection;
         private Vector3 _horizontalVelocity;
         private Vector3 _groundNormal = Vector3.up;
         private Vector2 _animationBlendDirection;
@@ -70,6 +73,12 @@ namespace SoulsLike.Entities.Character.Components.Movement
         {
             _movementBlocked = blocked;
 
+            if (!blocked)
+            {
+                _activeRollTarget = null;
+                _activeRollDirection = Vector2.zero;
+            }
+
             if (blocked && Model.Grounded)
             {
                 _horizontalVelocity = Vector3.zero;
@@ -79,12 +88,24 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public void ApplyAnimationMovement(Vector3 deltaPosition, Quaternion deltaRotation)
         {
             Vector3 planarDelta = new Vector3(deltaPosition.x, 0.0f, deltaPosition.z);
+            bool isLockedRoll = _activeRollTarget != null;
+            if (isLockedRoll)
+            {
+                planarDelta = CalculateLockedRollDelta(planarDelta.magnitude);
+            }
+
             if (Model.Grounded)
             {
                 planarDelta = Vector3.ProjectOnPlane(planarDelta, _groundNormal);
             }
 
             _controller.Move(planarDelta + Vector3.up * deltaPosition.y);
+
+            if (isLockedRoll)
+            {
+                FaceActiveRollTarget();
+                return;
+            }
 
             Vector3 rotatedForward = deltaRotation * transform.forward;
             rotatedForward.y = 0.0f;
@@ -168,6 +189,12 @@ namespace SoulsLike.Entities.Character.Components.Movement
             if (moveInput.sqrMagnitude <= INPUT_DEAD_ZONE)
             {
                 rollDirection = Vector2.down;
+                if (_movementMode == MovementMode.Free)
+                {
+                    Vector3 backward = -transform.forward;
+                    backward.y = 0.0f;
+                    transform.rotation = Quaternion.LookRotation(backward.normalized, Vector3.up);
+                }
             }
             else
             {
@@ -180,12 +207,74 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 }
                 else
                 {
-                    rollDirection = moveInput.normalized;
+                    rollDirection = QuantizeLockedRollDirection(moveInput);
                 }
+            }
+
+            _activeRollDirection = rollDirection;
+            _activeRollTarget = _movementMode == MovementMode.LockedOn ? _lockOnTarget : null;
+            if (_activeRollTarget != null)
+            {
+                FaceActiveRollTarget();
             }
 
             _rollCooldownRemaining = Model.RollCooldown;
             RequireMediator().NotifyRoll(rollDirection);
+        }
+
+        private Vector3 CalculateLockedRollDelta(float rollDistance)
+        {
+            if (_activeRollTarget == null)
+            {
+                throw new InvalidOperationException("Locked roll has no target.");
+            }
+
+            Vector3 targetPosition = _activeRollTarget.position;
+            Vector3 toTarget = targetPosition - transform.position;
+            toTarget.y = 0.0f;
+
+            if (Mathf.Abs(_activeRollDirection.x) > 0.0f)
+            {
+                Vector3 radial = -toTarget;
+                float radius = radial.magnitude;
+                if (radius <= MIN_LOCK_ON_ROLL_RADIUS)
+                {
+                    throw new InvalidOperationException("Locked lateral roll requires distance from the target.");
+                }
+
+                float orbitAngle = -_activeRollDirection.x * rollDistance / radius * Mathf.Rad2Deg;
+                Vector3 nextRadial = Quaternion.AngleAxis(orbitAngle, Vector3.up) * radial;
+                return nextRadial - radial;
+            }
+
+            if (toTarget.sqrMagnitude <= INPUT_DEAD_ZONE)
+            {
+                throw new InvalidOperationException("Locked roll direction cannot be resolved at the target position.");
+            }
+
+            return toTarget.normalized * (_activeRollDirection.y * rollDistance);
+        }
+
+        private void FaceActiveRollTarget()
+        {
+            Vector3 toTarget = _activeRollTarget.position - transform.position;
+            toTarget.y = 0.0f;
+            if (toTarget.sqrMagnitude <= INPUT_DEAD_ZONE)
+            {
+                return;
+            }
+
+            transform.rotation = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
+        }
+
+        private static Vector2 QuantizeLockedRollDirection(Vector2 moveInput)
+        {
+            if (Mathf.Abs(moveInput.x) > Mathf.Abs(moveInput.y))
+            {
+                return new Vector2(Mathf.Sign(moveInput.x), 0.0f);
+            }
+
+            return new Vector2(0.0f, Mathf.Sign(moveInput.y));
         }
 
         private void TryStartJump(bool jumpRequested)
