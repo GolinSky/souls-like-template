@@ -6,6 +6,7 @@ using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Extensions;
 using SoulsLike.Factory;
+using SoulsLike.Ui.LockOn;
 using SoulsLike.Ui.PlayerHud;
 using UnityEngine;
 using VContainer;
@@ -61,6 +62,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
                 builder.Register<PlayerHudUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             });

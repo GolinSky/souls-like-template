@@ -8,6 +8,7 @@ namespace SoulsLike.Services.Targeting
     {
         TargetLockNode CurrentTarget { get; }
         bool IsLockedOn { get; }
+        event Action<TargetLockNode> TargetChanged;
 
         bool TryAcquireTarget(Transform origin);
         bool IsCurrentTargetValid(Transform origin);
@@ -20,6 +21,7 @@ namespace SoulsLike.Services.Targeting
 
         public TargetLockNode CurrentTarget { get; private set; }
         public bool IsLockedOn => CurrentTarget != null;
+        public event Action<TargetLockNode> TargetChanged;
 
         public bool TryAcquireTarget(Transform origin)
         {
@@ -50,7 +52,7 @@ namespace SoulsLike.Services.Targeting
                 }
             }
 
-            CurrentTarget = closestTarget;
+            SetCurrentTarget(closestTarget);
             return CurrentTarget != null;
         }
 
@@ -72,7 +74,22 @@ namespace SoulsLike.Services.Targeting
 
         public void ClearTarget()
         {
-            CurrentTarget = null;
+            SetCurrentTarget(null);
+        }
+
+        private void SetCurrentTarget(TargetLockNode target)
+        {
+            if (CurrentTarget == target)
+            {
+                return;
+            }
+
+            CurrentTarget = target;
+            Action<TargetLockNode> targetChanged = TargetChanged;
+            if (targetChanged != null)
+            {
+                targetChanged(CurrentTarget);
+            }
         }
     }
 }

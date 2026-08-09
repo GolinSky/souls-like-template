@@ -117,7 +117,7 @@ MonoBehaviour:
   m_ImageType: 3
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
+  m_OutlineWidth: 1.5
   m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
@@ -329,7 +329,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0.961
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -532,7 +532,7 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
+  m_OutlineWidth: 1.5
   m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
@@ -688,7 +688,7 @@ MonoBehaviour:
   m_ImageType: 3
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
+  m_OutlineWidth: 1.5
   m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
@@ -844,7 +844,7 @@ MonoBehaviour:
   m_ImageType: 3
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
+  m_OutlineWidth: 1.5
   m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
@@ -1000,7 +1000,7 @@ MonoBehaviour:
   m_ImageType: 3
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
+  m_OutlineWidth: 1.5
   m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
@@ -1312,7 +1312,7 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
+  m_OutlineWidth: 1.5
   m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
@@ -1620,8 +1620,8 @@ MonoBehaviour:
   m_ImageType: 3
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 0.03
+  m_OutlineColor: {r: 1, g: 1, b: 1, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
