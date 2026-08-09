@@ -13,6 +13,8 @@ namespace SoulsLike.Entities.Character
 {
     public class Character : MonoBehaviour, IInitializable, IComponentMediator
     {
+        private const float SPRINT_HOLD_THRESHOLD = 0.2f;
+
         [SerializeField] private MovementComponent _movementComponent;
         [SerializeField] private AnimatorComponent _animatorComponent;
         [SerializeField] private EquipmentComponent _equipmentComponent;
@@ -25,6 +27,8 @@ namespace SoulsLike.Entities.Character
         [SerializeField] private LayerMask _aimLayerMask;
 
         private ICameraService _cameraService;
+        private float _sprintPressedAt;
+        private bool _sprintHoldQualified;
 
         public Transform CameraTarget => _cameraTarget;
         public InventoryComponent InventoryComponent => _inventoryComponent;
@@ -47,13 +51,34 @@ namespace SoulsLike.Entities.Character
 
         public void UpdateBehaviour(ProjectInputActions.CharacterActions actions)
         {
+            if (actions.Sprint.WasPressedThisFrame())
+            {
+                _sprintPressedAt = Time.time;
+                _sprintHoldQualified = false;
+            }
+
+            bool sprinting = actions.Sprint.IsPressed()
+                && (_sprintHoldQualified || Time.time - _sprintPressedAt >= SPRINT_HOLD_THRESHOLD);
+
+            if (sprinting)
+            {
+                _sprintHoldQualified = true;
+            }
+
+            bool rollRequested = actions.Roll.WasReleasedThisFrame() && !_sprintHoldQualified;
+
             _movementComponent.Move(
                 actions.Move.ReadValue<Vector2>(),
                 _cameraService.GetYaw(),
-                actions.Sprint.IsPressed(),
+                sprinting,
                 actions.Jump.WasPressedThisFrame(),
-                actions.Roll.WasPressedThisFrame(),
+                rollRequested,
                 actions.Crouch.IsPressed());
+
+            if (actions.Sprint.WasReleasedThisFrame())
+            {
+                _sprintHoldQualified = false;
+            }
 
             Ray aimRay = _cameraService.GetRay();
             Vector3 targetPoint = Physics.Raycast(aimRay, out RaycastHit hit, _aimTargetDistance, _aimLayerMask)

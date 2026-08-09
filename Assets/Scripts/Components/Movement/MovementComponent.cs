@@ -146,7 +146,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
                 if (moveInput.sqrMagnitude < 0.01f)
                 {
-                    _rollDirection = transform.forward;
+                    _rollDirection = -transform.forward;
                 }
                 else
                 {
