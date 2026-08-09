@@ -125,13 +125,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 case MovementState.Rolling:
                     HandleRollingState(direction, cameraYaw, sprint, jumpRequested, rollRequested, crouchActionHeld);
                     break;
-                case MovementState.Climbing:
-                    // Future implementation: handle climbing movement along surface here
-                    // No gravity or standard jump applied.
-                    break;
-                case MovementState.Ziplining:
-                    // Future implementation: slide character along spline path
-                    break;
                 case MovementState.LedgeGrabbing:
                     // Future implementation: hang onto ledge, wait for climb-up or drop
                     break;
