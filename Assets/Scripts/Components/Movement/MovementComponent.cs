@@ -41,6 +41,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private float _defaultControllerHeight;
         private Vector3 _defaultControllerCenter;
 
+        public bool IsMoving => _horizontalVelocity.sqrMagnitude > INPUT_DEAD_ZONE * INPUT_DEAD_ZONE;
+
         public void Initialize()
         {
             ValidateDependencies();

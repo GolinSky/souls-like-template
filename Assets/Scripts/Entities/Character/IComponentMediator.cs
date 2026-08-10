@@ -1,3 +1,5 @@
+using SoulsLike.Entities.Character.Components.Attack;
+using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Health;
 using UnityEngine;
 
@@ -15,6 +17,8 @@ namespace SoulsLike.Entities.Character
         void NotifyHealthStatsChanged(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
         void NotifyDeath();
+        void NotifyAttack(AttackType attackType);
+        void NotifyAnimatorStateChanged(AnimatorStateMachineDto state);
         void NotifyZoom(bool isZoomed);
         void NotifyAimTarget(Vector3 targetPosition);
         void NotifyTurn(float turnAmount);

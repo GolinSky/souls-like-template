@@ -1,5 +1,6 @@
 using System;
 using SoulsLike.Entities.Character.Components;
+using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
@@ -36,6 +37,7 @@ namespace SoulsLike.Entities.Character
 
             Character character = GetRequiredComponent<Character>(instance);
             AnimatorComponent animatorComponent = GetRequiredComponent<AnimatorComponent>(instance);
+            AttackComponent attackComponent = GetRequiredComponent<AttackComponent>(instance);
             MovementComponent movementComponent = GetRequiredComponent<MovementComponent>(instance);
             EquipmentComponent equipmentComponent = GetRequiredComponent<EquipmentComponent>(instance);
             InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
@@ -47,6 +49,8 @@ namespace SoulsLike.Entities.Character
 
                 builder.Register<AnimatorModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(animatorComponent).AsSelf().AsImplementedInterfaces();
+
+                builder.RegisterComponent(attackComponent).AsSelf().AsImplementedInterfaces();
 
                 builder.Register<MovementModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterScriptableObject<MovementData>().As<IMovementData>();

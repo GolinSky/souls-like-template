@@ -1,5 +1,7 @@
 using System;
 using SoulsLike.Entities.Character.Components;
+using SoulsLike.Entities.Character.Components.Attack;
+using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
@@ -27,6 +29,7 @@ namespace SoulsLike.Entities.Character
         [SerializeField] private LayerMask _aimLayerMask;
 
         private ICameraService _cameraService;
+        private AttackComponent _attackComponent;
         private float _sprintPressedAt;
         private bool _sprintHoldQualified;
         private bool _manualMovementBlocked;
@@ -38,9 +41,10 @@ namespace SoulsLike.Entities.Character
         public HealthStats HealthStats => _healthComponent.Stats;
 
         [Inject]
-        public void InjectDependencies(ICameraService cameraService)
+        public void InjectDependencies(ICameraService cameraService, AttackComponent attackComponent)
         {
             _cameraService = cameraService;
+            _attackComponent = attackComponent;
         }
 
         public void Initialize()
@@ -48,6 +52,7 @@ namespace SoulsLike.Entities.Character
             ValidateDependencies();
             _movementComponent.SetMediator(this);
             _animatorComponent.SetMediator(this);
+            _attackComponent.SetMediator(this);
             _equipmentComponent.SetMediator(this);
             _healthComponent.SetMediator(this);
             Cursor.lockState = CursorLockMode.Locked;
@@ -71,8 +76,22 @@ namespace SoulsLike.Entities.Character
 
             bool rollRequested = actions.Roll.WasReleasedThisFrame() && !_sprintHoldQualified;
 
+            Vector2 moveInput = actions.Move.ReadValue<Vector2>();
+            bool hasMovementInput = moveInput.sqrMagnitude > 0.0001f;
+            bool canStartAttack = _movementComponent.Model.Grounded
+                && !_manualMovementBlocked
+                && !_animationMovementBlocked;
+            bool canUseSpecialAttack = canStartAttack
+                && !hasMovementInput
+                && !_movementComponent.IsMoving;
+            _attackComponent.HandleInput(
+                actions,
+                sprinting && hasMovementInput,
+                canStartAttack,
+                canUseSpecialAttack);
+
             _movementComponent.Move(
-                actions.Move.ReadValue<Vector2>(),
+                moveInput,
                 _cameraService.GetYaw(),
                 sprinting,
                 actions.Jump.WasPressedThisFrame(),
@@ -183,6 +202,16 @@ namespace SoulsLike.Entities.Character
             _animatorComponent.SetTurn(turnAmount);
         }
 
+        public void NotifyAttack(AttackType attackType)
+        {
+            _animatorComponent.PlayAttack(attackType);
+        }
+
+        public void NotifyAnimatorStateChanged(AnimatorStateMachineDto state)
+        {
+            _attackComponent.HandleAnimatorState(state);
+        }
+
         public void SetMovementBlocked(bool blocked)
         {
             _manualMovementBlocked = blocked;
@@ -223,6 +252,7 @@ namespace SoulsLike.Entities.Character
         {
             if (_movementComponent == null) throw new InvalidOperationException($"{name} requires a MovementComponent.");
             if (_animatorComponent == null) throw new InvalidOperationException($"{name} requires an AnimatorComponent.");
+            if (_attackComponent == null) throw new InvalidOperationException($"{name} requires an AttackComponent.");
             if (_equipmentComponent == null) throw new InvalidOperationException($"{name} requires an EquipmentComponent.");
             if (_healthComponent == null) throw new InvalidOperationException($"{name} requires a HealthComponent.");
             if (_inventoryComponent == null) throw new InvalidOperationException($"{name} requires an InventoryComponent.");

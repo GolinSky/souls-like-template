@@ -1,4 +1,6 @@
 using System;
+using SoulsLike.Entities.Character.Components.Attack;
+using SoulsLike.Entities.Character.Components.Animations;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -7,7 +9,8 @@ namespace SoulsLike.Entities.Character.Components
     /// <summary>
     /// Character animator component
     /// </summary>
-    public class AnimatorComponent: BaseComponent<AnimatorModel>, IInitializable
+    public class AnimatorComponent: BaseComponent<AnimatorModel>, IInitializable,
+        Animations.IObserver<AnimatorStateMachineDto>
     {
         private static readonly int _animIdHorizontal = Animator.StringToHash("Horizontal");
         private static readonly int _animIdVertical = Animator.StringToHash("Vertical");
@@ -22,6 +25,14 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int _animIdMoving = Animator.StringToHash("Moving");
         private static readonly int _animIdSpeed = Animator.StringToHash("Speed");
         private static readonly int _animIdLockOn = Animator.StringToHash("LockOn");
+        private static readonly int _lightAttackTrigger = Animator.StringToHash("LightAttack");
+        private static readonly int _lightAttackAltTrigger = Animator.StringToHash("LightAttackAlt");
+        private static readonly int _heavyAttackTrigger = Animator.StringToHash("HeavyAttack");
+        private static readonly int _chargedHeavyAttackTrigger = Animator.StringToHash("ChargedHeavyAttack");
+        private static readonly int _rollAttackTrigger = Animator.StringToHash("RollAttack");
+        private static readonly int _backStepAttackTrigger = Animator.StringToHash("BackStepAttack");
+        private static readonly int _runAttackTrigger = Animator.StringToHash("RunAttack");
+        private static readonly int _specialAttackTrigger = Animator.StringToHash("SpecialAttack");
 
         public void SetLockOn(bool isLockedOn)
         {
@@ -29,6 +40,7 @@ namespace SoulsLike.Entities.Character.Components
         }
         
         [SerializeField] private Animator _animator;
+        [SerializeField] private AnimatorStateMachineReceiver _stateMachineReceiver;
         [Header("Aim Target")]
         [SerializeField] private Transform _aimTarget;
         [Header("Aim Settings")]
@@ -51,7 +63,9 @@ namespace SoulsLike.Entities.Character.Components
         private Vector3 _targetAimPosition;
         private float _targetRiffleLayerWeight;
         private bool _aimTargetInitialized;
+        private IComponentMediator _mediator;
         private AnimatorRootMotionRelay _rootMotionRelay;
+        private bool _observingStateMachine;
         public Animator Animator => _animator;
 
         public void Initialize()
@@ -60,15 +74,16 @@ namespace SoulsLike.Entities.Character.Components
             {
                 throw new InvalidOperationException($"{name} requires an Animator.");
             }
+
+            if (_stateMachineReceiver == null)
+            {
+                throw new InvalidOperationException($"{name} requires an AnimatorStateMachineReceiver.");
+            }
         }
 
         public void SetMediator(IComponentMediator mediator)
         {
-            if (mediator == null)
-            {
-                throw new ArgumentNullException(nameof(mediator));
-            }
-
+            _mediator = mediator;
             _rootMotionRelay = _animator.GetComponent<AnimatorRootMotionRelay>();
             if (_rootMotionRelay == null)
             {
@@ -76,12 +91,42 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             _rootMotionRelay.Initialize(mediator);
+            if (!_observingStateMachine)
+            {
+                _stateMachineReceiver.AddObserver(this);
+                _observingStateMachine = true;
+            }
+
             _animator.applyRootMotion = true;
         }
 
         public void SetGrounded(bool modelGrounded)
         {
             _animator.SetBool(_animIdGrounded, modelGrounded);
+        }
+
+        public void PlayAttack(AttackType attackType)
+        {
+            int triggerHash = attackType switch
+            {
+                AttackType.LightAttack => _lightAttackTrigger,
+                AttackType.LightAttackAlt => _lightAttackAltTrigger,
+                AttackType.RollingLightAttack => _rollAttackTrigger,
+                AttackType.SprintingAttack => _runAttackTrigger,
+                AttackType.HeavyAttack => _heavyAttackTrigger,
+                AttackType.ChargedHeavyAttack => _chargedHeavyAttackTrigger,
+                AttackType.SpecialAttack => _specialAttackTrigger,
+                AttackType.BackStepAttack => _backStepAttackTrigger,
+                _ => throw new ArgumentOutOfRangeException(nameof(attackType), attackType, null)
+            };
+
+            BeginRootMotionAction();
+            _animator.SetTrigger(triggerHash);
+        }
+
+        public void UpdateState(AnimatorStateMachineDto state)
+        {
+            _mediator.NotifyAnimatorStateChanged(state);
         }
 
 
@@ -112,6 +157,15 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             _rootMotionRelay.BeginRootMotionContract();
+        }
+
+        private void OnDestroy()
+        {
+            if (_observingStateMachine)
+            {
+                _stateMachineReceiver.RemoveObserver(this);
+                _observingStateMachine = false;
+            }
         }
         
 

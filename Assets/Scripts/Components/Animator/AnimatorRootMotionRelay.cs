@@ -16,7 +16,7 @@ namespace SoulsLike.Entities.Character.Components
 
         public void Initialize(IComponentMediator mediator)
         {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _mediator = mediator;
             _animator = GetComponent<Animator>();
             if (_animator == null)
             {
