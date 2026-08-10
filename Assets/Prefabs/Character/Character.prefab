@@ -371,15 +371,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 194035d1b01981e44b1817facced1a15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.AnimatorComponent
-  _animator: {fileID: 6026135802237666264}
-  _stateMachineReceiver: {fileID: 7103063604731942382}
-  _aimTarget: {fileID: 1344868499400956177}
-  _aimTrackingSpeed: 10
-  _aimVerticalOffset: 0
-  _turningLagAmount: 5
-  _layerTransitionSpeed: 10
-  _turnSmoothSpeed: 10
-  _locomotionSmoothSpeed: 10
+  animator: {fileID: 6026135802237666264}
+  stateMachineReceiver: {fileID: 7103063604731942382}
+  aimTarget: {fileID: 1344868499400956177}
+  aimTrackingSpeed: 10
+  aimVerticalOffset: 0
+  turningLagAmount: 5
+  layerTransitionSpeed: 10
+  turnSmoothSpeed: 10
+  locomotionSmoothSpeed: 10
+  rootMotionRelay: {fileID: 8205946695653247523}
   <RightHandAnchor>k__BackingField: {fileID: 0}
 --- !u!114 &7195035746810287973
 MonoBehaviour:
@@ -530,6 +531,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9c68b8996a8fddb4d93a332826174c45, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7103063604731942382}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9c68b8996a8fddb4d93a332826174c45, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8205946695653247523}
   m_SourcePrefab: {fileID: 100100000, guid: 9c68b8996a8fddb4d93a332826174c45, type: 3}
 --- !u!4 &378599516311263650 stripped
 Transform:
@@ -554,6 +558,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachineReceiver
   animator: {fileID: 6026135802237666264}
+--- !u!114 &8205946695653247523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1011866178125972248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b38554c7209a4dbf940fc69fb0055af0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.AnimatorRootMotionRelay
 --- !u!95 &6026135802237666264 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 9c68b8996a8fddb4d93a332826174c45, type: 3}
