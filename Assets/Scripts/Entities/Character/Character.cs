@@ -102,12 +102,6 @@ namespace SoulsLike.Entities.Character
             {
                 _sprintHoldQualified = false;
             }
-
-            Ray aimRay = _cameraService.GetRay();
-            Vector3 targetPoint = Physics.Raycast(aimRay, out RaycastHit hit, _aimTargetDistance, _aimLayerMask)
-                ? hit.point
-                : aimRay.GetPoint(_aimTargetDistance);
-            NotifyAimTarget(targetPoint);
         }
 
         public DamageResult ApplyDamage(DamageRequest request)
@@ -133,12 +127,6 @@ namespace SoulsLike.Entities.Character
         public void NotifyGrounded(bool isGrounded)
         {
             _animatorComponent.SetGrounded(isGrounded);
-        }
-        
-
-        public void NotifyWeaponFire()
-        {
-            _equipmentComponent.NotifyWeaponFired();
         }
 
         public void NotifyHealthStatsChanged(HealthStats stats)
@@ -179,16 +167,6 @@ namespace SoulsLike.Entities.Character
         public void NotifyCrouch(bool isCrouching)
         {
             _animatorComponent.SetCrouch(isCrouching);
-        }
-
-        public void NotifyZoom(bool isZoomed)
-        {
-            _cameraService.SetZoom(isZoomed);
-        }
-
-        public void NotifyAimTarget(Vector3 targetPosition)
-        {
-            _animatorComponent.SetAimTarget(targetPosition);
         }
         
         public void SetLockOnTarget(bool isLockedOn, Transform lockOnTarget)

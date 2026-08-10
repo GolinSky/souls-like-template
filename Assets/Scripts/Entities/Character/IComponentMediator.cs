@@ -13,14 +13,11 @@ namespace SoulsLike.Entities.Character
         void NotifyBackStep();
         void NotifyCrouch(bool isCrouching);
         void NotifyGrounded(bool isGrounded);
-        void NotifyWeaponFire();
         void NotifyHealthStatsChanged(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
         void NotifyDeath();
         void NotifyAttack(AttackType attackType);
         void NotifyAnimatorStateChanged(AnimatorStateMachineDto state);
-        void NotifyZoom(bool isZoomed);
-        void NotifyAimTarget(Vector3 targetPosition);
         void NotifyTurn(float turnAmount);
         void NotifyAnimationMovement(Vector3 deltaPosition, Quaternion deltaRotation);
         void SetAnimationMovementContract(bool movementBlocked, bool useRootMotion);

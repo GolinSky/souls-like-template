@@ -20,10 +20,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             }
         }
         
-      
-        public void NotifyWeaponFired()
-        {
-        }
+        
 
         public void SetMediator(IComponentMediator componentMediator)
         {

@@ -9,7 +9,7 @@ namespace SoulsLike.Entities.Character.Components
     /// <summary>
     /// Character animator component
     /// </summary>
-    public class AnimatorComponent : BaseComponent<AnimatorModel>, IInitializable,
+    public class AnimatorComponent : BaseComponent<AnimatorModel>,
         Animations.IObserver<AnimatorStateMachineDto>
     {
         private static readonly int AnimIdHorizontal = Animator.StringToHash("Horizontal");
@@ -33,20 +33,10 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int BackStepAttackTrigger = Animator.StringToHash("BackStepAttack");
         private static readonly int RunAttackTrigger = Animator.StringToHash("RunAttack");
         private static readonly int SpecialAttackTrigger = Animator.StringToHash("SpecialAttack");
-
-        public void SetLockOn(bool isLockedOn)
-        {
-            animator.SetBool(AnimIdLockOn, isLockedOn);
-        }
         
         [SerializeField] private Animator animator;
         [SerializeField] private AnimatorStateMachineReceiver stateMachineReceiver;
-        [Header("Aim Target")]
-        [SerializeField] private Transform aimTarget;
-        [Header("Aim Settings")]
-        [SerializeField] private float aimTrackingSpeed = 10f;
-        [SerializeField] private float aimVerticalOffset;
-        [SerializeField] private float turningLagAmount = 5f;
+     
         [Header("Smooth Transitions")]
         [SerializeField] private float layerTransitionSpeed = 10f;
         [SerializeField] private float turnSmoothSpeed = 10f;
@@ -55,22 +45,21 @@ namespace SoulsLike.Entities.Character.Components
         
         [field:SerializeField] public Transform RightHandAnchor { get; private set; }
 
-        private float _currentTurnAmount;
-        private float _targetSpeed;
-        private float _currentSpeed;
+        
+        private IComponentMediator _mediator;
         private Vector2 _targetLocomotion;
         private Vector2 _currentLocomotion;
         private Vector3 _targetAimPosition;
+        private float _currentTurnAmount;
+        private float _targetSpeed;
+        private float _currentSpeed;
+        private float _targetTurnAmount;
         private float _targetRiffleLayerWeight;
         private bool _aimTargetInitialized;
-        private IComponentMediator _mediator;
         private bool _observingStateMachine;
-        public Animator Animator => animator;
 
-        public void Initialize()
-        {
-        }
-
+        private Animator Animator => animator;
+        
         public void SetMediator(IComponentMediator mediator)
         {
             _mediator = mediator;
@@ -83,7 +72,12 @@ namespace SoulsLike.Entities.Character.Components
 
             animator.applyRootMotion = true;
         }
-
+        
+        public void SetLockOn(bool isLockedOn)
+        {
+            animator.SetBool(AnimIdLockOn, isLockedOn);
+        }
+        
         public void SetGrounded(bool modelGrounded)
         {
             animator.SetBool(AnimIdGrounded, modelGrounded);
@@ -150,16 +144,7 @@ namespace SoulsLike.Entities.Character.Components
         {
             animator.SetBool(AnimIdCrouch, isCrouching);
         }
-
-        public void SetAimTarget(Vector3 targetPosition)
-        {
-            _targetAimPosition = targetPosition + Vector3.up * aimVerticalOffset;
-            if (!_aimTargetInitialized && aimTarget != null)
-            {
-                aimTarget.position = _targetAimPosition;
-                _aimTargetInitialized = true;
-            }
-        }
+        
 
         public void SetLocomotion(float speed, Vector2 blendDirection)
         {
@@ -170,26 +155,7 @@ namespace SoulsLike.Entities.Character.Components
         private void LateUpdate()
         {
             float dt = Time.deltaTime;
-
-            // 1. Smooth Aim Target Tracking with Turning Lag
-            if (aimTarget != null && _aimTargetInitialized)
-            {
-                // Calculate turning lag based on rotation velocity from movement
-                // We use transform.right to offset the target horizontally
-                float turnLag = _targetTurnAmount * turningLagAmount; 
-                Vector3 laggedTarget = _targetAimPosition - transform.right * turnLag;
-                
-                aimTarget.position = Vector3.Lerp(aimTarget.position, laggedTarget, dt * aimTrackingSpeed);
-            }
-
-            // 3. Smooth Animator Layer Weight
-            int riffleLayerIndex = animator.GetLayerIndex("Riffle");
-            if (riffleLayerIndex != -1)
-            {
-                float currentWeight = animator.GetLayerWeight(riffleLayerIndex);
-                float nextWeight = Mathf.Lerp(currentWeight, _targetRiffleLayerWeight, dt * layerTransitionSpeed);
-                animator.SetLayerWeight(riffleLayerIndex, nextWeight);
-            }
+            
 
             _currentTurnAmount = Mathf.Lerp(_currentTurnAmount, _targetTurnAmount, dt * turnSmoothSpeed);
             animator.SetFloat(AnimIdTurn, _currentTurnAmount);
@@ -206,7 +172,6 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetBool(AnimIdMoving, isMoving);
         }
         
-        private float _targetTurnAmount;
         public void SetTurn(float turnAmount)
         {
             _targetTurnAmount = turnAmount;
@@ -214,18 +179,6 @@ namespace SoulsLike.Entities.Character.Components
 
         public void CopyStateFrom(AnimatorComponent source)
         {
-            if (source == null) return;
-            
-            _currentTurnAmount = source._currentTurnAmount;
-            _targetTurnAmount = source._targetTurnAmount;
-            _targetSpeed = source._targetSpeed;
-            _currentSpeed = source._currentSpeed;
-            _targetLocomotion = source._targetLocomotion;
-            _currentLocomotion = source._currentLocomotion;
-            _targetAimPosition = source._targetAimPosition;
-            _targetRiffleLayerWeight = source._targetRiffleLayerWeight;
-            _aimTargetInitialized = source._aimTargetInitialized;
-            
             if (source.Animator != null && this.Animator != null)
             {
                 CopyAnimatorValues(source.Animator, this.Animator);
