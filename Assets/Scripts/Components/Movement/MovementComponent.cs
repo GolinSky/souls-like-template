@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using VContainer.Unity;
@@ -24,6 +23,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private Vector2 _activeRollDirection;
         private Vector3 _horizontalVelocity;
         private Vector3 _groundNormal = Vector3.up;
+        private Vector3 _defaultControllerCenter;
         private Vector2 _animationBlendDirection;
         private float _animationBlend;
         private float _verticalVelocity;
@@ -39,14 +39,11 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private bool _isCrouching;
         private bool? _lastNotifiedGrounded;
         private float _defaultControllerHeight;
-        private Vector3 _defaultControllerCenter;
 
         public bool IsMoving => _horizontalVelocity.sqrMagnitude > INPUT_DEAD_ZONE * INPUT_DEAD_ZONE;
 
         public void Initialize()
         {
-            ValidateDependencies();
-
             _fallGraceRemaining = Model.FallTimeout;
             _defaultControllerHeight = _controller.height;
             _defaultControllerCenter = _controller.center;
@@ -55,8 +52,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         public void SetMediator(IComponentMediator mediator)
         {
-            ValidateDependencies();
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _mediator = mediator;
             SynchronizeGroundedState();
         }
 
@@ -119,11 +115,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         public void SetLockOnTarget(bool isLockedOn, Transform lockOnTarget)
         {
-            if (isLockedOn && lockOnTarget == null)
-            {
-                throw new ArgumentNullException(nameof(lockOnTarget), "Locked-on movement requires a target.");
-            }
-
             _movementMode = isLockedOn ? MovementMode.LockedOn : MovementMode.Free;
             _lockOnTarget = isLockedOn ? lockOnTarget : null;
         }
@@ -176,8 +167,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
             }
 
-            RequireMediator().NotifyLocomotion(_animationBlend, _animationBlendDirection);
-            RequireMediator().NotifyTurn(_turnAmount);
+            _mediator.NotifyLocomotion(_animationBlend, _animationBlendDirection);
+            _mediator.NotifyTurn(_turnAmount);
         }
 
         private void TryStartRoll(Vector2 moveInput, float cameraYaw, bool rollRequested)
@@ -218,21 +209,16 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _rollCooldownRemaining = Model.RollCooldown;
             if (isBackStep)
             {
-                RequireMediator().NotifyBackStep();
+                _mediator.NotifyBackStep();
             }
             else
             {
-                RequireMediator().NotifyRoll(rollDirection);
+                _mediator.NotifyRoll(rollDirection);
             }
         }
 
         private Vector3 CalculateLockedRollDelta(float rollDistance)
         {
-            if (_activeRollTarget == null)
-            {
-                throw new InvalidOperationException("Locked roll has no target.");
-            }
-
             Vector3 targetPosition = _activeRollTarget.position;
             Vector3 toTarget = targetPosition - transform.position;
             toTarget.y = 0.0f;
@@ -243,7 +229,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 float radius = radial.magnitude;
                 if (radius <= MIN_LOCK_ON_ROLL_RADIUS)
                 {
-                    throw new InvalidOperationException("Locked lateral roll requires distance from the target.");
+                    Debug.LogError($"[{nameof(MovementComponent)}] Locked lateral roll requires distance from the target.");
+                    return Vector3.zero;
                 }
 
                 float orbitAngle = -_activeRollDirection.x * rollDistance / radius * Mathf.Rad2Deg;
@@ -253,7 +240,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
             if (toTarget.sqrMagnitude <= INPUT_DEAD_ZONE)
             {
-                throw new InvalidOperationException("Locked roll direction cannot be resolved at the target position.");
+                Debug.LogError($"[{nameof(MovementComponent)}] Locked roll direction cannot be resolved at the target position.");
+                return Vector3.zero;
             }
 
             return toTarget.normalized * (_activeRollDirection.y * rollDistance);
@@ -265,6 +253,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             toTarget.y = 0.0f;
             if (toTarget.sqrMagnitude <= INPUT_DEAD_ZONE)
             {
+                Debug.LogError($"[{nameof(MovementComponent)}] Cannot face active roll target at the target position.");
                 return;
             }
 
@@ -294,7 +283,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _isRisingFromJump = true;
             _fallGraceRemaining = 0.0f;
             SetGrounded(false);
-            RequireMediator().NotifyJump();
+            _mediator.NotifyJump();
         }
 
         private void UpdateActionCooldowns(float deltaTime)
@@ -387,7 +376,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private void SetGrounded(bool grounded)
         {
             Model.Grounded = grounded;
-            if (_mediator == null || _lastNotifiedGrounded == grounded)
+            if (_lastNotifiedGrounded == grounded)
             {
                 return;
             }
@@ -576,11 +565,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         private Vector3 GetLockOnForward()
         {
-            if (_lockOnTarget == null)
-            {
-                throw new InvalidOperationException("Locked-on movement has no target.");
-            }
-
             Vector3 toTarget = _lockOnTarget.position - transform.position;
             toTarget.y = 0.0f;
             if (toTarget.sqrMagnitude <= INPUT_DEAD_ZONE)
@@ -613,7 +597,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 _controller.center = _defaultControllerCenter;
             }
 
-            RequireMediator().NotifyCrouch(crouched);
+            _mediator.NotifyCrouch(crouched);
         }
 
         private float GetExternalSpeedMultiplier()
@@ -625,24 +609,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
             }
 
             return total;
-        }
-
-        private IComponentMediator RequireMediator()
-        {
-            return _mediator ?? throw new InvalidOperationException($"{name} requires an IComponentMediator.");
-        }
-
-        private void ValidateDependencies()
-        {
-            if (Model == null)
-            {
-                throw new InvalidOperationException($"{name} requires a MovementModel.");
-            }
-
-            if (_controller == null)
-            {
-                throw new InvalidOperationException($"{name} requires a CharacterController.");
-            }
         }
 
         private static float MovementDeltaTime => Mathf.Min(Time.deltaTime, MAX_MOVEMENT_DELTA_TIME);
