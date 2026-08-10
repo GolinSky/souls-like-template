@@ -14,6 +14,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int _animIdGrounded = Animator.StringToHash("Grounded");
         private static readonly int _animIdJump = Animator.StringToHash("Jump");
         private static readonly int _animIdRoll = Animator.StringToHash("Roll");
+        private static readonly int _animIdBackStep = Animator.StringToHash("BackStep");
         private static readonly int _animIdRollHorizontal = Animator.StringToHash("RollHorizontal");
         private static readonly int _animIdRollVertical = Animator.StringToHash("RollVertical");
         private static readonly int _animIdCrouch = Animator.StringToHash("Crouch");
@@ -93,13 +94,24 @@ namespace SoulsLike.Entities.Character.Components
         {
             _animator.SetFloat(_animIdRollHorizontal, direction.x);
             _animator.SetFloat(_animIdRollVertical, direction.y);
+            BeginRootMotionAction();
+            _animator.SetTrigger(_animIdRoll);
+        }
+
+        public void TriggerBackStep()
+        {
+            BeginRootMotionAction();
+            _animator.SetTrigger(_animIdBackStep);
+        }
+
+        private void BeginRootMotionAction()
+        {
             if (_rootMotionRelay == null)
             {
                 throw new InvalidOperationException($"{name} requires an AnimatorRootMotionRelay.");
             }
 
             _rootMotionRelay.BeginRootMotionContract();
-            _animator.SetTrigger(_animIdRoll);
         }
         
 

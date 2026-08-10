@@ -152,6 +152,11 @@ namespace SoulsLike.Entities.Character
             _animatorComponent.TriggerRoll(direction);
         }
 
+        public void NotifyBackStep()
+        {
+            _animatorComponent.TriggerBackStep();
+        }
+
         public void NotifyCrouch(bool isCrouching)
         {
             _animatorComponent.SetCrouch(isCrouching);

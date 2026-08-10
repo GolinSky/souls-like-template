@@ -8,6 +8,7 @@ namespace SoulsLike.Entities.Character
         void NotifyLocomotion(float speed, Vector2 blendDirection);
         void NotifyJump();
         void NotifyRoll(Vector2 direction);
+        void NotifyBackStep();
         void NotifyCrouch(bool isCrouching);
         void NotifyGrounded(bool isGrounded);
         void NotifyWeaponFire();

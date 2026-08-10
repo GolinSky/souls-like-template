@@ -185,16 +185,11 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 return;
             }
 
+            bool isBackStep = moveInput.sqrMagnitude <= INPUT_DEAD_ZONE;
             Vector2 rollDirection;
-            if (moveInput.sqrMagnitude <= INPUT_DEAD_ZONE)
+            if (isBackStep)
             {
                 rollDirection = Vector2.down;
-                if (_movementMode == MovementMode.Free)
-                {
-                    Vector3 backward = -transform.forward;
-                    backward.y = 0.0f;
-                    transform.rotation = Quaternion.LookRotation(backward.normalized, Vector3.up);
-                }
             }
             else
             {
@@ -219,7 +214,14 @@ namespace SoulsLike.Entities.Character.Components.Movement
             }
 
             _rollCooldownRemaining = Model.RollCooldown;
-            RequireMediator().NotifyRoll(rollDirection);
+            if (isBackStep)
+            {
+                RequireMediator().NotifyBackStep();
+            }
+            else
+            {
+                RequireMediator().NotifyRoll(rollDirection);
+            }
         }
 
         private Vector3 CalculateLockedRollDelta(float rollDistance)
