@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Prospector.Utility.Timer;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -30,9 +31,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private float _rotationVelocity;
         private float _speedChangeTime;
         private float _lastTargetSpeed = -1.0f;
-        private float _jumpCooldownRemaining;
-        private float _rollCooldownRemaining;
-        private float _fallGraceRemaining;
+        private ITimer _jumpTimer;
+        private ITimer _rollTimer;
+        private ITimer _fallGraceTimer;
         private float _turnAmount;
         private bool _movementBlocked;
         private bool _isRisingFromJump;
@@ -44,7 +45,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         public void Initialize()
         {
-            _fallGraceRemaining = Model.FallTimeout;
+            _jumpTimer = TimerFactory.ConstructTimer(Model.JumpTimeout);
+            _rollTimer = TimerFactory.ConstructTimer(Model.RollCooldown);
+            _fallGraceTimer = TimerFactory.ConstructTimer(Model.FallTimeout);
             _defaultControllerHeight = _controller.height;
             _defaultControllerCenter = _controller.center;
             SynchronizeGroundedState();
@@ -53,7 +56,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public void SetMediator(IComponentMediator mediator)
         {
             _mediator = mediator;
-            SynchronizeGroundedState();
         }
 
         public void SetPosition(Vector3 position)
@@ -140,7 +142,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
             float deltaTime = MovementDeltaTime;
             Vector2 moveInput = Vector2.ClampMagnitude(direction, 1.0f);
 
-            UpdateActionCooldowns(deltaTime);
             UpdateGroundedState(deltaTime);
 
             if (!_movementBlocked)
@@ -162,7 +163,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
             if ((collisionFlags & CollisionFlags.Below) != 0 && _verticalVelocity <= 0.0f)
             {
                 _isRisingFromJump = false;
-                _fallGraceRemaining = Model.FallTimeout;
+                _fallGraceTimer
+                    .ChangeDuration(Model.FallTimeout)
+                    .Start();
                 SetGrounded(true);
                 _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
             }
@@ -173,7 +176,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         private void TryStartRoll(Vector2 moveInput, float cameraYaw, bool rollRequested)
         {
-            if (!rollRequested || _movementBlocked || !Model.Grounded || _rollCooldownRemaining > 0.0f)
+            if (!rollRequested || _movementBlocked || !Model.Grounded || (_rollTimer.IsRunning && !_rollTimer.IsComplete))
             {
                 return;
             }
@@ -206,7 +209,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 FaceActiveRollTarget();
             }
 
-            _rollCooldownRemaining = Model.RollCooldown;
+            _rollTimer
+                .ChangeDuration(Model.RollCooldown)
+                .Start();
             if (isBackStep)
             {
                 _mediator.NotifyBackStep();
@@ -272,24 +277,20 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         private void TryStartJump(bool jumpRequested)
         {
-            if (!jumpRequested || _movementBlocked || !Model.Grounded || _jumpCooldownRemaining > 0.0f)
+            if (!jumpRequested || _movementBlocked || !Model.Grounded || (_jumpTimer.IsRunning && !_jumpTimer.IsComplete))
             {
                 return;
             }
 
             SetCrouchState(false);
             _verticalVelocity = Mathf.Sqrt(Model.JumpHeight * 2.0f * Mathf.Abs(Model.Gravity));
-            _jumpCooldownRemaining = Model.JumpTimeout;
+            _jumpTimer
+                .ChangeDuration(Model.JumpTimeout)
+                .Start();
             _isRisingFromJump = true;
-            _fallGraceRemaining = 0.0f;
+            _fallGraceTimer.Stop();
             SetGrounded(false);
             _mediator.NotifyJump();
-        }
-
-        private void UpdateActionCooldowns(float deltaTime)
-        {
-            _jumpCooldownRemaining = Mathf.Max(0.0f, _jumpCooldownRemaining - deltaTime);
-            _rollCooldownRemaining = Mathf.Max(0.0f, _rollCooldownRemaining - deltaTime);
         }
 
         private void UpdateGroundedState(float deltaTime)
@@ -307,7 +308,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
             if (HasWalkableGroundContact())
             {
-                _fallGraceRemaining = Model.FallTimeout;
+                _fallGraceTimer
+                    .ChangeDuration(Model.FallTimeout)
+                    .Start();
                 SetGrounded(true);
                 return;
             }
@@ -317,8 +320,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 return;
             }
 
-            _fallGraceRemaining = Mathf.Max(0.0f, _fallGraceRemaining - deltaTime);
-            if (_fallGraceRemaining <= 0.0f)
+            if (!_fallGraceTimer.IsRunning || _fallGraceTimer.IsComplete)
             {
                 SetGrounded(false);
             }
@@ -329,7 +331,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
             bool grounded = HasWalkableGroundContact();
             if (grounded)
             {
-                _fallGraceRemaining = Model.FallTimeout;
+                _fallGraceTimer
+                    .ChangeDuration(Model.FallTimeout)
+                    .Start();
                 if (_verticalVelocity <= 0.0f)
                 {
                     _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
