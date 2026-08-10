@@ -46,12 +46,12 @@ namespace SoulsLike.Entities.Character.Components.Animations
             NotifyObserver();
         }
 
-        public void OnFinished(AnimatorStateInfo stateInfo, int layerIndex, StateMachineName stateMachineName)
+        public void OnQueueCheck(AnimatorStateInfo stateInfo, int layerIndex, StateMachineName stateMachineName)
         {
             _animatorStateMachineDto.StateMachineName = stateMachineName;
             _animatorStateMachineDto.StateInfo = stateInfo;
             _animatorStateMachineDto.LayerIndex = layerIndex;
-            _animatorStateMachineDto.State = StateMachineState.Finished;
+            _animatorStateMachineDto.State = StateMachineState.QueueCheck;
             NotifyObserver();
         }
 

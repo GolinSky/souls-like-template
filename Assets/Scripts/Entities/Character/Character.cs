@@ -6,6 +6,7 @@ using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
+using Prospector.Utility.Timer;
 using SoulsLike.Services.CameraService;
 using UnityEngine;
 using VContainer;
@@ -30,8 +31,10 @@ namespace SoulsLike.Entities.Character
 
         private ICameraService _cameraService;
         private AttackComponent _attackComponent;
-        private float _sprintPressedAt;
+        private CharacterActionBuffer _actionBuffer;
+        private ITimer _sprintHoldTimer;
         private bool _sprintHoldQualified;
+        private bool _actionTransitionOpen;
         private bool _manualMovementBlocked;
         private bool _animationMovementBlocked;
         private bool _animationRootMotionEnabled;
@@ -41,10 +44,14 @@ namespace SoulsLike.Entities.Character
         public HealthStats HealthStats => _healthComponent.Stats;
 
         [Inject]
-        public void InjectDependencies(ICameraService cameraService, AttackComponent attackComponent)
+        public void InjectDependencies(
+            ICameraService cameraService,
+            AttackComponent attackComponent,
+            CharacterActionBuffer actionBuffer)
         {
             _cameraService = cameraService;
             _attackComponent = attackComponent;
+            _actionBuffer = actionBuffer;
         }
 
         public void Initialize()
@@ -55,6 +62,7 @@ namespace SoulsLike.Entities.Character
             _attackComponent.SetMediator(this);
             _equipmentComponent.SetMediator(this);
             _healthComponent.SetMediator(this);
+            _sprintHoldTimer = TimerFactory.ConstructTimer(SPRINT_HOLD_THRESHOLD);
             Cursor.lockState = CursorLockMode.Locked;
         }
 
@@ -62,45 +70,63 @@ namespace SoulsLike.Entities.Character
         {
             if (actions.Sprint.WasPressedThisFrame())
             {
-                _sprintPressedAt = Time.time;
                 _sprintHoldQualified = false;
+                _sprintHoldTimer
+                    .ChangeDuration(SPRINT_HOLD_THRESHOLD)
+                    .Start();
             }
 
             bool sprinting = actions.Sprint.IsPressed()
-                && (_sprintHoldQualified || Time.time - _sprintPressedAt >= SPRINT_HOLD_THRESHOLD);
+                && (_sprintHoldQualified || _sprintHoldTimer.IsComplete);
 
             if (sprinting)
             {
                 _sprintHoldQualified = true;
             }
 
-            bool rollRequested = actions.Roll.WasReleasedThisFrame() && !_sprintHoldQualified;
-
             Vector2 moveInput = actions.Move.ReadValue<Vector2>();
+            float cameraYaw = _cameraService.GetYaw();
             bool hasMovementInput = moveInput.sqrMagnitude > 0.0001f;
             bool canStartAttack = _movementComponent.Model.Grounded
                 && !_manualMovementBlocked
                 && !_animationMovementBlocked;
-            bool canUseSpecialAttack = canStartAttack
+            bool canBufferAttack = _movementComponent.Model.Grounded && !_manualMovementBlocked;
+            bool canBufferSpecialAttack = canBufferAttack
                 && !hasMovementInput
                 && !_movementComponent.IsMoving;
-            _attackComponent.HandleInput(
+
+            if (_attackComponent.TryCaptureAction(
                 actions,
                 sprinting && hasMovementInput,
+                canBufferAttack,
+                canBufferSpecialAttack,
+                out BufferedCharacterAction attackAction))
+            {
+                _actionBuffer.Buffer(attackAction);
+            }
+
+            if (actions.Roll.WasReleasedThisFrame() && !_sprintHoldQualified)
+            {
+                _actionBuffer.Buffer(BufferedCharacterAction.Roll(moveInput, cameraYaw));
+            }
+
+            TryExecuteBufferedAction(
                 canStartAttack,
-                canUseSpecialAttack);
+                canBufferSpecialAttack,
+                _actionTransitionOpen && _attackComponent.IsActionActive);
 
             _movementComponent.Move(
                 moveInput,
-                _cameraService.GetYaw(),
+                cameraYaw,
                 sprinting,
                 actions.Jump.WasPressedThisFrame(),
-                rollRequested,
+                false,
                 actions.Crouch.IsPressed());
 
             if (actions.Sprint.WasReleasedThisFrame())
             {
                 _sprintHoldQualified = false;
+                _sprintHoldTimer.Reset();
             }
         }
 
@@ -188,6 +214,20 @@ namespace SoulsLike.Entities.Character
         public void NotifyAnimatorStateChanged(AnimatorStateMachineDto state)
         {
             _attackComponent.HandleAnimatorState(state);
+
+            if (state.State == StateMachineState.Enter)
+            {
+                _actionTransitionOpen = false;
+            }
+            else if (state.State == StateMachineState.QueueCheck)
+            {
+                _actionTransitionOpen = true;
+                TryExecuteBufferedAction(false, false, true);
+            }
+            else if (state.State == StateMachineState.Exit)
+            {
+                _actionTransitionOpen = false;
+            }
         }
 
         public void SetMovementBlocked(bool blocked)
@@ -226,11 +266,58 @@ namespace SoulsLike.Entities.Character
             _movementComponent.SetMovementBlocked(_manualMovementBlocked || _animationMovementBlocked);
         }
 
+        private void TryExecuteBufferedAction(
+            bool canStartAttack,
+            bool canUseSpecialAttack,
+            bool canInterruptAnimation)
+        {
+            if (!_actionBuffer.TryPeek(out BufferedCharacterAction action))
+            {
+                return;
+            }
+
+            if (action.Type == CharacterActionType.Roll)
+            {
+                if (_movementComponent.TryStartRoll(
+                    action.MoveInput,
+                    action.CameraYaw,
+                    true,
+                    canInterruptAnimation))
+                {
+                    _actionBuffer.Consume();
+                    if (canInterruptAnimation)
+                    {
+                        _actionTransitionOpen = false;
+                    }
+                }
+
+                return;
+            }
+
+            if (!_movementComponent.Model.Grounded
+                || (_attackComponent.IsActionActive && !canInterruptAnimation)
+                || (!canInterruptAnimation && !canStartAttack)
+                || (action.Type == CharacterActionType.SpecialAttack
+                    && !canInterruptAnimation
+                    && !canUseSpecialAttack))
+            {
+                return;
+            }
+
+            _attackComponent.ExecuteAction(action);
+            _actionBuffer.Consume();
+            if (canInterruptAnimation)
+            {
+                _actionTransitionOpen = false;
+            }
+        }
+
         private void ValidateDependencies()
         {
             if (_movementComponent == null) throw new InvalidOperationException($"{name} requires a MovementComponent.");
             if (_animatorComponent == null) throw new InvalidOperationException($"{name} requires an AnimatorComponent.");
             if (_attackComponent == null) throw new InvalidOperationException($"{name} requires an AttackComponent.");
+            if (_actionBuffer == null) throw new InvalidOperationException($"{name} requires a CharacterActionBuffer.");
             if (_equipmentComponent == null) throw new InvalidOperationException($"{name} requires an EquipmentComponent.");
             if (_healthComponent == null) throw new InvalidOperationException($"{name} requires a HealthComponent.");
             if (_inventoryComponent == null) throw new InvalidOperationException($"{name} requires an InventoryComponent.");

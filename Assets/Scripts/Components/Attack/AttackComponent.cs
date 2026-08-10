@@ -1,9 +1,10 @@
+using Prospector.Utility.Timer;
 using SoulsLike.Entities.Character.Components.Animations;
-using UnityEngine;
+using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character.Components.Attack
 {
-    public sealed class AttackComponent : BaseComponent
+    public sealed class AttackComponent : BaseComponent, IInitializable
     {
         private const float CHARGED_HEAVY_HOLD_THRESHOLD = 0.5f;
         private const float CONTEXTUAL_ATTACK_WINDOW = 1.0f;
@@ -11,61 +12,75 @@ namespace SoulsLike.Entities.Character.Components.Attack
         private IComponentMediator _mediator;
         private StateMachineName _activeState = StateMachineName.None;
         private StateMachineName _contextualState = StateMachineName.None;
-        private float _strongAttackPressedAt;
-        private float _contextualAttackExpiresAt;
+        private ITimer _strongAttackHoldTimer;
+        private ITimer _contextualAttackTimer;
         private bool _strongInputActive;
         private bool _suppressLightUntilRelease;
-        private bool _comboQueued;
+
+        public bool IsActionActive => _activeState != StateMachineName.None;
+
+        public void Initialize()
+        {
+            _strongAttackHoldTimer = TimerFactory.ConstructTimer(CHARGED_HEAVY_HOLD_THRESHOLD);
+            _contextualAttackTimer = TimerFactory.ConstructTimer(CONTEXTUAL_ATTACK_WINDOW);
+        }
 
         public void SetMediator(IComponentMediator mediator)
         {
             _mediator = mediator;
         }
 
-        public void HandleInput(
+        public bool TryCaptureAction(
             ProjectInputActions.CharacterActions actions,
             bool isSprinting,
-            bool canStartAttack,
-            bool canUseSpecialAttack)
+            bool canBufferAttack,
+            bool canBufferSpecialAttack,
+            out BufferedCharacterAction action)
         {
+            action = default;
+
             if (!actions.Attack.IsPressed())
             {
                 _suppressLightUntilRelease = false;
             }
 
-            if (_activeState != StateMachineName.None)
+            if (HandleStrongAttack(actions, canBufferAttack, out action))
             {
-                HandleActiveAttackInput(actions);
-                return;
-            }
-
-            if (!canStartAttack)
-            {
-                return;
-            }
-
-            if (HandleStrongAttack(actions))
-            {
-                return;
+                return true;
             }
 
             if (actions.SpecialAbility.WasPressedThisFrame())
             {
-                if (canUseSpecialAttack)
+                if (canBufferSpecialAttack)
                 {
-                    ClearContextualAttack();
-                    _mediator.NotifyAttack(AttackType.SpecialAttack);
+                    action = BufferedCharacterAction.Attack(CharacterActionType.SpecialAttack, false);
+                    return true;
                 }
 
-                return;
+                return false;
             }
 
-            if (_suppressLightUntilRelease || !actions.Attack.WasPressedThisFrame())
+            if (!canBufferAttack || _suppressLightUntilRelease || !actions.Attack.WasPressedThisFrame())
             {
-                return;
+                return false;
             }
 
-            AttackType attackType = ResolveLightAttack(isSprinting);
+            action = BufferedCharacterAction.Attack(CharacterActionType.LightAttack, isSprinting);
+            return true;
+        }
+
+        public void ExecuteAction(BufferedCharacterAction action)
+        {
+            AttackType attackType = action.Type switch
+            {
+                CharacterActionType.LightAttack => ResolveLightAttack(action.IsSprinting),
+                CharacterActionType.HeavyAttack => AttackType.HeavyAttack,
+                CharacterActionType.ChargedHeavyAttack => AttackType.ChargedHeavyAttack,
+                CharacterActionType.SpecialAttack => AttackType.SpecialAttack,
+                _ => throw new System.ArgumentOutOfRangeException(nameof(action.Type), action.Type, null)
+            };
+
+            ClearContextualAttack();
             _mediator.NotifyAttack(attackType);
         }
 
@@ -74,12 +89,12 @@ namespace SoulsLike.Entities.Character.Components.Attack
             if (state.State == StateMachineState.Enter)
             {
                 _activeState = state.StateMachineName;
-                _comboQueued = false;
 
                 if (state.StateMachineName == StateMachineName.Roll
                     || state.StateMachineName == StateMachineName.BackStep)
                 {
                     _strongInputActive = false;
+                    _strongAttackHoldTimer.Reset();
                     ClearContextualAttack();
                 }
 
@@ -95,70 +110,80 @@ namespace SoulsLike.Entities.Character.Components.Attack
                 || state.StateMachineName == StateMachineName.BackStep)
             {
                 _contextualState = state.StateMachineName;
-                _contextualAttackExpiresAt = Time.time + CONTEXTUAL_ATTACK_WINDOW;
+                _contextualAttackTimer
+                    .ChangeDuration(CONTEXTUAL_ATTACK_WINDOW)
+                    .Start();
             }
 
             if (_activeState == state.StateMachineName)
             {
                 _activeState = StateMachineName.None;
-                _comboQueued = false;
             }
         }
 
-        private void HandleActiveAttackInput(ProjectInputActions.CharacterActions actions)
+        private bool HandleStrongAttack(
+            ProjectInputActions.CharacterActions actions,
+            bool canBufferAttack,
+            out BufferedCharacterAction action)
         {
-            if (_comboQueued
-                || actions.StrongAttack.IsPressed()
-                || !actions.Attack.WasPressedThisFrame())
-            {
-                return;
-            }
+            action = default;
 
-            if (_activeState == StateMachineName.LightAttack)
-            {
-                _comboQueued = true;
-                _mediator.NotifyAttack(AttackType.LightAttackAlt);
-            }
-            else if (_activeState == StateMachineName.LightAttackAlt)
-            {
-                _comboQueued = true;
-                _mediator.NotifyAttack(AttackType.LightAttack);
-            }
-        }
-
-        private bool HandleStrongAttack(ProjectInputActions.CharacterActions actions)
-        {
             if (actions.StrongAttack.WasPressedThisFrame())
             {
-                _strongAttackPressedAt = Time.time;
-                _strongInputActive = true;
+                _strongInputActive = canBufferAttack;
                 _suppressLightUntilRelease = true;
+                if (_strongInputActive)
+                {
+                    _strongAttackHoldTimer
+                        .ChangeDuration(CHARGED_HEAVY_HOLD_THRESHOLD)
+                        .Start();
+                }
             }
 
             if (_strongInputActive
                 && actions.StrongAttack.IsPressed()
-                && Time.time - _strongAttackPressedAt >= CHARGED_HEAVY_HOLD_THRESHOLD)
+                && _strongAttackHoldTimer.IsComplete)
             {
                 _strongInputActive = false;
-                ClearContextualAttack();
-                _mediator.NotifyAttack(AttackType.ChargedHeavyAttack);
+                _strongAttackHoldTimer.Reset();
+                action = BufferedCharacterAction.Attack(CharacterActionType.ChargedHeavyAttack, false);
                 return true;
             }
 
             if (_strongInputActive && actions.StrongAttack.WasReleasedThisFrame())
             {
                 _strongInputActive = false;
-                ClearContextualAttack();
-                _mediator.NotifyAttack(AttackType.HeavyAttack);
+                _strongAttackHoldTimer.Reset();
+                action = BufferedCharacterAction.Attack(CharacterActionType.HeavyAttack, false);
                 return true;
             }
 
-            return _strongInputActive || actions.StrongAttack.IsPressed();
+            return false;
         }
 
         private AttackType ResolveLightAttack(bool isSprinting)
         {
-            if (Time.time > _contextualAttackExpiresAt)
+            if (_activeState == StateMachineName.LightAttack)
+            {
+                return AttackType.LightAttackAlt;
+            }
+
+            if (_activeState == StateMachineName.LightAttackAlt)
+            {
+                return AttackType.LightAttack;
+            }
+
+            if (_activeState == StateMachineName.Roll)
+            {
+                return AttackType.RollingLightAttack;
+            }
+
+            if (_activeState == StateMachineName.BackStep)
+            {
+                return AttackType.BackStepAttack;
+            }
+
+            if (_contextualState != StateMachineName.None && _contextualAttackTimer.IsComplete)
             {
                 ClearContextualAttack();
             }
@@ -186,7 +211,7 @@ namespace SoulsLike.Entities.Character.Components.Attack
         private void ClearContextualAttack()
         {
             _contextualState = StateMachineName.None;
-            _contextualAttackExpiresAt = 0.0f;
+            _contextualAttackTimer.Reset();
         }
     }
 }

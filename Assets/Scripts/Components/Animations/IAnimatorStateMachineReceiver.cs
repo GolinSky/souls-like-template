@@ -7,7 +7,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
         void OnEnter(AnimatorStateInfo stateInfo, int layerIndex, StateMachineName stateMachineName);
         void OnExit(AnimatorStateInfo stateInfo, int layerIndex, StateMachineName stateMachineName);
         void OnLoop(int loopIndex, AnimatorStateInfo stateInfo, int layerIndex, StateMachineName stateMachineName);
-        void OnFinished(AnimatorStateInfo stateInfo, int layerIndex, StateMachineName stateMachineName);
+        void OnQueueCheck(AnimatorStateInfo stateInfo, int layerIndex, StateMachineName stateMachineName);
         void OnProgress(AnimatorStateInfo stateInfo, int layerIndex, StateMachineName stateMachineName);
     }
 }

@@ -4,7 +4,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
     {
         Enter = 0,
         Exit = 1,
-        Finished = 2,
+        QueueCheck = 2,
         Loop = 3,
         Progress = 4
     }

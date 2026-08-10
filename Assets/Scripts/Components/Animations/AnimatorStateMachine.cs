@@ -8,22 +8,25 @@ namespace SoulsLike.Entities.Character.Components.Animations
 
 
         [SerializeField] private bool isReportingProgress;
+        [SerializeField] private bool reportsQueueCheck;
+        [SerializeField, Range(0.0f, 1.0f)] private float queueCheckNormalizedTime = 0.55f;
 
         private IAnimatorStateMachineReceiver animatorStateMachineReceiver;
         
         private int _currentLoopIndex = 0;
-        private bool _isFinishFired;
+        private bool _isQueueCheckFired;
 
         private void ResetValues()
         {
             _currentLoopIndex = -1;
-            _isFinishFired = false;
+            _isQueueCheckFired = false;
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateUpdate(animator, stateInfo, layerIndex);
             ReportProgress(stateInfo, layerIndex);
+            ReportQueueCheck(stateInfo, layerIndex);
         }
 
         private void ReportProgress(AnimatorStateInfo stateInfo, int layerIndex)
@@ -34,6 +37,17 @@ namespace SoulsLike.Entities.Character.Components.Animations
             }
             animatorStateMachineReceiver?.OnProgress(stateInfo,
                 layerIndex, stateMachineName);
+        }
+
+        private void ReportQueueCheck(AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            if (!reportsQueueCheck || _isQueueCheckFired || stateInfo.normalizedTime < queueCheckNormalizedTime)
+            {
+                return;
+            }
+
+            _isQueueCheckFired = true;
+            animatorStateMachineReceiver?.OnQueueCheck(stateInfo, layerIndex, stateMachineName);
         }
 
        

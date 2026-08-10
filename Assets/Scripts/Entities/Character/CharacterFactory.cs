@@ -68,6 +68,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<PlayerHudUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
+                builder.Register<CharacterActionBuffer>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             });
 

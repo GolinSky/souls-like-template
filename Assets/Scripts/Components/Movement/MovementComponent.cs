@@ -153,7 +153,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 SetCrouchState(false);
             }
 
-            TryStartRoll(moveInput, cameraYaw, rollRequested);
+            TryStartRoll(moveInput, cameraYaw, rollRequested, false);
             TryStartJump(jumpRequested);
             UpdateVerticalVelocity(deltaTime);
 
@@ -174,11 +174,18 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _mediator.NotifyTurn(_turnAmount);
         }
 
-        private void TryStartRoll(Vector2 moveInput, float cameraYaw, bool rollRequested)
+        public bool TryStartRoll(
+            Vector2 moveInput,
+            float cameraYaw,
+            bool rollRequested,
+            bool canInterruptAnimation)
         {
-            if (!rollRequested || _movementBlocked || !Model.Grounded || (_rollTimer.IsRunning && !_rollTimer.IsComplete))
+            if (!rollRequested
+                || (_movementBlocked && !canInterruptAnimation)
+                || !Model.Grounded
+                || (_rollTimer.IsRunning && !_rollTimer.IsComplete))
             {
-                return;
+                return false;
             }
 
             bool isBackStep = moveInput.sqrMagnitude <= INPUT_DEAD_ZONE;
@@ -220,6 +227,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
             {
                 _mediator.NotifyRoll(rollDirection);
             }
+
+            return true;
         }
 
         private Vector3 CalculateLockedRollDelta(float rollDistance)
