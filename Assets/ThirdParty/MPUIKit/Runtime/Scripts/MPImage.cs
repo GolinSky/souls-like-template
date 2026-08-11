@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UI.MPUIKIT;
@@ -345,6 +345,64 @@ namespace MPUIKIT {
                 m_GradientEffect = value;
                 SetMaterialDirty();
             }
+        }
+
+        /// <summary>
+        /// Automatically enables and configures a linear gradient based on the MPImage's main color.
+        /// </summary>
+        /// <param name="rotation">Rotation angle for the linear gradient in degrees.</param>
+        /// <param name="shadowFactor">Multiplier for the start/shadow keyframe color (default 0.75).</param>
+        /// <param name="highlightFactor">Multiplier for the end/highlight keyframe color (default 1.25).</param>
+        public void SetLinearGradientFromMainColor(float rotation = 0f, float shadowFactor = 0.75f, float highlightFactor = 1.25f)
+        {
+            Color mainColor = this.color;
+            if (mainColor == default || (mainColor.r == 0 && mainColor.g == 0 && mainColor.b == 0 && mainColor.a == 0))
+            {
+                mainColor = Color.white;
+            }
+
+            Color startColor;
+            Color endColor;
+
+            // Special case for pure white / near white so white images get a subtle silver/metallic linear gradient
+            if (mainColor.r > 0.95f && mainColor.g > 0.95f && mainColor.b > 0.95f)
+            {
+                startColor = new Color(0.75f, 0.75f, 0.78f, mainColor.a);
+                endColor = new Color(1f, 1f, 1f, mainColor.a);
+            }
+            else
+            {
+                startColor = new Color(
+                    Mathf.Clamp01(mainColor.r * shadowFactor),
+                    Mathf.Clamp01(mainColor.g * shadowFactor),
+                    Mathf.Clamp01(mainColor.b * shadowFactor),
+                    mainColor.a
+                );
+
+                endColor = new Color(
+                    Mathf.Clamp01(mainColor.r * highlightFactor),
+                    Mathf.Clamp01(mainColor.g * highlightFactor),
+                    Mathf.Clamp01(mainColor.b * highlightFactor),
+                    mainColor.a
+                );
+            }
+
+            // Set base color to white so shader multiplies color by gradient keyframes 1:1
+            this.color = Color.white;
+
+            GradientEffect gradientEffect = m_GradientEffect;
+            gradientEffect.Enabled = true;
+            gradientEffect.GradientType = GradientType.Linear;
+            gradientEffect.Rotation = rotation;
+
+            Gradient g = new Gradient();
+            g.SetKeys(
+                new GradientColorKey[] { new GradientColorKey(startColor, 0f), new GradientColorKey(endColor, 1f) },
+                new GradientAlphaKey[] { new GradientAlphaKey(startColor.a, 0f), new GradientAlphaKey(endColor.a, 1f) }
+            );
+            gradientEffect.Gradient = g;
+            m_GradientEffect = gradientEffect;
+            SetMaterialDirty();
         }
 
         #endregion
