@@ -12,7 +12,7 @@ AnimatorStateTransition:
     m_ConditionEvent: ChargedHeavyAttack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: -2799846450983574758}
+  m_DstState: {fileID: 6857283488661261428}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -256,7 +256,7 @@ AnimatorStateTransition:
     m_ConditionEvent: RunAttack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: -577279920648275352}
+  m_DstState: {fileID: 2833593018735444896}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -1549,7 +1549,7 @@ AnimatorStateTransition:
     m_ConditionEvent: LightAttack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: -1291215716896765041}
+  m_DstState: {fileID: -723498844841441241}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -1828,7 +1828,7 @@ AnimatorStateTransition:
     m_ConditionEvent: LightAttackAlt
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: 6376697365179980835}
+  m_DstState: {fileID: 8478347079969625450}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -2120,7 +2120,7 @@ AnimatorStateTransition:
     m_ConditionEvent: BackStepAttack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: -2300837740703879589}
+  m_DstState: {fileID: -8214750780296448994}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -2145,7 +2145,7 @@ AnimatorStateTransition:
     m_ConditionEvent: SpecialAttack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: 4950452824672491280}
+  m_DstState: {fileID: -3453254151353157070}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -2246,7 +2246,7 @@ AnimatorStateTransition:
     m_ConditionEvent: HeavyAttack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: 9018881206611671125}
+  m_DstState: {fileID: -9035632057262612228}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
@@ -2493,7 +2493,7 @@ AnimatorStateTransition:
     m_ConditionEvent: RollAttack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
-  m_DstState: {fileID: 5766097912703366952}
+  m_DstState: {fileID: 2489476988230978765}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
