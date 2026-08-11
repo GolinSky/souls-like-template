@@ -32,10 +32,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         public MovementModel(IMovementData movementData)
         {
-            if (movementData == null)
-            {
-                throw new ArgumentNullException(nameof(movementData));
-            }
+
 
             MoveSpeed = movementData.MoveSpeed;
             SprintSpeed = movementData.SprintSpeed;

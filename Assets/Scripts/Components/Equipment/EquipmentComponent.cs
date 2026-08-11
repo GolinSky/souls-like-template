@@ -36,11 +36,6 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             {
                 throw new InvalidOperationException($"{name} requires an equipment parent.");
             }
-
-            if (Model == null)
-            {
-                throw new InvalidOperationException($"{name} requires an EquipmentModel.");
-            }
         }
 
         public bool TryBeginHandModeSwitch()
@@ -76,8 +71,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         public void SetMediator(IComponentMediator componentMediator)
         {
-            _componentMediator = componentMediator ??
-                throw new ArgumentNullException(nameof(componentMediator));
+            _componentMediator = componentMediator;
         }
     }
 }

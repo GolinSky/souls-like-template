@@ -57,7 +57,6 @@ namespace SoulsLike.Entities.Character
 
         public void Initialize()
         {
-            ValidateDependencies();
             _movementComponent.SetMediator(this);
             _animatorComponent.SetMediator(this);
             _attackComponent.SetMediator(this);
@@ -362,17 +361,5 @@ namespace SoulsLike.Entities.Character
             }
         }
 
-        private void ValidateDependencies()
-        {
-            if (_movementComponent == null) throw new InvalidOperationException($"{name} requires a MovementComponent.");
-            if (_animatorComponent == null) throw new InvalidOperationException($"{name} requires an AnimatorComponent.");
-            if (_attackComponent == null) throw new InvalidOperationException($"{name} requires an AttackComponent.");
-            if (_actionBuffer == null) throw new InvalidOperationException($"{name} requires a CharacterActionBuffer.");
-            if (_equipmentComponent == null) throw new InvalidOperationException($"{name} requires an EquipmentComponent.");
-            if (_healthComponent == null) throw new InvalidOperationException($"{name} requires a HealthComponent.");
-            if (_inventoryComponent == null) throw new InvalidOperationException($"{name} requires an InventoryComponent.");
-            if (_cameraTarget == null) throw new InvalidOperationException($"{name} requires a camera target.");
-            if (_cameraService == null) throw new InvalidOperationException($"{name} requires an ICameraService.");
-        }
     }
 }

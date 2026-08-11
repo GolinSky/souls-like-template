@@ -21,10 +21,7 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         public HealthModel(IHealthData healthData)
         {
-            if (healthData == null)
-            {
-                throw new ArgumentNullException(nameof(healthData));
-            }
+
 
             MaxHealth = Mathf.Max(1f, healthData.MaxHealth);
             StartingHealth = Mathf.Clamp(healthData.StartingHealth, 0f, MaxHealth);

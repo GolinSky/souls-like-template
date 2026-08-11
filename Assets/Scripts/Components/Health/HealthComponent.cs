@@ -23,10 +23,7 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         public HealthStats BuildDefaultStats()
         {
-            if (Model == null)
-            {
-                throw new InvalidOperationException($"{name} requires a HealthModel.");
-            }
+
 
             float maxHealth = Mathf.Max(1f, Model.MaxHealth);
             float currentHealth = Mathf.Clamp(Model.StartingHealth, 0f, maxHealth);
@@ -107,7 +104,7 @@ namespace SoulsLike.Entities.Character.Components.Health
             float healthDamage = incomingAmount;
             float nextHealth = stats.CurrentHealth - healthDamage;
 
-            if (Model != null && !Model.CanDie)
+            if (!Model.CanDie)
             {
                 nextHealth = Mathf.Max(1f, nextHealth);
             }
