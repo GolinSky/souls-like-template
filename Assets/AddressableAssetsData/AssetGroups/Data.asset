@@ -25,6 +25,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c390ac6056d48f458008ed236dfc1e8
+    m_Address: 3c390ac6056d48f458008ed236dfc1e8
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6fedd0e416865cc4b8000cb06f4ffd16
+    m_Address: 6fedd0e416865cc4b8000cb06f4ffd16
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 84dc0f3e47d560e4b9ebd5cc56ef7150
     m_Address: LayerData
     m_ReadOnly: 0

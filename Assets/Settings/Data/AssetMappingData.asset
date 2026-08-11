@@ -49,6 +49,20 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: AudioData
+      value:
+        m_AssetGUID: 6fedd0e416865cc4b8000cb06f4ffd16
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: AmbienceData
+      value:
+        m_AssetGUID: 3c390ac6056d48f458008ed236dfc1e8
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
   uiMappings:
     keyValue:
     - key: MainMenuUi

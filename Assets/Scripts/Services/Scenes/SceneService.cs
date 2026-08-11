@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Services.Scenes.Data;
 using UnityEngine.SceneManagement;
@@ -9,6 +9,7 @@ namespace SoulsLike.Services.Scenes
     public class SceneService : ISceneService 
     {
         public event Action<float> OnProgressUpdated;// temp solution
+        public event Action<SceneType> OnSceneChanged;
         
         private readonly SceneModel _sceneModel;
         public SceneType TargetScene { get; private set; }
@@ -98,6 +99,7 @@ namespace SoulsLike.Services.Scenes
             await UniTask.Delay(300); // small smooth delay
 
             asyncOp.allowSceneActivation = true;
+            OnSceneChanged?.Invoke(sceneType);
         }
     }
 }

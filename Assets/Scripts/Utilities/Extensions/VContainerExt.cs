@@ -1,4 +1,4 @@
-﻿using SoulsLike.Services.Repository;
+using SoulsLike.Services.Repository;
 using UnityEngine;
 using VContainer;
 
