@@ -6,17 +6,20 @@ namespace SoulsLike.Entities.Character.Components.Animations
     {
         [SerializeField] private StateMachineName stateMachineName;
         [SerializeField] private bool isReportingProgress;
+        [SerializeField, Range(0.0f, 1.0f)] private float _progressNormalizedTime = 0.5f;
         [SerializeField] private bool reportsQueueCheck;
         [SerializeField, Range(0.0f, 1.0f)] private float queueCheckNormalizedTime = 0.55f;
 
         private IAnimatorStateMachineReceiver animatorStateMachineReceiver;
         
         private int _currentLoopIndex = 0;
+        private bool _isProgressFired;
         private bool _isQueueCheckFired;
 
         private void ResetValues()
         {
             _currentLoopIndex = -1;
+            _isProgressFired = false;
             _isQueueCheckFired = false;
         }
 
@@ -29,10 +32,14 @@ namespace SoulsLike.Entities.Character.Components.Animations
 
         private void ReportProgress(AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (!isReportingProgress)
+            if (!isReportingProgress
+                || _isProgressFired
+                || stateInfo.normalizedTime < _progressNormalizedTime)
             {
                 return;
             }
+
+            _isProgressFired = true;
             animatorStateMachineReceiver?.OnProgress(stateInfo,
                 layerIndex, stateMachineName);
         }

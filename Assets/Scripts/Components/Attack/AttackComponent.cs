@@ -96,6 +96,14 @@ namespace SoulsLike.Entities.Character.Components.Attack
 
         public void HandleAnimatorState(AnimatorStateMachineDto state)
         {
+            if (state.State == StateMachineState.Progress
+                && (state.StateMachineName == StateMachineName.HeavyAttack
+                    || state.StateMachineName == StateMachineName.HeavyAttackAlt))
+            {
+                _mediator.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
+                return;
+            }
+
             if (state.State == StateMachineState.Enter)
             {
                 _activeState = state.StateMachineName;

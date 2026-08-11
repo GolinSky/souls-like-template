@@ -53,6 +53,7 @@ namespace SoulsLike.Entities.Character.Components
         [SerializeField] private float layerTransitionSpeed = 10f;
         [SerializeField] private float turnSmoothSpeed = 10f;
         [SerializeField] private float locomotionSmoothSpeed = 10f;
+        [SerializeField, Min(0.0f)] private float _chargedAttackSpeedSmoothTime = 0.15f;
         [SerializeField] private AnimatorRootMotionRelay rootMotionRelay;
         
         [field:SerializeField] public Transform RightHandAnchor { get; private set; }
@@ -67,7 +68,9 @@ namespace SoulsLike.Entities.Character.Components
         private float _currentSpeed;
         private float _targetTurnAmount;
         private float _targetRiffleLayerWeight;
+        private float _targetChargedAttackSpeed = 1.0f;
         private bool _aimTargetInitialized;
+        private bool _hasChargedAttackSpeedParameter;
         private bool _observingStateMachine;
 
         private Animator Animator => animator;
@@ -76,6 +79,16 @@ namespace SoulsLike.Entities.Character.Components
         {
             _mediator = mediator;
             rootMotionRelay.Initialize(mediator);
+            _hasChargedAttackSpeedParameter = HasParameter(
+                animator,
+                ChargedSpeedParameter,
+                AnimatorControllerParameterType.Float);
+
+            if (_hasChargedAttackSpeedParameter)
+            {
+                _targetChargedAttackSpeed = animator.GetFloat(ChargedSpeedParameter);
+            }
+
             if (!_observingStateMachine)
             {
                 stateMachineReceiver.AddObserver(this);
@@ -121,7 +134,13 @@ namespace SoulsLike.Entities.Character.Components
                 throw new ArgumentOutOfRangeException(nameof(speed), speed, "Attack speed must be greater than zero.");
             }
 
-            if (HasParameter(animator, ChargedSpeedParameter, AnimatorControllerParameterType.Float))
+            if (!_hasChargedAttackSpeedParameter)
+            {
+                return;
+            }
+
+            _targetChargedAttackSpeed = speed;
+            if (speed < animator.GetFloat(ChargedSpeedParameter))
             {
                 animator.SetFloat(ChargedSpeedParameter, speed);
             }
@@ -229,7 +248,15 @@ namespace SoulsLike.Entities.Character.Components
         private void LateUpdate()
         {
             float dt = Time.deltaTime;
-            
+
+            if (_hasChargedAttackSpeedParameter)
+            {
+                animator.SetFloat(
+                    ChargedSpeedParameter,
+                    _targetChargedAttackSpeed,
+                    _chargedAttackSpeedSmoothTime,
+                    dt);
+            }
 
             _currentTurnAmount = Mathf.Lerp(_currentTurnAmount, _targetTurnAmount, dt * turnSmoothSpeed);
             animator.SetFloat(AnimIdTurn, _currentTurnAmount);
