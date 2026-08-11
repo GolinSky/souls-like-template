@@ -1815,7 +1815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 9
-  isReportingProgress: 1
+  isReportingProgress: 0
   reportsQueueCheck: 1
   queueCheckNormalizedTime: 0.5
 --- !u!1101 &5675077740351971153
@@ -2226,7 +2226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 9
-  isReportingProgress: 1
+  isReportingProgress: 0
   reportsQueueCheck: 1
   queueCheckNormalizedTime: 0.5
 --- !u!1102 &9018881206611671125
