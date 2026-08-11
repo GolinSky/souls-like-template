@@ -323,7 +323,7 @@ MonoBehaviour:
   stateMachineName: 6
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.9
+  queueCheckNormalizedTime: 0.5
 --- !u!1101 &-4852253683775449498
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -694,7 +694,7 @@ MonoBehaviour:
   stateMachineName: 7
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.9
+  queueCheckNormalizedTime: 0.5
 --- !u!1101 &-900000000000000023
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1059,7 +1059,7 @@ MonoBehaviour:
   stateMachineName: 1
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.9
+  queueCheckNormalizedTime: 0.5
 --- !u!1101 &-218176227131467603
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1630,7 +1630,7 @@ MonoBehaviour:
   stateMachineName: 8
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.9
+  queueCheckNormalizedTime: 0.5
 --- !u!1101 &4185118684171279853
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1671,7 +1671,7 @@ MonoBehaviour:
   stateMachineName: 3
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.9
+  queueCheckNormalizedTime: 0.5
 --- !u!1107 &4377631906137699284
 AnimatorStateMachine:
   serializedVersion: 6
@@ -1936,7 +1936,7 @@ MonoBehaviour:
   stateMachineName: 5
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.9
+  queueCheckNormalizedTime: 0.5
 --- !u!114 &5955516003914750792
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1952,7 +1952,7 @@ MonoBehaviour:
   stateMachineName: 2
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.9
+  queueCheckNormalizedTime: 0.5
 --- !u!1102 &6216278401631243598
 AnimatorState:
   serializedVersion: 6
@@ -2074,7 +2074,7 @@ MonoBehaviour:
   stateMachineName: 4
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.9
+  queueCheckNormalizedTime: 0.5
 --- !u!1101 &6739275281982273127
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
