@@ -107,7 +107,9 @@ namespace SoulsLike.Entities.Character
                 && _equipmentComponent.TryBeginHandModeSwitch())
             {
                 handModeSwitchStarted = true;
-                _animatorComponent.TriggerHandModeSwitch(_equipmentComponent.PendingHandMode);
+                _animatorComponent.TriggerHandModeSwitch(
+                    _equipmentComponent.PendingHandMode,
+                    _movementComponent.IsMoving);
             }
 
             if (!handModeSwitchStarted && _attackComponent.TryCaptureAction(

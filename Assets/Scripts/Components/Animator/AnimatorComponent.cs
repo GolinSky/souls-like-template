@@ -38,10 +38,13 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int SpecialAttackTrigger = Animator.StringToHash("SpecialAttack");
         private static readonly int ChangeModeTrigger = Animator.StringToHash("ChangeMode");
         private static readonly int HandModeTargetParameter = Animator.StringToHash("HandModeTarget");
+        private static readonly int UseUpperBodyHandModeSwitchParameter =
+            Animator.StringToHash("UseUpperBodyHandModeSwitch");
 
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_LAYER = "UpperBody";
+        private const string FULL_BODY_LAYER = "FullBody";
         
         [SerializeField] private Animator animator;
         [SerializeField] private AnimatorStateMachineReceiver stateMachineReceiver;
@@ -153,7 +156,7 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetTrigger(AnimIdBackStep);
         }
 
-        public void TriggerHandModeSwitch(HandMode handMode)
+        public void TriggerHandModeSwitch(HandMode handMode, bool isMoving)
         {
             switch (handMode)
             {
@@ -164,6 +167,9 @@ namespace SoulsLike.Entities.Character.Components
                     throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
             }
 
+            animator.SetLayerWeight(GetRequiredLayerIndex(FULL_BODY_LAYER), isMoving ? 0.0f : 1.0f);
+            animator.SetLayerWeight(GetRequiredLayerIndex(UPPER_BODY_LAYER), isMoving ? 1.0f : 0.0f);
+            animator.SetBool(UseUpperBodyHandModeSwitchParameter, isMoving);
             animator.SetInteger(HandModeTargetParameter, (int)handMode);
             animator.SetTrigger(ChangeModeTrigger);
         }
@@ -190,7 +196,8 @@ namespace SoulsLike.Entities.Character.Components
 
         public bool IsHandModeSwitchLayer(int layerIndex)
         {
-            return layerIndex == GetRequiredLayerIndex(UPPER_BODY_LAYER);
+            return layerIndex == GetRequiredLayerIndex(FULL_BODY_LAYER)
+                || layerIndex == GetRequiredLayerIndex(UPPER_BODY_LAYER);
         }
 
         private void BeginRootMotionAction()
