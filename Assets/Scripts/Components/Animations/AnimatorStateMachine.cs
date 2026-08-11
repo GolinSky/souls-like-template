@@ -5,8 +5,6 @@ namespace SoulsLike.Entities.Character.Components.Animations
     public class AnimatorStateMachine : StateMachineBehaviour
     {
         [SerializeField] private StateMachineName stateMachineName;
-
-
         [SerializeField] private bool isReportingProgress;
         [SerializeField] private bool reportsQueueCheck;
         [SerializeField, Range(0.0f, 1.0f)] private float queueCheckNormalizedTime = 0.55f;

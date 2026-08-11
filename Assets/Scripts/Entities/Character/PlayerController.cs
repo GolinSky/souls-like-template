@@ -50,7 +50,7 @@ namespace SoulsLike.Entities.Character
 
         public void Tick()
         {
-            if (_currentGameState != GameState.Idle)
+            if (_currentGameState != GameState.Idle || _character.IsInputBlocked)
             {
                 return;
             }
@@ -61,7 +61,7 @@ namespace SoulsLike.Entities.Character
 
         public void LateTick()
         {
-            if (_currentGameState == GameState.Idle)
+            if (_currentGameState == GameState.Idle && !_character.IsInputBlocked)
             {
                 _cameraService.UpdateRotation(_inputService.CharacterActions.Look.ReadValue<Vector2>());
             }

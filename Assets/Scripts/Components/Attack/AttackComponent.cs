@@ -6,13 +6,13 @@ namespace SoulsLike.Entities.Character.Components.Attack
 {
     public sealed class AttackComponent : BaseComponent, IInitializable
     {
-        private const float CHARGED_HEAVY_HOLD_THRESHOLD = 0.5f;
+        private const float CHARGED_HEAVY_SPEED = 0.25f;
+        private const float NORMAL_ATTACK_SPEED = 1.0f;
         private const float CONTEXTUAL_ATTACK_WINDOW = 1.0f;
 
         private IComponentMediator _mediator;
         private StateMachineName _activeState = StateMachineName.None;
         private StateMachineName _contextualState = StateMachineName.None;
-        private ITimer _strongAttackHoldTimer;
         private ITimer _contextualAttackTimer;
         private bool _strongInputActive;
         private bool _suppressLightUntilRelease;
@@ -21,7 +21,6 @@ namespace SoulsLike.Entities.Character.Components.Attack
 
         public void Initialize()
         {
-            _strongAttackHoldTimer = TimerFactory.ConstructTimer(CHARGED_HEAVY_HOLD_THRESHOLD);
             _contextualAttackTimer = TimerFactory.ConstructTimer(CONTEXTUAL_ATTACK_WINDOW);
         }
 
@@ -74,13 +73,18 @@ namespace SoulsLike.Entities.Character.Components.Attack
             AttackType attackType = action.Type switch
             {
                 CharacterActionType.LightAttack => ResolveLightAttack(action.IsSprinting),
-                CharacterActionType.HeavyAttack => AttackType.HeavyAttack,
-                CharacterActionType.ChargedHeavyAttack => AttackType.ChargedHeavyAttack,
+                CharacterActionType.HeavyAttack => ResolveHeavyAttack(),
                 CharacterActionType.SpecialAttack => AttackType.SpecialAttack,
                 _ => throw new System.ArgumentOutOfRangeException(nameof(action.Type), action.Type, null)
             };
 
             ClearContextualAttack();
+            if (action.Type == CharacterActionType.HeavyAttack)
+            {
+                _mediator.SetChargedAttackSpeed(
+                    _strongInputActive ? CHARGED_HEAVY_SPEED : NORMAL_ATTACK_SPEED);
+            }
+
             _mediator.NotifyAttack(attackType);
         }
 
@@ -94,7 +98,7 @@ namespace SoulsLike.Entities.Character.Components.Attack
                     || state.StateMachineName == StateMachineName.BackStep)
                 {
                     _strongInputActive = false;
-                    _strongAttackHoldTimer.Reset();
+                    _mediator.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
                     ClearContextualAttack();
                 }
 
@@ -128,37 +132,31 @@ namespace SoulsLike.Entities.Character.Components.Attack
         {
             action = default;
 
+            if (_strongInputActive && actions.StrongAttack.WasReleasedThisFrame())
+            {
+                _strongInputActive = false;
+                _mediator.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
+            }
+
             if (actions.StrongAttack.WasPressedThisFrame())
             {
                 _strongInputActive = canBufferAttack;
                 _suppressLightUntilRelease = true;
                 if (_strongInputActive)
                 {
-                    _strongAttackHoldTimer
-                        .ChangeDuration(CHARGED_HEAVY_HOLD_THRESHOLD)
-                        .Start();
+                    action = BufferedCharacterAction.Attack(CharacterActionType.HeavyAttack, false);
+                    return true;
                 }
             }
 
-            if (_strongInputActive
-                && actions.StrongAttack.IsPressed()
-                && _strongAttackHoldTimer.IsComplete)
-            {
-                _strongInputActive = false;
-                _strongAttackHoldTimer.Reset();
-                action = BufferedCharacterAction.Attack(CharacterActionType.ChargedHeavyAttack, false);
-                return true;
-            }
-
-            if (_strongInputActive && actions.StrongAttack.WasReleasedThisFrame())
-            {
-                _strongInputActive = false;
-                _strongAttackHoldTimer.Reset();
-                action = BufferedCharacterAction.Attack(CharacterActionType.HeavyAttack, false);
-                return true;
-            }
-
             return false;
+        }
+
+        private AttackType ResolveHeavyAttack()
+        {
+            return _activeState == StateMachineName.HeavyAttack
+                ? AttackType.HeavyAttackAlt
+                : AttackType.HeavyAttack;
         }
 
         private AttackType ResolveLightAttack(bool isSprinting)

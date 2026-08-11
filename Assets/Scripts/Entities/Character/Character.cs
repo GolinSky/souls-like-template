@@ -42,6 +42,7 @@ namespace SoulsLike.Entities.Character
         public Transform CameraTarget => _cameraTarget;
         public InventoryComponent InventoryComponent => _inventoryComponent;
         public HealthStats HealthStats => _healthComponent.Stats;
+        public bool IsInputBlocked { get; private set; }
 
         [Inject]
         public void InjectDependencies(
@@ -64,6 +65,8 @@ namespace SoulsLike.Entities.Character
             _healthComponent.SetMediator(this);
             _sprintHoldTimer = TimerFactory.ConstructTimer(SPRINT_HOLD_THRESHOLD);
             Cursor.lockState = CursorLockMode.Locked;
+            IsInputBlocked = true;
+            _animatorComponent.TriggerSpawn();
         }
 
         public void UpdateBehaviour(ProjectInputActions.CharacterActions actions)
@@ -211,9 +214,26 @@ namespace SoulsLike.Entities.Character
             _animatorComponent.PlayAttack(attackType);
         }
 
+        public void SetChargedAttackSpeed(float speed)
+        {
+            _animatorComponent.SetChargedAttackSpeed(speed);
+        }
+
         public void NotifyAnimatorStateChanged(AnimatorStateMachineDto state)
         {
             _attackComponent.HandleAnimatorState(state);
+
+            if (state.StateMachineName == StateMachineName.Spawn)
+            {
+                if (state.State == StateMachineState.Enter)
+                {
+                    IsInputBlocked = true;
+                }
+                else if (state.State == StateMachineState.Exit)
+                {
+                    IsInputBlocked = false;
+                }
+            }
 
             if (state.State == StateMachineState.Enter)
             {

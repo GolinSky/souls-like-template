@@ -7,7 +7,7 @@ namespace SoulsLike.Entities.Character.Components.Attack
         RollingLightAttack = 2,
         SprintingAttack = 3,
         HeavyAttack = 4,
-        ChargedHeavyAttack = 5,
+        HeavyAttackAlt = 5,
         SpecialAttack = 6,
         BackStepAttack = 7
     }

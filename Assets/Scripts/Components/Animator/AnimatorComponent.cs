@@ -25,10 +25,12 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int AnimIdMoving = Animator.StringToHash("Moving");
         private static readonly int AnimIdSpeed = Animator.StringToHash("Speed");
         private static readonly int AnimIdLockOn = Animator.StringToHash("LockOn");
+        private static readonly int SpawnTrigger = Animator.StringToHash("Spawn");
         private static readonly int LightAttackTrigger = Animator.StringToHash("LightAttack");
         private static readonly int LightAttackAltTrigger = Animator.StringToHash("LightAttackAlt");
         private static readonly int HeavyAttackTrigger = Animator.StringToHash("HeavyAttack");
-        private static readonly int ChargedHeavyAttackTrigger = Animator.StringToHash("ChargedHeavyAttack");
+        private static readonly int HeavyAttackAltTrigger = Animator.StringToHash("ChargedHeavyAttack");
+        private static readonly int ChargedSpeedParameter = Animator.StringToHash("ChargedSpeed");
         private static readonly int RollAttackTrigger = Animator.StringToHash("RollAttack");
         private static readonly int BackStepAttackTrigger = Animator.StringToHash("BackStepAttack");
         private static readonly int RunAttackTrigger = Animator.StringToHash("RunAttack");
@@ -92,7 +94,7 @@ namespace SoulsLike.Entities.Character.Components
                 AttackType.RollingLightAttack => RollAttackTrigger,
                 AttackType.SprintingAttack => RunAttackTrigger,
                 AttackType.HeavyAttack => HeavyAttackTrigger,
-                AttackType.ChargedHeavyAttack => ChargedHeavyAttackTrigger,
+                AttackType.HeavyAttackAlt => HeavyAttackAltTrigger,
                 AttackType.SpecialAttack => SpecialAttackTrigger,
                 AttackType.BackStepAttack => BackStepAttackTrigger,
                 _ => throw new ArgumentOutOfRangeException(nameof(attackType), attackType, null)
@@ -100,6 +102,19 @@ namespace SoulsLike.Entities.Character.Components
 
             BeginRootMotionAction();
             animator.SetTrigger(triggerHash);
+        }
+
+        public void SetChargedAttackSpeed(float speed)
+        {
+            if (speed <= 0.0f)
+            {
+                throw new ArgumentOutOfRangeException(nameof(speed), speed, "Attack speed must be greater than zero.");
+            }
+
+            if (HasParameter(animator, ChargedSpeedParameter, AnimatorControllerParameterType.Float))
+            {
+                animator.SetFloat(ChargedSpeedParameter, speed);
+            }
         }
 
         public void UpdateState(AnimatorStateMachineDto state)
@@ -110,6 +125,11 @@ namespace SoulsLike.Entities.Character.Components
         public void SetJump()
         {
             animator.SetTrigger(AnimIdJump);
+        }
+
+        public void TriggerSpawn()
+        {
+            animator.SetTrigger(SpawnTrigger);
         }
         
         public void TriggerRoll(Vector2 direction)
@@ -203,6 +223,9 @@ namespace SoulsLike.Entities.Character.Components
                 if (source.IsParameterControlledByCurve(param.nameHash))
                     continue;
 
+                if (!HasParameter(target, param.nameHash, param.type))
+                    continue;
+
                 switch (param.type)
                 {
                     case AnimatorControllerParameterType.Float:
@@ -216,6 +239,22 @@ namespace SoulsLike.Entities.Character.Components
                         break;
                 }
             }
+        }
+
+        private static bool HasParameter(
+            Animator target,
+            int parameterHash,
+            AnimatorControllerParameterType parameterType)
+        {
+            foreach (AnimatorControllerParameter parameter in target.parameters)
+            {
+                if (parameter.nameHash == parameterHash && parameter.type == parameterType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void OnFootstep(AnimationEvent animationEvent)

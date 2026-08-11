@@ -17,6 +17,7 @@ namespace SoulsLike.Entities.Character
         void NotifyDamageApplied(DamageResult result);
         void NotifyDeath();
         void NotifyAttack(AttackType attackType);
+        void SetChargedAttackSpeed(float speed);
         void NotifyAnimatorStateChanged(AnimatorStateMachineDto state);
         void NotifyTurn(float turnAmount);
         void NotifyAnimationMovement(Vector3 deltaPosition, Quaternion deltaRotation);

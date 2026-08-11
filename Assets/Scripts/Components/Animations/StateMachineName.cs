@@ -13,7 +13,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
         SpecialAttack = 8,
         Roll = 9,
         BackStep = 10,
-
+        Spawn = 11, // appear animation on spawn
         None = -1
     }
 }

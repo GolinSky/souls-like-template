@@ -8,7 +8,6 @@ namespace SoulsLike.Entities.Character
         None = 0,
         LightAttack = 1,
         HeavyAttack = 2,
-        ChargedHeavyAttack = 3,
         SpecialAttack = 4,
         Roll = 5
     }
@@ -108,7 +107,6 @@ namespace SoulsLike.Entities.Character
             {
                 CharacterActionType.LightAttack => ATTACK_PRIORITY,
                 CharacterActionType.HeavyAttack => ATTACK_PRIORITY,
-                CharacterActionType.ChargedHeavyAttack => ATTACK_PRIORITY,
                 CharacterActionType.SpecialAttack => ATTACK_PRIORITY,
                 CharacterActionType.Roll => ROLL_PRIORITY,
                 _ => throw new System.ArgumentOutOfRangeException(nameof(type), type, null)
