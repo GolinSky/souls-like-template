@@ -96,9 +96,7 @@ namespace SoulsLike.Entities.Character
                 && !_animationMovementBlocked;
             bool canBufferAttack = _movementComponent.Model.Grounded
                 && !_manualMovementBlocked;
-            bool canBufferSpecialAttack = canBufferAttack
-                && !hasMovementInput
-                && !_movementComponent.IsMoving;
+            bool canBufferSpecialAttack = canBufferAttack;
 
             bool handModeSwitchStarted = false;
             if (actions.TwoHanded.WasPressedThisFrame()
