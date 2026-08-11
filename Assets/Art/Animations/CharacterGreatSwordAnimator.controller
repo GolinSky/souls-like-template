@@ -15,7 +15,7 @@ MonoBehaviour:
   stateMachineName: 10
   isReportingProgress: 0
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.8
+  queueCheckNormalizedTime: 0.5
 --- !u!1101 &-9121713599881378956
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -477,14 +477,6 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -6269344208544061273}
-  - {fileID: 702603020915687114}
-  - {fileID: 1861452157661936117}
-  - {fileID: 6603340446473913390}
-  - {fileID: -9121713599881378956}
-  - {fileID: 8189773886920277911}
-  - {fileID: 5675077740351971153}
-  - {fileID: -8173874656338380606}
-  - {fileID: 5799722563138614303}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
@@ -831,7 +823,7 @@ AnimatorStateTransition:
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
-  m_CanTransitionToSelf: 0
+  m_CanTransitionToSelf: 1
 --- !u!1101 &-900000000000000013
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -848,7 +840,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.09169817
   m_TransitionOffset: 0
-  m_ExitTime: 0.818868
+  m_ExitTime: 1
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -1511,7 +1503,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.09169817
   m_TransitionOffset: 0
-  m_ExitTime: 0.818868
+  m_ExitTime: 1
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -1569,7 +1561,7 @@ AnimatorStateTransition:
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
-  m_CanTransitionToSelf: 0
+  m_CanTransitionToSelf: 1
 --- !u!1101 &2252604812597447398
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1749,7 +1741,7 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 1100, y: -370, z: 0}
+  m_AnyStatePosition: {x: 10, y: 30, z: 0}
   m_EntryPosition: {x: 770, y: -560, z: 0}
   m_ExitPosition: {x: 0, y: -300, z: 0}
   m_ParentStateMachinePosition: {x: -30, y: 100, z: 0}
@@ -1823,9 +1815,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 9
-  isReportingProgress: 0
+  isReportingProgress: 1
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.8
+  queueCheckNormalizedTime: 0.5
 --- !u!1101 &5675077740351971153
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1973,14 +1965,6 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -4852253683775449498}
-  - {fileID: -6382058566989483842}
-  - {fileID: 757437470057060327}
-  - {fileID: -796100787890826776}
-  - {fileID: -7819258830800431194}
-  - {fileID: -4594492332950430809}
-  - {fileID: -4429842447046590591}
-  - {fileID: -5972851594815079778}
-  - {fileID: 7591262712289062360}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
@@ -2242,9 +2226,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 9
-  isReportingProgress: 0
+  isReportingProgress: 1
   reportsQueueCheck: 1
-  queueCheckNormalizedTime: 0.8
+  queueCheckNormalizedTime: 0.5
 --- !u!1102 &9018881206611671125
 AnimatorState:
   serializedVersion: 6
@@ -2307,6 +2291,14 @@ AnimatorStateMachine:
   - {fileID: -900000000000000014}
   - {fileID: -900000000000000023}
   - {fileID: 6497649162351002203}
+  - {fileID: -6382058566989483842}
+  - {fileID: 757437470057060327}
+  - {fileID: -796100787890826776}
+  - {fileID: -7819258830800431194}
+  - {fileID: -4594492332950430809}
+  - {fileID: -4429842447046590591}
+  - {fileID: -5972851594815079778}
+  - {fileID: 7591262712289062360}
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []

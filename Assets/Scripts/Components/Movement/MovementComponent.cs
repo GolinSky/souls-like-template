@@ -183,7 +183,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
             if (!rollRequested
                 || (_movementBlocked && !canInterruptAnimation)
                 || !Model.Grounded
-                || (_rollTimer.IsRunning && !_rollTimer.IsComplete))
+                || (_rollTimer.IsRunning
+                    && !_rollTimer.IsComplete
+                    && !canInterruptAnimation))
             {
                 return false;
             }

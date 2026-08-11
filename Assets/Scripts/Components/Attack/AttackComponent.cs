@@ -18,6 +18,7 @@ namespace SoulsLike.Entities.Character.Components.Attack
         private bool _suppressLightUntilRelease;
 
         public bool IsActionActive => _activeState != StateMachineName.None;
+        public bool IsRollActive => _activeState == StateMachineName.Roll;
 
         public void Initialize()
         {
@@ -43,19 +44,24 @@ namespace SoulsLike.Entities.Character.Components.Attack
                 _suppressLightUntilRelease = false;
             }
 
-            if (HandleStrongAttack(actions, canBufferAttack, out action))
+            if (!IsRollActive && HandleStrongAttack(actions, canBufferAttack, out action))
             {
                 return true;
             }
 
             if (actions.SpecialAbility.WasPressedThisFrame())
             {
-                if (canBufferSpecialAttack)
+                if (!IsRollActive && canBufferSpecialAttack)
                 {
                     action = BufferedCharacterAction.Attack(CharacterActionType.SpecialAttack, false);
                     return true;
                 }
 
+                return false;
+            }
+
+            if (IsRollActive && actions.StrongAttack.IsPressed())
+            {
                 return false;
             }
 
