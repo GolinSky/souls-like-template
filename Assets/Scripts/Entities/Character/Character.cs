@@ -17,7 +17,6 @@ namespace SoulsLike.Entities.Character
     public class Character : MonoBehaviour, IInitializable, IComponentMediator
     {
         private const float SPRINT_HOLD_THRESHOLD = 0.2f;
-        private const float ROLL_SELF_INTERRUPT_NORMALIZED_TIME = 0.5f;
 
         [SerializeField] private MovementComponent _movementComponent;
         [SerializeField] private AnimatorComponent _animatorComponent;
@@ -36,7 +35,6 @@ namespace SoulsLike.Entities.Character
         private ITimer _sprintHoldTimer;
         private bool _sprintHoldQualified;
         private bool _actionTransitionOpen;
-        private bool _rollSelfTransitionOpen;
         private bool _manualMovementBlocked;
         private bool _animationMovementBlocked;
         private bool _animationRootMotionEnabled;
@@ -96,8 +94,7 @@ namespace SoulsLike.Entities.Character
                 && !_manualMovementBlocked
                 && !_animationMovementBlocked;
             bool canBufferAttack = _movementComponent.Model.Grounded
-                && !_manualMovementBlocked
-                && (!_attackComponent.IsRollActive || _actionTransitionOpen);
+                && !_manualMovementBlocked;
             bool canBufferSpecialAttack = canBufferAttack
                 && !hasMovementInput
                 && !_movementComponent.IsMoving;
@@ -228,20 +225,6 @@ namespace SoulsLike.Entities.Character
             _attackComponent.HandleAnimatorState(state);
 
             Debug.Log($"{state.StateMachineName}:{state.State}");
-            if (state.StateMachineName == StateMachineName.Roll)
-            {
-                if (state.State == StateMachineState.Progress)
-                {
-                    _rollSelfTransitionOpen = state.StateInfo.normalizedTime
-                        >= ROLL_SELF_INTERRUPT_NORMALIZED_TIME;
-                }
-                else if (state.State == StateMachineState.Enter
-                    || state.State == StateMachineState.Exit)
-                {
-                    _rollSelfTransitionOpen = false;
-                }
-            }
-
         if (state.StateMachineName == StateMachineName.Spawn)
             {
                 if (state.State == StateMachineState.Enter)
@@ -260,7 +243,7 @@ namespace SoulsLike.Entities.Character
             }
             else if (state.State == StateMachineState.QueueCheck)
             {
-                Debug.Log("finished 80%");
+                Debug.Log("queue check");
                 _actionTransitionOpen = true;
                 TryExecuteBufferedAction(false, false, true);
             }
@@ -311,25 +294,25 @@ namespace SoulsLike.Entities.Character
             bool canUseSpecialAttack,
             bool canInterruptAnimation)
         {
-            if (!_actionBuffer.TryPeek(out BufferedCharacterAction action))
+            if (!_actionBuffer.TryPeek(
+                out BufferedCharacterAction action,
+                _attackComponent.IsActionActive))
             {
                 return;
             }
 
             if (action.Type == CharacterActionType.Roll)
             {
-                bool canInterruptWithRoll = canInterruptAnimation || _rollSelfTransitionOpen;
                 if (_movementComponent.TryStartRoll(
                     action.MoveInput,
                     action.CameraYaw,
                     true,
-                    canInterruptWithRoll))
+                    canInterruptAnimation))
                 {
                     _actionBuffer.Consume();
-                    if (canInterruptWithRoll)
+                    if (canInterruptAnimation)
                     {
                         _actionTransitionOpen = false;
-                        _rollSelfTransitionOpen = false;
                     }
                 }
 

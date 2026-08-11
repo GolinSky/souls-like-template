@@ -45,8 +45,6 @@ namespace SoulsLike.Entities.Character
     public sealed class CharacterActionBuffer
     {
         private const float BUFFER_DURATION = 1f;
-        private const int ATTACK_PRIORITY = 100;
-        private const int ROLL_PRIORITY = 200;
 
         private readonly ITimer _bufferTimer;
 
@@ -62,11 +60,6 @@ namespace SoulsLike.Entities.Character
         {
             ExpireAction();
 
-            if (_hasBufferedAction && GetPriority(action.Type) < GetPriority(_bufferedAction.Type))
-            {
-                return;
-            }
-
             _bufferedAction = action;
             _hasBufferedAction = true;
             _bufferTimer
@@ -74,9 +67,15 @@ namespace SoulsLike.Entities.Character
                 .Start();
         }
 
-        public bool TryPeek(out BufferedCharacterAction action)
+        public bool TryPeek(
+            out BufferedCharacterAction action,
+            bool retainWhileActionActive)
         {
-            ExpireAction();
+            if (!retainWhileActionActive)
+            {
+                ExpireAction();
+            }
+
             action = _bufferedAction;
             return _hasBufferedAction;
         }
@@ -99,18 +98,6 @@ namespace SoulsLike.Entities.Character
             {
                 Clear();
             }
-        }
-
-        private static int GetPriority(CharacterActionType type)
-        {
-            return type switch
-            {
-                CharacterActionType.LightAttack => ATTACK_PRIORITY,
-                CharacterActionType.HeavyAttack => ATTACK_PRIORITY,
-                CharacterActionType.SpecialAttack => ATTACK_PRIORITY,
-                CharacterActionType.Roll => ROLL_PRIORITY,
-                _ => throw new System.ArgumentOutOfRangeException(nameof(type), type, null)
-            };
         }
     }
 }
