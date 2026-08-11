@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ToDo/First Steps.md",
+                "file": "Arhitecture/PROJECT_ORGANIZATION.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "First Steps"
+              "title": "PROJECT_ORGANIZATION"
             }
           }
         ]
@@ -207,8 +207,8 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
-    "Arhitecture/PROJECT_ORGANIZATION.md",
     "ToDo/First Steps.md",
+    "Arhitecture/PROJECT_ORGANIZATION.md",
     "Welcome.md",
     "ToDo",
     "Untitled.md",
