@@ -1,6 +1,7 @@
 using System;
 using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Animations;
+using SoulsLike.Entities.Character.Components.Equipment;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -35,6 +36,10 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int BackStepAttackTrigger = Animator.StringToHash("BackStepAttack");
         private static readonly int RunAttackTrigger = Animator.StringToHash("RunAttack");
         private static readonly int SpecialAttackTrigger = Animator.StringToHash("SpecialAttack");
+        private static readonly int ChangeModeTrigger = Animator.StringToHash("ChangeMode");
+
+        private const string ONE_HANDED_LAYER = "OneHandedLayer";
+        private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         
         [SerializeField] private Animator animator;
         [SerializeField] private AnimatorStateMachineReceiver stateMachineReceiver;
@@ -146,6 +151,41 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetTrigger(AnimIdBackStep);
         }
 
+        public void TriggerHandModeSwitch()
+        {
+            animator.SetTrigger(ChangeModeTrigger);
+        }
+
+        public void SetHandMode(HandMode handMode)
+        {
+            int oneHandedLayerIndex = GetRequiredLayerIndex(ONE_HANDED_LAYER);
+            int twoHandedLayerIndex = GetRequiredLayerIndex(TWO_HANDED_LAYER);
+
+            switch (handMode)
+            {
+                case HandMode.OneHanded:
+                    animator.SetLayerWeight(oneHandedLayerIndex, 1.0f);
+                    animator.SetLayerWeight(twoHandedLayerIndex, 0.0f);
+                    break;
+                case HandMode.TwoHanded:
+                    animator.SetLayerWeight(oneHandedLayerIndex, 0.0f);
+                    animator.SetLayerWeight(twoHandedLayerIndex, 1.0f);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
+            }
+        }
+
+        public bool IsHandModeLayer(int layerIndex, HandMode handMode)
+        {
+            return handMode switch
+            {
+                HandMode.OneHanded => layerIndex == GetRequiredLayerIndex(ONE_HANDED_LAYER),
+                HandMode.TwoHanded => layerIndex == GetRequiredLayerIndex(TWO_HANDED_LAYER),
+                _ => throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null)
+            };
+        }
+
         private void BeginRootMotionAction()
         {
             rootMotionRelay.BeginRootMotionContract();
@@ -255,6 +295,18 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             return false;
+        }
+
+        private int GetRequiredLayerIndex(string layerName)
+        {
+            int layerIndex = animator.GetLayerIndex(layerName);
+            if (layerIndex < 0)
+            {
+                throw new InvalidOperationException(
+                    $"Animator '{animator.name}' requires the '{layerName}' layer.");
+            }
+
+            return layerIndex;
         }
 
         private void OnFootstep(AnimationEvent animationEvent)

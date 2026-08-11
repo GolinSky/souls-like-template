@@ -63,6 +63,7 @@ namespace SoulsLike.Entities.Character
             _attackComponent.SetMediator(this);
             _equipmentComponent.SetMediator(this);
             _healthComponent.SetMediator(this);
+            _animatorComponent.SetHandMode(_equipmentComponent.Model.ActiveHandMode);
             _sprintHoldTimer = TimerFactory.ConstructTimer(SPRINT_HOLD_THRESHOLD);
             Cursor.lockState = CursorLockMode.Locked;
             IsInputBlocked = true;
@@ -99,7 +100,17 @@ namespace SoulsLike.Entities.Character
                 && !hasMovementInput
                 && !_movementComponent.IsMoving;
 
-            if (_attackComponent.TryCaptureAction(
+            bool handModeSwitchStarted = false;
+            if (actions.TwoHanded.WasPressedThisFrame()
+                && canStartAttack
+                && !_attackComponent.IsActionActive
+                && _equipmentComponent.TryBeginHandModeSwitch())
+            {
+                handModeSwitchStarted = true;
+                _animatorComponent.TriggerHandModeSwitch();
+            }
+
+            if (!handModeSwitchStarted && _attackComponent.TryCaptureAction(
                 actions,
                 sprinting && hasMovementInput,
                 canBufferAttack,
@@ -109,15 +120,20 @@ namespace SoulsLike.Entities.Character
                 _actionBuffer.Buffer(attackAction);
             }
 
-            if (actions.Roll.WasReleasedThisFrame() && !_sprintHoldQualified)
+            if (!handModeSwitchStarted
+                && actions.Roll.WasReleasedThisFrame()
+                && !_sprintHoldQualified)
             {
                 _actionBuffer.Buffer(BufferedCharacterAction.Roll(moveInput, cameraYaw));
             }
 
-            TryExecuteBufferedAction(
-                canStartAttack,
-                canBufferSpecialAttack,
-                _actionTransitionOpen && _attackComponent.IsActionActive);
+            if (!handModeSwitchStarted)
+            {
+                TryExecuteBufferedAction(
+                    canStartAttack,
+                    canBufferSpecialAttack,
+                    _actionTransitionOpen && _attackComponent.IsActionActive);
+            }
 
             _movementComponent.Move(
                 moveInput,
@@ -223,6 +239,17 @@ namespace SoulsLike.Entities.Character
         public void NotifyAnimatorStateChanged(AnimatorStateMachineDto state)
         {
             _attackComponent.HandleAnimatorState(state);
+
+            if (state.StateMachineName == StateMachineName.HandModeSwitch
+                && state.State == StateMachineState.Exit
+                && _equipmentComponent.IsHandModeSwitchInProgress
+                && _animatorComponent.IsHandModeLayer(
+                    state.LayerIndex,
+                    _equipmentComponent.Model.ActiveHandMode))
+            {
+                _equipmentComponent.CompleteHandModeSwitch();
+                _animatorComponent.SetHandMode(_equipmentComponent.Model.ActiveHandMode);
+            }
 
             Debug.Log($"{state.StateMachineName}:{state.State}");
         if (state.StateMachineName == StateMachineName.Spawn)
