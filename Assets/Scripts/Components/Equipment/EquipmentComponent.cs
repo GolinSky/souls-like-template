@@ -16,6 +16,20 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         public bool IsHandModeSwitchInProgress => _isHandModeSwitchInProgress;
 
+        public HandMode PendingHandMode
+        {
+            get
+            {
+                if (!_isHandModeSwitchInProgress)
+                {
+                    throw new InvalidOperationException(
+                        "Cannot read a pending hand mode when no switch is in progress.");
+                }
+
+                return _pendingHandMode;
+            }
+        }
+
         public void Initialize()
         {
             if (_equipmentParent == null)

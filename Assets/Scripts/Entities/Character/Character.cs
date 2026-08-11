@@ -107,7 +107,7 @@ namespace SoulsLike.Entities.Character
                 && _equipmentComponent.TryBeginHandModeSwitch())
             {
                 handModeSwitchStarted = true;
-                _animatorComponent.TriggerHandModeSwitch();
+                _animatorComponent.TriggerHandModeSwitch(_equipmentComponent.PendingHandMode);
             }
 
             if (!handModeSwitchStarted && _attackComponent.TryCaptureAction(
@@ -240,12 +240,10 @@ namespace SoulsLike.Entities.Character
         {
             _attackComponent.HandleAnimatorState(state);
 
-            if (state.StateMachineName == StateMachineName.HandModeSwitch
-                && state.State == StateMachineState.Exit
+            if (state.StateMachineName == StateMachineName.HandModeSwitchComplete
+                && state.State == StateMachineState.Enter
                 && _equipmentComponent.IsHandModeSwitchInProgress
-                && _animatorComponent.IsHandModeLayer(
-                    state.LayerIndex,
-                    _equipmentComponent.Model.ActiveHandMode))
+                && _animatorComponent.IsHandModeSwitchLayer(state.LayerIndex))
             {
                 _equipmentComponent.CompleteHandModeSwitch();
                 _animatorComponent.SetHandMode(_equipmentComponent.Model.ActiveHandMode);

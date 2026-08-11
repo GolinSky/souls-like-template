@@ -37,9 +37,11 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int RunAttackTrigger = Animator.StringToHash("RunAttack");
         private static readonly int SpecialAttackTrigger = Animator.StringToHash("SpecialAttack");
         private static readonly int ChangeModeTrigger = Animator.StringToHash("ChangeMode");
+        private static readonly int HandModeTargetParameter = Animator.StringToHash("HandModeTarget");
 
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
+        private const string UPPER_BODY_LAYER = "UpperBody";
         
         [SerializeField] private Animator animator;
         [SerializeField] private AnimatorStateMachineReceiver stateMachineReceiver;
@@ -151,8 +153,18 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetTrigger(AnimIdBackStep);
         }
 
-        public void TriggerHandModeSwitch()
+        public void TriggerHandModeSwitch(HandMode handMode)
         {
+            switch (handMode)
+            {
+                case HandMode.OneHanded:
+                case HandMode.TwoHanded:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
+            }
+
+            animator.SetInteger(HandModeTargetParameter, (int)handMode);
             animator.SetTrigger(ChangeModeTrigger);
         }
 
@@ -176,14 +188,9 @@ namespace SoulsLike.Entities.Character.Components
             }
         }
 
-        public bool IsHandModeLayer(int layerIndex, HandMode handMode)
+        public bool IsHandModeSwitchLayer(int layerIndex)
         {
-            return handMode switch
-            {
-                HandMode.OneHanded => layerIndex == GetRequiredLayerIndex(ONE_HANDED_LAYER),
-                HandMode.TwoHanded => layerIndex == GetRequiredLayerIndex(TWO_HANDED_LAYER),
-                _ => throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null)
-            };
+            return layerIndex == GetRequiredLayerIndex(UPPER_BODY_LAYER);
         }
 
         private void BeginRootMotionAction()
