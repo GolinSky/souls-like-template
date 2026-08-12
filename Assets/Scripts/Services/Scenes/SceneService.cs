@@ -66,10 +66,7 @@ namespace SoulsLike.Services.Scenes
             
             TargetScene = sceneType;
             SceneReference targetScene = _sceneModel.GetScene(sceneType);
-            var sceneLoadOperations = new List<AsyncOperation>
-            {
-                StartSceneLoad(targetScene, LoadSceneMode.Additive)
-            };
+            var sceneLoadOperations = new List<AsyncOperation>();
 
             if (_sceneModel.TryGetDependencies(sceneType, out SceneReference[] dependencies))
             {
@@ -79,26 +76,11 @@ namespace SoulsLike.Services.Scenes
                 }
             }
 
-            bool allScenesLoaded = false;
-            while (!allScenesLoaded)
-            {
-                float totalProgress = 0f;
-                allScenesLoaded = true;
+            int totalSceneCount = sceneLoadOperations.Count + 1;
+            await WaitForSceneLoads(sceneLoadOperations, totalSceneCount);
 
-                foreach (AsyncOperation operation in sceneLoadOperations)
-                {
-                    totalProgress += operation.progress;
-                    allScenesLoaded &= operation.isDone;
-                }
-
-                if (allScenesLoaded)
-                {
-                    break;
-                }
-
-                OnProgressUpdated?.Invoke(totalProgress / sceneLoadOperations.Count);
-                await UniTask.Yield();
-            }
+            sceneLoadOperations.Add(StartSceneLoad(targetScene, LoadSceneMode.Additive));
+            await WaitForSceneLoads(sceneLoadOperations, totalSceneCount);
 
             OnProgressUpdated?.Invoke(1f);
 
@@ -121,6 +103,30 @@ namespace SoulsLike.Services.Scenes
 
             await unloadLoadingOperation.ToUniTask();
             OnSceneChanged?.Invoke(sceneType);
+        }
+
+        private async UniTask WaitForSceneLoads(IReadOnlyList<AsyncOperation> sceneLoadOperations, int totalSceneCount)
+        {
+            bool allScenesLoaded = false;
+            while (!allScenesLoaded)
+            {
+                float totalProgress = 0f;
+                allScenesLoaded = true;
+
+                foreach (AsyncOperation operation in sceneLoadOperations)
+                {
+                    totalProgress += operation.progress;
+                    allScenesLoaded &= operation.isDone;
+                }
+
+                if (allScenesLoaded)
+                {
+                    break;
+                }
+
+                OnProgressUpdated?.Invoke(totalProgress / totalSceneCount);
+                await UniTask.Yield();
+            }
         }
 
         private static AsyncOperation StartSceneLoad(SceneReference scene, LoadSceneMode loadSceneMode)
