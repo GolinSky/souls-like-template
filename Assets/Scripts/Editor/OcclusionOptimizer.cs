@@ -9,11 +9,14 @@ namespace SoulsLike.EditorTools
         [MenuItem("Tools/Optimize Scene Occlusion (Prevent Baking Crash)")]
         public static void OptimizeSceneOcclusion()
         {
+            OptimizeSceneOcclusion(3.5f);
+        }
+
+        public static void OptimizeSceneOcclusion(float minOccluderSizeMeters)
+        {
             var allGameObjects = Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
             int occluderRemovedCount = 0;
             int totalStaticCount = 0;
-
-            const float minOccluderSizeMeters = 3.5f;
 
             Undo.RegisterCompleteObjectUndo(allGameObjects, "Optimize Occlusion Static Flags");
 

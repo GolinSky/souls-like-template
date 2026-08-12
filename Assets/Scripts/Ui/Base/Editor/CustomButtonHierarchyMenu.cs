@@ -10,7 +10,7 @@ namespace UI.Base.Editor
     public static class CustomButtonHierarchyMenu
     {
         // Finds the first mapping asset in the project.
-        private static CustomButtonMapping TryGetMappingAsset()
+        public static CustomButtonMapping TryGetMappingAsset()
         {
             CustomButtonMapping mapping = null;
             string[] guids = AssetDatabase.FindAssets("t:CustomButtonMapping");
@@ -21,15 +21,10 @@ namespace UI.Base.Editor
             return mapping;
         }
 
-
-
-        private static void InstantiatePrefabInContext(GameObject prefab, MenuCommand menuCommand)
+        public static void InstantiatePrefabInContext(GameObject prefab, GameObject context = null)
         {
             // Attempt to instantiate the prefab preserving its exact structure
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-            
-            // Set parent/context based on the right-clicked object
-            GameObject context = menuCommand.context as GameObject;
             
             if (context == null || context.GetComponentInParent<Canvas>() == null)
             {
@@ -65,7 +60,13 @@ namespace UI.Base.Editor
             Selection.activeObject = instance;
         }
 
-        private static void CreateButton(MenuCommand menuCommand, InputTypes buttonType)
+        private static void InstantiatePrefabInContext(GameObject prefab, MenuCommand menuCommand)
+        {
+            GameObject context = menuCommand.context as GameObject;
+            InstantiatePrefabInContext(prefab, context);
+        }
+
+        public static void CreateButton(InputTypes buttonType, GameObject context = null)
         {
             CustomButtonMapping mapping = TryGetMappingAsset();
             if (mapping == null)
@@ -81,11 +82,16 @@ namespace UI.Base.Editor
                 return;
             }
 
-            InstantiatePrefabInContext(prefab.gameObject, menuCommand);
+            InstantiatePrefabInContext(prefab.gameObject, context);
         }
 
-        [MenuItem("GameObject/UI(CustomCanvas)/Buttons/Toggle", false, 12)]
-        private static void CreateToggleButton(MenuCommand menuCommand)
+        private static void CreateButton(MenuCommand menuCommand, InputTypes buttonType)
+        {
+            GameObject context = menuCommand.context as GameObject;
+            CreateButton(buttonType, context);
+        }
+
+        public static void CreateToggleButton(GameObject context = null)
         {
             CustomButtonMapping mapping = TryGetMappingAsset();
             if (mapping == null)
@@ -101,7 +107,13 @@ namespace UI.Base.Editor
                 return;
             }
 
-            InstantiatePrefabInContext(prefab.gameObject, menuCommand);
+            InstantiatePrefabInContext(prefab.gameObject, context);
+        }
+
+        [MenuItem("GameObject/UI(CustomCanvas)/Buttons/Toggle", false, 12)]
+        private static void CreateToggleButton(MenuCommand menuCommand)
+        {
+            CreateToggleButton(menuCommand.context as GameObject);
         }
 
         [MenuItem("GameObject/UI(CustomCanvas)/Buttons/Primary", false, 8)]
