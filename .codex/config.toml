@@ -1,8 +1,9 @@
 [mcp_servers.unityMCP]
-command = "C:\\Users\\golin\\.local\\bin\\uvx.exe"
-args = [ "--offline", "--from", "mcpforunityserver==10.1.2", "mcp-for-unity", "--transport", "stdio" ]
-startup_timeout_sec = 60
-env = { SystemRoot = "C:\\WINDOWS" }
+enabled = false
+
+[mcp_servers.unity-cli]
+command = "C:\\Users\\golin\\AppData\\Local\\Unity\\bin\\unity.exe"
+args = [ "pipeline", "mcp" ]
 
 [mcp_servers.obsidian]
 url = "http://127.0.0.1:27123/mcp/"
