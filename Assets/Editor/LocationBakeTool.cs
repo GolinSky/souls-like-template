@@ -63,12 +63,12 @@ namespace SoulsLike.EditorTools
             var settings = new LightingSettings();
             settings.name = "PCLightingSettings";
             settings.lightmapper = LightingSettings.Lightmapper.ProgressiveGPU;
-            settings.lightmapResolution = 32; // 32 texels/unit for High Quality PC
-            settings.directSampleCount = 64;
-            settings.indirectSampleCount = 256;
-            settings.environmentSampleCount = 256;
-            settings.maxBounces = 3;
-            settings.lightmapMaxSize = 2048;
+            settings.lightmapResolution = 10; // 10 texels/unit for High Quality PC Location
+            settings.directSampleCount = 32;
+            settings.indirectSampleCount = 128;
+            settings.environmentSampleCount = 128;
+            settings.maxBounces = 2;
+            settings.lightmapMaxSize = 1024;
             settings.lightmapCompression = LightmapCompression.NormalQuality;
             settings.ao = true;
             settings.aoMaxDistance = 2.0f;
@@ -348,6 +348,151 @@ namespace SoulsLike.EditorTools
             }
 
             WriteLog($"=== ALL 23 SCENES SUCCESSFULLY BAKED AND SAVED ===");
+        }
+
+        private const string BAKE_TEMP_LIGHTS_NAME = "_BakeCopiedLightsContainer";
+
+        [MenuItem("Tools/Bake/Inspect DefaultLocation Lights")]
+        public static void InspectDefaultLocationLights()
+        {
+            string mainScenePath = "Assets/Scenes/DefaultLocation/DefaultLocaiton.unity";
+            var scene = EditorSceneManager.OpenScene(mainScenePath, OpenSceneMode.Single);
+
+            GameObject dirLightGO = FindGameObjectByNameOrComponent("Directional Light", LightType.Directional);
+            GameObject pointLightsGO = GameObject.Find("PointLights");
+            GameObject spotLightsGO = GameObject.Find("SpotLights");
+
+            Debug.Log($"[LocationBakeTool] Directional Light GO: {(dirLightGO != null ? dirLightGO.name : "NOT FOUND")}");
+            Debug.Log($"[LocationBakeTool] PointLights Container GO: {(pointLightsGO != null ? pointLightsGO.name + $" ({pointLightsGO.GetComponentsInChildren<Light>(true).Length} lights)" : "NOT FOUND")}");
+            Debug.Log($"[LocationBakeTool] SpotLights Container GO: {(spotLightsGO != null ? spotLightsGO.name + $" ({spotLightsGO.GetComponentsInChildren<Light>(true).Length} lights)" : "NOT FOUND")}");
+        }
+
+        [MenuItem("Tools/Bake/Bake Subscenes With Copied Baked Lights")]
+        public static void BakeSubscenesWithCopiedLights()
+        {
+            string mainScenePath = "Assets/Scenes/DefaultLocation/DefaultLocaiton.unity";
+            WriteLog($"=== STARTING COPY-LIGHT BAKE FOR ALL SUBSCENES ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===");
+
+            // Step 1: Open main scene and collect target light GameObjects
+            var mainScene = EditorSceneManager.OpenScene(mainScenePath, OpenSceneMode.Single);
+
+            GameObject dirLightGO = FindGameObjectByNameOrComponent("Directional Light", LightType.Directional);
+            GameObject pointLightsGO = GameObject.Find("PointLights");
+            GameObject spotLightsGO = GameObject.Find("SpotLights");
+
+            List<GameObject> sourceLightRootGOs = new List<GameObject>();
+            if (dirLightGO != null) sourceLightRootGOs.Add(dirLightGO);
+            if (pointLightsGO != null) sourceLightRootGOs.Add(pointLightsGO);
+            if (spotLightsGO != null) sourceLightRootGOs.Add(spotLightsGO);
+
+            if (sourceLightRootGOs.Count == 0)
+            {
+                WriteLog("ERROR: No light objects (Directional Light, PointLights, SpotLights) found in DefaultLocaiton.unity!");
+                return;
+            }
+
+            // Duplicate source light roots into temporary prototypes
+            List<GameObject> tempPrototypes = new List<GameObject>();
+            foreach (var srcGO in sourceLightRootGOs)
+            {
+                var dup = UnityEngine.Object.Instantiate(srcGO);
+                dup.name = srcGO.name;
+                dup.hideFlags = HideFlags.DontSave;
+                tempPrototypes.Add(dup);
+            }
+
+            try
+            {
+                for (int i = 0; i < AllScenes.Length; i++)
+                {
+                    string scenePath = AllScenes[i];
+                    string sceneName = Path.GetFileName(scenePath);
+
+                    WriteLog($"[{i + 1}/{AllScenes.Length}] Processing scene {sceneName} for Light Baking...");
+                    DateTime startTime = DateTime.Now;
+
+                    var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+
+                    // Clean up any existing temp copied lights root in scene
+                    GameObject existingContainer = GameObject.Find(BAKE_TEMP_LIGHTS_NAME);
+                    if (existingContainer != null)
+                    {
+                        UnityEngine.Object.DestroyImmediate(existingContainer);
+                    }
+
+                    // Create new container for copied lights
+                    GameObject container = new GameObject(BAKE_TEMP_LIGHTS_NAME);
+
+                    // Copy each prototype hierarchy into the subscene
+                    foreach (var proto in tempPrototypes)
+                    {
+                        var copy = UnityEngine.Object.Instantiate(proto, container.transform);
+                        copy.name = proto.name;
+                        copy.hideFlags = HideFlags.None;
+                    }
+
+                    // Ensure container and all lights inside are ENABLED and set to BAKED
+                    container.SetActive(true);
+                    int lightsConfigured = 0;
+                    foreach (Transform child in container.GetComponentsInChildren<Transform>(true))
+                    {
+                        child.gameObject.SetActive(true);
+                    }
+
+                    foreach (var light in container.GetComponentsInChildren<Light>(true))
+                    {
+                        light.gameObject.SetActive(true);
+                        light.enabled = true;
+                        light.lightmapBakeType = LightmapBakeType.Baked;
+                        lightsConfigured++;
+                    }
+
+                    // Apply PCBakeSettings
+                    ApplyPCBakeSettings();
+
+                    WriteLog($"[{i + 1}/{AllScenes.Length}] Configured {lightsConfigured} copied lights (Enabled & Baked mode). Starting Lightmap Bake for {sceneName}...");
+
+                    // Perform Lightmap Bake synchronously
+                    bool bakeSuccess = Lightmapping.Bake();
+
+                    // Step 3: Disable copied lights in subscene so they are inactive at runtime
+                    container.SetActive(false);
+                    foreach (var light in container.GetComponentsInChildren<Light>(true))
+                    {
+                        light.enabled = false;
+                        light.gameObject.SetActive(false);
+                    }
+
+                    EditorSceneManager.MarkSceneDirty(scene);
+                    EditorSceneManager.SaveOpenScenes();
+                    AssetDatabase.SaveAssets();
+
+                    double durationSec = (DateTime.Now - startTime).TotalSeconds;
+                    WriteLog($"[{i + 1}/{AllScenes.Length}] Completed {sceneName} Lightmap Bake -> Success: {bakeSuccess} (Duration: {durationSec:F1}s). Copied lights DISABLED.");
+                }
+
+                WriteLog("=== ALL SUBSCENES SUCCESSFULLY BAKED WITH COPIED LIGHTS AND SAVED ===");
+            }
+            finally
+            {
+                // Clean up in-memory prototypes
+                foreach (var proto in tempPrototypes)
+                {
+                    if (proto != null) UnityEngine.Object.DestroyImmediate(proto);
+                }
+            }
+        }
+
+        private static GameObject FindGameObjectByNameOrComponent(string name, LightType type)
+        {
+            GameObject go = GameObject.Find(name);
+            if (go != null) return go;
+
+            foreach (var light in UnityEngine.Object.FindObjectsByType<Light>(FindObjectsSortMode.None))
+            {
+                if (light.type == type) return light.gameObject;
+            }
+            return null;
         }
 
         private static void WriteLog(string message)
