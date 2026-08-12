@@ -801,9 +801,9 @@ CharacterController:
   m_Height: 1.8
   m_Radius: 0.28
   m_SlopeLimit: 45
-  m_StepOffset: 0.25
-  m_SkinWidth: 0.02
-  m_MinMoveDistance: 0
+  m_StepOffset: 0.4
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0.92, z: 0}
 --- !u!114 &7434439003422819638
 MonoBehaviour:
@@ -857,6 +857,7 @@ MonoBehaviour:
   layerTransitionSpeed: 10
   turnSmoothSpeed: 10
   locomotionSmoothSpeed: 10
+  _chargedAttackSpeedSmoothTime: 0.15
   rootMotionRelay: {fileID: 8205946695653247523}
   <RightHandAnchor>k__BackingField: {fileID: 0}
 --- !u!114 &7195035746810287973

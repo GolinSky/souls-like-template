@@ -29,3 +29,74 @@ MonoBehaviour:
         m_SceneAsset: {fileID: 102900000, guid: e1e3c7572dbb88649b71d17c69aa6429, type: 3}
         m_IsDirty: 0
         m_ScenePath: Assets/Scenes/DefaultLocation/DefaultLocaiton.unity
+  dependencies:
+    keyValue:
+    - key: 2
+      value:
+        <Dependencies>k__BackingField:
+        - m_SceneAsset: {fileID: 102900000, guid: 4a31f7a9ff610d843b63cefee27ef26d, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Stairs.unity
+        - m_SceneAsset: {fileID: 102900000, guid: f320e52661ab77f4897a99f29e12076d, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/InteriorFloorBoxes.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 5257bb1d2366666498e50f6782df2a98, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/WoodDeco.unity
+        - m_SceneAsset: {fileID: 102900000, guid: dc754c3e0e085fc43a03ac832630f188, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/PillarSet2.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 1eef7fe1de73ef54781f15e4effa9769, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Chandeliers.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 9cb1bc5f5cbdbd044942175271b03c81, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/MergedCylinders.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 6208ecc761f7a1248815ec6ae6952320, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/SupportPillars.unity
+        - m_SceneAsset: {fileID: 102900000, guid: ca1993bff47a50c4381c62a15e3e5d04, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/SupportTowers.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 23d54d41c73419941b1b9de1255ea30e, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/CastleSideBridges.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 070d81d71c171d74a880807a861dc8b7, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/WallGargoyles.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 32c37a4ff34c24b48b9cda81f9d7f02f, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Railings.unity
+        - m_SceneAsset: {fileID: 102900000, guid: bcf4274dce0cb7440b6ee2c3f43796bc, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Walls.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 1c3ccefb1789a714b86e95f2879f17ae, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/StaticMeshActors.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 047f4d4a036ac07418eaa405b2c543a3, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Torches.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 63d521a9df2c89941a90bfe77fcb094b, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/GroundTorches.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 7eb259908adc7814db8cd0b4d1b65504, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Grasses.unity
+        - m_SceneAsset: {fileID: 102900000, guid: a0bf95a0ed7f0a448bcb170e1be34540, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Stones.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 9d6c139ea89b79e42964cb4f6caf154c, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/CandleHolder.unity
+        - m_SceneAsset: {fileID: 102900000, guid: c636e3ee4c5b3b4468eba50eb1bd584d, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Candles.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 2f74995d3115c7b4db0ef500f27cd461, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Rocks.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 7bbc06393e47f1d4fb97d8d203484a14, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Blueprints.unity
+        - m_SceneAsset: {fileID: 102900000, guid: 01b1414b241a0674e8e18174fd6d3626, type: 3}
+          m_IsDirty: 0
+          m_ScenePath: Assets/Scenes/DefaultLocation/Other.unity

@@ -9,7 +9,6 @@ namespace SoulsLike.Services.Scenes
         event Action<float> OnProgressUpdated;
         event Action<SceneType> OnSceneChanged;
         UniTask LoadScene(SceneType sceneType);
-        bool TryGetScenePath(SceneType sceneType, out string scenePath);
         SceneType GetSceneType(string scenePathOrName);
         SceneType CurrentScene { get; }
     }

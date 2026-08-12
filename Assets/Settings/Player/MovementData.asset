@@ -46,9 +46,9 @@ MonoBehaviour:
   <AirControl>k__BackingField: 0.25
   <AirAcceleration>k__BackingField: 8
   <JumpTimeout>k__BackingField: 0.5
-  <FallTimeout>k__BackingField: 0.15
+  <FallTimeout>k__BackingField: 0.2
   <Grounded>k__BackingField: 1
-  <GroundedOffset>k__BackingField: -0.14
+  <GroundedOffset>k__BackingField: -0.2
   <GroundedRadius>k__BackingField: 0.28
   <TerminalVelocity>k__BackingField: 0
   <GroundLayers>k__BackingField:
