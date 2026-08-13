@@ -63,8 +63,7 @@ namespace SoulsLike.Entities.Character.Components
         private float _targetSpeed;
         private float _currentSpeed;
         private float _targetTurnAmount;
-        private float _targetOneHandedLayerWeight;
-        private float _targetTwoHandedLayerWeight;
+        private HandMode _targetHandMode;
         private float _targetRiffleLayerWeight;
         private float _targetChargedAttackSpeed = 1.0f;
         private bool _aimTargetInitialized;
@@ -180,17 +179,21 @@ namespace SoulsLike.Entities.Character.Components
 
         public void TransitionHandMode(HandMode handMode)
         {
-            SetHandModeLayerTargets(handMode);
+            SetHandModeTarget(handMode);
         }
 
         public void SetHandMode(HandMode handMode)
         {
-            SetHandModeLayerTargets(handMode);
+            SetHandModeTarget(handMode);
             int oneHandedLayerIndex = GetRequiredLayerIndex(ONE_HANDED_LAYER);
             int twoHandedLayerIndex = GetRequiredLayerIndex(TWO_HANDED_LAYER);
 
-            animator.SetLayerWeight(oneHandedLayerIndex, _targetOneHandedLayerWeight);
-            animator.SetLayerWeight(twoHandedLayerIndex, _targetTwoHandedLayerWeight);
+            animator.SetLayerWeight(
+                oneHandedLayerIndex,
+                handMode == HandMode.OneHanded ? 1.0f : 0.0f);
+            animator.SetLayerWeight(
+                twoHandedLayerIndex,
+                handMode == HandMode.TwoHanded ? 1.0f : 0.0f);
         }
 
         private void BeginRootMotionAction()
@@ -249,21 +252,18 @@ namespace SoulsLike.Entities.Character.Components
             UpdateHandModeSwitchLayerWeights(isMoving, dt);
         }
 
-        private void SetHandModeLayerTargets(HandMode handMode)
+        private void SetHandModeTarget(HandMode handMode)
         {
             switch (handMode)
             {
                 case HandMode.OneHanded:
-                    _targetOneHandedLayerWeight = 1.0f;
-                    _targetTwoHandedLayerWeight = 0.0f;
-                    break;
                 case HandMode.TwoHanded:
-                    _targetOneHandedLayerWeight = 0.0f;
-                    _targetTwoHandedLayerWeight = 1.0f;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
             }
+
+            _targetHandMode = handMode;
         }
 
         private void UpdateHandModeLayerWeights(float deltaTime)
@@ -271,19 +271,21 @@ namespace SoulsLike.Entities.Character.Components
             int oneHandedLayerIndex = GetRequiredLayerIndex(ONE_HANDED_LAYER);
             int twoHandedLayerIndex = GetRequiredLayerIndex(TWO_HANDED_LAYER);
             float maxDelta = deltaTime * layerTransitionSpeed;
+            float targetTwoHandedLayerWeight = _targetHandMode == HandMode.TwoHanded ? 1.0f : 0.0f;
+            float twoHandedLayerWeight = Mathf.MoveTowards(
+                animator.GetLayerWeight(twoHandedLayerIndex),
+                targetTwoHandedLayerWeight,
+                maxDelta);
 
-            animator.SetLayerWeight(
-                oneHandedLayerIndex,
-                Mathf.MoveTowards(
-                    animator.GetLayerWeight(oneHandedLayerIndex),
-                    _targetOneHandedLayerWeight,
-                    maxDelta));
-            animator.SetLayerWeight(
-                twoHandedLayerIndex,
-                Mathf.MoveTowards(
-                    animator.GetLayerWeight(twoHandedLayerIndex),
-                    _targetTwoHandedLayerWeight,
-                    maxDelta));
+            // OneHandedLayer is below TwoHandedLayer. Keeping it fully weighted during the
+            // crossfade prevents the base pose from leaking in and shifting the hips vertically.
+            animator.SetLayerWeight(oneHandedLayerIndex, 1.0f);
+            animator.SetLayerWeight(twoHandedLayerIndex, twoHandedLayerWeight);
+
+            if (_targetHandMode == HandMode.TwoHanded && twoHandedLayerWeight >= 1.0f)
+            {
+                animator.SetLayerWeight(oneHandedLayerIndex, 0.0f);
+            }
         }
 
         private void UpdateHandModeSwitchLayerWeights(bool isMoving, float deltaTime)
