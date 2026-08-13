@@ -38,6 +38,8 @@ namespace SoulsLike.Entities.Character
         private bool _manualMovementBlocked;
         private bool _animationMovementBlocked;
         private bool _animationRootMotionEnabled;
+        private bool _handModeSwitchAnimationExited;
+        private int _handModeSwitchLayerIndex = -1;
 
         public Transform CameraTarget => _cameraTarget;
         public InventoryComponent InventoryComponent => _inventoryComponent;
@@ -71,6 +73,8 @@ namespace SoulsLike.Entities.Character
 
         public void UpdateBehaviour(ProjectInputActions.CharacterActions actions)
         {
+            TryCompleteHandModeSwitch();
+
             if (actions.Sprint.WasPressedThisFrame())
             {
                 _sprintHoldQualified = false;
@@ -106,9 +110,9 @@ namespace SoulsLike.Entities.Character
                 && _equipmentComponent.TryBeginHandModeSwitch())
             {
                 handModeSwitchStarted = true;
-                _animatorComponent.TriggerHandModeSwitch(
-                    _equipmentComponent.PendingHandMode,
-                    _movementComponent.IsMoving);
+                _handModeSwitchAnimationExited = false;
+                _handModeSwitchLayerIndex = -1;
+                _animatorComponent.TriggerHandModeSwitch(_equipmentComponent.PendingHandMode);
             }
 
             if (!handModeSwitchStarted && _attackComponent.TryCaptureAction(
@@ -241,13 +245,13 @@ namespace SoulsLike.Entities.Character
         {
             _attackComponent.HandleAnimatorState(state);
 
-            if (state.StateMachineName == StateMachineName.HandModeSwitchComplete
-                && state.State == StateMachineState.Enter
-                && _equipmentComponent.IsHandModeSwitchInProgress
-                && _animatorComponent.IsHandModeSwitchLayer(state.LayerIndex))
+            if (state.StateMachineName == StateMachineName.HandModeSwitch
+                && state.State == StateMachineState.Exit
+                && _animatorComponent.IsHandModeSwitchLayer(state.LayerIndex)
+                && _equipmentComponent.IsHandModeSwitchInProgress)
             {
-                _equipmentComponent.CompleteHandModeSwitch();
-                _animatorComponent.SetHandMode(_equipmentComponent.Model.ActiveHandMode);
+                _handModeSwitchAnimationExited = true;
+                _handModeSwitchLayerIndex = state.LayerIndex;
             }
 
             Debug.Log($"{state.StateMachineName}:{state.State}");
@@ -313,6 +317,21 @@ namespace SoulsLike.Entities.Character
         private void SynchronizeMovementBlock()
         {
             _movementComponent.SetMovementBlocked(_manualMovementBlocked || _animationMovementBlocked);
+        }
+
+        private void TryCompleteHandModeSwitch()
+        {
+            if (!_handModeSwitchAnimationExited
+                || !_equipmentComponent.IsHandModeSwitchInProgress
+                || !_animatorComponent.IsHandModeSwitchTransitionComplete(_handModeSwitchLayerIndex))
+            {
+                return;
+            }
+
+            _equipmentComponent.CompleteHandModeSwitch();
+            _animatorComponent.SetHandMode(_equipmentComponent.Model.ActiveHandMode);
+            _handModeSwitchAnimationExited = false;
+            _handModeSwitchLayerIndex = -1;
         }
 
         private void TryExecuteBufferedAction(

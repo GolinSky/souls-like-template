@@ -41,8 +41,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private bool? _lastNotifiedGrounded;
         private float _defaultControllerHeight;
 
-        public bool IsMoving => _horizontalVelocity.sqrMagnitude > INPUT_DEAD_ZONE * INPUT_DEAD_ZONE;
-
         public void Initialize()
         {
             _jumpTimer = TimerFactory.ConstructTimer(Model.JumpTimeout);

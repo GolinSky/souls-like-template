@@ -454,7 +454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4423baee491137e4dabf304ca5d9c20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
-  stateMachineName: 13
+  stateMachineName: 12
   isReportingProgress: 0
   _progressNormalizedTime: 0.5
   reportsQueueCheck: 0
@@ -714,9 +714,6 @@ AnimatorStateTransition:
     m_EventTreshold: 0
   - m_ConditionMode: 6
     m_ConditionEvent: HandModeTarget
-    m_EventTreshold: 0
-  - m_ConditionMode: 2
-    m_ConditionEvent: UseUpperBodyHandModeSwitch
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -8671138620857537411}
@@ -1264,7 +1261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4423baee491137e4dabf304ca5d9c20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
-  stateMachineName: 13
+  stateMachineName: 12
   isReportingProgress: 0
   _progressNormalizedTime: 0.5
   reportsQueueCheck: 0
@@ -1856,12 +1853,6 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: UseUpperBodyHandModeSwitch
-    m_Type: 4
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -2037,7 +2028,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4423baee491137e4dabf304ca5d9c20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
-  stateMachineName: 13
+  stateMachineName: 12
   isReportingProgress: 0
   _progressNormalizedTime: 0.5
   reportsQueueCheck: 0
@@ -2056,9 +2047,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: HandModeTarget
     m_EventTreshold: 1
-  - m_ConditionMode: 1
-    m_ConditionEvent: UseUpperBodyHandModeSwitch
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5105642480249566702}
   m_Solo: 0
@@ -2474,9 +2462,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: HandModeTarget
     m_EventTreshold: 0
-  - m_ConditionMode: 1
-    m_ConditionEvent: UseUpperBodyHandModeSwitch
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5301841724725864224}
   m_Solo: 0
@@ -2503,7 +2488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4423baee491137e4dabf304ca5d9c20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
-  stateMachineName: 13
+  stateMachineName: 12
   isReportingProgress: 0
   _progressNormalizedTime: 0.5
   reportsQueueCheck: 0
@@ -3243,9 +3228,6 @@ AnimatorStateTransition:
   - m_ConditionMode: 6
     m_ConditionEvent: HandModeTarget
     m_EventTreshold: 1
-  - m_ConditionMode: 2
-    m_ConditionEvent: UseUpperBodyHandModeSwitch
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6724603695796569902}
   m_Solo: 0

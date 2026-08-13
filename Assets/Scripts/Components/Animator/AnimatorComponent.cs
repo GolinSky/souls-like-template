@@ -39,8 +39,6 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int WeaponBlockParameter = Animator.StringToHash("WeaponBlock");
         private static readonly int ChangeModeTrigger = Animator.StringToHash("ChangeMode");
         private static readonly int HandModeTargetParameter = Animator.StringToHash("HandModeTarget");
-        private static readonly int UseUpperBodyHandModeSwitchParameter =
-            Animator.StringToHash("UseUpperBodyHandModeSwitch");
 
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
@@ -181,7 +179,7 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetBool(WeaponBlockParameter, isBlocking);
         }
 
-        public void TriggerHandModeSwitch(HandMode handMode, bool isMoving)
+        public void TriggerHandModeSwitch(HandMode handMode)
         {
             switch (handMode)
             {
@@ -192,8 +190,6 @@ namespace SoulsLike.Entities.Character.Components
                     throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
             }
 
-            UpdateHandModeSwitchLayerWeights(isMoving);
-            animator.SetBool(UseUpperBodyHandModeSwitchParameter, isMoving);
             animator.SetInteger(HandModeTargetParameter, (int)handMode);
             animator.SetTrigger(ChangeModeTrigger);
         }
@@ -222,6 +218,11 @@ namespace SoulsLike.Entities.Character.Components
         {
             return layerIndex == GetRequiredLayerIndex(FULL_BODY_LAYER)
                 || layerIndex == GetRequiredLayerIndex(UPPER_BODY_LAYER);
+        }
+
+        public bool IsHandModeSwitchTransitionComplete(int layerIndex)
+        {
+            return !animator.IsInTransition(layerIndex);
         }
 
         private void BeginRootMotionAction()
