@@ -37,9 +37,6 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int RunAttackTrigger = Animator.StringToHash("RunAttack");
         private static readonly int SpecialAttackTrigger = Animator.StringToHash("SpecialAttack");
         private static readonly int WeaponBlockParameter = Animator.StringToHash("WeaponBlock");
-        private static readonly int ChangeModeTrigger = Animator.StringToHash("ChangeMode");
-        private static readonly int HandModeTargetParameter = Animator.StringToHash("HandModeTarget");
-
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_LAYER = "UpperBody";
@@ -66,6 +63,8 @@ namespace SoulsLike.Entities.Character.Components
         private float _targetSpeed;
         private float _currentSpeed;
         private float _targetTurnAmount;
+        private float _targetOneHandedLayerWeight;
+        private float _targetTwoHandedLayerWeight;
         private float _targetRiffleLayerWeight;
         private float _targetChargedAttackSpeed = 1.0f;
         private bool _aimTargetInitialized;
@@ -179,50 +178,19 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetBool(WeaponBlockParameter, isBlocking);
         }
 
-        public void TriggerHandModeSwitch(HandMode handMode)
+        public void TransitionHandMode(HandMode handMode)
         {
-            switch (handMode)
-            {
-                case HandMode.OneHanded:
-                case HandMode.TwoHanded:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
-            }
-
-            animator.SetInteger(HandModeTargetParameter, (int)handMode);
-            animator.SetTrigger(ChangeModeTrigger);
+            SetHandModeLayerTargets(handMode);
         }
 
         public void SetHandMode(HandMode handMode)
         {
+            SetHandModeLayerTargets(handMode);
             int oneHandedLayerIndex = GetRequiredLayerIndex(ONE_HANDED_LAYER);
             int twoHandedLayerIndex = GetRequiredLayerIndex(TWO_HANDED_LAYER);
 
-            switch (handMode)
-            {
-                case HandMode.OneHanded:
-                    animator.SetLayerWeight(oneHandedLayerIndex, 1.0f);
-                    animator.SetLayerWeight(twoHandedLayerIndex, 0.0f);
-                    break;
-                case HandMode.TwoHanded:
-                    animator.SetLayerWeight(oneHandedLayerIndex, 0.0f);
-                    animator.SetLayerWeight(twoHandedLayerIndex, 1.0f);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
-            }
-        }
-
-        public bool IsHandModeSwitchLayer(int layerIndex)
-        {
-            return layerIndex == GetRequiredLayerIndex(FULL_BODY_LAYER)
-                || layerIndex == GetRequiredLayerIndex(UPPER_BODY_LAYER);
-        }
-
-        public bool IsHandModeSwitchTransitionComplete(int layerIndex)
-        {
-            return !animator.IsInTransition(layerIndex);
+            animator.SetLayerWeight(oneHandedLayerIndex, _targetOneHandedLayerWeight);
+            animator.SetLayerWeight(twoHandedLayerIndex, _targetTwoHandedLayerWeight);
         }
 
         private void BeginRootMotionAction()
@@ -277,13 +245,65 @@ namespace SoulsLike.Entities.Character.Components
 
             bool isMoving = _targetSpeed > 0.01f || _targetLocomotion.sqrMagnitude > 0.0001f || _currentLocomotion.sqrMagnitude > 0.0001f;
             animator.SetBool(AnimIdMoving, isMoving);
-            UpdateHandModeSwitchLayerWeights(isMoving);
+            UpdateHandModeLayerWeights(dt);
+            UpdateHandModeSwitchLayerWeights(isMoving, dt);
         }
 
-        private void UpdateHandModeSwitchLayerWeights(bool isMoving)
+        private void SetHandModeLayerTargets(HandMode handMode)
         {
-            animator.SetLayerWeight(GetRequiredLayerIndex(FULL_BODY_LAYER), isMoving ? 0.0f : 1.0f);
-            animator.SetLayerWeight(GetRequiredLayerIndex(UPPER_BODY_LAYER), isMoving ? 1.0f : 0.0f);
+            switch (handMode)
+            {
+                case HandMode.OneHanded:
+                    _targetOneHandedLayerWeight = 1.0f;
+                    _targetTwoHandedLayerWeight = 0.0f;
+                    break;
+                case HandMode.TwoHanded:
+                    _targetOneHandedLayerWeight = 0.0f;
+                    _targetTwoHandedLayerWeight = 1.0f;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
+            }
+        }
+
+        private void UpdateHandModeLayerWeights(float deltaTime)
+        {
+            int oneHandedLayerIndex = GetRequiredLayerIndex(ONE_HANDED_LAYER);
+            int twoHandedLayerIndex = GetRequiredLayerIndex(TWO_HANDED_LAYER);
+            float maxDelta = deltaTime * layerTransitionSpeed;
+
+            animator.SetLayerWeight(
+                oneHandedLayerIndex,
+                Mathf.MoveTowards(
+                    animator.GetLayerWeight(oneHandedLayerIndex),
+                    _targetOneHandedLayerWeight,
+                    maxDelta));
+            animator.SetLayerWeight(
+                twoHandedLayerIndex,
+                Mathf.MoveTowards(
+                    animator.GetLayerWeight(twoHandedLayerIndex),
+                    _targetTwoHandedLayerWeight,
+                    maxDelta));
+        }
+
+        private void UpdateHandModeSwitchLayerWeights(bool isMoving, float deltaTime)
+        {
+            int fullBodyLayerIndex = GetRequiredLayerIndex(FULL_BODY_LAYER);
+            int upperBodyLayerIndex = GetRequiredLayerIndex(UPPER_BODY_LAYER);
+            float maxDelta = deltaTime * layerTransitionSpeed;
+
+            animator.SetLayerWeight(
+                fullBodyLayerIndex,
+                Mathf.MoveTowards(
+                    animator.GetLayerWeight(fullBodyLayerIndex),
+                    isMoving ? 0.0f : 1.0f,
+                    maxDelta));
+            animator.SetLayerWeight(
+                upperBodyLayerIndex,
+                Mathf.MoveTowards(
+                    animator.GetLayerWeight(upperBodyLayerIndex),
+                    isMoving ? 1.0f : 0.0f,
+                    maxDelta));
         }
         
         public void SetTurn(float turnAmount)
