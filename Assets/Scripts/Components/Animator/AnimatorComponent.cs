@@ -36,6 +36,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int BackStepAttackTrigger = Animator.StringToHash("BackStepAttack");
         private static readonly int RunAttackTrigger = Animator.StringToHash("RunAttack");
         private static readonly int SpecialAttackTrigger = Animator.StringToHash("SpecialAttack");
+        private static readonly int WeaponBlockParameter = Animator.StringToHash("WeaponBlock");
         private static readonly int ChangeModeTrigger = Animator.StringToHash("ChangeMode");
         private static readonly int HandModeTargetParameter = Animator.StringToHash("HandModeTarget");
         private static readonly int UseUpperBodyHandModeSwitchParameter =
@@ -175,6 +176,11 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetTrigger(AnimIdBackStep);
         }
 
+        public void SetWeaponBlock(bool isBlocking)
+        {
+            animator.SetBool(WeaponBlockParameter, isBlocking);
+        }
+
         public void TriggerHandModeSwitch(HandMode handMode, bool isMoving)
         {
             switch (handMode)
@@ -186,8 +192,7 @@ namespace SoulsLike.Entities.Character.Components
                     throw new ArgumentOutOfRangeException(nameof(handMode), handMode, null);
             }
 
-            animator.SetLayerWeight(GetRequiredLayerIndex(FULL_BODY_LAYER), isMoving ? 0.0f : 1.0f);
-            animator.SetLayerWeight(GetRequiredLayerIndex(UPPER_BODY_LAYER), isMoving ? 1.0f : 0.0f);
+            UpdateHandModeSwitchLayerWeights(isMoving);
             animator.SetBool(UseUpperBodyHandModeSwitchParameter, isMoving);
             animator.SetInteger(HandModeTargetParameter, (int)handMode);
             animator.SetTrigger(ChangeModeTrigger);
@@ -271,6 +276,13 @@ namespace SoulsLike.Entities.Character.Components
 
             bool isMoving = _targetSpeed > 0.01f || _targetLocomotion.sqrMagnitude > 0.0001f || _currentLocomotion.sqrMagnitude > 0.0001f;
             animator.SetBool(AnimIdMoving, isMoving);
+            UpdateHandModeSwitchLayerWeights(isMoving);
+        }
+
+        private void UpdateHandModeSwitchLayerWeights(bool isMoving)
+        {
+            animator.SetLayerWeight(GetRequiredLayerIndex(FULL_BODY_LAYER), isMoving ? 0.0f : 1.0f);
+            animator.SetLayerWeight(GetRequiredLayerIndex(UPPER_BODY_LAYER), isMoving ? 1.0f : 0.0f);
         }
         
         public void SetTurn(float turnAmount)
