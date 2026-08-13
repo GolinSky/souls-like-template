@@ -8,6 +8,8 @@ using SoulsLike.Services.Scenes.Data;
 using SoulsLike.Services.Storage;
 using SoulsLike.Services.Layer;
 using SoulsLike.Services.Layer.Data;
+using SoulsLike.Ui.FpsCounter;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -15,6 +17,9 @@ namespace SoulsLike
 {
     public class ProjectScope: LifetimeScope
     {
+        [Header("UI Components")]
+        [SerializeField] private OnGuiFpsCounter fpsCounter;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.Register<GameOrchestrator>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
@@ -37,7 +42,16 @@ namespace SoulsLike
 
             builder.Register<AddressableAssetService>(Lifetime.Singleton).As<IAssetService>();
             builder.Register<StorageRegistry>(Lifetime.Singleton).As<IStorageRegistry>();
-            
+
+            // Wire OnGuiFpsCounter in ProjectScope
+            if (fpsCounter != null)
+            {
+                builder.RegisterComponent(fpsCounter);
+            }
+            else
+            {
+                builder.RegisterComponentOnNewGameObject<OnGuiFpsCounter>(Lifetime.Singleton, "OnGUI_FPS_Counter");
+            }
         }
     }
 }

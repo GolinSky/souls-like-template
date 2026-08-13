@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8694299840493463655}
   - component: {fileID: 8451061527009292363}
+  - component: {fileID: 6499634240981005766}
   m_Layer: 0
   m_Name: ProjectScope
   m_TagString: Untagged
@@ -48,3 +49,34 @@ MonoBehaviour:
     TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  fpsCounter: {fileID: 6499634240981005766}
+--- !u!114 &6499634240981005766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1766206799217575827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7904d4fac8701214589c2324b46bdf80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Ui.FpsCounter.OnGuiFpsCounter
+  showFpsCounter: 1
+  updateInterval: 0.5
+  showFrameTime: 1
+  showMinMax: 0
+  width: 160
+  height: 45
+  paddingRight: 12
+  paddingTop: 12
+  fontSize: 14
+  showBackground: 1
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.65}
+  useColorCoding: 1
+  targetFps: 60
+  lowFpsThreshold: 30
+  goodColor: {r: 0.2, g: 0.9, b: 0.2, a: 1}
+  warningColor: {r: 0.95, g: 0.8, b: 0.2, a: 1}
+  criticalColor: {r: 0.95, g: 0.25, b: 0.25, a: 1}
+  toggleKey: 94
