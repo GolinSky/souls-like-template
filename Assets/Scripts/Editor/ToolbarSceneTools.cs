@@ -4,209 +4,170 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.Toolbars;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
 
 namespace SoulsLike.EditorTools
 {
     /// <summary>
-    /// Unity Editor Toolbar extension that provides:
-    /// 1. Game Entry Play Button: Starts Play Mode using scene index 0 (MainMenu).
-    /// 2. Scenes Dropdown: Dynamic list of all scenes in Assets/Scenes to switch scenes quickly.
+    /// Unity 6 Main Toolbar extension providing:
+    /// 1. Play Game Button: Starts Play mode with scene index 0 (MainMenu).
+    /// 2. Scenes Dropdown: Dynamic selector for scenes in Assets/Scenes.
     /// </summary>
     [InitializeOnLoad]
     public static class ToolbarSceneTools
     {
-        private static ScriptableObject m_CurrentToolbar;
+        private const string PLAY_BUTTON_PATH = "SoulsLike/Play Game";
+        private const string SCENE_DROPDOWN_PATH = "SoulsLike/Scene Selector";
+        private const string SCENES_ROOT = "Assets/Scenes";
 
         static ToolbarSceneTools()
         {
-            EditorApplication.update -= OnUpdate;
-            EditorApplication.update += OnUpdate;
+            EditorSceneManager.activeSceneChangedInEditMode -= OnActiveSceneChanged;
+            EditorSceneManager.activeSceneChangedInEditMode += OnActiveSceneChanged;
+
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+
+            // Ensure elements are shown on main toolbar when domain reloads
+            EditorApplication.delayCall += EnsureToolbarElementsVisible;
         }
 
-        private static void OnPlayModeStateChanged(PlayModeStateChange state)
-        {
-            if (state == PlayModeStateChange.EnteredEditMode)
-            {
-                // Reset playModeStartScene so standard Unity play mode works normally when initiated elsewhere
-                EditorSceneManager.playModeStartScene = null;
-            }
-        }
-
-        private static void OnUpdate()
-        {
-            if (m_CurrentToolbar != null) return;
-
-            // Locate UnityEditor.Toolbar instance via reflection
-            Type toolbarType = typeof(Editor).Assembly.GetType("UnityEditor.Toolbar");
-            if (toolbarType == null) return;
-
-            UnityEngine.Object[] toolbars = Resources.FindObjectsOfTypeAll(toolbarType);
-            if (toolbars == null || toolbars.Length == 0) return;
-
-            m_CurrentToolbar = toolbars[0] as ScriptableObject;
-            if (m_CurrentToolbar == null) return;
-
-            FieldInfo rootField = toolbarType.GetField("m_Root", BindingFlags.NonPublic | BindingFlags.Instance);
-            if (rootField == null) return;
-
-            VisualElement mRoot = rootField.GetValue(m_CurrentToolbar) as VisualElement;
-            if (mRoot == null) return;
-
-            // Search for left alignment zone, right alignment zone, or fallback to root
-            VisualElement targetZone = mRoot.Q("ToolbarZoneLeftAlign")
-                                    ?? mRoot.Q(className: "unity-toolbar-zone-left")
-                                    ?? mRoot.Q("ToolbarZoneRightAlign")
-                                    ?? mRoot.Q(className: "unity-toolbar-zone-right")
-                                    ?? mRoot;
-
-            if (targetZone == null) return;
-
-            // Prevent duplicate toolbar elements injection
-            if (targetZone.Q("SoulsLikeToolbarTools") != null) return;
-
-            IMGUIContainer container = new IMGUIContainer(OnGUI)
-            {
-                name = "SoulsLikeToolbarTools",
-                style =
-                {
-                    flexDirection = FlexDirection.Row,
-                    alignItems = Align.Center,
-                    marginLeft = 8,
-                    marginRight = 8
-                }
-            };
-
-            targetZone.Add(container);
-        }
-
-        private static void OnGUI()
-        {
-            GUILayout.BeginHorizontal();
-
-            // 1. Game Entry Play Button (Starts index 0 / MainMenu)
-            DrawGameEntryPlayButton();
-
-            GUILayout.Space(6);
-
-            // 2. Scene Selector Dropdown (Assets/Scenes)
-            DrawSceneSelectionDropdown();
-
-            GUILayout.EndHorizontal();
-        }
-
-        /// <summary>
-        /// Renders the Game Entry Play button in the Unity Editor Toolbar.
-        /// </summary>
-        private static void DrawGameEntryPlayButton()
+        [MainToolbarElement(
+            PLAY_BUTTON_PATH,
+            defaultDockPosition = MainToolbarDockPosition.Middle,
+            defaultDockIndex = 0)]
+        private static MainToolbarButton CreatePlayButton()
         {
             bool isPlaying = EditorApplication.isPlaying;
+            string label = isPlaying ? "⏹ Stop Game" : "▶ Play MainMenu";
+            string tooltip = isPlaying ? "Stop Play Mode" : "Save current scene and start Game from scene index 0 (MainMenu)";
 
-            GUIContent playContent;
-            if (isPlaying)
-            {
-                playContent = new GUIContent(" ⏹ Stop Game", "Stop Play Mode");
-            }
-            else
-            {
-                playContent = new GUIContent(" ▶ Play MainMenu (0)", "Save current scene and start Game from scene index 0 (MainMenu)");
-            }
-
-            GUIStyle buttonStyle = new GUIStyle(EditorStyles.toolbarButton)
-            {
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter
-            };
-
-            Color originalColor = GUI.backgroundColor;
-            if (isPlaying)
-            {
-                GUI.backgroundColor = new Color(1.0f, 0.45f, 0.45f); // Red tint while playing
-            }
-            else
-            {
-                GUI.backgroundColor = new Color(0.4f, 0.9f, 0.55f); // Soft green tint for Play MainMenu
-            }
-
-            if (GUILayout.Button(playContent, buttonStyle, GUILayout.Height(22), GUILayout.MinWidth(140)))
-            {
-                if (isPlaying)
-                {
-                    EditorApplication.isPlaying = false;
-                }
-                else
-                {
-                    StartGameFromFirstScene();
-                }
-            }
-
-            GUI.backgroundColor = originalColor;
+            return new MainToolbarButton(
+                new MainToolbarContent(label, null, tooltip),
+                OnPlayButtonClicked);
         }
 
-        /// <summary>
-        /// Renders the Scenes Dropdown menu in the Unity Editor Toolbar.
-        /// </summary>
-        private static void DrawSceneSelectionDropdown()
+        [MainToolbarElement(
+            SCENE_DROPDOWN_PATH,
+            defaultDockPosition = MainToolbarDockPosition.Middle,
+            defaultDockIndex = 1)]
+        private static MainToolbarDropdown CreateSceneDropdown()
         {
-            Scene activeScene = EditorSceneManager.GetActiveScene();
-            string currentSceneName = string.IsNullOrEmpty(activeScene.name) ? "Untitled Scene" : activeScene.name;
+            var activeSceneName = SceneManager.GetActiveScene().name;
+            var label = string.IsNullOrEmpty(activeSceneName) ? "Select Scene" : $"🎬 {activeSceneName}";
+            var tooltip = "Open a scene from Assets/Scenes";
 
-            GUIContent dropdownContent = new GUIContent($" 🎬 Scene: {currentSceneName} ▾", "Select a scene from Assets/Scenes");
+            return new MainToolbarDropdown(
+                new MainToolbarContent(label, null, tooltip),
+                ShowSceneMenu);
+        }
 
-            Rect rect = GUILayoutUtility.GetRect(dropdownContent, EditorStyles.toolbarDropDown, GUILayout.Height(22), GUILayout.MinWidth(150));
+        [MenuItem("Tools/SoulsLike/Add Toolbar Controls to Main Toolbar", false, 1)]
+        public static void EnsureToolbarElementsVisible()
+        {
+            var showAllMethod = typeof(MainToolbar).GetMethod(
+                "ShowAll",
+                BindingFlags.NonPublic | BindingFlags.Static,
+                null,
+                new[] { typeof(string) },
+                null);
 
-            if (EditorGUI.DropdownButton(rect, dropdownContent, FocusType.Keyboard, EditorStyles.toolbarDropDown))
+            if (showAllMethod != null)
             {
-                GenericMenu menu = new GenericMenu();
-
-                // Locate all scene assets in Assets/Scenes
-                string[] guids = AssetDatabase.FindAssets("t:Scene", new[] { "Assets/Scenes" });
-
-                if (guids == null || guids.Length == 0)
+                try
                 {
-                    menu.AddDisabledItem(new GUIContent("No scenes found in Assets/Scenes"));
+                    showAllMethod.Invoke(null, new object[] { PLAY_BUTTON_PATH });
+                    showAllMethod.Invoke(null, new object[] { SCENE_DROPDOWN_PATH });
                 }
-                else
+                catch (Exception ex)
                 {
-                    var scenePaths = guids.Select(AssetDatabase.GUIDToAssetPath).Distinct().OrderBy(p => p).ToList();
-
-                    foreach (string scenePath in scenePaths)
-                    {
-                        // Clean display name (e.g. "MainMenu/MainMenu" or "DefaultLocation/Blueprints")
-                        string displayName = scenePath;
-                        if (displayName.StartsWith("Assets/Scenes/"))
-                        {
-                            displayName = displayName.Substring("Assets/Scenes/".Length);
-                        }
-                        if (displayName.EndsWith(".unity"))
-                        {
-                            displayName = displayName.Substring(0, displayName.Length - ".unity".Length);
-                        }
-
-                        bool isActive = string.Equals(activeScene.path, scenePath, StringComparison.OrdinalIgnoreCase);
-
-                        string targetPath = scenePath;
-                        menu.AddItem(new GUIContent(displayName), isActive, () =>
-                        {
-                            SwitchToScene(targetPath);
-                        });
-                    }
+                    Debug.LogWarning($"[ToolbarSceneTools] Failed to auto-enable toolbar elements: {ex.Message}");
                 }
-
-                menu.AddSeparator("");
-                menu.AddItem(new GUIContent("Ping Current Scene in Project"), false, PingCurrentScene);
-
-                menu.DropDown(rect);
             }
         }
 
-        /// <summary>
-        /// Launches the game starting from Scene Index 0 (MainMenu).
-        /// </summary>
+        private static void OnPlayButtonClicked()
+        {
+            if (EditorApplication.isPlaying)
+            {
+                EditorApplication.isPlaying = false;
+            }
+            else
+            {
+                StartGameFromFirstScene();
+            }
+        }
+
+        private static void ShowSceneMenu(Rect dropdownRect)
+        {
+            var menu = new GenericMenu();
+
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                menu.AddDisabledItem(new GUIContent("Exit Play Mode to switch scenes"));
+                menu.DropDown(dropdownRect);
+                return;
+            }
+
+            var scenePaths = AssetDatabase.FindAssets("t:Scene", new[] { SCENES_ROOT })
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Where(path => path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
+                .Distinct()
+                .OrderBy(GetSceneLabel, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (scenePaths.Length == 0)
+            {
+                menu.AddDisabledItem(new GUIContent("No scenes found in Assets/Scenes"));
+            }
+            else
+            {
+                var activeScenePath = SceneManager.GetActiveScene().path;
+
+                foreach (var scenePath in scenePaths)
+                {
+                    menu.AddItem(
+                        new GUIContent(GetSceneLabel(scenePath)),
+                        string.Equals(scenePath, activeScenePath, StringComparison.OrdinalIgnoreCase),
+                        OpenScene,
+                        scenePath);
+                }
+            }
+
+            menu.AddSeparator("");
+            menu.AddItem(new GUIContent("Ping Current Scene in Project"), false, PingCurrentScene);
+
+            menu.DropDown(dropdownRect);
+        }
+
+        private static string GetSceneLabel(string scenePath)
+        {
+            if (scenePath.StartsWith(SCENES_ROOT + "/"))
+            {
+                var relativePath = scenePath.Substring(SCENES_ROOT.Length + 1);
+                return Path.ChangeExtension(relativePath, null).Replace("/", " > ");
+            }
+            return Path.GetFileNameWithoutExtension(scenePath);
+        }
+
+        private static void OpenScene(object scenePathValue)
+        {
+            var scenePath = scenePathValue as string;
+            if (string.IsNullOrEmpty(scenePath)) return;
+
+            if (string.Equals(scenePath, SceneManager.GetActiveScene().path, StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            {
+                EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            }
+        }
+
         [MenuItem("SoulsLike/Play Game (MainMenu - Index 0) _F5", false, 100)]
         public static void StartGameFromFirstScene()
         {
@@ -216,7 +177,6 @@ namespace SoulsLike.EditorTools
                 return;
             }
 
-            // Prompt user to save modified scenes
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
                 return;
@@ -242,35 +202,22 @@ namespace SoulsLike.EditorTools
             EditorApplication.isPlaying = true;
         }
 
-        /// <summary>
-        /// Switches to the specified scene path after prompting to save modifications.
-        /// </summary>
-        public static void SwitchToScene(string scenePath)
+        private static void OnActiveSceneChanged(Scene previousScene, Scene newScene)
         {
-            if (EditorApplication.isPlaying)
-            {
-                Debug.LogWarning("[ToolbarSceneTools] Cannot switch scenes while in Play Mode. Exit Play Mode first.");
-                return;
-            }
-
-            Scene activeScene = EditorSceneManager.GetActiveScene();
-            if (string.Equals(activeScene.path, scenePath, StringComparison.OrdinalIgnoreCase))
-            {
-                return;
-            }
-
-            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
-            {
-                return;
-            }
-
-            Debug.Log($"[ToolbarSceneTools] Opening scene: {scenePath}");
-            EditorSceneManager.OpenScene(scenePath);
+            MainToolbar.Refresh(PLAY_BUTTON_PATH);
+            MainToolbar.Refresh(SCENE_DROPDOWN_PATH);
         }
 
-        /// <summary>
-        /// Selects and pings the active scene file in the Project window.
-        /// </summary>
+        private static void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.EnteredEditMode)
+            {
+                EditorSceneManager.playModeStartScene = null;
+            }
+            MainToolbar.Refresh(PLAY_BUTTON_PATH);
+            MainToolbar.Refresh(SCENE_DROPDOWN_PATH);
+        }
+
         private static void PingCurrentScene()
         {
             Scene activeScene = EditorSceneManager.GetActiveScene();
@@ -284,12 +231,8 @@ namespace SoulsLike.EditorTools
             }
         }
 
-        /// <summary>
-        /// Retrieves scene index 0 path from EditorBuildSettings or fallbacks to MainMenu path.
-        /// </summary>
         private static string GetFirstScenePath()
         {
-            // 1. Try index 0 from Build Settings
             if (EditorBuildSettings.scenes != null && EditorBuildSettings.scenes.Length > 0)
             {
                 string buildScenePath = EditorBuildSettings.scenes[0].path;
@@ -299,14 +242,12 @@ namespace SoulsLike.EditorTools
                 }
             }
 
-            // 2. Default path Assets/Scenes/MainMenu/MainMenu.unity
             string defaultMainMenuPath = "Assets/Scenes/MainMenu/MainMenu.unity";
             if (File.Exists(defaultMainMenuPath))
             {
                 return defaultMainMenuPath;
             }
 
-            // 3. Find any scene named MainMenu under Assets/
             string[] guids = AssetDatabase.FindAssets("MainMenu t:Scene");
             if (guids.Length > 0)
             {
