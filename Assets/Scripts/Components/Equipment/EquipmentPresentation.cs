@@ -9,6 +9,10 @@ namespace SoulsLike.Entities.Character.Components.Equipment
         [SerializeField] private Transform rightHandAnchor;
         [SerializeField] private Transform leftHandAnchor;
 
+        private static readonly Vector3 _leftHandSwordLocalPosition = new(0f, 0.11f, 0.039f);
+        private static readonly Quaternion _leftHandSwordLocalRotation =
+            new(-0.49997228f, -0.4999985f, -0.5000271f, 0.5000021f);
+
         private GameObject _rightInstance;
         private GameObject _leftInstance;
 
@@ -31,7 +35,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
             if (loadout.EffectiveRight != null)
             {
-                _rightInstance = CreatePresentation(loadout.EffectiveRight, rightHandAnchor);
+                _rightInstance = CreatePresentation(loadout.EffectiveRight, rightHandAnchor, false);
                 if (loadout.EffectiveRight.Definition is WeaponDefinition rightWeapon)
                 {
                     ActiveRightWeaponRuntime = RequireWeaponRuntime(
@@ -43,7 +47,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
             if (loadout.EffectiveLeft != null)
             {
-                _leftInstance = CreatePresentation(loadout.EffectiveLeft, leftHandAnchor);
+                _leftInstance = CreatePresentation(loadout.EffectiveLeft, leftHandAnchor, true);
                 if (loadout.EffectiveLeft.Definition is WeaponDefinition leftWeapon)
                 {
                     RequireWeaponRuntime(_leftInstance, loadout.EffectiveLeft, leftWeapon);
@@ -53,7 +57,8 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         private static GameObject CreatePresentation(
             EquippedItemContext context,
-            Transform anchor)
+            Transform anchor,
+            bool isLeftHand)
         {
             GameObject prefab = context.Definition switch
             {
@@ -71,6 +76,12 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             else
             {
                 instance = Instantiate(prefab, anchor, false);
+            }
+
+            if (isLeftHand && context.Definition is WeaponDefinition)
+            {
+                instance.transform.localPosition = _leftHandSwordLocalPosition;
+                instance.transform.localRotation = _leftHandSwordLocalRotation;
             }
 
             return instance;
