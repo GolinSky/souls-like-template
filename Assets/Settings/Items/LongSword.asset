@@ -22,7 +22,7 @@ MonoBehaviour:
   equipmentGroups: 01000000
   animationProfile: {fileID: 11400000, guid: 76b984e4dd89c4141ad3097fa1ae36de, type: 2}
   combatProfile: {fileID: 11400000, guid: 4922315f981898a4c8bd76e1906b672f, type: 2}
-  equippedPrefab: {fileID: 0}
+  equippedPrefab: {fileID: 6567348171521726959, guid: 496566ce87c33db47b6fd4176d192c6a, type: 3}
   canTwoHand: 1
   physicalAttack: 110
   magicAttack: 0

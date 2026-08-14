@@ -10,16 +10,12 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 {
     public sealed class EquipmentComponent : BaseComponent<EquipmentModel>, IInitializable, IDisposable
     {
-        [SerializeField] private Transform _equipmentParent;
-
         private IComponentMediator _componentMediator;
         private InventoryComponent _inventory;
         private ItemDatabase _itemDatabase;
 
         public event Action<EquipmentSlotChange> SlotChanged;
         public event Action<EquipmentLoadout> LoadoutChanged;
-
-        public Transform EquipmentParent => _equipmentParent;
 
         //todo: avoid other component dependency (InventoryComponent)
         [Inject]
@@ -31,11 +27,6 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         public void Initialize()
         {
-            if (_equipmentParent == null)
-            {
-                throw new InvalidOperationException($"{name} requires an equipment parent.");
-            }
-
             _inventory.Model.Changed += HandleInventoryChanged;
         }
 

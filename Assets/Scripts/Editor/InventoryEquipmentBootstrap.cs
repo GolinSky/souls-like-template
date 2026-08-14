@@ -214,7 +214,6 @@ namespace SoulsLike.Editor
             try
             {
                 Character character = RequireComponent<Character>(root);
-                EquipmentComponent equipment = RequireComponent<EquipmentComponent>(root);
                 AnimatorComponent animatorComponent = RequireComponent<AnimatorComponent>(root);
                 EquipmentPresentation presentation = root.GetComponent<EquipmentPresentation>();
                 if (presentation == null)
@@ -222,18 +221,16 @@ namespace SoulsLike.Editor
                     presentation = root.AddComponent<EquipmentPresentation>();
                 }
 
-                var equipmentSerialized = new SerializedObject(equipment);
-                Transform equipmentParent = RequireProperty(
-                    equipmentSerialized,
-                    "_equipmentParent").objectReferenceValue as Transform;
-                if (equipmentParent == null)
-                {
-                    throw new InvalidOperationException("Character prefab requires EquipmentParent.");
-                }
+                Transform rightHandAnchor = FindRequiredChild(
+                    root.transform,
+                    "mixamorig:RightHand");
+                Transform leftHandAnchor = FindRequiredChild(
+                    root.transform,
+                    "mixamorig:LeftHand");
 
                 var presentationSerialized = new SerializedObject(presentation);
-                SetObject(presentationSerialized, "_rightHandAnchor", equipmentParent, false);
-                SetObject(presentationSerialized, "_leftHandAnchor", equipmentParent);
+                SetObject(presentationSerialized, "rightHandAnchor", rightHandAnchor, false);
+                SetObject(presentationSerialized, "leftHandAnchor", leftHandAnchor);
 
                 var characterSerialized = new SerializedObject(character);
                 SetObject(characterSerialized, "_equipmentPresentation", presentation, false);
@@ -243,7 +240,7 @@ namespace SoulsLike.Editor
                 SetObject(
                     animatorSerialized,
                     "<RightHandAnchor>k__BackingField",
-                    equipmentParent,
+                    rightHandAnchor,
                     false);
                 Animator animator = RequireProperty(
                     animatorSerialized,

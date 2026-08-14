@@ -6,20 +6,21 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 {
     public sealed class EquipmentPresentation : MonoBehaviour
     {
-        [SerializeField] private Transform _rightHandAnchor;
-        [SerializeField] private Transform _leftHandAnchor;
+        [SerializeField] private Transform rightHandAnchor;
+        [SerializeField] private Transform leftHandAnchor;
 
         private GameObject _rightInstance;
         private GameObject _leftInstance;
 
         public WeaponRuntime ActiveRightWeaponRuntime { get; private set; }
 
-        public void Configure(Transform rightHandAnchor, Transform leftHandAnchor)
+        private void Awake()
         {
-            _rightHandAnchor = rightHandAnchor
-                ?? throw new ArgumentNullException(nameof(rightHandAnchor));
-            _leftHandAnchor = leftHandAnchor
-                ?? throw new ArgumentNullException(nameof(leftHandAnchor));
+            if (rightHandAnchor == null || leftHandAnchor == null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(EquipmentPresentation)} '{name}' requires right and left hand anchors.");
+            }
         }
 
         public void ApplyLoadout(EquipmentLoadout loadout)
@@ -30,7 +31,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
             if (loadout.EffectiveRight != null)
             {
-                _rightInstance = CreatePresentation(loadout.EffectiveRight, _rightHandAnchor);
+                _rightInstance = CreatePresentation(loadout.EffectiveRight, rightHandAnchor);
                 if (loadout.EffectiveRight.Definition is WeaponDefinition rightWeapon)
                 {
                     ActiveRightWeaponRuntime = RequireWeaponRuntime(
@@ -42,7 +43,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
             if (loadout.EffectiveLeft != null)
             {
-                _leftInstance = CreatePresentation(loadout.EffectiveLeft, _leftHandAnchor);
+                _leftInstance = CreatePresentation(loadout.EffectiveLeft, leftHandAnchor);
                 if (loadout.EffectiveLeft.Definition is WeaponDefinition leftWeapon)
                 {
                     RequireWeaponRuntime(_leftInstance, loadout.EffectiveLeft, leftWeapon);

@@ -43,15 +43,8 @@ namespace SoulsLike.Entities.Character
             AttackComponent attackComponent = GetRequiredComponent<AttackComponent>(instance);
             MovementComponent movementComponent = GetRequiredComponent<MovementComponent>(instance);
             EquipmentComponent equipmentComponent = GetRequiredComponent<EquipmentComponent>(instance);
-            EquipmentPresentation equipmentPresentation = instance.GetComponent<EquipmentPresentation>();
-            if (equipmentPresentation == null)
-            {
-                equipmentPresentation = instance.AddComponent<EquipmentPresentation>();
-            }
-
-            equipmentPresentation.Configure(
-                equipmentComponent.EquipmentParent,
-                equipmentComponent.EquipmentParent);
+            EquipmentPresentation equipmentPresentation =
+                GetRequiredComponent<EquipmentPresentation>(instance);
             character.SetEquipmentPresentation(equipmentPresentation);
             InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
