@@ -353,7 +353,11 @@ namespace SoulsLike.Entities.Character
             AnimationProfile animationProfile = weaponDefinition == null
                 ? null
                 : weaponDefinition.AnimationProfile;
-            _animatorComponent.ApplyAnimationProfile(animationProfile);
+            //todo:  check if loadout empty - avoid null 
+            if (animationProfile != null)
+            {
+                _animatorComponent.ApplyAnimationProfile(animationProfile);
+            }
             _animatorComponent.TransitionHandMode(loadout.HandMode);
             _attackComponent.SetActiveWeapon(
                 weaponDefinition,
