@@ -198,6 +198,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         private void PublishLoadoutChanged()
         {
+            NormalizeHandMode();
             EquipmentLoadout loadout = BuildLoadout();
             LoadoutChanged?.Invoke(loadout);
             if (_componentMediator == null)
@@ -207,6 +208,23 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             }
 
             _componentMediator.NotifyEquipmentLoadoutChanged(loadout);
+        }
+
+        private void NormalizeHandMode()
+        {
+            if (Model.ActiveHandMode != HandMode.TwoHanded)
+            {
+                return;
+            }
+
+            EquippedItemContext right = ResolveActiveItem(
+                EquipmentSlotGroup.RightHandArmament);
+            if (right?.Definition is WeaponDefinition { CanTwoHand: true })
+            {
+                return;
+            }
+
+            Model.SetHandMode(HandMode.OneHanded);
         }
 
         private void HandleInventoryChanged(InventoryChange change)
