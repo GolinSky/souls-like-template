@@ -12,42 +12,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e87dcfd897b3264b920d5be9965d813, type: 3}
   m_Name: LongSword
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.WeaponDefinition
-  _itemId: 1
-  _displayName: Long Sword
-  _description: A dependable straight sword suited to one- or two-handed combat.
-  _loreDescription: A plain sword carried by soldiers across the realm.
-  _icon: {fileID: 21300000, guid: 4c64b7a6d876a4146880587b20cfc4c6, type: 3}
-  _weight: 3.5
-  _maxStack: 1
-  _equipmentGroups: 01000000
-  _animationProfile: {fileID: 11400000, guid: 76b984e4dd89c4141ad3097fa1ae36de, type: 2}
-  _combatProfile: {fileID: 11400000, guid: 4922315f981898a4c8bd76e1906b672f, type: 2}
-  _equippedPrefab: {fileID: 0}
-  _canTwoHand: 1
-  _physicalAttack: 110
-  _magicAttack: 0
-  _fireAttack: 0
-  _lightningAttack: 0
-  _holyAttack: 0
-  _critical: 100
-  _physicalGuard: 0
-  _magicGuard: 0
-  _fireGuard: 0
-  _lightningGuard: 0
-  _holyGuard: 0
-  _guardBoost: 0
-  _requirements:
+  itemId: 1
+  displayName: Long Sword
+  description: A dependable straight sword suited to one- or two-handed combat.
+  loreDescription: A plain sword carried by soldiers across the realm.
+  icon: {fileID: 21300000, guid: 4c64b7a6d876a4146880587b20cfc4c6, type: 3}
+  weight: 3.5
+  maxStack: 1
+  equipmentGroups: 01000000
+  animationProfile: {fileID: 11400000, guid: 76b984e4dd89c4141ad3097fa1ae36de, type: 2}
+  combatProfile: {fileID: 11400000, guid: 4922315f981898a4c8bd76e1906b672f, type: 2}
+  equippedPrefab: {fileID: 0}
+  canTwoHand: 1
+  physicalAttack: 110
+  magicAttack: 0
+  fireAttack: 0
+  lightningAttack: 0
+  holyAttack: 0
+  critical: 100
+  physicalGuard: 0
+  magicGuard: 0
+  fireGuard: 0
+  lightningGuard: 0
+  holyGuard: 0
+  guardBoost: 0
+  requirements:
     Strength: 10
     Dexterity: 10
     Intelligence: 0
     Faith: 0
     Arcane: 0
-  _scaling:
+  scaling:
     Strength: 2
     Dexterity: 2
     Intelligence: 0
     Faith: 0
     Arcane: 0
-  _skillName: Square Off
-  _skillIcon: {fileID: 0}
-  _skillFocusCost: 8
+  skillName: Square Off
+  skillIcon: {fileID: 0}
+  skillFocusCost: 8

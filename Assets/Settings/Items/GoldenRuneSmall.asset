@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1038c958bee121446812d5a9c264dc7c, type: 3}
   m_Name: GoldenRuneSmall
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.ConsumableDefinition
-  _itemId: 5
-  _displayName: 'Golden Rune [1]'
-  _description: Grants a small number of runes.
-  _loreDescription: Grants a small number of runes.
-  _icon: {fileID: 21300000, guid: d024dedecb3e6db4081dc7fea7a60128, type: 3}
-  _weight: 0
-  _maxStack: 99
-  _equipmentGroups: 09000000
-  _useType: 2
-  _effectAmount: 200
-  _durationSeconds: 0
+  itemId: 5
+  displayName: 'Golden Rune [1]'
+  description: Grants a small number of runes.
+  loreDescription: Grants a small number of runes.
+  icon: {fileID: 21300000, guid: d024dedecb3e6db4081dc7fea7a60128, type: 3}
+  weight: 0
+  maxStack: 99
+  equipmentGroups: 09000000
+  useType: 2
+  effectAmount: 200
+  durationSeconds: 0

@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1038c958bee121446812d5a9c264dc7c, type: 3}
   m_Name: CrimsonFlask
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.ConsumableDefinition
-  _itemId: 3
-  _displayName: Crimson Flask
-  _description: Restores HP.
-  _loreDescription: Restores HP.
-  _icon: {fileID: 21300000, guid: b8dd92f11f6bdcb468bf094ff75ff713, type: 3}
-  _weight: 0
-  _maxStack: 10
-  _equipmentGroups: 09000000
-  _useType: 1
-  _effectAmount: 60
-  _durationSeconds: 0
+  itemId: 3
+  displayName: Crimson Flask
+  description: Restores HP.
+  loreDescription: Restores HP.
+  icon: {fileID: 21300000, guid: b8dd92f11f6bdcb468bf094ff75ff713, type: 3}
+  weight: 0
+  maxStack: 10
+  equipmentGroups: 09000000
+  useType: 1
+  effectAmount: 60
+  durationSeconds: 0
