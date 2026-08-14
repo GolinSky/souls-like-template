@@ -147,12 +147,35 @@ namespace SoulsLike.Entities.Character
                     || equipmentActionPerformed;
             }
 
-            if (!equipmentActionPerformed && _attackComponent.TryCaptureAction(
-                actions,
-                sprinting && hasMovementInput,
-                canBufferAttack,
-                canBufferSpecialAttack,
-                out BufferedCharacterAction attackAction))
+            EquipmentLoadout loadout = _equipmentComponent.BuildLoadout();
+            bool hasRightWeapon = loadout.EffectiveRight?.Definition is WeaponDefinition;
+            bool hasLeftWeapon = loadout.EffectiveLeft?.Definition is WeaponDefinition;
+            bool attackCaptured = false;
+            BufferedCharacterAction attackAction = default;
+            if (!equipmentActionPerformed && (hasRightWeapon || !hasLeftWeapon))
+            {
+                attackCaptured = _attackComponent.TryCaptureAction(
+                    actions,
+                    sprinting && hasMovementInput,
+                    canBufferAttack,
+                    canBufferSpecialAttack,
+                    out attackAction);
+            }
+
+            if (!equipmentActionPerformed
+                && !attackCaptured
+                && hasLeftWeapon
+                && canBufferAttack
+                && actions.Guard.WasPressedThisFrame())
+            {
+                attackAction = BufferedCharacterAction.Attack(
+                    CharacterActionType.LightAttack,
+                    false,
+                    true);
+                attackCaptured = true;
+            }
+
+            if (attackCaptured)
             {
                 _actionBuffer.Buffer(attackAction);
             }
@@ -181,6 +204,7 @@ namespace SoulsLike.Entities.Character
                 actions.Crouch.IsPressed());
 
             bool canBlock = !equipmentActionPerformed
+                && loadout.EffectiveLeft?.Definition is ShieldDefinition
                 && _movementComponent.Model.Grounded
                 && !_manualMovementBlocked
                 && (!_animationMovementBlocked
@@ -270,9 +294,9 @@ namespace SoulsLike.Entities.Character
             _animatorComponent.SetTurn(turnAmount);
         }
 
-        public void NotifyAttack(AttackType attackType)
+        public void NotifyAttack(AttackType attackType, bool isLeftHandAttack)
         {
-            _animatorComponent.PlayAttack(attackType);
+            _animatorComponent.PlayAttack(attackType, isLeftHandAttack);
         }
 
         public void SetChargedAttackSpeed(float speed)
@@ -349,19 +373,27 @@ namespace SoulsLike.Entities.Character
             _equipmentPresentation.ApplyLoadout(loadout);
 
             //todo: instead of casting ItemDefinition to WeaponDefinition - get item type and id - then get WeaponDefinition,Don't use inheritance on WeaponDefinition->ItemDefinition
-            WeaponDefinition weaponDefinition = loadout.EffectiveRight?.Definition as WeaponDefinition;
-            AnimationProfile animationProfile = weaponDefinition == null
-                ? null
-                : weaponDefinition.AnimationProfile;
-            //todo:  check if loadout empty - avoid null 
+            WeaponDefinition rightWeapon = loadout.EffectiveRight?.Definition as WeaponDefinition;
+            WeaponDefinition leftWeapon = loadout.EffectiveLeft?.Definition as WeaponDefinition;
+            AnimationProfile animationProfile = rightWeapon?.AnimationProfile
+                ?? leftWeapon?.AnimationProfile;
             if (animationProfile != null)
             {
-                _animatorComponent.ApplyAnimationProfile(animationProfile);
+                _animatorComponent.ApplyAnimationProfile(
+                    animationProfile,
+                    rightWeapon != null,
+                    leftWeapon != null);
+            }
+            else
+            {
+                _animatorComponent.ResetAnimationProfile();
             }
             _animatorComponent.TransitionHandMode(loadout.HandMode);
-            _attackComponent.SetActiveWeapon(
-                weaponDefinition,
+            _attackComponent.SetActiveWeapons(
+                rightWeapon,
                 _equipmentPresentation.ActiveRightWeaponRuntime,
+                leftWeapon,
+                _equipmentPresentation.ActiveLeftWeaponRuntime,
                 loadout.HandMode);
         }
 

@@ -18,27 +18,43 @@ namespace SoulsLike.Entities.Character
         public Vector2 MoveInput { get; }
         public float CameraYaw { get; }
         public bool IsSprinting { get; }
+        public bool IsLeftHandAttack { get; }
 
         private BufferedCharacterAction(
             CharacterActionType type,
             Vector2 moveInput,
             float cameraYaw,
-            bool isSprinting)
+            bool isSprinting,
+            bool isLeftHandAttack)
         {
             Type = type;
             MoveInput = moveInput;
             CameraYaw = cameraYaw;
             IsSprinting = isSprinting;
+            IsLeftHandAttack = isLeftHandAttack;
         }
 
-        public static BufferedCharacterAction Attack(CharacterActionType type, bool isSprinting)
+        public static BufferedCharacterAction Attack(
+            CharacterActionType type,
+            bool isSprinting,
+            bool isLeftHandAttack = false)
         {
-            return new BufferedCharacterAction(type, Vector2.zero, 0.0f, isSprinting);
+            return new BufferedCharacterAction(
+                type,
+                Vector2.zero,
+                0.0f,
+                isSprinting,
+                isLeftHandAttack);
         }
 
         public static BufferedCharacterAction Roll(Vector2 moveInput, float cameraYaw)
         {
-            return new BufferedCharacterAction(CharacterActionType.Roll, moveInput, cameraYaw, false);
+            return new BufferedCharacterAction(
+                CharacterActionType.Roll,
+                moveInput,
+                cameraYaw,
+                false,
+                false);
         }
     }
 

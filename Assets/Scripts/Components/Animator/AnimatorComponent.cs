@@ -37,6 +37,14 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int BackStepAttackTrigger = Animator.StringToHash("BackStepAttack");
         private static readonly int RunAttackTrigger = Animator.StringToHash("RunAttack");
         private static readonly int SpecialAttackTrigger = Animator.StringToHash("SpecialAttack");
+        private static readonly int LeftLightAttackTrigger = Animator.StringToHash("LeftLightAttack");
+        private static readonly int LeftLightAttackAltTrigger = Animator.StringToHash("LeftLightAttackAlt");
+        private static readonly int LeftHeavyAttackTrigger = Animator.StringToHash("LeftHeavyAttack");
+        private static readonly int LeftHeavyAttackAltTrigger = Animator.StringToHash("LeftChargedHeavyAttack");
+        private static readonly int LeftRollAttackTrigger = Animator.StringToHash("LeftRollAttack");
+        private static readonly int LeftBackStepAttackTrigger = Animator.StringToHash("LeftBackStepAttack");
+        private static readonly int LeftRunAttackTrigger = Animator.StringToHash("LeftRunAttack");
+        private static readonly int LeftSpecialAttackTrigger = Animator.StringToHash("LeftSpecialAttack");
         private static readonly int WeaponBlockParameter = Animator.StringToHash("WeaponBlock");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
@@ -71,6 +79,7 @@ namespace SoulsLike.Entities.Character.Components
         private bool _hasChargedAttackSpeedParameter;
         private bool _observingStateMachine;
         private RuntimeAnimatorController _defaultController;
+        private bool _supportsLeftHandAttacks;
 
         private Animator Animator => animator;
         
@@ -98,15 +107,15 @@ namespace SoulsLike.Entities.Character.Components
             animator.applyRootMotion = true;
         }
 
-        public void ApplyAnimationProfile(AnimationProfile animationProfile)
+        public void ApplyAnimationProfile(
+            AnimationProfile animationProfile,
+            bool hasRightWeapon,
+            bool hasLeftWeapon)
         {
-            RuntimeAnimatorController targetController = animationProfile.Controller;
-
-            if (targetController == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(AnimatorComponent)} cannot apply an animation profile without a controller.");
-            }
+            RuntimeAnimatorController targetController = animationProfile.GetController(
+                hasRightWeapon,
+                hasLeftWeapon);
+            _supportsLeftHandAttacks = hasLeftWeapon;
 
             if (animator.runtimeAnimatorController == targetController)
             {
@@ -114,6 +123,28 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             animator.runtimeAnimatorController = targetController;
+            _hasChargedAttackSpeedParameter = HasParameter(
+                animator,
+                ChargedSpeedParameter,
+                AnimatorControllerParameterType.Float);
+            SetHandMode(_targetHandMode);
+        }
+
+        public void ResetAnimationProfile()
+        {
+            _supportsLeftHandAttacks = false;
+            if (_defaultController == null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(AnimatorComponent)} requires a default animator controller.");
+            }
+
+            if (animator.runtimeAnimatorController == _defaultController)
+            {
+                return;
+            }
+
+            animator.runtimeAnimatorController = _defaultController;
             _hasChargedAttackSpeedParameter = HasParameter(
                 animator,
                 ChargedSpeedParameter,
@@ -131,9 +162,25 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetBool(AnimIdGrounded, modelGrounded);
         }
 
-        public void PlayAttack(AttackType attackType)
+        public void PlayAttack(AttackType attackType, bool isLeftHandAttack)
         {
-            int triggerHash = attackType switch
+            if (isLeftHandAttack && !_supportsLeftHandAttacks)
+            {
+                throw new InvalidOperationException(
+                    "The active animator controller does not support left-hand attacks.");
+            }
+
+            int triggerHash = isLeftHandAttack
+                ? GetLeftAttackTrigger(attackType)
+                : GetRightAttackTrigger(attackType);
+
+            BeginRootMotionAction();
+            animator.SetTrigger(triggerHash);
+        }
+
+        private static int GetRightAttackTrigger(AttackType attackType)
+        {
+            return attackType switch
             {
                 AttackType.LightAttack => LightAttackTrigger,
                 AttackType.LightAttackAlt => LightAttackAltTrigger,
@@ -145,9 +192,22 @@ namespace SoulsLike.Entities.Character.Components
                 AttackType.BackStepAttack => BackStepAttackTrigger,
                 _ => throw new ArgumentOutOfRangeException(nameof(attackType), attackType, null)
             };
+        }
 
-            BeginRootMotionAction();
-            animator.SetTrigger(triggerHash);
+        private static int GetLeftAttackTrigger(AttackType attackType)
+        {
+            return attackType switch
+            {
+                AttackType.LightAttack => LeftLightAttackTrigger,
+                AttackType.LightAttackAlt => LeftLightAttackAltTrigger,
+                AttackType.RollingLightAttack => LeftRollAttackTrigger,
+                AttackType.SprintingAttack => LeftRunAttackTrigger,
+                AttackType.HeavyAttack => LeftHeavyAttackTrigger,
+                AttackType.HeavyAttackAlt => LeftHeavyAttackAltTrigger,
+                AttackType.SpecialAttack => LeftSpecialAttackTrigger,
+                AttackType.BackStepAttack => LeftBackStepAttackTrigger,
+                _ => throw new ArgumentOutOfRangeException(nameof(attackType), attackType, null)
+            };
         }
 
         public void SetChargedAttackSpeed(float speed)

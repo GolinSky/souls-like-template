@@ -18,6 +18,10 @@ namespace SoulsLike.Entities.Character.Components.Attack
         private ITimer _contextualAttackTimer;
         private bool _strongInputActive;
         private bool _suppressLightUntilRelease;
+        private WeaponDefinition _rightWeaponDefinition;
+        private WeaponDefinition _leftWeaponDefinition;
+        private WeaponRuntime _rightWeaponRuntime;
+        private WeaponRuntime _leftWeaponRuntime;
 
         public WeaponDefinition ActiveWeaponDefinition { get; private set; }
         public CombatProfile ActiveCombatProfile { get; private set; }
@@ -37,15 +41,19 @@ namespace SoulsLike.Entities.Character.Components.Attack
             _mediator = mediator;
         }
 
-        public void SetActiveWeapon(
-            WeaponDefinition definition,
-            WeaponRuntime weaponRuntime,
+        public void SetActiveWeapons(
+            WeaponDefinition rightDefinition,
+            WeaponRuntime rightWeaponRuntime,
+            WeaponDefinition leftDefinition,
+            WeaponRuntime leftWeaponRuntime,
             HandMode handMode)
         {
-            ActiveWeaponDefinition = definition;
-            ActiveCombatProfile = definition == null ? null : definition.CombatProfile;
-            ActiveWeaponRuntime = weaponRuntime;
+            _rightWeaponDefinition = rightDefinition;
+            _rightWeaponRuntime = rightWeaponRuntime;
+            _leftWeaponDefinition = leftDefinition;
+            _leftWeaponRuntime = leftWeaponRuntime;
             ActiveHandMode = handMode;
+            SetActionWeapon(false);
         }
 
         public bool TryCaptureAction(
@@ -94,6 +102,7 @@ namespace SoulsLike.Entities.Character.Components.Attack
 
         public void ExecuteAction(BufferedCharacterAction action)
         {
+            SetActionWeapon(action.IsLeftHandAttack);
             AttackType attackType = action.Type switch
             {
                 CharacterActionType.LightAttack => ResolveLightAttack(action.IsSprinting),
@@ -109,7 +118,20 @@ namespace SoulsLike.Entities.Character.Components.Attack
                     _strongInputActive ? CHARGED_HEAVY_SPEED : NORMAL_ATTACK_SPEED);
             }
 
-            _mediator.NotifyAttack(attackType);
+            _mediator.NotifyAttack(attackType, action.IsLeftHandAttack);
+        }
+
+        private void SetActionWeapon(bool isLeftHandAttack)
+        {
+            ActiveWeaponDefinition = isLeftHandAttack
+                ? _leftWeaponDefinition
+                : _rightWeaponDefinition;
+            ActiveWeaponRuntime = isLeftHandAttack
+                ? _leftWeaponRuntime
+                : _rightWeaponRuntime;
+            ActiveCombatProfile = ActiveWeaponDefinition == null
+                ? null
+                : ActiveWeaponDefinition.CombatProfile;
         }
 
         public void HandleAnimatorState(AnimatorStateMachineDto state)

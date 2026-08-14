@@ -17,7 +17,7 @@ namespace SoulsLike.Entities.Character
         void NotifyHealthStatsChanged(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
         void NotifyDeath();
-        void NotifyAttack(AttackType attackType);
+        void NotifyAttack(AttackType attackType, bool isLeftHandAttack);
         void SetChargedAttackSpeed(float speed);
         void NotifyAnimatorStateChanged(AnimatorStateMachineDto state);
         void NotifyTurn(float turnAmount);

@@ -17,6 +17,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
         private GameObject _leftInstance;
 
         public WeaponRuntime ActiveRightWeaponRuntime { get; private set; }
+        public WeaponRuntime ActiveLeftWeaponRuntime { get; private set; }
 
         private void Awake()
         {
@@ -32,6 +33,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             ClearInstance(ref _rightInstance);
             ClearInstance(ref _leftInstance);
             ActiveRightWeaponRuntime = null;
+            ActiveLeftWeaponRuntime = null;
 
             if (loadout.EffectiveRight != null)
             {
@@ -50,7 +52,10 @@ namespace SoulsLike.Entities.Character.Components.Equipment
                 _leftInstance = CreatePresentation(loadout.EffectiveLeft, leftHandAnchor, true);
                 if (loadout.EffectiveLeft.Definition is WeaponDefinition leftWeapon)
                 {
-                    RequireWeaponRuntime(_leftInstance, loadout.EffectiveLeft, leftWeapon);
+                    ActiveLeftWeaponRuntime = RequireWeaponRuntime(
+                        _leftInstance,
+                        loadout.EffectiveLeft,
+                        leftWeapon);
                 }
             }
         }

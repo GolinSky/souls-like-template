@@ -30,6 +30,10 @@ namespace SoulsLike.Editor
         private const string EQUIPMENT_UI_PREFAB_PATH = "Assets/Prefabs/Ui/Equipment/EquipmentUi.prefab";
         private const string NO_WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterNoWeaponAnimator.controller";
         private const string WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterGreatSwordAnimator.controller";
+        private const string LEFT_WEAPON_CONTROLLER_PATH =
+            "Assets/Art/Animation/CharacterGreatSwordLeftHandAnimator.controller";
+        private const string DUAL_WIELD_CONTROLLER_PATH =
+            "Assets/Art/Animation/CharacterGreatSwordDualWieldAnimator.controller";
         private const string ADDRESSABLE_PACKED_BUILD_PATH =
             "Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedMode.asset";
 
@@ -94,8 +98,22 @@ namespace SoulsLike.Editor
                 ITEM_FOLDER + "/StraightSwordAnimationProfile.asset");
             RuntimeAnimatorController controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(
                 WEAPON_CONTROLLER_PATH);
+            RuntimeAnimatorController leftController =
+                AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(LEFT_WEAPON_CONTROLLER_PATH);
+            RuntimeAnimatorController dualWieldController =
+                AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(DUAL_WIELD_CONTROLLER_PATH);
             RequireAsset(controller, WEAPON_CONTROLLER_PATH);
+            RequireAsset(leftController, LEFT_WEAPON_CONTROLLER_PATH);
+            RequireAsset(dualWieldController, DUAL_WIELD_CONTROLLER_PATH);
             SetObject(new SerializedObject(profile), "<Controller>k__BackingField", controller);
+            SetObject(
+                new SerializedObject(profile),
+                "<LeftHandController>k__BackingField",
+                leftController);
+            SetObject(
+                new SerializedObject(profile),
+                "<DualWieldController>k__BackingField",
+                dualWieldController);
             return profile;
         }
 
