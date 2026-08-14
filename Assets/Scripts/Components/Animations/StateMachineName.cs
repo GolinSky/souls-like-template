@@ -15,6 +15,8 @@ namespace SoulsLike.Entities.Character.Components.Animations
         BackStep = 10,
         Spawn = 11, // appear animation on spawn
         HandModeSwitch = 12,
+        EquipmentSwapOut = 13,
+        EquipmentSwapIn = 14,
         None = -1
     }
 }

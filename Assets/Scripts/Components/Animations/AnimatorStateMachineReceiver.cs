@@ -13,6 +13,11 @@ namespace SoulsLike.Entities.Character.Components.Animations
         
         public void OnEnable()
         {
+            InitializeStateMachines();
+        }
+
+        public void InitializeStateMachines()
+        {
             foreach (var behaviour in animator.GetBehaviours<AnimatorStateMachine>())
             {
                 behaviour.Initialize(this);

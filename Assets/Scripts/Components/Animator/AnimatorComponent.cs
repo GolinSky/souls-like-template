@@ -46,6 +46,8 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int LeftRunAttackTrigger = Animator.StringToHash("LeftRunAttack");
         private static readonly int LeftSpecialAttackTrigger = Animator.StringToHash("LeftSpecialAttack");
         private static readonly int WeaponBlockParameter = Animator.StringToHash("WeaponBlock");
+        private static readonly int EquipmentSwapOutTrigger = Animator.StringToHash("EquipmentSwapOut");
+        private static readonly int EquipmentSwapInTrigger = Animator.StringToHash("EquipmentSwapIn");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_LAYER = "UpperBody";
@@ -123,6 +125,7 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             animator.runtimeAnimatorController = targetController;
+            stateMachineReceiver.InitializeStateMachines();
             _hasChargedAttackSpeedParameter = HasParameter(
                 animator,
                 ChargedSpeedParameter,
@@ -145,6 +148,7 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             animator.runtimeAnimatorController = _defaultController;
+            stateMachineReceiver.InitializeStateMachines();
             _hasChargedAttackSpeedParameter = HasParameter(
                 animator,
                 ChargedSpeedParameter,
@@ -261,6 +265,16 @@ namespace SoulsLike.Entities.Character.Components
         public void SetWeaponBlock(bool isBlocking)
         {
             animator.SetBool(WeaponBlockParameter, isBlocking);
+        }
+
+        public void TriggerEquipmentSwapOut()
+        {
+            SetRequiredTrigger(EquipmentSwapOutTrigger, "EquipmentSwapOut");
+        }
+
+        public void TriggerEquipmentSwapIn()
+        {
+            SetRequiredTrigger(EquipmentSwapInTrigger, "EquipmentSwapIn");
         }
 
         public void TransitionHandMode(HandMode handMode)
@@ -458,6 +472,20 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             return false;
+        }
+
+        private void SetRequiredTrigger(int triggerHash, string parameterName)
+        {
+            if (!HasParameter(
+                    animator,
+                    triggerHash,
+                    AnimatorControllerParameterType.Trigger))
+            {
+                throw new InvalidOperationException(
+                    $"Animator controller '{animator.runtimeAnimatorController.name}' requires trigger '{parameterName}'.");
+            }
+
+            animator.SetTrigger(triggerHash);
         }
 
         private int GetRequiredLayerIndex(string layerName)

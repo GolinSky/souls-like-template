@@ -28,7 +28,7 @@ namespace SoulsLike.Editor
         private const string INVENTORY_UI_PREFAB_PATH = "Assets/Prefabs/Ui/Inventory/InventoryUi.prefab";
         private const string INVENTORY_SLOT_PREFAB_PATH = "Assets/Prefabs/Ui/Inventory/InventorySlot.prefab";
         private const string EQUIPMENT_UI_PREFAB_PATH = "Assets/Prefabs/Ui/Equipment/EquipmentUi.prefab";
-        private const string NO_WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterNoWeaponAnimator.controller";
+        private const string NO_WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/NoWeaponAnimator.controller";
         private const string WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterGreatSwordAnimator.controller";
         private const string LEFT_WEAPON_CONTROLLER_PATH =
             "Assets/Art/Animation/CharacterGreatSwordLeftHandAnimator.controller";

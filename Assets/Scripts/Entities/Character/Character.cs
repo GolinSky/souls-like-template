@@ -17,6 +17,14 @@ namespace SoulsLike.Entities.Character
 {
     public class Character : MonoBehaviour, IInitializable, IComponentMediator
     {
+        private enum EquipmentSwapPhase
+        {
+            None = 0,
+            SwapOut = 1,
+            SwapOutCompleted = 2,
+            SwapIn = 3
+        }
+
         private const float SPRINT_HOLD_THRESHOLD = 0.2f;
 
         [SerializeField] private MovementComponent _movementComponent;
@@ -41,6 +49,8 @@ namespace SoulsLike.Entities.Character
         private bool _manualMovementBlocked;
         private bool _animationMovementBlocked;
         private bool _animationRootMotionEnabled;
+        private EquipmentSlotGroup? _pendingEquipmentSwapGroup;
+        private EquipmentSwapPhase _equipmentSwapPhase;
 
         public Transform CameraTarget => _cameraTarget;
         public InventoryComponent InventoryComponent => _inventoryComponent;
@@ -115,12 +125,12 @@ namespace SoulsLike.Entities.Character
                 && !_manualMovementBlocked;
             bool canBufferSpecialAttack = canBufferAttack;
 
-            bool equipmentActionPerformed = false;
-            if (!_attackComponent.IsActionActive)
+            bool equipmentActionPerformed = TryAdvanceEquipmentSwap();
+            if (!_attackComponent.IsActionActive && !_pendingEquipmentSwapGroup.HasValue)
             {
                 if (actions.SwitchWeapon.WasPressedThisFrame())
                 {
-                    _equipmentComponent.SwitchActive(EquipmentSlotGroup.RightHandArmament);
+                    BeginEquipmentSwap(EquipmentSlotGroup.RightHandArmament);
                     equipmentActionPerformed = true;
                 }
                 else if (actions.SwitchShield.WasPressedThisFrame())
@@ -204,6 +214,7 @@ namespace SoulsLike.Entities.Character
                 actions.Crouch.IsPressed());
 
             bool canBlock = !equipmentActionPerformed
+                && !_pendingEquipmentSwapGroup.HasValue
                 && loadout.EffectiveLeft?.Definition is ShieldDefinition
                 && _movementComponent.Model.Grounded
                 && !_manualMovementBlocked
@@ -307,6 +318,7 @@ namespace SoulsLike.Entities.Character
         public void NotifyAnimatorStateChanged(AnimatorStateMachineDto state)
         {
             _attackComponent.HandleAnimatorState(state);
+            HandleEquipmentSwapState(state);
 
             Debug.Log($"{state.StateMachineName}:{state.State}");
         if (state.StateMachineName == StateMachineName.Spawn)
@@ -444,7 +456,98 @@ namespace SoulsLike.Entities.Character
 
         private void SynchronizeMovementBlock()
         {
-            _movementComponent.SetMovementBlocked(_manualMovementBlocked || _animationMovementBlocked);
+            _movementComponent.SetMovementBlocked(
+                _manualMovementBlocked
+                || _animationMovementBlocked
+                || _pendingEquipmentSwapGroup.HasValue);
+        }
+
+        private void BeginEquipmentSwap(EquipmentSlotGroup group)
+        {
+            if (_pendingEquipmentSwapGroup.HasValue)
+            {
+                throw new InvalidOperationException("An equipment swap is already in progress.");
+            }
+
+            _pendingEquipmentSwapGroup = group;
+            _equipmentSwapPhase = EquipmentSwapPhase.SwapOut;
+            SynchronizeMovementBlock();
+            _animatorComponent.TriggerEquipmentSwapOut();
+        }
+
+        private bool TryAdvanceEquipmentSwap()
+        {
+            if (_equipmentSwapPhase != EquipmentSwapPhase.SwapOutCompleted)
+            {
+                return false;
+            }
+
+            if (!_pendingEquipmentSwapGroup.HasValue)
+            {
+                throw new InvalidOperationException(
+                    "Equipment swap-out completed without a pending equipment group.");
+            }
+
+            _equipmentSwapPhase = EquipmentSwapPhase.SwapIn;
+            _equipmentComponent.SwitchActive(_pendingEquipmentSwapGroup.Value);
+            _animatorComponent.TriggerEquipmentSwapIn();
+            return true;
+        }
+
+        private void HandleEquipmentSwapState(AnimatorStateMachineDto state)
+        {
+            if (state.State != StateMachineState.Exit)
+            {
+                return;
+            }
+
+            switch (state.StateMachineName)
+            {
+                case StateMachineName.EquipmentSwapOut:
+                    if (_equipmentSwapPhase is EquipmentSwapPhase.SwapOutCompleted
+                        or EquipmentSwapPhase.SwapIn)
+                    {
+                        return;
+                    }
+
+                    if (!_pendingEquipmentSwapGroup.HasValue)
+                    {
+                        throw new InvalidOperationException(
+                            "Equipment swap-out exited without a pending equipment group.");
+                    }
+
+                    if (_equipmentSwapPhase != EquipmentSwapPhase.SwapOut)
+                    {
+                        throw new InvalidOperationException(
+                            $"Equipment swap-out exited during phase '{_equipmentSwapPhase}'.");
+                    }
+
+                    _equipmentSwapPhase = EquipmentSwapPhase.SwapOutCompleted;
+                    break;
+                case StateMachineName.EquipmentSwapIn:
+                    if (_equipmentSwapPhase == EquipmentSwapPhase.None
+                        && !_pendingEquipmentSwapGroup.HasValue)
+                    {
+                        return;
+                    }
+
+                    if (!_pendingEquipmentSwapGroup.HasValue)
+                    {
+                        throw new InvalidOperationException(
+                            "Equipment swap-in exited without a pending equipment group.");
+                    }
+
+                    if (_equipmentSwapPhase != EquipmentSwapPhase.SwapIn)
+                    {
+                        throw new InvalidOperationException(
+                            $"Equipment swap-in exited during phase '{_equipmentSwapPhase}'.");
+                    }
+
+                    _equipmentSwapPhase = EquipmentSwapPhase.None;
+                    _pendingEquipmentSwapGroup = null;
+                    SynchronizeMovementBlock();
+                    break;
+            }
         }
 
         private void TryExecuteBufferedAction(
