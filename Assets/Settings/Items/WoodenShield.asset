@@ -16,7 +16,7 @@ MonoBehaviour:
   _displayName: Wooden Shield
   _description: A light wooden shield with modest physical protection.
   _loreDescription: Common protection for travelers and militia.
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: 174e4cb3c44b58243bd4cf3a6b1499f5, type: 3}
   _weight: 2
   _maxStack: 1
   _equipmentGroups: 01000000

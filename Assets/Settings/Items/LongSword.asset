@@ -16,7 +16,7 @@ MonoBehaviour:
   _displayName: Long Sword
   _description: A dependable straight sword suited to one- or two-handed combat.
   _loreDescription: A plain sword carried by soldiers across the realm.
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: 4c64b7a6d876a4146880587b20cfc4c6, type: 3}
   _weight: 3.5
   _maxStack: 1
   _equipmentGroups: 01000000

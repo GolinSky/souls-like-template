@@ -16,7 +16,7 @@ MonoBehaviour:
   _displayName: 'Golden Rune [1]'
   _description: Grants a small number of runes.
   _loreDescription: Grants a small number of runes.
-  _icon: {fileID: 0}
+  _icon: {fileID: 21300000, guid: d024dedecb3e6db4081dc7fea7a60128, type: 3}
   _weight: 0
   _maxStack: 99
   _equipmentGroups: 09000000
