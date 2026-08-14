@@ -1,6 +1,6 @@
-# Equipment UI/UX Architecture & Unity Implementation Guide
+# Equipment UI/UX Architecture Guide
 
-This guide breaks down the structure, spatial layout, UX interaction states, and technical implementation details for recreating an Souls-like style Equipment UI in **Unity3D**.
+This guide breaks down the structure, spatial layout, UX interaction states, and visual design specifications for recreating a Souls-like style Equipment UI.
 
 ---
 
@@ -147,259 +147,40 @@ A persistent status panel showing character stats updated in real-time when hove
 
 ---
 
-## 4. Unity Data Architecture
+## 4. Visual UI Layout Hierarchy
 
-### Data Models (ScriptableObjects)
-
-```csharp
-using UnityEngine;
-
-public enum ItemType { Weapon, Armor, Talisman, Consumable, Ammunition }
-public enum ArmorSlotType { Head, Chest, Arms, Legs }
-public enum WeaponSlotType { RightHand, LeftHand }
-public enum WeightClass { Light, Medium, Heavy, Overencumbered }
-
-[CreateAssetMenu(fileName = "NewItem", menuName = "ItemData")]
-public class ItemDataSO : ScriptableObject
-{
-    public string itemId;
-    public string itemName;
-    public Sprite itemIcon;
-    public ItemType itemType;
-    public float weight;
-    [TextArea] public string description;
-}
-
-[CreateAssetMenu(fileName = "NewWeapon", menuName = "WeaponData")]
-public class WeaponDataSO : ItemDataSO
-{
-    public WeaponSlotType slotType;
-    public string skillName;
-    public int fpCost;
-    
-    [Header("Base Attack Power")]
-    public int physicalAttack;
-    public int magicAttack;
-    public int fireAttack;
-    public int lightningAttack;
-    public int holyAttack;
-    public int critical;
-
-    [Header("Requirements")]
-    public int reqStrength;
-    public int reqDexterity;
-    public int reqIntelligence;
-    public int reqFaith;
-    public int reqArcane;
-}
-
-[CreateAssetMenu(fileName = "NewArmor", menuName = "ArmorData")]
-public class ArmorDataSO : ItemDataSO
-{
-    public ArmorSlotType armorSlot;
-
-    [Header("Damage Negation (%)")]
-    public float physicalNegation;
-    public float strikeNegation;
-    public float slashNegation;
-    public float pierceNegation;
-    public float magicNegation;
-    public float fireNegation;
-    
-    [Header("Resistances")]
-    public int immunity;
-    public int robustness;
-    public int focus;
-    public int vitality;
-    public int poise;
-}
+```
+[Screen Layout Container]
+ ├── [Header Panel]
+ │    ├── Title Label ("EQUIPMENT")
+ │    └── Player Summary Label ("Lvl 120 | Runes: 45,210")
+ ├── [Main Content Panel]
+ │    ├── [Equipment Grid Panel]
+ │    │    ├── Row: Right-Hand Armaments (3 Slots)
+ │    │    ├── Row: Left-Hand Armaments (3 Slots)
+ │    │    ├── Row: Ammunition (4 Slots)
+ │    │    ├── Row: Apparel / Armor (4 Slots)
+ │    │    ├── Row: Talismans (4 Slots)
+ │    │    └── Row: Quick Items / Belt (10 Slots)
+ │    ├── [Item Inspector Panel]
+ │    │    ├── Item Icon
+ │    │    ├── Item Name
+ │    │    ├── Skill / Ash of War Label
+ │    │    └── Stats & Requirements Details Container
+ │    └── [Character Status Panel]
+ │         ├── Character Vitals (HP, FP, Stamina)
+ │         ├── Equip Load & Weight Class Badge ("42.5 / 70.0 (Medium)")
+ │         └── Damage Negation & Resistance Stats
+ ├── [Inventory Picker Overlay Modal]
+ │    ├── Scrollable Inventory Candidate List
+ │    └── Side-by-Side Comparison Panel
+ └── [Bottom Action Bar]
+      └── Controller Action Legend Prompts
 ```
 
 ---
 
-## 5. Unity Implementation Architecture (UGUI / C#)
-
-### UI Layout Structure (Canvas Hierarchy)
-```
-[Canvas] (Screen Space - Overlay / Camera)
- ├── [HeaderPanel]
- │    ├── [TMP_TitleText] ("EQUIPMENT")
- │    └── [TMP_PlayerSummaryText] ("Lvl 120 | Runes: 45,210")
- ├── [MainContentPanel]
- │    ├── [EquipmentGridPanel] (Vertical Layout Group)
- │    │    ├── [Row_RightHand] (Horizontal Layout Group -> 3 SlotViews)
- │    │    ├── [Row_LeftHand]  (Horizontal Layout Group -> 3 SlotViews)
- │    │    ├── [Row_Ammo]      (Horizontal Layout Group -> 4 SlotViews)
- │    │    ├── [Row_Armor]     (Horizontal Layout Group -> 4 SlotViews)
- │    │    ├── [Row_Talismans] (Horizontal Layout Group -> 4 SlotViews)
- │    │    └── [Row_QuickItems] (Grid Layout Group -> 10 SlotViews)
- │    ├── [ItemInspectorPanel]
- │    │    ├── [Image_ItemIcon]
- │    │    ├── [TMP_ItemName]
- │    │    ├── [TMP_SkillText]
- │    │    └── [StatsDetailsContainer]
- │    └── [CharacterStatusPanel]
- │         ├── [TMP_Vitals] (HP, FP, Stamina)
- │         ├── [TMP_EquipLoadText] ("42.5 / 70.0 (Medium)")
- │         └── [TMP_NegationStats]
- ├── [InventoryPickerOverlay] (Disabled by Default)
- │    ├── [ScrollRect_InventoryList]
- │    └── [ComparisonViewPanel]
- └── [BottomActionBar]
-      └── [TMP_ActionPrompts]
-```
-
----
-
-### Core UI Controller Scripts
-
-#### 1. Equipment Slot View (`EquipmentSlotView.cs`)
-```csharp
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using System;
-
-public class EquipmentSlotView : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointerClickHandler
-{
-    [SerializeField] private Image iconImage;
-    [SerializeField] private Image selectionHighlight;
-    [SerializeField] private Image lockOverlay;
-
-    public string SlotId { get; private set; }
-    public ItemDataSO CurrentItem { get; private set; }
-    public bool IsLocked { get; private set; }
-
-    public event Action<EquipmentSlotView> OnSlotSelected;
-    public event Action<EquipmentSlotView> OnSlotClicked;
-
-    public void SetupSlot(string id, ItemDataSO item, bool isLocked = false)
-    {
-        SlotId = id;
-        CurrentItem = item;
-        IsLocked = isLocked;
-
-        if (IsLocked)
-        {
-            lockOverlay.gameObject.SetActive(true);
-            iconImage.enabled = false;
-        }
-        else
-        {
-            lockOverlay.gameObject.SetActive(false);
-            if (item != null)
-            {
-                iconImage.sprite = item.itemIcon;
-                iconImage.enabled = true;
-            }
-            else
-            {
-                iconImage.enabled = false;
-            }
-        }
-        selectionHighlight.gameObject.SetActive(false);
-    }
-
-    public void OnSelect(BaseEventData eventData)
-    {
-        selectionHighlight.gameObject.SetActive(true);
-        OnSlotSelected?.Invoke(this);
-    }
-
-    public void OnDeselect(BaseEventData eventData)
-    {
-        selectionHighlight.gameObject.SetActive(false);
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        OnSlotClicked?.Invoke(this);
-    }
-}
-```
-
-#### 2. Master Equipment UI Controller (`EquipmentUIController.cs`)
-```csharp
-using UnityEngine;
-using TMPro;
-
-public class EquipmentUIController : MonoBehaviour
-{
-    [Header("Panels")]
-    [SerializeField] private GameObject equipmentMainPanel;
-    [SerializeField] private GameObject inventoryPickerOverlay;
-
-    [Header("Inspector References")]
-    [SerializeField] private TextMeshProUGUI itemNameText;
-    [SerializeField] private TextMeshProUGUI itemDescriptionText;
-    [SerializeField] private Image itemIconImage;
-
-    [Header("Status References")]
-    [SerializeField] private TextMeshProUGUI equipLoadText;
-    [SerializeField] private TextMeshProUGUI weightClassText;
-
-    private EquipmentSlotView currentlySelectedSlot;
-
-    public void OnSlotHighlighted(EquipmentSlotView slot)
-    {
-        currentlySelectedSlot = slot;
-        UpdateInspector(slot.CurrentItem);
-    }
-
-    private void UpdateInspector(ItemDataSO item)
-    {
-        if (item == null)
-        {
-            itemNameText.text = "Empty";
-            itemDescriptionText.text = "";
-            itemIconImage.enabled = false;
-            return;
-        }
-
-        itemNameText.text = item.itemName;
-        itemDescriptionText.text = item.description;
-        itemIconImage.sprite = item.itemIcon;
-        itemIconImage.enabled = true;
-    }
-
-    public void OpenInventoryPicker()
-    {
-        if (currentlySelectedSlot == null || currentlySelectedSlot.IsLocked) return;
-        
-        inventoryPickerOverlay.SetActive(true);
-        // Populate inventory picker based on currentlySelectedSlot type
-    }
-
-    public void CloseInventoryPicker()
-    {
-        inventoryPickerOverlay.SetActive(false);
-    }
-}
-```
-
-#### 3. Stat Comparison Formatting Logic (`StatComparisonUtility.cs`)
-```csharp
-public static class StatComparisonUtility
-{
-    public static string FormatStatDiff(int currentVal, int newVal)
-    {
-        int diff = newVal - currentVal;
-        if (diff > 0)
-        {
-            return $"{newVal} <color=#55AAFF>(+{diff})</color>"; // Blue for improvement
-        }
-        else if (diff < 0)
-        {
-            return $"{newVal} <color=#FF5555>({diff})</color>";  // Red for downgrade
-        }
-        return $"{newVal}";
-    }
-}
-```
-
----
-
-## 6. Visual & Audio Polish Guidelines
+## 5. Visual & Audio Polish Guidelines
 
 ### Visual Style
 - **Color Palette:**
@@ -419,13 +200,3 @@ public static class StatComparisonUtility
 - `SFX_UI_Equip`: Heavy metallic thud when equipping armor/weapon.
 - `SFX_UI_Unequip`: Quick cloth slide sound when clearing a slot.
 - `SFX_UI_Back`: Muted slate click when closing menus.
-
----
-
-## 7. Summary Checklist for Unity Implementation
-
-1. **[ ] Data Setup:** Create `ItemDataSO`, `WeaponDataSO`, and `ArmorDataSO` ScriptableObject templates.
-2. **[ ] UI Layout:** Construct the 6-row Equipment Grid using Unity's `VerticalLayoutGroup` and `HorizontalLayoutGroup`.
-3. **[ ] Navigation setup:** Ensure Unity EventSystem explicit navigation links work seamlessly across D-Pad, WASD, and Mouse.
-4. **[ ] Dynamic Inspector:** Wire `OnSelect` actions from `EquipmentSlotView` to update the Item Inspector Card and Character Status.
-5. **[ ] Selection Modal:** Implement the Inventory Picker Overlay with side-by-side stat comparison (`+` Blue / `-` Red diff text).

@@ -1,6 +1,6 @@
-# Inventory UI/UX Architecture & Unity Implementation Guide
+# Inventory UI/UX Architecture Guide
 
-A detailed UX breakdown of The game's inventory, equipment, and stat screens. This document provides spatial layout specifications, color palettes, grid slot prefab component hierarchies, stat delta logic, view state transitions, and Unity implementation guidelines for game developers.
+A detailed UX breakdown of the game's inventory, equipment, and stat screens. This document provides spatial layout specifications, color palettes, grid slot component hierarchies, stat delta logic, view state transitions, and interaction guidelines.
 
 ---
 
@@ -77,9 +77,9 @@ The visual style follows an authentic dark-fantasy parchment aesthetic using war
 
 ## 4. Cell UI Architecture (Item Grid Slots)
 
-Each item grid cell is a self-contained interactive widget. In Unity UGUI or UI Toolkit, structure the component hierarchy layered from back to front:
+Each item grid cell is a self-contained interactive widget. Layered from back to front:
 
-### Prefab Layer Hierarchy (Back to Front)
+### Component Layer Hierarchy (Back to Front)
 
 1. **Background Box (`Image`)**
    - Dark slate filled box (`#1A1A18`) with a faint 1px border (`#3D3A33`).
@@ -93,7 +93,7 @@ Each item grid cell is a self-contained interactive widget. In Unity UGUI or UI 
    - Shows equipment slot markers (e.g., `R1`, `R2`, `L1`, `L2`, `1`, `2`, or checkmark) if the item is currently equipped.
 5. **Unmet Requirement Overlay (`Image` + `Icon`)**
    - Semi-transparent dark red tint layer (`#E53935` at 35% alpha) plus a red warning cross icon in the top-right corner if character requirements are unmet.
-6. **Stack Quantity Counter (`Text` / `TextMeshPro`)**
+6. **Stack Quantity Counter (`Text`)**
    - Bottom-Right alignment anchor.
    - Text format: `x99`, `x1` (hidden if non-stackable or quantity is 1).
 7. **Quick-Item / Ash of War Badge (`Image`)**
@@ -120,11 +120,11 @@ When the user navigates across the grid cells in Column 1:
 1. **Candidate Resolution:** The UI system queries the currently focused item (`ItemData`).
 2. **Active Comparison:** The system identifies the item currently equipped in the target slot.
 3. **Delta Computation:**
-   $$\Delta 	ext{Stat} = 	ext{Candidate.StatValue} - 	ext{Equipped.StatValue}$$
+   $$\Delta \text{Stat} = \text{Candidate.StatValue} - \text{Equipped.StatValue}$$
 4. **Visual Indicator Rules:**
-   - If $\Delta 	ext{Stat} > 0$: Display value in **Soft Blue** (`#62B5F6`) with an upward arrow indicator (`↑`).
-   - If $\Delta 	ext{Stat} < 0$: Display value in **Soft Red** (`#EF5350`) with a downward arrow indicator (`↓`).
-   - If $\Delta 	ext{Stat} = 0$: Display value in **Parchment Primary** (`#E6E1C5`).
+   - If $\Delta \text{Stat} > 0$: Display value in **Soft Blue** (`#62B5F6`) with an upward arrow indicator (`↑`).
+   - If $\Delta \text{Stat} < 0$: Display value in **Soft Red** (`#EF5350`) with a downward arrow indicator (`↓`).
+   - If $\Delta \text{Stat} = 0$: Display value in **Parchment Primary** (`#E6E1C5`).
 
 ### Unmet Attribute Warning
 - Items check character base attributes vs item requirements:
@@ -139,7 +139,7 @@ When the user navigates across the grid cells in Column 1:
 
 ## 6. UI/UX View State Machine
 
-uses a multi-state view switcher to prevent visual clutter while providing deep lore and model inspection.
+Uses a multi-state view switcher to prevent visual clutter while providing deep lore and model inspection.
 
 ```
                      +---------------------------+
@@ -182,7 +182,7 @@ uses a multi-state view switcher to prevent visual clutter while providing deep 
 
 ## 7. Navigation, Focus Management & Input Mapping
 
-To achieve authentic controller-first feel in Unity:
+To achieve authentic controller-first feel:
 
 ### Input Mapping Table
 
@@ -197,47 +197,6 @@ To achieve authentic controller-first feel in Unity:
 | **`RS Click`** | `F` / Toggle Key | Toggle Simple/Compact UI View (State 1/2 ↔ State 3). |
 | **`X` / Square** | `X` | Open Item Context Action Menu (Use, Discard, Leave, Organize). |
 
-### Unity Event System & Focus Handling Rules
-- Always maintain explicit explicit navigation anchors (`Selectable.FindSelectableOnDown()`) or rely on dynamic grid positioning (`GridLayoutGroup`).
-- When switching tabs (`LB`/`RB`), programmatically reset focus to the first valid cell in the grid using `EventSystem.current.SetSelectedGameObject(firstCell)`.
-- Ensure scroll views automatically scroll to keep the focused cell centered in view (`ScrollRect.ScrollToCell()`).
-
 ---
 
-## 8. Recommended Unity Implementation Architecture
-
-For building this UI architecture in Unity, a modular MVP (Model-View-Presenter) or Signal/Event-driven approach is recommended.
-
-```
-  [ ItemData / CharacterStats ScriptableObjects ]
-                       |
-                       v
-         [ InventoryManager / Controller ]
-            /          |                      v           v            v
-  [ GridView ]   [ DetailsView ]   [ CharacterStatsView ]
-     (Cells)      (Middle Card)       (Right Panel)
-```
-
-### Essential C# Script Structure Overview
-
-1. **`InventoryItemSO.cs` (ScriptableObject):**
-   - Data container holding item ID, localized name, icon sprite, type, weight, attack stats, scaling grades, requirements, and lore string.
-
-2. **`InventorySlotUI.cs` (MonoBehaviour on Cell Prefab):**
-   - Manages UI references (`Image icon`, `Text quantity`, `GameObject equipBadge`, `GameObject unmetOverlay`, `Outline glowFrame`).
-   - Listens for `ISelectHandler` and `IDeselectHandler` events to trigger state feedback.
-
-3. **`InventoryGridController.cs` (MonoBehaviour):**
-   - Instantiates cell prefabs inside a `GridLayoutGroup` or `UI Toolkit ScrollView`.
-   - Populates items based on active category filter.
-
-4. **`InventoryDetailsPresenter.cs` (MonoBehaviour):**
-   - Listens for focus change events from grid cells.
-   - Updates the Middle Details panel and triggers delta computations in the Right Stats panel.
-
-5. **`InventoryViewStateController.cs` (MonoBehaviour):**
-   - Manages canvas group alpha / visibility toggles between Standard, Lore, and Simple view states.
-
----
-
-*End of Inventory UI/UX Architecture Specification Guide.*
+*End of Inventory UI/UX Architecture Guide.*
