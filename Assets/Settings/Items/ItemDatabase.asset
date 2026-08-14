@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d9a517e1f319f74f86e33d6c21e43e8, type: 3}
   m_Name: ItemDatabase
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.ItemDatabase
-  _items:
+  items:
   - {fileID: 11400000, guid: 8c9f7a18d5f42c94e89937f75cf7398f, type: 2}
   - {fileID: 11400000, guid: b2d2bc095be1d984c9d51d87a7269e03, type: 2}
   - {fileID: 11400000, guid: 02339affd34623d46967b21154408763, type: 2}

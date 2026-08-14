@@ -8,11 +8,11 @@ namespace SoulsLike.Items
     [CreateAssetMenu(fileName = "ItemDatabase", menuName = "Data/Items/Item Database")]
     public sealed class ItemDatabase : Data
     {
-        [SerializeField] private List<ItemDefinition> _items = new();
+        [SerializeField] private List<ItemDefinition> items = new();
 
         private Dictionary<ItemId, ItemDefinition> _itemsById;
 
-        public IReadOnlyList<ItemDefinition> Items => _items;
+        public IReadOnlyList<ItemDefinition> Items => items;
 
         public ItemDefinition GetRequired(ItemId itemId)
         {
@@ -47,7 +47,7 @@ namespace SoulsLike.Items
         private Dictionary<ItemId, ItemDefinition> BuildIndex()
         {
             var result = new Dictionary<ItemId, ItemDefinition>();
-            foreach (ItemDefinition definition in _items)
+            foreach (ItemDefinition definition in items)
             {
                 if (definition == null)
                 {

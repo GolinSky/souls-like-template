@@ -16,8 +16,8 @@ namespace SoulsLike.Entities.Character.Components.Inventory
     [CreateAssetMenu(fileName = "InventoryData", menuName = "Data/InventoryData")]
     public sealed class InventoryData : Data
     {
-        [SerializeField] private List<InitialInventoryEntry> _initialEntries = new();
+        [SerializeField] private List<InitialInventoryEntry> initialEntries = new();
 
-        public IReadOnlyList<InitialInventoryEntry> InitialEntries => _initialEntries;
+        public IReadOnlyList<InitialInventoryEntry> InitialEntries => initialEntries;
     }
 }
