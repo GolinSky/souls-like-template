@@ -9,3 +9,9 @@
 
 - Do not run tests or test suites unless the user directly and explicitly requests test execution.
 - Do not treat tests as an automatic verification step; report that they were not run when relevant.
+
+## Unity Tooling
+
+- Use Unity's official `unity` CLI command; do not call `unity-cli` or `unity-mcp-cli`.
+- Use direct `unity` commands for project, Editor, build, package, and diagnostic operations.
+- For interactive Editor automation through MCP, use the official Unity CLI bridge (`unity mcp`) backed by `com.unity.pipeline`; do not use the legacy Coplay/mcp-for-unity server.

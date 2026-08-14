@@ -1,17 +1,12 @@
 {
   "mcpServers": {
-    "unityMCP": {
-      "command": "C:\\Users\\golin\\.local\\bin\\uvx.exe",
+    "unity": {
+      "command": "unity",
       "args": [
-        "--offline",
-        "--from",
-        "mcpforunityserver==10.1.2",
-        "mcp-for-unity",
-        "--transport",
-        "stdio"
-      ],
-      "type": "stdio",
-      "disabled": false
+        "mcp",
+        "--project-path",
+        "F:\\Private\\SoulsLikeTemplate"
+      ]
     },
     "obsidian": {
       "url": "https://127.0.0.1:27124/mcp/",
