@@ -13,10 +13,10 @@ namespace SoulsLike.Entities.Character.Components
         private IComponentMediator _mediator;
         private bool _movementBlocked;
         private bool _usesRootMotion;
+        private bool _initialized;
 
-        public void Initialize(IComponentMediator mediator)
+        private void Awake()
         {
-            _mediator = mediator;
             _animator = GetComponent<Animator>();
             if (_animator == null)
             {
@@ -24,9 +24,15 @@ namespace SoulsLike.Entities.Character.Components
             }
         }
 
+        public void Initialize(IComponentMediator mediator)
+        {
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _initialized = true;
+        }
+
         public void BeginRootMotionContract()
         {
-            if (_mediator == null)
+            if (!_initialized || _mediator == null)
             {
                 throw new InvalidOperationException($"{name} root motion relay is not initialized.");
             }
@@ -36,6 +42,11 @@ namespace SoulsLike.Entities.Character.Components
 
         private void OnAnimatorMove()
         {
+            if (!_initialized)
+            {
+                return;
+            }
+
             if (_animator == null || _mediator == null)
             {
                 throw new InvalidOperationException($"{name} root motion relay is not initialized.");

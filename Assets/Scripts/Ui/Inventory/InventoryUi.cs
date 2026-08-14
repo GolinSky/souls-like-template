@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using MPUIKIT;
+using SoulsLike.Entities.Character;
+using SoulsLike.Items;
 using SoulsLike.Ui.Base;
 using SoulsLike.Ui.Inventory.Data;
 using TMPro;
@@ -9,8 +10,10 @@ using UnityEngine.UI;
 
 namespace SoulsLike.Ui.Inventory
 {
-    public class InventoryUi : BaseUi
+    public sealed class InventoryUi : BaseUi
     {
+        private const int GRID_COLUMN_COUNT = 5;
+
         [Header("View State Controller")]
         [SerializeField] private InventoryViewStateController viewStateController;
 
@@ -47,7 +50,6 @@ namespace SoulsLike.Ui.Inventory
         [SerializeField] private TMP_Text detailReqFth;
         [SerializeField] private TMP_Text detailReqArc;
         [SerializeField] private TMP_Text detailSkillName;
-        [SerializeField] private Image detailSkillIcon;
         [SerializeField] private TMP_Text detailSkillFpCost;
         [SerializeField] private TMP_Text detailEffectDescription;
 
@@ -77,139 +79,227 @@ namespace SoulsLike.Ui.Inventory
         [SerializeField] private TMP_Text legendToggleLoreText;
         [SerializeField] private TMP_Text legendSimpleViewText;
 
-        // Color Constants (Elden Ring Palette)
-        public static readonly Color ColorParchmentPrimary = new Color(0.902f, 0.882f, 0.773f); // #E6E1C5
-        public static readonly Color ColorParchmentSubdued = new Color(0.620f, 0.596f, 0.522f); // #9E9885
-        public static readonly Color ColorStatBuff        = new Color(0.384f, 0.710f, 0.965f); // #62B5F6 Soft Blue
-        public static readonly Color ColorStatNerf        = new Color(0.937f, 0.325f, 0.314f); // #EF5350 Soft Red
-        public static readonly Color ColorUnmetRequirement = new Color(0.898f, 0.224f, 0.208f); // #E53935 Red
+        public static readonly Color ColorParchmentPrimary = new(0.902f, 0.882f, 0.773f);
+        public static readonly Color ColorStatBuff = new(0.384f, 0.710f, 0.965f);
+        public static readonly Color ColorStatNerf = new(0.937f, 0.325f, 0.314f);
+        public static readonly Color ColorUnmetRequirement = new(0.898f, 0.224f, 0.208f);
 
+        private readonly List<InventorySlotUI> _spawnedSlots = new();
         private IInventoryPresenter _presenter;
-        private List<InventorySlotUI> _spawnedSlots = new List<InventorySlotUI>();
 
-        public void Initialize(IInventoryPresenter presenter)
+        public void AssignPresenter(IInventoryPresenter presenter)
         {
-            _presenter = presenter;
+            _presenter = presenter ?? throw new ArgumentNullException(nameof(presenter));
         }
 
-        public void PopulateGrid(List<InventoryItemSO> items, Func<InventoryItemSO, bool> isEquippedCheck, Func<InventoryItemSO, bool> meetsReqCheck)
+        public override void Show()
         {
-            ClearGrid();
+            base.Show();
+            SelectFirstSlot();
+        }
 
-            if (items == null || slotPrefab == null || gridContentParent == null) return;
-
-            foreach (var item in items)
+        public void PopulateGrid(IReadOnlyList<InventoryItemViewData> items)
+        {
+            if (items == null)
             {
-                var slot = Instantiate(slotPrefab, gridContentParent);
-                bool isEq = isEquippedCheck != null && isEquippedCheck(item);
-                bool meetsReq = meetsReqCheck == null || meetsReqCheck(item);
+                throw new ArgumentNullException(nameof(items));
+            }
 
-                slot.Bind(item, 1, isEq, "R1", meetsReq);
-                slot.OnSlotSelected += HandleSlotSelected;
-                slot.OnSlotClicked += HandleSlotClicked;
-
+            RequirePresenter();
+            ClearGrid();
+            foreach (InventoryItemViewData item in items)
+            {
+                InventorySlotUI slot = Instantiate(slotPrefab, gridContentParent);
+                slot.Bind(item);
+                slot.SlotSelected += HandleSlotSelected;
+                slot.SlotSubmitted += HandleSlotSubmitted;
                 _spawnedSlots.Add(slot);
             }
+
+            ConfigureGridNavigation();
+            if (IsActive)
+            {
+                SelectFirstSlot();
+            }
         }
+
+        public void DisplayItemDetails(
+            InventoryItemViewData item,
+            CharacterAttributeStats attributes)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
+            ItemDefinition definition = item.Definition;
+            ItemStatSnapshot stats = definition.Stats;
+            detailItemArtwork.sprite = definition.Icon;
+            detailItemArtwork.enabled = definition.Icon != null;
+            detailItemName.text = definition.DisplayName;
+            detailItemType.text = definition.ItemType.ToString();
+            detailItemWeight.text = definition.Weight.ToString("F1");
+            detailAttackPhysical.text = stats.PhysicalAttack.ToString();
+            detailAttackMagic.text = stats.MagicAttack.ToString();
+            detailAttackFire.text = stats.FireAttack.ToString();
+            detailAttackLightning.text = stats.LightningAttack.ToString();
+            detailAttackHoly.text = stats.HolyAttack.ToString();
+            detailAttackCritical.text = stats.Critical.ToString();
+            detailGuardBoost.text = stats.GuardBoost.ToString("F0");
+            detailScaleStr.text = FormatScaling(stats.Scaling.Strength);
+            detailScaleDex.text = FormatScaling(stats.Scaling.Dexterity);
+            detailScaleInt.text = FormatScaling(stats.Scaling.Intelligence);
+            detailScaleFth.text = FormatScaling(stats.Scaling.Faith);
+            detailScaleArc.text = FormatScaling(stats.Scaling.Arcane);
+            SetRequirementField(detailReqStr, stats.Requirements.Strength, attributes.Strength);
+            SetRequirementField(detailReqDex, stats.Requirements.Dexterity, attributes.Dexterity);
+            SetRequirementField(detailReqInt, stats.Requirements.Intelligence, attributes.Intelligence);
+            SetRequirementField(detailReqFth, stats.Requirements.Faith, attributes.Faith);
+            SetRequirementField(detailReqArc, stats.Requirements.Arcane, attributes.Arcane);
+            detailSkillName.text = string.IsNullOrWhiteSpace(stats.SkillName) ? "-" : stats.SkillName;
+            detailSkillFpCost.text = stats.SkillFocusCost > 0 ? $"FP {stats.SkillFocusCost}" : "-";
+            detailEffectDescription.text = definition.Description;
+
+            loreItemName.text = definition.DisplayName;
+            loreItemArtwork.sprite = definition.Icon;
+            loreItemArtwork.enabled = definition.Icon != null;
+            loreFullText.text = $"{definition.Description}\n\n{definition.LoreDescription}";
+        }
+
+        public void DisplayCharacterStats(Character character, float equipWeight, float maxEquipWeight)
+        {
+            if (character == null)
+            {
+                throw new ArgumentNullException(nameof(character));
+            }
+
+            CharacterAttributeStats attributes = character.Attributes;
+            statVigor.text = attributes.Vigor.ToString();
+            statMind.text = attributes.Mind.ToString();
+            statEndurance.text = attributes.Endurance.ToString();
+            statStrength.text = attributes.Strength.ToString();
+            statDexterity.text = attributes.Dexterity.ToString();
+            statIntelligence.text = attributes.Intelligence.ToString();
+            statFaith.text = attributes.Faith.ToString();
+            statArcane.text = attributes.Arcane.ToString();
+            statEquipLoadText.text = $"{equipWeight:F1} / {maxEquipWeight:F1}";
+            statEquipLoadBar.fillAmount = maxEquipWeight <= 0f
+                ? 0f
+                : Mathf.Clamp01(equipWeight / maxEquipWeight);
+            statPoise.text = "0";
+        }
+
+        public void UpdateStatComparison(int currentAttack, int candidateAttack)
+        {
+            int delta = candidateAttack - currentAttack;
+            statR1Attack.text = delta switch
+            {
+                > 0 => $"{candidateAttack} (+{delta})",
+                < 0 => $"{candidateAttack} ({delta})",
+                _ => candidateAttack.ToString()
+            };
+            statR1Attack.color = delta switch
+            {
+                > 0 => ColorStatBuff,
+                < 0 => ColorStatNerf,
+                _ => ColorParchmentPrimary
+            };
+        }
+
+        public void ToggleLoreView() => viewStateController.ToggleLoreView();
+        public void ToggleSimpleView() => viewStateController.ToggleSimpleView();
 
         public void ClearGrid()
         {
-            foreach (var slot in _spawnedSlots)
+            foreach (InventorySlotUI slot in _spawnedSlots)
             {
-                if (slot != null)
-                {
-                    slot.OnSlotSelected -= HandleSlotSelected;
-                    slot.OnSlotClicked -= HandleSlotClicked;
-                    Destroy(slot.gameObject);
-                }
+                slot.SlotSelected -= HandleSlotSelected;
+                slot.SlotSubmitted -= HandleSlotSubmitted;
+                Destroy(slot.gameObject);
             }
+
             _spawnedSlots.Clear();
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            if (viewStateController == null
+                || screenTitleText == null
+                || primaryCategoryTabContainer == null
+                || subCategoryIconContainer == null
+                || gridContentParent == null
+                || gridScrollRect == null
+                || slotPrefab == null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(InventoryUi)} '{name}' has missing structural references.");
+            }
+
+            screenTitleText.text = "INVENTORY";
+        }
+
+        private void OnDestroy()
+        {
+            ClearGrid();
         }
 
         private void HandleSlotSelected(InventorySlotUI slot)
         {
-            if (slot == null || slot.CurrentItem == null) return;
-            DisplayItemDetails(slot.CurrentItem, slot.MeetsRequirements);
-            _presenter?.OnItemFocused(slot.CurrentItem);
+            RequirePresenter().OnItemFocused(slot.CurrentItem.EntryId);
         }
 
-        private void HandleSlotClicked(InventorySlotUI slot)
+        private void HandleSlotSubmitted(InventorySlotUI slot)
         {
-            if (slot == null || slot.CurrentItem == null) return;
-            _presenter?.OnItemSubmitted(slot.CurrentItem);
+            RequirePresenter().OnItemSubmitted(slot.CurrentItem.EntryId);
         }
 
-        public void DisplayItemDetails(InventoryItemSO item, bool meetsRequirements = true)
+        private void ConfigureGridNavigation()
         {
-            if (item == null) return;
-
-            // Details Column
-            if (detailItemArtwork != null) detailItemArtwork.sprite = item.itemIcon;
-            if (detailItemName != null) detailItemName.text = item.itemName;
-            if (detailItemType != null) detailItemType.text = item.itemTypeLabel;
-            if (detailItemWeight != null) detailItemWeight.text = item.weight.ToString("F1");
-
-            if (detailAttackPhysical != null) detailAttackPhysical.text = item.physicalAttack.ToString();
-            if (detailAttackMagic != null) detailAttackMagic.text = item.magicAttack.ToString();
-            if (detailAttackFire != null) detailAttackFire.text = item.fireAttack.ToString();
-            if (detailAttackLightning != null) detailAttackLightning.text = item.lightningAttack.ToString();
-            if (detailAttackHoly != null) detailAttackHoly.text = item.holyAttack.ToString();
-            if (detailAttackCritical != null) detailAttackCritical.text = item.critical.ToString();
-            if (detailGuardBoost != null) detailGuardBoost.text = item.guardBoost.ToString("F0");
-
-            if (detailScaleStr != null) detailScaleStr.text = item.scaleStrength.ToString();
-            if (detailScaleDex != null) detailScaleDex.text = item.scaleDexterity.ToString();
-            if (detailScaleInt != null) detailScaleInt.text = item.scaleIntelligence.ToString();
-            if (detailScaleFth != null) detailScaleFth.text = item.scaleFaith.ToString();
-            if (detailScaleArc != null) detailScaleArc.text = item.scaleArcane.ToString();
-
-            // Requirements with unmet coloring
-            SetRequirementField(detailReqStr, item.reqStrength, 10);
-            SetRequirementField(detailReqDex, item.reqDexterity, 10);
-            SetRequirementField(detailReqInt, item.reqIntelligence, 10);
-            SetRequirementField(detailReqFth, item.reqFaith, 10);
-            SetRequirementField(detailReqArc, item.reqArcane, 10);
-
-            if (detailSkillName != null) detailSkillName.text = item.skillName;
-            if (detailSkillIcon != null) detailSkillIcon.sprite = item.skillIcon;
-            if (detailSkillFpCost != null) detailSkillFpCost.text = item.fpCost > 0 ? $"FP {item.fpCost}" : "-";
-            if (detailEffectDescription != null) detailEffectDescription.text = item.effectDescription;
-
-            // Lore Card Column
-            if (loreItemName != null) loreItemName.text = item.itemName;
-            if (loreItemArtwork != null) loreItemArtwork.sprite = item.itemIcon;
-            if (loreFullText != null) loreFullText.text = $"{item.effectDescription}\n\n{item.loreDescription}";
-        }
-
-        private void SetRequirementField(TMP_Text field, int requiredVal, int playerVal)
-        {
-            if (field == null) return;
-            field.text = requiredVal > 0 ? requiredVal.ToString() : "-";
-            field.color = playerVal < requiredVal ? ColorUnmetRequirement : ColorParchmentPrimary;
-        }
-
-        public void UpdateStatComparison(int currentR1, int candidateR1, float currentWeight, float candidateWeight)
-        {
-            // Stat Delta formatting (Soft Blue for buff, Soft Red for nerf)
-            if (statR1Attack != null)
+            for (int index = 0; index < _spawnedSlots.Count; index++)
             {
-                int delta = candidateR1 - currentR1;
-                if (delta > 0)
-                {
-                    statR1Attack.text = $"{candidateR1} (+{delta})";
-                    statR1Attack.color = ColorStatBuff;
-                }
-                else if (delta < 0)
-                {
-                    statR1Attack.text = $"{candidateR1} ({delta})";
-                    statR1Attack.color = ColorStatNerf;
-                }
-                else
-                {
-                    statR1Attack.text = candidateR1.ToString();
-                    statR1Attack.color = ColorParchmentPrimary;
-                }
+                InventorySlotUI up = index >= GRID_COLUMN_COUNT
+                    ? _spawnedSlots[index - GRID_COLUMN_COUNT]
+                    : null;
+                InventorySlotUI down = index + GRID_COLUMN_COUNT < _spawnedSlots.Count
+                    ? _spawnedSlots[index + GRID_COLUMN_COUNT]
+                    : null;
+                InventorySlotUI left = index % GRID_COLUMN_COUNT > 0
+                    ? _spawnedSlots[index - 1]
+                    : null;
+                InventorySlotUI right = index % GRID_COLUMN_COUNT < GRID_COLUMN_COUNT - 1
+                    && index + 1 < _spawnedSlots.Count
+                    ? _spawnedSlots[index + 1]
+                    : null;
+                _spawnedSlots[index].ConfigureNavigation(up, down, left, right);
             }
+        }
+
+        private void SelectFirstSlot()
+        {
+            if (_spawnedSlots.Count > 0)
+            {
+                _spawnedSlots[0].Select();
+            }
+        }
+
+        private IInventoryPresenter RequirePresenter()
+        {
+            return _presenter ?? throw new InvalidOperationException(
+                $"{nameof(InventoryUi)} requires a presenter before use.");
+        }
+
+        private static string FormatScaling(SoulsLike.Items.ScalingGrade grade)
+        {
+            return grade == SoulsLike.Items.ScalingGrade.None ? "-" : grade.ToString();
+        }
+
+        private static void SetRequirementField(TMP_Text field, int requiredValue, int playerValue)
+        {
+            field.text = requiredValue > 0 ? requiredValue.ToString() : "-";
+            field.color = playerValue < requiredValue
+                ? ColorUnmetRequirement
+                : ColorParchmentPrimary;
         }
     }
 }

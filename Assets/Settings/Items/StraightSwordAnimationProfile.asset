@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c84ea7303995ab64bbb1d42a80a7790f, type: 3}
+  m_Name: StraightSwordAnimationProfile
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.AnimationProfile
+  <Controller>k__BackingField: {fileID: 9100000, guid: 583776710670a444bafe6982b11b45c9, type: 2}

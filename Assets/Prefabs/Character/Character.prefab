@@ -752,6 +752,7 @@ GameObject:
   - component: {fileID: 9002903856365429309}
   - component: {fileID: 1001450772407502477}
   - component: {fileID: 876779542987437841}
+  - component: {fileID: 4953552906734793246}
   m_Layer: 6
   m_Name: Character
   m_TagString: Player
@@ -822,7 +823,17 @@ MonoBehaviour:
   _equipmentComponent: {fileID: 7195035746810287973}
   _healthComponent: {fileID: 9002903856365429309}
   _inventoryComponent: {fileID: 1001450772407502477}
+  _equipmentPresentation: {fileID: 4953552906734793246}
   _cameraTarget: {fileID: 1033412270112227245}
+  _attributes:
+    <Vigor>k__BackingField: 10
+    <Mind>k__BackingField: 10
+    <Endurance>k__BackingField: 10
+    <Strength>k__BackingField: 10
+    <Dexterity>k__BackingField: 10
+    <Intelligence>k__BackingField: 10
+    <Faith>k__BackingField: 10
+    <Arcane>k__BackingField: 10
   _aimTargetDistance: 100
   _aimLayerMask:
     serializedVersion: 2
@@ -873,7 +884,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Equipment.EquipmentComponent
   _equipmentParent: {fileID: 7022122914397534779}
-  _weaponAnchor: {fileID: 0}
 --- !u!114 &9002903856365429309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -910,6 +920,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 869834b8790e79b4fb574b858f08ec58, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Attack.AttackComponent
+--- !u!114 &4953552906734793246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4657128601297372913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c83960e86bc091d48b409ccd3df21e7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Equipment.EquipmentPresentation
+  _rightHandAnchor: {fileID: 7022122914397534779}
+  _leftHandAnchor: {fileID: 7022122914397534779}
 --- !u!1 &5237542798037926601
 GameObject:
   m_ObjectHideFlags: 0
@@ -1282,7 +1306,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 9c68b8996a8fddb4d93a332826174c45, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 583776710670a444bafe6982b11b45c9, type: 2}
+      objectReference: {fileID: 9100000, guid: 097d729e6aad72b45b81c55234201ba6, type: 2}
     - target: {fileID: 5866666021909216657, guid: 9c68b8996a8fddb4d93a332826174c45, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0

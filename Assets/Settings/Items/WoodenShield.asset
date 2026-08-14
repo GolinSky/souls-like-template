@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3968d75257658d74da119bd7a514edfe, type: 3}
+  m_Name: WoodenShield
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.ShieldDefinition
+  _itemId: 2
+  _displayName: Wooden Shield
+  _description: A light wooden shield with modest physical protection.
+  _loreDescription: Common protection for travelers and militia.
+  _icon: {fileID: 0}
+  _weight: 2
+  _maxStack: 1
+  _equipmentGroups: 01000000
+  _equippedPrefab: {fileID: 0}
+  _physicalGuard: 60
+  _magicGuard: 30
+  _fireGuard: 20
+  _lightningGuard: 35
+  _holyGuard: 30
+  _guardBoost: 40
+  _requirements:
+    Strength: 8
+    Dexterity: 0
+    Intelligence: 0
+    Faith: 0
+    Arcane: 0

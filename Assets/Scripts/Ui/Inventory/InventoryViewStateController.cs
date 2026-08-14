@@ -20,6 +20,20 @@ namespace SoulsLike.Ui.Inventory
 
         public InventoryViewState CurrentState { get; private set; } = InventoryViewState.DualPanel;
 
+        private void Awake()
+        {
+            if (gridColumnGroup == null
+                || detailsColumnGroup == null
+                || loreCardGroup == null
+                || statsColumnGroup == null)
+            {
+                throw new System.InvalidOperationException(
+                    $"{nameof(InventoryViewStateController)} '{name}' has missing column references.");
+            }
+
+            SetState(CurrentState);
+        }
+
         public void SetState(InventoryViewState newState)
         {
             CurrentState = newState;
@@ -27,24 +41,24 @@ namespace SoulsLike.Ui.Inventory
             switch (newState)
             {
                 case InventoryViewState.DualPanel:
-                    gridColumnGroup?.SetActive(true);
-                    detailsColumnGroup?.SetActive(true);
-                    loreCardGroup?.SetActive(false);
-                    statsColumnGroup?.SetActive(true);
+                    gridColumnGroup.SetActive(true);
+                    detailsColumnGroup.SetActive(true);
+                    loreCardGroup.SetActive(false);
+                    statsColumnGroup.SetActive(true);
                     break;
 
                 case InventoryViewState.LoreView:
-                    gridColumnGroup?.SetActive(true);
-                    detailsColumnGroup?.SetActive(false);
-                    loreCardGroup?.SetActive(true);
-                    statsColumnGroup?.SetActive(false);
+                    gridColumnGroup.SetActive(true);
+                    detailsColumnGroup.SetActive(false);
+                    loreCardGroup.SetActive(true);
+                    statsColumnGroup.SetActive(false);
                     break;
 
                 case InventoryViewState.SimpleView:
-                    gridColumnGroup?.SetActive(true);
-                    detailsColumnGroup?.SetActive(false);
-                    loreCardGroup?.SetActive(false);
-                    statsColumnGroup?.SetActive(false);
+                    gridColumnGroup.SetActive(true);
+                    detailsColumnGroup.SetActive(false);
+                    loreCardGroup.SetActive(false);
+                    statsColumnGroup.SetActive(false);
                     break;
             }
         }

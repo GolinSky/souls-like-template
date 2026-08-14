@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Ui
   m_GUID: c14872aedb987b9408f342ffa1cd89fe
   m_SerializeEntries:
+  - m_GUID: 04c9c316a7440544085b0c87e72a777b
+    m_Address: InventoryUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0f164e7c417f3cb4da63de4dd337277e
     m_Address: PauseMenuUi
     m_ReadOnly: 0

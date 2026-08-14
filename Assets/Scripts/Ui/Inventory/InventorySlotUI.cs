@@ -1,5 +1,6 @@
 using System;
 using MPUIKIT;
+using SoulsLike.Items;
 using SoulsLike.Ui.Inventory.Data;
 using TMPro;
 using UnityEngine;
@@ -8,7 +9,13 @@ using UnityEngine.UI;
 
 namespace SoulsLike.Ui.Inventory
 {
-    public class InventorySlotUI : MonoBehaviour, ISelectHandler, IDeselectHandler, IPointerClickHandler, ISubmitHandler
+    public sealed class InventorySlotUI : MonoBehaviour,
+        ISelectHandler,
+        IDeselectHandler,
+        IPointerClickHandler,
+        IPointerEnterHandler,
+        ISubmitHandler,
+        IMoveHandler
     {
         [Header("MPUIKit Visual Components")]
         [SerializeField] private MPImage backgroundBox;
@@ -21,89 +28,81 @@ namespace SoulsLike.Ui.Inventory
         [SerializeField] private TMP_Text quantityText;
         [SerializeField] private TMP_Text equippedBadgeText;
         [SerializeField] private Image ashOfWarIcon;
-        [SerializeField] private Image unmetWarningIcon;
 
-        public InventoryItemSO CurrentItem { get; private set; }
-        public int ItemQuantity { get; private set; } = 1;
-        public bool IsEquipped { get; private set; }
-        public bool MeetsRequirements { get; private set; } = true;
+        private InventorySlotUI _up;
+        private InventorySlotUI _down;
+        private InventorySlotUI _left;
+        private InventorySlotUI _right;
 
-        public event Action<InventorySlotUI> OnSlotSelected;
-        public event Action<InventorySlotUI> OnSlotClicked;
+        public InventoryItemViewData CurrentItem { get; private set; }
 
-        public void Bind(InventoryItemSO item, int quantity = 1, bool isEquipped = false, string equipLabel = "R1", bool meetsReqs = true)
+        public event Action<InventorySlotUI> SlotSelected;
+        public event Action<InventorySlotUI> SlotSubmitted;
+
+        private void Awake()
         {
-            CurrentItem = item;
-            ItemQuantity = quantity;
-            IsEquipped = isEquipped;
-            MeetsRequirements = meetsReqs;
-
-            if (item == null)
+            if (backgroundBox == null
+                || focusFrame == null
+                || equippedBadgeBox == null
+                || unmetRequirementOverlay == null
+                || itemIcon == null
+                || quantityText == null
+                || equippedBadgeText == null
+                || ashOfWarIcon == null)
             {
-                Clear();
-                return;
+                throw new InvalidOperationException(
+                    $"{nameof(InventorySlotUI)} '{name}' has missing serialized references.");
             }
+        }
 
-            if (itemIcon != null)
-            {
-                itemIcon.sprite = item.itemIcon;
-                itemIcon.enabled = item.itemIcon != null;
-            }
+        public void Bind(InventoryItemViewData item)
+        {
+            CurrentItem = item ?? throw new ArgumentNullException(nameof(item));
+            ItemDefinition definition = item.Definition;
 
-            if (quantityText != null)
-            {
-                bool showQty = item.isStackable && quantity > 1;
-                quantityText.text = showQty ? $"x{quantity}" : string.Empty;
-                quantityText.gameObject.SetActive(showQty);
-            }
+            itemIcon.sprite = definition.Icon;
+            itemIcon.enabled = definition.Icon != null;
 
-            if (equippedBadgeBox != null)
-            {
-                equippedBadgeBox.gameObject.SetActive(isEquipped);
-                if (equippedBadgeText != null && isEquipped)
-                {
-                    equippedBadgeText.text = equipLabel;
-                }
-            }
+            bool showQuantity = definition.IsStackable && item.Quantity > 1;
+            quantityText.text = showQuantity ? $"x{item.Quantity}" : string.Empty;
+            quantityText.gameObject.SetActive(showQuantity);
 
-            if (unmetRequirementOverlay != null)
-            {
-                unmetRequirementOverlay.gameObject.SetActive(!meetsReqs);
-            }
+            equippedBadgeBox.gameObject.SetActive(item.IsEquipped);
+            equippedBadgeText.text = item.IsEquipped ? item.EquipmentLabel : string.Empty;
+            unmetRequirementOverlay.gameObject.SetActive(!item.MeetsRequirements);
 
-            if (ashOfWarIcon != null)
-            {
-                bool hasSkill = item.skillIcon != null;
-                ashOfWarIcon.sprite = item.skillIcon;
-                ashOfWarIcon.gameObject.SetActive(hasSkill);
-            }
-
+            Sprite skillIcon = definition is WeaponDefinition weapon ? weapon.SkillIcon : null;
+            ashOfWarIcon.sprite = skillIcon;
+            ashOfWarIcon.gameObject.SetActive(skillIcon != null);
             SetFocusState(false);
         }
 
-        public void Clear()
+        public void ConfigureNavigation(
+            InventorySlotUI up,
+            InventorySlotUI down,
+            InventorySlotUI left,
+            InventorySlotUI right)
         {
-            CurrentItem = null;
-            if (itemIcon != null) itemIcon.enabled = false;
-            if (quantityText != null) quantityText.gameObject.SetActive(false);
-            if (equippedBadgeBox != null) equippedBadgeBox.gameObject.SetActive(false);
-            if (unmetRequirementOverlay != null) unmetRequirementOverlay.gameObject.SetActive(false);
-            if (ashOfWarIcon != null) ashOfWarIcon.gameObject.SetActive(false);
-            SetFocusState(false);
+            _up = up;
+            _down = down;
+            _left = left;
+            _right = right;
         }
 
-        public void SetFocusState(bool focused)
+        public void Select()
         {
-            if (focusFrame != null)
+            if (EventSystem.current == null)
             {
-                focusFrame.gameObject.SetActive(focused);
+                throw new InvalidOperationException("Inventory UI requires an active EventSystem.");
             }
+
+            EventSystem.current.SetSelectedGameObject(gameObject);
         }
 
         public void OnSelect(BaseEventData eventData)
         {
             SetFocusState(true);
-            OnSlotSelected?.Invoke(this);
+            SlotSelected?.Invoke(this);
         }
 
         public void OnDeselect(BaseEventData eventData)
@@ -111,14 +110,42 @@ namespace SoulsLike.Ui.Inventory
             SetFocusState(false);
         }
 
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            Select();
+        }
+
         public void OnPointerClick(PointerEventData eventData)
         {
-            OnSlotClicked?.Invoke(this);
+            SlotSubmitted?.Invoke(this);
         }
 
         public void OnSubmit(BaseEventData eventData)
         {
-            OnSlotClicked?.Invoke(this);
+            SlotSubmitted?.Invoke(this);
+        }
+
+        public void OnMove(AxisEventData eventData)
+        {
+            InventorySlotUI target = eventData.moveDir switch
+            {
+                MoveDirection.Up => _up,
+                MoveDirection.Down => _down,
+                MoveDirection.Left => _left,
+                MoveDirection.Right => _right,
+                _ => null
+            };
+
+            if (target != null)
+            {
+                target.Select();
+                eventData.Use();
+            }
+        }
+
+        private void SetFocusState(bool focused)
+        {
+            focusFrame.gameObject.SetActive(focused);
         }
     }
 }

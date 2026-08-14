@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e87dcfd897b3264b920d5be9965d813, type: 3}
+  m_Name: LongSword
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.WeaponDefinition
+  _itemId: 1
+  _displayName: Long Sword
+  _description: A dependable straight sword suited to one- or two-handed combat.
+  _loreDescription: A plain sword carried by soldiers across the realm.
+  _icon: {fileID: 0}
+  _weight: 3.5
+  _maxStack: 1
+  _equipmentGroups: 01000000
+  _animationProfile: {fileID: 11400000, guid: 76b984e4dd89c4141ad3097fa1ae36de, type: 2}
+  _combatProfile: {fileID: 11400000, guid: 4922315f981898a4c8bd76e1906b672f, type: 2}
+  _equippedPrefab: {fileID: 0}
+  _canTwoHand: 1
+  _physicalAttack: 110
+  _magicAttack: 0
+  _fireAttack: 0
+  _lightningAttack: 0
+  _holyAttack: 0
+  _critical: 100
+  _physicalGuard: 0
+  _magicGuard: 0
+  _fireGuard: 0
+  _lightningGuard: 0
+  _holyGuard: 0
+  _guardBoost: 0
+  _requirements:
+    Strength: 10
+    Dexterity: 10
+    Intelligence: 0
+    Faith: 0
+    Arcane: 0
+  _scaling:
+    Strength: 2
+    Dexterity: 2
+    Intelligence: 0
+    Faith: 0
+    Arcane: 0
+  _skillName: Square Off
+  _skillIcon: {fileID: 0}
+  _skillFocusCost: 8

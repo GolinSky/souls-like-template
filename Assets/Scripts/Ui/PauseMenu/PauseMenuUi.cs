@@ -1,6 +1,6 @@
-﻿using UnityEngine;
-using SoulsLike.Ui.Base;
 using System.Ui.Base;
+using SoulsLike.Ui.Base;
+using UnityEngine;
 
 namespace SoulsLike
 {
@@ -15,12 +15,11 @@ namespace SoulsLike
         public void Initialize(IPauseMenuPresenter presenter)
         {
             _presenter = presenter;
-            
             resumeButton.onClick.AddListener(_presenter.ResumeGame);
             optionsButton.onClick.AddListener(_presenter.OpenOptions);
             exitButton.onClick.AddListener(_presenter.QuitGame);
         }
-        
+
         private void OnDestroy()
         {
             resumeButton.onClick.RemoveListener(_presenter.ResumeGame);

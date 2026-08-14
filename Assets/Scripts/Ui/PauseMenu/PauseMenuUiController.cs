@@ -32,7 +32,8 @@ namespace SoulsLike
             {
                 PauseGame();
             }
-            else if (_coreGameOrchestrator.CurrentGameState == GameState.Paused)
+            else if (_coreGameOrchestrator.CurrentGameState == GameState.Paused
+                && !_pauseMenuUi.IsHidden)
             {
                 ResumeGame();
             }

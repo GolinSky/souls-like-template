@@ -21,7 +21,7 @@ namespace SoulsLike.Ui.Base
         
         public Transform Transform => transform;
         
-        private void Awake()
+        protected virtual void Awake()
         {
             if (autoHide)
             {

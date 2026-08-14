@@ -9,6 +9,9 @@ using SoulsLike.Extensions;
 using SoulsLike.Factory;
 using SoulsLike.Ui.LockOn;
 using SoulsLike.Ui.PlayerHud;
+using SoulsLike.Items;
+using SoulsLike.Ui.Inventory;
+using SoulsLike.Ui.Equipment;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -40,6 +43,16 @@ namespace SoulsLike.Entities.Character
             AttackComponent attackComponent = GetRequiredComponent<AttackComponent>(instance);
             MovementComponent movementComponent = GetRequiredComponent<MovementComponent>(instance);
             EquipmentComponent equipmentComponent = GetRequiredComponent<EquipmentComponent>(instance);
+            EquipmentPresentation equipmentPresentation = instance.GetComponent<EquipmentPresentation>();
+            if (equipmentPresentation == null)
+            {
+                equipmentPresentation = instance.AddComponent<EquipmentPresentation>();
+            }
+
+            equipmentPresentation.Configure(
+                equipmentComponent.EquipmentParent,
+                equipmentComponent.EquipmentParent);
+            character.SetEquipmentPresentation(equipmentPresentation);
             InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
 
@@ -58,15 +71,20 @@ namespace SoulsLike.Entities.Character
 
                 builder.Register<EquipmentModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(equipmentComponent).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponent(equipmentPresentation).AsSelf();
 
                 builder.RegisterScriptableObject<InventoryData>();
-                builder.RegisterComponent(inventoryComponent).AsSelf();
+                builder.RegisterScriptableObject<ItemDatabase>();
+                builder.Register<InventoryModel>(Lifetime.Singleton).AsSelf();
+                builder.RegisterComponent(inventoryComponent).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterScriptableObject<HealthData>().As<IHealthData>();
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
                 builder.Register<PlayerHudUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<InventoryUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<EquipmentUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
                 builder.Register<CharacterActionBuffer>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

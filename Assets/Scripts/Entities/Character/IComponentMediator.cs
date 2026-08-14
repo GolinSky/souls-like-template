@@ -1,6 +1,7 @@
 using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Health;
+using SoulsLike.Entities.Character.Components.Equipment;
 using UnityEngine;
 
 namespace SoulsLike.Entities.Character
@@ -24,5 +25,6 @@ namespace SoulsLike.Entities.Character
         void SetAnimationMovementContract(bool movementBlocked, bool useRootMotion);
         void SetSpeedMultiplier(SpeedMultiplierKey key, float multiplier);
         void RemoveSpeedMultiplier(SpeedMultiplierKey key);
+        void NotifyEquipmentLoadoutChanged(EquipmentLoadout loadout);
     }
 }

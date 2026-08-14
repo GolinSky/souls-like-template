@@ -8,6 +8,7 @@ using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
 using Prospector.Utility.Timer;
 using SoulsLike.Services.CameraService;
+using SoulsLike.Items;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -23,7 +24,9 @@ namespace SoulsLike.Entities.Character
         [SerializeField] private EquipmentComponent _equipmentComponent;
         [SerializeField] private HealthComponent _healthComponent;
         [SerializeField] private InventoryComponent _inventoryComponent;
+        [SerializeField] private EquipmentPresentation _equipmentPresentation;
         [SerializeField] private Transform _cameraTarget;
+        [SerializeField] private CharacterAttributeStats _attributes;
 
         [Header("Aim Settings")]
         [SerializeField, Min(0.1f)] private float _aimTargetDistance = 100f;
@@ -42,6 +45,8 @@ namespace SoulsLike.Entities.Character
         public Transform CameraTarget => _cameraTarget;
         public InventoryComponent InventoryComponent => _inventoryComponent;
         public HealthStats HealthStats => _healthComponent.Stats;
+        public int HeldCurrency { get; private set; }
+        public CharacterAttributeStats Attributes => _attributes;
         public bool IsInputBlocked { get; private set; }
 
         [Inject]
@@ -55,6 +60,12 @@ namespace SoulsLike.Entities.Character
             _actionBuffer = actionBuffer;
         }
 
+        public void SetEquipmentPresentation(EquipmentPresentation equipmentPresentation)
+        {
+            _equipmentPresentation = equipmentPresentation
+                ?? throw new ArgumentNullException(nameof(equipmentPresentation));
+        }
+
         public void Initialize()
         {
             _movementComponent.SetMediator(this);
@@ -62,7 +73,14 @@ namespace SoulsLike.Entities.Character
             _attackComponent.SetMediator(this);
             _equipmentComponent.SetMediator(this);
             _healthComponent.SetMediator(this);
+            if (_equipmentPresentation == null)
+            {
+                throw new InvalidOperationException(
+                    $"{name} requires an {nameof(EquipmentPresentation)} component.");
+            }
+
             _animatorComponent.SetHandMode(_equipmentComponent.Model.ActiveHandMode);
+            NotifyEquipmentLoadoutChanged(_equipmentComponent.BuildLoadout());
             _sprintHoldTimer = TimerFactory.ConstructTimer(SPRINT_HOLD_THRESHOLD);
             Cursor.lockState = CursorLockMode.Locked;
             IsInputBlocked = true;
@@ -97,17 +115,39 @@ namespace SoulsLike.Entities.Character
                 && !_manualMovementBlocked;
             bool canBufferSpecialAttack = canBufferAttack;
 
-            bool handModeSwitched = false;
+            bool equipmentActionPerformed = false;
+            if (!_attackComponent.IsActionActive)
+            {
+                if (actions.SwitchWeapon.WasPressedThisFrame())
+                {
+                    _equipmentComponent.SwitchActive(EquipmentSlotGroup.RightHandArmament);
+                    equipmentActionPerformed = true;
+                }
+                else if (actions.SwitchShield.WasPressedThisFrame())
+                {
+                    _equipmentComponent.SwitchActive(EquipmentSlotGroup.LeftHandArmament);
+                    equipmentActionPerformed = true;
+                }
+                else if (actions.SwitchFlask.WasPressedThisFrame())
+                {
+                    _equipmentComponent.SwitchActive(EquipmentSlotGroup.QuickItem);
+                    equipmentActionPerformed = true;
+                }
+                else if (actions.UseItem.WasPressedThisFrame())
+                {
+                    equipmentActionPerformed = TryUseActiveQuickItem();
+                }
+            }
+
             if (actions.TwoHanded.WasPressedThisFrame()
                 && canStartAttack
                 && !_attackComponent.IsActionActive)
             {
-                handModeSwitched = true;
-                HandMode handMode = _equipmentComponent.SwitchHandMode();
-                _animatorComponent.TransitionHandMode(handMode);
+                equipmentActionPerformed = _equipmentComponent.TrySwitchHandMode(out _)
+                    || equipmentActionPerformed;
             }
 
-            if (!handModeSwitched && _attackComponent.TryCaptureAction(
+            if (!equipmentActionPerformed && _attackComponent.TryCaptureAction(
                 actions,
                 sprinting && hasMovementInput,
                 canBufferAttack,
@@ -117,14 +157,14 @@ namespace SoulsLike.Entities.Character
                 _actionBuffer.Buffer(attackAction);
             }
 
-            if (!handModeSwitched
+            if (!equipmentActionPerformed
                 && actions.Roll.WasReleasedThisFrame()
                 && !_sprintHoldQualified)
             {
                 _actionBuffer.Buffer(BufferedCharacterAction.Roll(moveInput, cameraYaw));
             }
 
-            if (!handModeSwitched)
+            if (!equipmentActionPerformed)
             {
                 TryExecuteBufferedAction(
                     canStartAttack,
@@ -140,7 +180,7 @@ namespace SoulsLike.Entities.Character
                 false,
                 actions.Crouch.IsPressed());
 
-            bool canBlock = !handModeSwitched
+            bool canBlock = !equipmentActionPerformed
                 && _movementComponent.Model.Grounded
                 && !_manualMovementBlocked
                 && (!_animationMovementBlocked
@@ -302,6 +342,68 @@ namespace SoulsLike.Entities.Character
         public void RemoveSpeedMultiplier(SpeedMultiplierKey key)
         {
             _movementComponent.RemoveSpeedMultiplier(key);
+        }
+
+        public void NotifyEquipmentLoadoutChanged(EquipmentLoadout loadout)
+        {
+            _equipmentPresentation.ApplyLoadout(loadout);
+
+            //todo: instead of casting ItemDefinition to WeaponDefinition - get item type and id - then get WeaponDefinition,Don't use inheritance on WeaponDefinition->ItemDefinition
+            WeaponDefinition weaponDefinition = loadout.EffectiveRight?.Definition as WeaponDefinition;
+            AnimationProfile animationProfile = weaponDefinition == null
+                ? null
+                : weaponDefinition.AnimationProfile;
+            _animatorComponent.ApplyAnimationProfile(animationProfile);
+            _animatorComponent.TransitionHandMode(loadout.HandMode);
+            _attackComponent.SetActiveWeapon(
+                weaponDefinition,
+                _equipmentPresentation.ActiveRightWeaponRuntime,
+                loadout.HandMode);
+        }
+
+        private bool TryUseActiveQuickItem()
+        {
+            EquippedItemContext quickItem = _equipmentComponent.BuildLoadout().ActiveQuickItem;
+            if (quickItem == null)
+            {
+                return false;
+            }
+
+            if (quickItem.Definition is not ConsumableDefinition consumable)
+            {
+                throw new InvalidOperationException(
+                    $"Quick-item slot contains non-consumable '{quickItem.Definition.DisplayName}'.");
+            }
+
+            switch (consumable.UseType)
+            {
+                case ItemUseType.Heal:
+                    Heal(consumable.EffectAmount);
+                    break;
+                case ItemUseType.GrantCurrency:
+                    HeldCurrency = checked(HeldCurrency + Mathf.RoundToInt(consumable.EffectAmount));
+                    break;
+                case ItemUseType.InfuseActiveWeapon:
+                    WeaponRuntime weaponRuntime = _equipmentPresentation.ActiveRightWeaponRuntime;
+                    if (weaponRuntime == null)
+                    {
+                        return false;
+                    }
+
+                    weaponRuntime.ApplyLightningInfusion(
+                        consumable.EffectAmount,
+                        consumable.DurationSeconds);
+                    break;
+                case ItemUseType.None:
+                default:
+                    throw new ArgumentOutOfRangeException(
+                        nameof(consumable.UseType),
+                        consumable.UseType,
+                        $"Consumable '{consumable.DisplayName}' has no supported use behavior.");
+            }
+
+            _inventoryComponent.Consume(quickItem.Entry.EntryId);
+            return true;
         }
 
         private void SynchronizeMovementBlock()

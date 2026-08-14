@@ -2,6 +2,7 @@ using System;
 using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Equipment;
+using SoulsLike.Items;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -69,12 +70,14 @@ namespace SoulsLike.Entities.Character.Components
         private bool _aimTargetInitialized;
         private bool _hasChargedAttackSpeedParameter;
         private bool _observingStateMachine;
+        private RuntimeAnimatorController _defaultController;
 
         private Animator Animator => animator;
         
         public void SetMediator(IComponentMediator mediator)
         {
             _mediator = mediator;
+            _defaultController = animator.runtimeAnimatorController;
             rootMotionRelay.Initialize(mediator);
             _hasChargedAttackSpeedParameter = HasParameter(
                 animator,
@@ -93,6 +96,29 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             animator.applyRootMotion = true;
+        }
+
+        public void ApplyAnimationProfile(AnimationProfile animationProfile)
+        {
+            RuntimeAnimatorController targetController = animationProfile.Controller;
+
+            if (targetController == null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(AnimatorComponent)} cannot apply an animation profile without a controller.");
+            }
+
+            if (animator.runtimeAnimatorController == targetController)
+            {
+                return;
+            }
+
+            animator.runtimeAnimatorController = targetController;
+            _hasChargedAttackSpeedParameter = HasParameter(
+                animator,
+                ChargedSpeedParameter,
+                AnimatorControllerParameterType.Float);
+            SetHandMode(_targetHandMode);
         }
         
         public void SetLockOn(bool isLockedOn)
@@ -182,6 +208,7 @@ namespace SoulsLike.Entities.Character.Components
             SetHandModeTarget(handMode);
         }
 
+        //todo: we had smooth 1hand/2hand layer switching - find this method
         public void SetHandMode(HandMode handMode)
         {
             SetHandModeTarget(handMode);

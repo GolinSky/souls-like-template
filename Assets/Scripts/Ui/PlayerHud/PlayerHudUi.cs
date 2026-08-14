@@ -160,8 +160,9 @@ namespace SoulsLike.Ui.PlayerHud
         private static readonly Color StaminaPrimaryColor = HexToColor("#1E5E3A"); // Dark Forest Green
         private static readonly Color StaminaBufferColor = HexToColor("#4D9E6E"); // Dark Muted Sage Green
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             hpBar.primaryColor = HpPrimaryColor;
             hpBar.bufferColor = HpBufferColor;
             fpBar.primaryColor = FpPrimaryColor;

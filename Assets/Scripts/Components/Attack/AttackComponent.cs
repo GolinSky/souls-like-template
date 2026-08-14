@@ -1,5 +1,7 @@
 using Prospector.Utility.Timer;
 using SoulsLike.Entities.Character.Components.Animations;
+using SoulsLike.Entities.Character.Components.Equipment;
+using SoulsLike.Items;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character.Components.Attack
@@ -17,6 +19,11 @@ namespace SoulsLike.Entities.Character.Components.Attack
         private bool _strongInputActive;
         private bool _suppressLightUntilRelease;
 
+        public WeaponDefinition ActiveWeaponDefinition { get; private set; }
+        public CombatProfile ActiveCombatProfile { get; private set; }
+        public WeaponRuntime ActiveWeaponRuntime { get; private set; }
+        public HandMode ActiveHandMode { get; private set; } = HandMode.OneHanded;
+
         public bool IsActionActive => _activeState != StateMachineName.None;
         public bool IsRollActive => _activeState == StateMachineName.Roll;
 
@@ -28,6 +35,17 @@ namespace SoulsLike.Entities.Character.Components.Attack
         public void SetMediator(IComponentMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        public void SetActiveWeapon(
+            WeaponDefinition definition,
+            WeaponRuntime weaponRuntime,
+            HandMode handMode)
+        {
+            ActiveWeaponDefinition = definition;
+            ActiveCombatProfile = definition == null ? null : definition.CombatProfile;
+            ActiveWeaponRuntime = weaponRuntime;
+            ActiveHandMode = handMode;
         }
 
         public bool TryCaptureAction(

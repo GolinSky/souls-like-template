@@ -1,18 +1,17 @@
-﻿using System.Ui.Base;
+using System.Ui.Base;
 using SoulsLike.Ui.Base;
 using UnityEngine;
 using VContainer.Unity;
 
 namespace SoulsLike.Ui.MainMenu
 {
-    public class MainMenuUi: BaseUi, IStartable
+    public class MainMenuUi : BaseUi, IStartable
     {
         [SerializeField] private CustomButton playButton;
         [SerializeField] private CustomButton optionsButton;
         [SerializeField] private CustomButton exitButton;
-     
-        private IMainMenuPresenter Presenter { get; set; }
 
+        private IMainMenuPresenter Presenter { get; set; }
 
         void IStartable.Start()
         {

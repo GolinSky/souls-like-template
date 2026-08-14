@@ -1,6 +1,7 @@
 using SoulsLike.Services.Repository;
 using UnityEngine;
 using VContainer;
+using InvalidOperationException = System.InvalidOperationException;
 
 namespace SoulsLike.Extensions
 {
@@ -46,6 +47,12 @@ namespace SoulsLike.Extensions
             where TImpl : Object
         {
             var instance = AssetService.Load<TImpl>(key);
+            if (instance == null)
+            {
+                throw new InvalidOperationException(
+                    $"Required addressable asset '{key}' for {typeof(TImpl).Name} was not found.");
+            }
+
             return builder.RegisterInstance(instance).AsSelf();
         }
     }

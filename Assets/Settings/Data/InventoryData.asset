@@ -12,3 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec37c84a8a3b5f24dba7ccbe72caf5ae, type: 3}
   m_Name: InventoryData
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Inventory.InventoryData
+  _initialEntries:
+  - <ItemId>k__BackingField: 1
+    <Quantity>k__BackingField: 1
+  - <ItemId>k__BackingField: 2
+    <Quantity>k__BackingField: 1
+  - <ItemId>k__BackingField: 3
+    <Quantity>k__BackingField: 5
+  - <ItemId>k__BackingField: 4
+    <Quantity>k__BackingField: 3
+  - <ItemId>k__BackingField: 5
+    <Quantity>k__BackingField: 2

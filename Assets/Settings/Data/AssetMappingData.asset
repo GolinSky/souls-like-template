@@ -63,6 +63,13 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: ItemDatabase
+      value:
+        m_AssetGUID: 8c6433f8b1497044081a4b66c6e1d051
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
   uiMappings:
     keyValue:
     - key: MainMenuUi
@@ -82,6 +89,20 @@ MonoBehaviour:
     - key: PlayerHudUi
       value:
         m_AssetGUID: e518bb335d3d04547bfcb38405fd043f
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: InventoryUi
+      value:
+        m_AssetGUID: 04c9c316a7440544085b0c87e72a777b
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: EquipmentUi
+      value:
+        m_AssetGUID: 2c13d40b6983eeb4c9e74f1db20584f4
         m_SubObjectName: 
         m_SubObjectType: 
         m_SubObjectGUID: 
