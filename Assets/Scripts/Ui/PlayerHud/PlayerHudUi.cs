@@ -1,8 +1,11 @@
 using System;
 using MPUIKIT;
+using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Ui.Base;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SoulsLike.Ui.PlayerHud
 {
@@ -144,6 +147,13 @@ namespace SoulsLike.Ui.PlayerHud
             scaleFactor = 0.80f
         };
 
+        [Header("Equipment HUD")]
+        [SerializeField] private RectTransform equipmentHudContainer;
+        [SerializeField] private EquipmentSlotHud topSlot = new EquipmentSlotHud();
+        [SerializeField] private EquipmentSlotHud leftSlot = new EquipmentSlotHud();
+        [SerializeField] private EquipmentSlotHud rightSlot = new EquipmentSlotHud();
+        [SerializeField] private EquipmentSlotHud bottomSlot = new EquipmentSlotHud();
+
         [Header("HUD Visibility State Machine")]
         [SerializeField] private float fadeDuration = 0.5f;
         [SerializeField] private float autoHideDelay = 3.0f;
@@ -193,6 +203,44 @@ namespace SoulsLike.Ui.PlayerHud
             staminaBar.UpdateValue(stats.CurrentStamina, stats.MaxStamina);
 
             _targetAlpha = 1f;
+        }
+
+        public void UpdateEquipment(EquipmentLoadout loadout)
+        {
+            // Right Hand Armament (Main Weapon)
+            if (loadout.AssignedRight?.Definition != null)
+            {
+                rightSlot.SetItem(loadout.AssignedRight.Definition.Icon);
+            }
+            else
+            {
+                rightSlot.SetEmpty();
+            }
+
+            // Left Hand Armament (Shield / Offhand)
+            bool isTwoHanded = loadout.HandMode == HandMode.TwoHanded;
+            if (loadout.AssignedLeft?.Definition != null)
+            {
+                leftSlot.SetItem(loadout.AssignedLeft.Definition.Icon, 0, isTwoHanded);
+            }
+            else
+            {
+                leftSlot.SetEmpty(isTwoHanded);
+            }
+
+            // Top Slot (Reserved for Magic / Spells)
+            topSlot.SetEmpty();
+
+            // Bottom Slot (Quick Item / Consumable)
+            if (loadout.ActiveQuickItem?.Definition != null)
+            {
+                int quantity = loadout.ActiveQuickItem.Entry.Quantity;
+                bottomSlot.SetItem(loadout.ActiveQuickItem.Definition.Icon, quantity);
+            }
+            else
+            {
+                bottomSlot.SetEmpty();
+            }
         }
 
         private void Update()
