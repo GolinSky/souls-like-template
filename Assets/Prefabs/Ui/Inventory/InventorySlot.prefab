@@ -179,7 +179,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 68, y: 68}
+  m_SizeDelta: {x: 115, y: 115}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &2530559128365187034
 CanvasGroup:
@@ -213,7 +213,6 @@ MonoBehaviour:
   quantityText: {fileID: 7430126606931315531}
   equippedBadgeText: {fileID: 1730999012647555403}
   ashOfWarIcon: {fileID: 8702259054919021937}
-  unmetWarningIcon: {fileID: 0}
 --- !u!1 &3581819023095665183
 GameObject:
   m_ObjectHideFlags: 0
