@@ -37178,11 +37178,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
-  Damping: {x: 0.1, y: 0.25, z: 1}
+  Damping: {x: 0.1, y: 0.25, z: 2}
   ShoulderOffset: {x: 1, y: 0.25, z: 0}
-  VerticalArmLength: 0
-  CameraSide: 0.6
-  CameraDistance: 5
+  VerticalArmLength: -0.31
+  CameraSide: 0.5
+  CameraDistance: 4
   AvoidObstacles:
     Enabled: 1
     CollisionFilter:
