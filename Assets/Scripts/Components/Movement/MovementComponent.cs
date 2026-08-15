@@ -13,7 +13,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private const float GROUNDED_VERTICAL_VELOCITY = -2.0f;
         private const float DEFAULT_TERMINAL_VELOCITY = 53.0f;
 
-        [SerializeField] private CharacterController _controller;
+        [SerializeField] private CharacterController controller;
 
         private readonly Dictionary<SpeedMultiplierKey, float> _speedMultipliers = new Dictionary<SpeedMultiplierKey, float>();
 
@@ -46,8 +46,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _jumpTimer = TimerFactory.ConstructTimer(Model.JumpTimeout);
             _rollTimer = TimerFactory.ConstructTimer(Model.RollCooldown);
             _fallGraceTimer = TimerFactory.ConstructTimer(Model.FallTimeout);
-            _defaultControllerHeight = _controller.height;
-            _defaultControllerCenter = _controller.center;
+            _defaultControllerHeight = controller.height;
+            _defaultControllerCenter = controller.center;
             SynchronizeGroundedState();
         }
 
@@ -58,10 +58,10 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         public void SetPosition(Vector3 position)
         {
-            bool controllerWasEnabled = _controller.enabled;
-            _controller.enabled = false;
+            bool controllerWasEnabled = controller.enabled;
+            controller.enabled = false;
             transform.position = position;
-            _controller.enabled = controllerWasEnabled;
+            controller.enabled = controllerWasEnabled;
 
             _horizontalVelocity = Vector3.zero;
             _verticalVelocity = 0.0f;
@@ -97,7 +97,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 planarDelta = Vector3.ProjectOnPlane(planarDelta, _groundNormal);
             }
 
-            _controller.Move(planarDelta + Vector3.up * deltaPosition.y);
+            controller.Move(planarDelta + Vector3.up * deltaPosition.y);
 
             if (isLockedRoll)
             {
@@ -156,7 +156,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             UpdateVerticalVelocity(deltaTime);
 
             Vector3 horizontalMotion = CalculateHorizontalMovement(moveInput, cameraYaw, sprint, deltaTime);
-            CollisionFlags collisionFlags = _controller.Move((horizontalMotion + Vector3.up * _verticalVelocity) * deltaTime);
+            CollisionFlags collisionFlags = controller.Move((horizontalMotion + Vector3.up * _verticalVelocity) * deltaTime);
 
             if ((collisionFlags & CollisionFlags.Below) != 0 && _verticalVelocity <= 0.0f)
             {
@@ -379,7 +379,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                     QueryTriggerInteraction.Ignore))
             {
                 _groundNormal = hit.normal;
-                return Vector3.Angle(_groundNormal, Vector3.up) <= _controller.slopeLimit;
+                return Vector3.Angle(_groundNormal, Vector3.up) <= controller.slopeLimit;
             }
 
             _groundNormal = Vector3.up;
@@ -598,16 +598,16 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _isCrouching = crouched;
             if (crouched)
             {
-                _controller.height = Model.CrouchHeight;
-                _controller.center = new Vector3(
+                controller.height = Model.CrouchHeight;
+                controller.center = new Vector3(
                     _defaultControllerCenter.x,
                     Model.CrouchHeight * 0.5f,
                     _defaultControllerCenter.z);
             }
             else
             {
-                _controller.height = _defaultControllerHeight;
-                _controller.center = _defaultControllerCenter;
+                controller.height = _defaultControllerHeight;
+                controller.center = _defaultControllerCenter;
             }
 
             _mediator.NotifyCrouch(crouched);

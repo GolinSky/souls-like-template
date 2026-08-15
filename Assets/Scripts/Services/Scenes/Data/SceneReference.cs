@@ -1,4 +1,4 @@
-﻿// MIT License Copyright(c) 2024 Filip Slavov, https://github.com/NibbleByte/UnitySceneReference
+// MIT License Copyright(c) 2024 Filip Slavov, https://github.com/NibbleByte/UnitySceneReference
 
 using System;
 using System.IO;
@@ -31,19 +31,19 @@ namespace SoulsLike.Services.Scenes.Data
 #if UNITY_EDITOR
 		// Reference to the asset used in the editor. Player builds don't know about SceneAsset.
 		// Will be used to update the scene path.
-		[SerializeField] private SceneAsset m_SceneAsset;
+		[SerializeField] private SceneAsset sceneAsset;
 
 #pragma warning disable 0414 // Never used warning - will be used by SerializedProperty.
 		// Used to dirtify the data when needed upon displaying in the inspector.
 		// Otherwise the user will never get the changes to save (unless he changes any other field of the object / scene).
-		[SerializeField] private bool m_IsDirty;
+		[SerializeField] private bool isDirty;
 #pragma warning restore 0414
 #endif
 
 		// Player builds will use the path stored here. Should be updated in the editor or during build.
 		// If scene is deleted, path will remain.
 		[SerializeField]
-		private string m_ScenePath = string.Empty;
+		private string scenePath = string.Empty;
 
 
 		/// <summary>
@@ -58,20 +58,20 @@ namespace SoulsLike.Services.Scenes.Data
 				AutoUpdateReference();
 #endif
 
-				return m_ScenePath;
+				return scenePath;
 			}
 
 			set {
-				m_ScenePath = value;
+				scenePath = value;
 
 #if UNITY_EDITOR
-				if (string.IsNullOrEmpty(m_ScenePath)) {
-					m_SceneAsset = null;
+				if (string.IsNullOrEmpty(scenePath)) {
+					sceneAsset = null;
 					return;
 				}
 
-				m_SceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(m_ScenePath);
-				if (m_SceneAsset == null) {
+				sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
+				if (sceneAsset == null) {
 					Debug.LogError($"Setting {nameof(SceneReference)} to {value}, but no scene could be located there.");
 				}
 #endif
@@ -138,11 +138,11 @@ namespace SoulsLike.Services.Scenes.Data
 
 		public SceneReference(SceneReference other)
 		{
-			m_ScenePath = other.m_ScenePath;
+			scenePath = other.scenePath;
 
 #if UNITY_EDITOR
-			m_SceneAsset = other.m_SceneAsset;
-			m_IsDirty = other.m_IsDirty;
+			sceneAsset = other.sceneAsset;
+			isDirty = other.isDirty;
 
 			AutoUpdateReference();
 #endif
@@ -166,7 +166,7 @@ namespace SoulsLike.Services.Scenes.Data
 
 		public override string ToString()
 		{
-			return m_ScenePath;
+			return scenePath;
 		}
 
 		[Obsolete("Needed for the editor, don't use it in runtime code!", true)]
@@ -202,31 +202,31 @@ namespace SoulsLike.Services.Scenes.Data
 
 		private void AutoUpdateReference()
 		{
-			if (m_SceneAsset == null) {
-				if (string.IsNullOrEmpty(m_ScenePath))
+			if (sceneAsset == null) {
+				if (string.IsNullOrEmpty(scenePath))
 					return;
 
-				SceneAsset foundAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(m_ScenePath);
+				SceneAsset foundAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
 				if (foundAsset) {
-					m_SceneAsset = foundAsset;
-					m_IsDirty = true;
+					sceneAsset = foundAsset;
+					isDirty = true;
 
 					if (!Application.isPlaying) {
-						// NOTE: This doesn't work for scriptable objects, hence the m_IsDirty.
+						// NOTE: This doesn't work for scriptable objects, hence the isDirty.
 						EditorSceneManager.MarkAllScenesDirty();
 					}
 				}
 			} else {
-				string foundPath = AssetDatabase.GetAssetPath(m_SceneAsset);
+				string foundPath = AssetDatabase.GetAssetPath(sceneAsset);
 				if (string.IsNullOrEmpty(foundPath))
 					return;
 
-				if (foundPath != m_ScenePath) {
-					m_ScenePath = foundPath;
-					m_IsDirty = true;
+				if (foundPath != scenePath) {
+					scenePath = foundPath;
+					isDirty = true;
 
 					if (!Application.isPlaying) {
-						// NOTE: This doesn't work for scriptable objects, hence the m_IsDirty.
+						// NOTE: This doesn't work for scriptable objects, hence the isDirty.
 						EditorSceneManager.MarkAllScenesDirty();
 					}
 				}
@@ -259,7 +259,7 @@ namespace SoulsLike.Services.Scenes.Data
 				s_RemoveButtonContent = new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image, "Scene is already in the Editor Build Settings. Click here to remove it."); //EditorGUIUtility.IconContent("CrossIcon");
 			}
 
-			var isDirtyProperty = property.FindPropertyRelative("m_IsDirty");
+			var isDirtyProperty = property.FindPropertyRelative("isDirty");
 			if (isDirtyProperty.boolValue) {
 				isDirtyProperty.boolValue = false;
 				// This will force change in the property and make it dirty.
@@ -279,7 +279,7 @@ namespace SoulsLike.Services.Scenes.Data
 			buildSettingsPos.x += position.width - buildSettingsWidth + padding;
 			buildSettingsPos.width = buildSettingsWidth;
 
-			var sceneAssetProperty = property.FindPropertyRelative("m_SceneAsset");
+			var sceneAssetProperty = property.FindPropertyRelative("sceneAsset");
 			bool hadReference = sceneAssetProperty.objectReferenceValue != null;
 
 			EditorGUI.PropertyField(assetPos, sceneAssetProperty, new GUIContent());
@@ -293,7 +293,7 @@ namespace SoulsLike.Services.Scenes.Data
 					indexInSettings = Array.FindIndex(EditorBuildSettings.scenes, s => s.guid.ToString() == guid);
 				}
 			} else if (hadReference) {
-				property.FindPropertyRelative("m_ScenePath").stringValue = string.Empty;
+				property.FindPropertyRelative("scenePath").stringValue = string.Empty;
 			}
 
 			GUIContent settingsContent = indexInSettings != -1

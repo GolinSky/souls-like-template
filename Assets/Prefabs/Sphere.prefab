@@ -125,5 +125,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b2f7e823eec3f14fa3f031ed2cff395, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.GroundItem
-  _itemId: 1
-  _quantity: 1
+  itemId: 1
+  quantity: 1

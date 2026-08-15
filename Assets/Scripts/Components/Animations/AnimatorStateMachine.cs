@@ -6,7 +6,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
     {
         [SerializeField] private StateMachineName stateMachineName;
         [SerializeField] private bool isReportingProgress;
-        [SerializeField, Range(0.0f, 1.0f)] private float _progressNormalizedTime = 0.5f;
+        [SerializeField, Range(0.0f, 1.0f)] private float progressNormalizedTime = 0.5f;
         [SerializeField] private bool reportsQueueCheck;
         [SerializeField, Range(0.0f, 1.0f)] private float queueCheckNormalizedTime = 0.55f;
 
@@ -34,7 +34,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
         {
             if (!isReportingProgress
                 || _isProgressFired
-                || stateInfo.normalizedTime < _progressNormalizedTime)
+                || stateInfo.normalizedTime < progressNormalizedTime)
             {
                 return;
             }

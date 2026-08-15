@@ -251,7 +251,7 @@ namespace SoulsLike.Editor
                 SetObject(presentationSerialized, "leftHandAnchor", leftHandAnchor);
 
                 var characterSerialized = new SerializedObject(character);
-                SetObject(characterSerialized, "_equipmentPresentation", presentation, false);
+                SetObject(characterSerialized, "equipmentPresentation", presentation, false);
                 SetCharacterAttributes(characterSerialized, 10);
 
                 var animatorSerialized = new SerializedObject(animatorComponent);
@@ -518,7 +518,7 @@ namespace SoulsLike.Editor
             };
             foreach (string name in names)
             {
-                SetInt(character, $"_attributes.<{name}>k__BackingField", value, false);
+                SetInt(character, $"attributes.<{name}>k__BackingField", value, false);
             }
 
             character.ApplyModifiedPropertiesWithoutUndo();

@@ -8,11 +8,11 @@ namespace SoulsLike.Items
     //todo: instead of some single GroundItem use main single GroundItemsSystem - which will invoked in OnTriggerEnter and by itself use entity locator etc....
     public sealed class GroundItem : MonoBehaviour
     {
-        [SerializeField] private ItemId _itemId;
-        [SerializeField, Min(1)] private int _quantity = 1;
+        [SerializeField] private ItemId itemId;
+        [SerializeField, Min(1)] private int quantity = 1;
 
-        public ItemId ItemId => _itemId;
-        public int Quantity => _quantity;
+        public ItemId ItemId => itemId;
+        public int Quantity => quantity;
 
         public void Collect(InventoryComponent inventory)
         {
@@ -21,12 +21,12 @@ namespace SoulsLike.Items
                 throw new ArgumentNullException(nameof(inventory));
             }
 
-            if (_itemId == ItemId.None)
+            if (itemId == ItemId.None)
             {
                 throw new InvalidOperationException($"Ground item '{name}' requires an ItemId.");
             }
 
-            inventory.Add(_itemId, _quantity);
+            inventory.Add(itemId, quantity);
             Destroy(gameObject);
         }
 

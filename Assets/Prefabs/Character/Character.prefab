@@ -786,14 +786,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0ab055c35872634ababc8700eaebb68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Character
-  _movementComponent: {fileID: 5680682844388360234}
-  _animatorComponent: {fileID: 2205946695653247522}
-  _equipmentComponent: {fileID: 7195035746810287973}
-  _healthComponent: {fileID: 9002903856365429309}
-  _inventoryComponent: {fileID: 1001450772407502477}
-  _equipmentPresentation: {fileID: 4953552906734793246}
-  _cameraTarget: {fileID: 1033412270112227245}
-  _attributes:
+  movementComponent: {fileID: 5680682844388360234}
+  animatorComponent: {fileID: 2205946695653247522}
+  equipmentComponent: {fileID: 7195035746810287973}
+  healthComponent: {fileID: 9002903856365429309}
+  inventoryComponent: {fileID: 1001450772407502477}
+  equipmentPresentation: {fileID: 4953552906734793246}
+  cameraTarget: {fileID: 1033412270112227245}
+  attributes:
     <Vigor>k__BackingField: 10
     <Mind>k__BackingField: 10
     <Endurance>k__BackingField: 10
@@ -802,8 +802,8 @@ MonoBehaviour:
     <Intelligence>k__BackingField: 10
     <Faith>k__BackingField: 10
     <Arcane>k__BackingField: 10
-  _aimTargetDistance: 100
-  _aimLayerMask:
+  aimTargetDistance: 100
+  aimLayerMask:
     serializedVersion: 2
     m_Bits: 0
 --- !u!114 &5680682844388360234
@@ -818,7 +818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20883e1f4ef6e5b4680dae6cb8405ab9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Movement.MovementComponent
-  _controller: {fileID: 4657128601297372923}
+  controller: {fileID: 4657128601297372923}
 --- !u!114 &2205946695653247522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -836,7 +836,7 @@ MonoBehaviour:
   layerTransitionSpeed: 10
   turnSmoothSpeed: 10
   locomotionSmoothSpeed: 10
-  _chargedAttackSpeedSmoothTime: 0.15
+  chargedAttackSpeedSmoothTime: 0.15
   rootMotionRelay: {fileID: 8205946695653247523}
   <RightHandAnchor>k__BackingField: {fileID: 0}
 --- !u!114 &7195035746810287973

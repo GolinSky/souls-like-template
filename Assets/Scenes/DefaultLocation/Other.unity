@@ -197403,8 +197403,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99eb2a3c1aeafb84989841a1428c2af8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.TargetLockNode
-  _anchorType: 3
-  _customTargetPoint: {fileID: 327398046}
+  anchorType: 3
+  customTargetPoint: {fileID: 327398046}
 --- !u!1 &1215346632
 GameObject:
   m_ObjectHideFlags: 0

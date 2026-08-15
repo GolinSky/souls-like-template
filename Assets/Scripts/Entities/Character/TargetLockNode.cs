@@ -12,16 +12,16 @@ namespace SoulsLike.Entities.Character
 
     public class TargetLockNode : MonoBehaviour
     {
-        [SerializeField] private TargetLockAnchorType _anchorType = TargetLockAnchorType.Torso;
-        [SerializeField] private Transform _customTargetPoint;
+        [SerializeField] private TargetLockAnchorType anchorType = TargetLockAnchorType.Torso;
+        [SerializeField] private Transform customTargetPoint;
 
         public Transform TargetTransform
         {
             get
             {
-                if (_anchorType == TargetLockAnchorType.Custom && _customTargetPoint != null)
+                if (anchorType == TargetLockAnchorType.Custom && customTargetPoint != null)
                 {
-                    return _customTargetPoint;
+                    return customTargetPoint;
                 }
 
                 return transform;

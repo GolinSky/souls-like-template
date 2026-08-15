@@ -60,7 +60,7 @@ namespace SoulsLike.Entities.Character.Components
         [SerializeField] private float layerTransitionSpeed = 10f;
         [SerializeField] private float turnSmoothSpeed = 10f;
         [SerializeField] private float locomotionSmoothSpeed = 10f;
-        [SerializeField, Min(0.0f)] private float _chargedAttackSpeedSmoothTime = 0.15f;
+        [SerializeField, Min(0.0f)] private float chargedAttackSpeedSmoothTime = 0.15f;
         [SerializeField] private AnimatorRootMotionRelay rootMotionRelay;
         
         [field:SerializeField] public Transform RightHandAnchor { get; private set; }
@@ -332,7 +332,7 @@ namespace SoulsLike.Entities.Character.Components
                 animator.SetFloat(
                     ChargedSpeedParameter,
                     _targetChargedAttackSpeed,
-                    _chargedAttackSpeedSmoothTime,
+                    chargedAttackSpeedSmoothTime,
                     dt);
             }
 
