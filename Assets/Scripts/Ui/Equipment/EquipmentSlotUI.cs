@@ -25,8 +25,8 @@ namespace SoulsLike.Ui.Equipment
         [SerializeField] private TMP_Text quantityText;
 
         [Header("Visual Colors")]
-        [SerializeField] private Color normalBorderColor = new(0.23f, 0.20f, 0.17f, 1f);
-        [SerializeField] private Color selectedBorderColor = new(0.77f, 0.63f, 0.35f, 1f);
+        [SerializeField] private Color normalBorderColor = new(0.102f, 0.102f, 0.094f, 1f);
+        [SerializeField] private Color selectedBorderColor = new(0.102f, 0.102f, 0.094f, 1f);
 
         private EquipmentSlotUI _up;
         private EquipmentSlotUI _down;

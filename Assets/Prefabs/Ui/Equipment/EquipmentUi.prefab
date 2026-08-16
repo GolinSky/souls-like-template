@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.22745098, g: 0.20392157, b: 0.16862746, a: 1}
+  m_Color: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -231,7 +231,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -254,7 +254,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -403,7 +403,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2577503643075907401
 CanvasRenderer:
@@ -426,7 +426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -447,8 +447,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -458,7 +458,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -608,7 +608,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -629,8 +629,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -723,8 +723,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 6656707272614323564}
   lockOverlay: {fileID: 5604329690109792774}
   quantityText: {fileID: 3966835247307374375}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &251956979596732358
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,7 +800,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4284063941
-  m_fontColor: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -817,13 +817,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -929,15 +929,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: SELECT ITEM TO EQUIP
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 0}
-  m_sharedMaterial: {fileID: 0}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -954,13 +954,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
   m_fontSizeMax: 0
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1074,7 +1074,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1211,7 +1211,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1234,7 +1234,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -1357,7 +1357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1378,8 +1378,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -1472,8 +1472,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 8799210031392087525}
   lockOverlay: {fileID: 2814045909818280704}
   quantityText: {fileID: 1601179808721970710}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &437632297254837552
 GameObject:
   m_ObjectHideFlags: 0
@@ -1509,7 +1509,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1436297792498264875
 CanvasRenderer:
@@ -1532,7 +1532,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1553,8 +1553,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -1564,7 +1564,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -1688,7 +1688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1809,7 +1809,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1958696203826612517
 CanvasRenderer:
@@ -1832,7 +1832,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1853,8 +1853,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -1864,7 +1864,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -2005,7 +2005,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2028,7 +2028,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -2142,7 +2142,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2165,7 +2165,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -2263,7 +2263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2520,7 +2520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2541,8 +2541,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -2635,8 +2635,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 4081023433561882019}
   lockOverlay: {fileID: 4516853175975959230}
   quantityText: {fileID: 7674704062402934664}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &896294546096507848
 GameObject:
   m_ObjectHideFlags: 0
@@ -2696,7 +2696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2854,7 +2854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.101960786, g: 0.10980392, b: 0.13333334, a: 1}
+  m_Color: {r: 0.078, g: 0.078, b: 0.071, a: 0.92}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3027,7 +3027,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3050,7 +3050,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -3164,7 +3164,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3285,7 +3285,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.22745098, g: 0.20392157, b: 0.16862746, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3306,8 +3306,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -3517,7 +3517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3690,7 +3690,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3811,7 +3811,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3984,7 +3984,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4001,8 +4001,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4130,7 +4130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4151,8 +4151,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -4245,8 +4245,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 3118787165944632371}
   lockOverlay: {fileID: 896294546096507848}
   quantityText: {fileID: 109950848623679320}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &1498900150788135583
 GameObject:
   m_ObjectHideFlags: 0
@@ -4322,7 +4322,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4345,7 +4345,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -4534,7 +4534,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4557,7 +4557,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -4671,7 +4671,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4694,7 +4694,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -4808,7 +4808,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4831,7 +4831,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -5020,7 +5020,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5117,7 +5117,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1548335762980149856
 CanvasRenderer:
@@ -5140,7 +5140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5161,8 +5161,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -5172,7 +5172,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -5313,7 +5313,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5450,7 +5450,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4284063941
-  m_fontColor: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -5467,13 +5467,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -5547,7 +5547,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &455031896313829474
 CanvasRenderer:
@@ -5570,7 +5570,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5591,8 +5591,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -5602,7 +5602,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -5727,7 +5727,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.11372549, g: 0.1254902, b: 0.15686275, a: 0.53333336}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5748,8 +5748,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -5884,7 +5884,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6041,7 +6041,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6450,7 +6450,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -6473,7 +6473,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -6735,7 +6735,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.08627451, g: 0.09411765, b: 0.11372549, a: 0.9019608}
+  m_Color: {r: 0.078, g: 0.078, b: 0.071, a: 0.92}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6756,8 +6756,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.361, g: 0.345, b: 0.306, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -6767,7 +6767,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -6917,7 +6917,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6938,8 +6938,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -7032,8 +7032,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 13879670121814586}
   lockOverlay: {fileID: 8549216258642860328}
   quantityText: {fileID: 917263711956782340}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &2119288819460836132
 GameObject:
   m_ObjectHideFlags: 0
@@ -7168,7 +7168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7412,7 +7412,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7571,7 +7571,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.101960786, g: 0.10980392, b: 0.13333334, a: 1}
+  m_Color: {r: 0.078, g: 0.078, b: 0.071, a: 0.92}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7753,7 +7753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7774,8 +7774,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -7868,8 +7868,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 5572643807327878929}
   lockOverlay: {fileID: 8790340965116222945}
   quantityText: {fileID: 3677235333215375054}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &2231532453687827014
 GameObject:
   m_ObjectHideFlags: 0
@@ -7945,7 +7945,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8042,7 +8042,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6848509882313928952
 CanvasRenderer:
@@ -8065,7 +8065,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8086,8 +8086,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -8097,7 +8097,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -8388,7 +8388,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8525,7 +8525,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8662,7 +8662,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8799,7 +8799,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8816,8 +8816,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -8920,7 +8920,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9053,7 +9053,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1083920046843553914
 CanvasRenderer:
@@ -9076,7 +9076,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9097,8 +9097,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -9108,7 +9108,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -9433,7 +9433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9454,8 +9454,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -9548,8 +9548,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 6167734719066466626}
   lockOverlay: {fileID: 2207286183590172669}
   quantityText: {fileID: 7002749736000793422}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &2600743725148493800
 GameObject:
   m_ObjectHideFlags: 0
@@ -9609,7 +9609,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9791,7 +9791,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9812,8 +9812,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -9906,8 +9906,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 1693878224355306194}
   lockOverlay: {fileID: 6288815882948011225}
   quantityText: {fileID: 3497781620332890583}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &2639017243101454318
 GameObject:
   m_ObjectHideFlags: 0
@@ -9943,7 +9943,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &967713833944212214
 CanvasRenderer:
@@ -9966,7 +9966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -9987,8 +9987,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -9998,7 +9998,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -10139,15 +10139,15 @@ MonoBehaviour:
 
     Equip Load: +1.2'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 0}
-  m_sharedMaterial: {fileID: 0}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -10164,8 +10164,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -10368,7 +10368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -10389,8 +10389,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -10483,8 +10483,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 6197771002808339073}
   lockOverlay: {fileID: 805158078336181651}
   quantityText: {fileID: 8015931060102364363}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &2814045909818280704
 GameObject:
   m_ObjectHideFlags: 0
@@ -10544,7 +10544,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -10776,7 +10776,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11099,7 +11099,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -11122,7 +11122,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -11236,7 +11236,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -11259,7 +11259,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -11382,7 +11382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11403,8 +11403,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -11497,8 +11497,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 7503109633883812707}
   lockOverlay: {fileID: 2426287940267693421}
   quantityText: {fileID: 6304573133005410026}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &2990914492429268838
 GameObject:
   m_ObjectHideFlags: 0
@@ -11534,7 +11534,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9127102608885139587
 CanvasRenderer:
@@ -11557,7 +11557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11578,8 +11578,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -11589,7 +11589,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -11715,7 +11715,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1254902, g: 0.13725491, b: 0.16470589, a: 0.53333336}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -11736,8 +11736,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -11747,7 +11747,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 2, y: 2, z: 2, w: 2}
+    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -11872,7 +11872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -12120,7 +12120,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -12137,8 +12137,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -12217,7 +12217,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &508171492554762290
 CanvasRenderer:
@@ -12240,7 +12240,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -12261,8 +12261,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -12272,7 +12272,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -12413,7 +12413,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -12550,7 +12550,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4285563016
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -12567,8 +12567,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -12687,7 +12687,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -12710,7 +12710,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -12784,7 +12784,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1124275039721083656
 CanvasRenderer:
@@ -12807,7 +12807,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -12828,8 +12828,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -12839,7 +12839,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -12980,7 +12980,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -12997,8 +12997,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -13192,7 +13192,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -13215,7 +13215,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -13289,7 +13289,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5220456469661131204
 CanvasRenderer:
@@ -13312,7 +13312,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13333,8 +13333,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -13344,7 +13344,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -13445,7 +13445,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8766538873459805819
 CanvasRenderer:
@@ -13468,7 +13468,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13489,8 +13489,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -13500,7 +13500,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -13601,7 +13601,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7988707863020462596
 CanvasRenderer:
@@ -13624,7 +13624,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13645,8 +13645,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -13656,7 +13656,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -13781,7 +13781,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13963,7 +13963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -13984,8 +13984,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -14078,8 +14078,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 2544010073275874977}
   lockOverlay: {fileID: 7640321925599298344}
   quantityText: {fileID: 9009812630158466478}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &3935749605096019430
 GameObject:
   m_ObjectHideFlags: 0
@@ -14115,7 +14115,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &969365231675574823
 CanvasRenderer:
@@ -14138,7 +14138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14159,8 +14159,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -14170,7 +14170,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -14395,7 +14395,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14416,8 +14416,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -14510,8 +14510,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 8117062990897159727}
   lockOverlay: {fileID: 3903883717322386242}
   quantityText: {fileID: 7728757304196825924}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &4084024541348754216
 GameObject:
   m_ObjectHideFlags: 0
@@ -14547,7 +14547,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4019405155960743634
 CanvasRenderer:
@@ -14570,7 +14570,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -14591,8 +14591,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -14602,7 +14602,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -14818,7 +14818,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -14841,7 +14841,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -14993,7 +14993,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -15016,7 +15016,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -15214,7 +15214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15235,8 +15235,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -15329,8 +15329,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 5238735276583591660}
   lockOverlay: {fileID: 1839401539246462813}
   quantityText: {fileID: 1149895633778826862}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &4301940622852331361
 GameObject:
   m_ObjectHideFlags: 0
@@ -15406,7 +15406,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -15618,7 +15618,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -15635,8 +15635,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -15739,7 +15739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15921,7 +15921,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15942,8 +15942,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -16036,8 +16036,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 5092067807062206951}
   lockOverlay: {fileID: 2893046440912284919}
   quantityText: {fileID: 3523715767672593753}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &4635453992650276511
 GameObject:
   m_ObjectHideFlags: 0
@@ -16113,7 +16113,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -16130,13 +16130,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -16334,7 +16334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16355,8 +16355,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -16449,8 +16449,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 7531887037163196166}
   lockOverlay: {fileID: 6249201017091579367}
   quantityText: {fileID: 3826205279727754670}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &4714835608343752499
 GameObject:
   m_ObjectHideFlags: 0
@@ -16526,7 +16526,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -16543,8 +16543,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -16672,7 +16672,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -16693,8 +16693,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -16787,8 +16787,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 7414118624603756033}
   lockOverlay: {fileID: 5511588319334765264}
   quantityText: {fileID: 8406454160499268946}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &4740925178719154102
 GameObject:
   m_ObjectHideFlags: 0
@@ -16864,7 +16864,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -16985,7 +16985,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -17158,7 +17158,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -17301,7 +17301,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4285563016
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -17318,8 +17318,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 13
-  m_fontSizeBase: 13
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -17438,7 +17438,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -17584,7 +17584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -17605,8 +17605,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -17699,8 +17699,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 3451985791459542099}
   lockOverlay: {fileID: 4880389294732853070}
   quantityText: {fileID: 3470707134844649063}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &5078227189703970188
 GameObject:
   m_ObjectHideFlags: 0
@@ -17759,7 +17759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.22745098, g: 0.20392157, b: 0.16862746, a: 1}
+  m_Color: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -17933,7 +17933,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -17950,13 +17950,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -18030,7 +18030,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4387910789340755790
 CanvasRenderer:
@@ -18053,7 +18053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18074,8 +18074,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -18085,7 +18085,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -18226,7 +18226,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -18249,7 +18249,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -18363,7 +18363,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -18386,7 +18386,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -18500,7 +18500,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -18523,7 +18523,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -18623,7 +18623,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.08627451, g: 0.09411765, b: 0.11372549, a: 0.9019608}
+  m_Color: {r: 0.078, g: 0.078, b: 0.071, a: 0.92}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -18644,8 +18644,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.361, g: 0.345, b: 0.306, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -18796,7 +18796,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -18813,13 +18813,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
-  m_fontSizeBase: 22
+  m_fontSize: 17
+  m_fontSizeBase: 17
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -19008,7 +19008,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -19031,7 +19031,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -19105,7 +19105,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7575766004438989094
 CanvasRenderer:
@@ -19128,7 +19128,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -19149,8 +19149,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -19160,7 +19160,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -19301,7 +19301,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -19398,7 +19398,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2262377487292925717
 CanvasRenderer:
@@ -19421,7 +19421,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -19442,8 +19442,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -19453,7 +19453,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -19594,7 +19594,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -19611,13 +19611,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
-  m_fontSizeBase: 28
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -19731,7 +19731,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -19754,7 +19754,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -19868,7 +19868,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4285563016
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -20005,7 +20005,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -20028,7 +20028,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -20126,7 +20126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20282,7 +20282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0.361, g: 0.345, b: 0.306, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20464,7 +20464,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20485,8 +20485,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -20579,8 +20579,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 212081790274822534}
   lockOverlay: {fileID: 2600743725148493800}
   quantityText: {fileID: 471262514995018949}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &5584020359487285039
 GameObject:
   m_ObjectHideFlags: 0
@@ -20640,7 +20640,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -20797,7 +20797,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -21016,7 +21016,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8856775392565476924
 CanvasRenderer:
@@ -21039,7 +21039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -21060,8 +21060,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -21071,7 +21071,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -21212,7 +21212,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -21350,7 +21350,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4284063941
-  m_fontColor: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_fontColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -21367,8 +21367,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -21547,7 +21547,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -21570,7 +21570,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -21684,7 +21684,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -21707,7 +21707,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -21896,7 +21896,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -22017,7 +22017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -22265,7 +22265,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -22282,8 +22282,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -22386,7 +22386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -22559,7 +22559,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -22582,7 +22582,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -22680,7 +22680,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -22853,7 +22853,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -22870,8 +22870,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -22995,7 +22995,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4285563016
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -23012,8 +23012,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 13
-  m_fontSizeBase: 13
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -23132,7 +23132,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -23229,7 +23229,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6279450746498241838
 CanvasRenderer:
@@ -23252,7 +23252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23273,8 +23273,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -23284,7 +23284,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -23584,7 +23584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.08627451, g: 0.09411765, b: 0.11372549, a: 0.9019608}
+  m_Color: {r: 0.078, g: 0.078, b: 0.071, a: 0.92}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23605,8 +23605,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.361, g: 0.345, b: 0.306, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -23616,7 +23616,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -23757,7 +23757,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -23894,7 +23894,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -23911,8 +23911,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -24031,7 +24031,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -24048,8 +24048,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -24255,7 +24255,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -24278,7 +24278,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -24401,7 +24401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -24422,8 +24422,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -24516,8 +24516,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 3629187711009502218}
   lockOverlay: {fileID: 2186697064134243983}
   quantityText: {fileID: 944411192179843972}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &7432364814091926656
 GameObject:
   m_ObjectHideFlags: 0
@@ -24593,7 +24593,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4285563016
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -24713,7 +24713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 0.13333334}
+  m_Color: {r: 0.831, g: 0.686, b: 0.216, a: 0.15}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -24734,8 +24734,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -24945,7 +24945,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.039215688, g: 0.043137256, b: 0.05490196, a: 0.9019608}
+  m_Color: {r: 0.047, g: 0.047, b: 0.047, a: 0.945}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -25078,7 +25078,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8260798849709675176
 CanvasRenderer:
@@ -25101,7 +25101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -25122,8 +25122,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -25133,7 +25133,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -25274,7 +25274,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -25411,7 +25411,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -25557,7 +25557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -25578,8 +25578,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -25672,8 +25672,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 5936502558150565746}
   lockOverlay: {fileID: 8845721440263966274}
   quantityText: {fileID: 56340912938155855}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &7615681955593191104
 GameObject:
   m_ObjectHideFlags: 0
@@ -25749,7 +25749,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -25766,8 +25766,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -25895,7 +25895,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -25916,8 +25916,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -26010,8 +26010,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 6136118454095346079}
   lockOverlay: {fileID: 1863097359250075764}
   quantityText: {fileID: 1689362023545176470}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &7640321925599298344
 GameObject:
   m_ObjectHideFlags: 0
@@ -26071,7 +26071,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -26204,7 +26204,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &478931676066578988
 CanvasRenderer:
@@ -26227,7 +26227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -26248,8 +26248,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -26259,7 +26259,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -26409,7 +26409,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -26430,8 +26430,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -26524,8 +26524,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 5829908105071078317}
   lockOverlay: {fileID: 6460706717192665891}
   quantityText: {fileID: 1353258482058066878}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &7773549192548109224
 GameObject:
   m_ObjectHideFlags: 0
@@ -26561,7 +26561,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4077473506889962428
 CanvasRenderer:
@@ -26584,7 +26584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -26605,8 +26605,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -26616,7 +26616,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -26740,7 +26740,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.22745098, g: 0.20392157, b: 0.16862746, a: 1}
+  m_Color: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -26913,7 +26913,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4285563016
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -26930,8 +26930,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -27050,7 +27050,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -27073,7 +27073,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -27196,7 +27196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -27217,8 +27217,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -27311,8 +27311,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 7944463293395296369}
   lockOverlay: {fileID: 9013207924058705649}
   quantityText: {fileID: 6103279519043618910}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &7949780522500560810
 GameObject:
   m_ObjectHideFlags: 0
@@ -27388,7 +27388,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -27405,8 +27405,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -27525,7 +27525,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -27662,7 +27662,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -27799,7 +27799,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4292075494
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -27816,13 +27816,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -27896,7 +27896,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6985040559511037826
 CanvasRenderer:
@@ -27919,7 +27919,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -27940,8 +27940,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -27951,7 +27951,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -28092,7 +28092,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -28229,7 +28229,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -28349,7 +28349,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.22745098, g: 0.20392157, b: 0.16862746, a: 1}
+  m_Color: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -28531,7 +28531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -28552,8 +28552,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -28646,8 +28646,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 5453594090899667471}
   lockOverlay: {fileID: 1223470449681952610}
   quantityText: {fileID: 7752551427243377146}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &8501720840498588490
 GameObject:
   m_ObjectHideFlags: 0
@@ -28683,7 +28683,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5847172430390299469
 CanvasRenderer:
@@ -28706,7 +28706,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -28727,8 +28727,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -28738,7 +28738,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -28888,7 +28888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -28909,8 +28909,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -29003,8 +29003,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 202527933434152898}
   lockOverlay: {fileID: 3009992515417902792}
   quantityText: {fileID: 1389988484499638872}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &8507662839495403252
 GameObject:
   m_ObjectHideFlags: 0
@@ -29089,7 +29089,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -29110,8 +29110,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -29204,8 +29204,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 33946708299000355}
   lockOverlay: {fileID: 8699094766812086610}
   quantityText: {fileID: 229833953993031881}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &8549216258642860328
 GameObject:
   m_ObjectHideFlags: 0
@@ -29265,7 +29265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -29423,7 +29423,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.08627451, g: 0.09411765, b: 0.11372549, a: 0.9019608}
+  m_Color: {r: 0.078, g: 0.078, b: 0.071, a: 0.92}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -29444,8 +29444,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.361, g: 0.345, b: 0.306, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -29455,7 +29455,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -29596,7 +29596,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4285563016
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -29613,8 +29613,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -29742,7 +29742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -29763,8 +29763,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -29857,8 +29857,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 4377304365786050593}
   lockOverlay: {fileID: 1312569799676375972}
   quantityText: {fileID: 1439555969634323273}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &8652504823539248062
 GameObject:
   m_ObjectHideFlags: 0
@@ -29894,7 +29894,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2224427513049464247
 CanvasRenderer:
@@ -29917,7 +29917,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -29938,8 +29938,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -29949,7 +29949,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -30073,7 +30073,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0.361, g: 0.345, b: 0.306, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -30230,7 +30230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -30403,7 +30403,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9019608, g: 0.8745098, b: 0.827451, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -30426,7 +30426,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 4
   m_VerticalAlignment: 1024
   m_textAlignment: 65535
@@ -30500,7 +30500,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &838538605908092864
 CanvasRenderer:
@@ -30523,7 +30523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -30544,8 +30544,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 3
+  m_OutlineColor: {r: 0.831, g: 0.686, b: 0.216, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -30555,7 +30555,7 @@ MonoBehaviour:
     m_CornerRadius: {x: 0, y: 0, z: 0}
     m_UniformCornerRadius: 0
   m_Rectangle:
-    m_CornerRadius: {x: 4, y: 4, z: 4, w: 4}
+    m_CornerRadius: {x: 6, y: 6, z: 6, w: 6}
     m_UniformCornerRadius: 0
   m_ChamferBox:
     m_ChamferSize: 0
@@ -30680,7 +30680,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -30862,7 +30862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.23, g: 0.2, b: 0.17, a: 1}
+  m_Color: {r: 0.102, g: 0.102, b: 0.094, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -30883,8 +30883,8 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0
-  m_OutlineColor: {r: 0, g: 0, b: 0, a: 1}
+  m_OutlineWidth: 1
+  m_OutlineColor: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -30977,8 +30977,8 @@ MonoBehaviour:
   selectionHighlight: {fileID: 4215949469932038157}
   lockOverlay: {fileID: 5584020359487285039}
   quantityText: {fileID: 3756853932530113002}
-  normalBorderColor: {r: 0.23, g: 0.2, b: 0.17, a: 1}
-  selectedBorderColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+  normalBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
+  selectedBorderColor: {r: 0.102, g: 0.102, b: 0.094, a: 1}
 --- !u!1 &8845721440263966274
 GameObject:
   m_ObjectHideFlags: 0
@@ -31038,7 +31038,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -31327,7 +31327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.22745098, g: 0.20392157, b: 0.16862746, a: 1}
+  m_Color: {r: 0.239, g: 0.227, b: 0.2, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -31500,7 +31500,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.53333336, g: 0.5019608, b: 0.4392157, a: 1}
+  m_fontColor: {r: 0.62, g: 0.596, b: 0.522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -31696,7 +31696,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.73333335}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.75}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -31869,7 +31869,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4284063941
-  m_fontColor: {r: 0.77254903, g: 0.627451, b: 0.34901962, a: 1}
+  m_fontColor: {r: 0.902, g: 0.882, b: 0.773, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -31886,13 +31886,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -31989,7 +31989,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 0.05882353, g: 0.06666667, b: 0.08235294, a: 0.9019608}
+  m_Color: {r: 0.047, g: 0.047, b: 0.047, a: 0.945}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
