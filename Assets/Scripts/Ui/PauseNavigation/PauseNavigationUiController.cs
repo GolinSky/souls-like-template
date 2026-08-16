@@ -22,13 +22,13 @@ namespace SoulsLike.Ui.PauseNavigation
         private readonly IInventoryRoute _inventoryRoute;
         private readonly Stack<IPauseNavigationRoute> _routeStack = new();
 
-        private static readonly ItemType[] _rightHandItemTypes =
+        private static readonly ItemType[] _leftHandItemTypes  =
         {
             ItemType.Weapon,
             ItemType.Shield
         };
 
-        private static readonly ItemType[] _leftHandItemTypes = { ItemType.Weapon };
+        private static readonly ItemType[] _rightHandItemTypes = { ItemType.Weapon };
         private static readonly ItemType[] _ammunitionItemTypes = { ItemType.Ammunition };
         private static readonly ItemType[] _armorItemTypes = { ItemType.Armor };
         private static readonly ItemType[] _talismanItemTypes = { ItemType.Talisman };
