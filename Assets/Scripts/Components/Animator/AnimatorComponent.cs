@@ -84,6 +84,8 @@ namespace SoulsLike.Entities.Character.Components
         private bool _supportsLeftHandAttacks;
 
         private Animator Animator => animator;
+
+        public bool IsNoWeaponMode => Animator.runtimeAnimatorController == _defaultController;
         
         public void SetMediator(IComponentMediator mediator)
         {

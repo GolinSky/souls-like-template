@@ -55,9 +55,42 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             }
 
             IReadOnlyList<EquipmentSlotId> slots = EquipmentSlotCatalog.GetSlots(group);
-            int nextIndex = (_activeIndexes[group] + 1) % slots.Count;
-            _activeIndexes[group] = nextIndex;
-            return slots[nextIndex];
+            EquipmentSlotId activeSlot = slots[_activeIndexes[group]];
+            EquipmentSlotId emptySlotToInclude = activeSlot;
+            if (_assignments[activeSlot].HasValue)
+            {
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    if (!_assignments[slots[i]].HasValue)
+                    {
+                        emptySlotToInclude = slots[i];
+                        break;
+                    }
+                }
+            }
+
+            var cycleSlots = new List<EquipmentSlotId>();
+            for (int i = 0; i < slots.Count; i++)
+            {
+                EquipmentSlotId slot = slots[i];
+                if (_assignments[slot].HasValue || slot == emptySlotToInclude)
+                {
+                    cycleSlots.Add(slot);
+                }
+            }
+
+            int activeCycleIndex = cycleSlots.IndexOf(activeSlot);
+            EquipmentSlotId nextSlot = cycleSlots[(activeCycleIndex + 1) % cycleSlots.Count];
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (slots[i] == nextSlot)
+                {
+                    _activeIndexes[group] = i;
+                    break;
+                }
+            }
+
+            return nextSlot;
         }
 
         internal void SetHandMode(HandMode handMode)

@@ -469,9 +469,31 @@ namespace SoulsLike.Entities.Character
                 throw new InvalidOperationException("An equipment swap is already in progress.");
             }
 
+            EquipmentSlotId previousActiveSlot = equipmentComponent.Model.GetActiveSlot(group);
             _pendingEquipmentSwapGroup = group;
-            _equipmentSwapPhase = EquipmentSwapPhase.SwapOut;
             SynchronizeMovementBlock();
+
+            if (animatorComponent.IsNoWeaponMode)
+            {
+                _equipmentSwapPhase = EquipmentSwapPhase.SwapIn;
+                EquipmentSlotId activeSlot = equipmentComponent.SwitchActive(group);
+                EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
+                bool hasWeapon = loadout.EffectiveRight?.Definition is WeaponDefinition
+                    || loadout.EffectiveLeft?.Definition is WeaponDefinition;
+
+                if (activeSlot == previousActiveSlot || !hasWeapon)
+                {
+                    _equipmentSwapPhase = EquipmentSwapPhase.None;
+                    _pendingEquipmentSwapGroup = null;
+                    SynchronizeMovementBlock();
+                    return;
+                }
+
+                animatorComponent.TriggerEquipmentSwapIn();
+                return;
+            }
+
+            _equipmentSwapPhase = EquipmentSwapPhase.SwapOut;
             animatorComponent.TriggerEquipmentSwapOut();
         }
 
@@ -490,6 +512,15 @@ namespace SoulsLike.Entities.Character
 
             _equipmentSwapPhase = EquipmentSwapPhase.SwapIn;
             equipmentComponent.SwitchActive(_pendingEquipmentSwapGroup.Value);
+
+            if (animatorComponent.IsNoWeaponMode)
+            {
+                _equipmentSwapPhase = EquipmentSwapPhase.None;
+                _pendingEquipmentSwapGroup = null;
+                SynchronizeMovementBlock();
+                return true;
+            }
+
             animatorComponent.TriggerEquipmentSwapIn();
             return true;
         }

@@ -73,8 +73,13 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         public EquipmentSlotId SwitchActive(EquipmentSlotGroup group)
         {
+            EquipmentSlotId previousActiveSlot = Model.GetActiveSlot(group);
             EquipmentSlotId activeSlot = Model.AdvanceActiveSlot(group);
-            PublishLoadoutChanged();
+            if (activeSlot != previousActiveSlot)
+            {
+                PublishLoadoutChanged();
+            }
+
             return activeSlot;
         }
 
