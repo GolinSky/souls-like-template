@@ -2,6 +2,7 @@ using System;
 using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Equipment;
+using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Items;
 using UnityEngine;
 using VContainer.Unity;
@@ -17,6 +18,8 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int AnimIdHorizontal = Animator.StringToHash("Horizontal");
         private static readonly int AnimIdVertical = Animator.StringToHash("Vertical");
         private static readonly int AnimIdGrounded = Animator.StringToHash("Grounded");
+        private static readonly int AnimIdVerticalVelocity = Animator.StringToHash("VerticalVelocity");
+        private static readonly int AnimIdLandingType = Animator.StringToHash("LandingType");
         private static readonly int AnimIdJump = Animator.StringToHash("Jump");
         private static readonly int AnimIdRoll = Animator.StringToHash("Roll");
         private static readonly int AnimIdBackStep = Animator.StringToHash("BackStep");
@@ -130,7 +133,9 @@ namespace SoulsLike.Entities.Character.Components
                 GetRequiredLayerIndex(FULL_BODY_LAYER));
             float upperBodyLayerWeight = animator.GetLayerWeight(
                 GetRequiredLayerIndex(UPPER_BODY_LAYER));
+            bool isGrounded = animator.GetBool(AnimIdGrounded);
             animator.runtimeAnimatorController = targetController;
+            SetGrounded(isGrounded);
             stateMachineReceiver.InitializeStateMachines();
             _hasChargedAttackSpeedParameter = HasParameter(
                 animator,
@@ -163,7 +168,9 @@ namespace SoulsLike.Entities.Character.Components
                 GetRequiredLayerIndex(FULL_BODY_LAYER));
             float upperBodyLayerWeight = animator.GetLayerWeight(
                 GetRequiredLayerIndex(UPPER_BODY_LAYER));
+            bool isGrounded = animator.GetBool(AnimIdGrounded);
             animator.runtimeAnimatorController = _defaultController;
+            SetGrounded(isGrounded);
             stateMachineReceiver.InitializeStateMachines();
             _hasChargedAttackSpeedParameter = HasParameter(
                 animator,
@@ -186,6 +193,12 @@ namespace SoulsLike.Entities.Character.Components
         public void SetGrounded(bool modelGrounded)
         {
             animator.SetBool(AnimIdGrounded, modelGrounded);
+        }
+
+        public void SetAirborneMotion(float verticalVelocity, LandingType landingType)
+        {
+            animator.SetFloat(AnimIdVerticalVelocity, verticalVelocity);
+            animator.SetInteger(AnimIdLandingType, (int)landingType);
         }
 
         public void PlayAttack(AttackType attackType, bool isLeftHandAttack)

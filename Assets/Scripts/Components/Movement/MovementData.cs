@@ -15,6 +15,11 @@ namespace SoulsLike.Entities.Character.Components.Movement
         float Gravity { get; }
         float AirControl { get; }
         float AirAcceleration { get; }
+        float AirRotationSmoothTime { get; }
+        float JumpGroundIgnoreTime { get; }
+        float MinimumAirborneTime { get; }
+        float JumpApexThreshold { get; }
+        float HardLandingMinFallSpeed { get; }
         float JumpTimeout { get; }
         float FallTimeout { get; }
         bool Grounded { get; }
@@ -76,6 +81,26 @@ namespace SoulsLike.Entities.Character.Components.Movement
         [field: SerializeField]
         public float AirAcceleration { get; private set; } = 8.0f;
 
+        [Tooltip("How slowly free-movement facing follows travel direction while airborne")]
+        [field: SerializeField]
+        public float AirRotationSmoothTime { get; private set; } = 0.25f;
+
+        [Tooltip("Prevents the ground probe from immediately cancelling a jump takeoff")]
+        [field: SerializeField]
+        public float JumpGroundIgnoreTime { get; private set; } = 0.12f;
+
+        [Tooltip("Minimum airborne duration before a landing can be accepted")]
+        [field: SerializeField]
+        public float MinimumAirborneTime { get; private set; } = 0.08f;
+
+        [Tooltip("Vertical speed at which jump start becomes the falling phase")]
+        [field: SerializeField]
+        public float JumpApexThreshold { get; private set; } = 0.35f;
+
+        [Tooltip("Downward impact speed that selects a hard landing")]
+        [field: SerializeField]
+        public float HardLandingMinFallSpeed { get; private set; } = 12.0f;
+
         [field:Space(10)]
         [Tooltip("Time required to pass before being able to jump again. Set to 0f to instantly jump again")]
         [field: SerializeField]
@@ -83,7 +108,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         [Tooltip("Time required to pass before entering the fall state. Useful for walking down stairs")]
         [field: SerializeField]
-        public float FallTimeout { get; private set; } = 0.15f;
+        public float FallTimeout { get; private set; } = 0.1f;
 
         [Header("Player Grounded")]
         [Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]

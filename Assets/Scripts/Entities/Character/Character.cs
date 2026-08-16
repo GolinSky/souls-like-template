@@ -25,7 +25,7 @@ namespace SoulsLike.Entities.Character
             SwapIn = 3
         }
 
-        private const float SPRINT_HOLD_THRESHOLD = 0.2f;
+        private const float SPRINT_HOLD_THRESHOLD = 0.3f;
 
         [SerializeField] private MovementComponent movementComponent;
         [SerializeField] private AnimatorComponent animatorComponent;
@@ -45,6 +45,7 @@ namespace SoulsLike.Entities.Character
         private CharacterActionBuffer _actionBuffer;
         private ITimer _sprintHoldTimer;
         private bool _sprintHoldQualified;
+        private bool _rollPressedDuringRoll;
         private bool _actionTransitionOpen;
         private bool _manualMovementBlocked;
         private bool _animationMovementBlocked;
@@ -102,12 +103,14 @@ namespace SoulsLike.Entities.Character
             if (actions.Sprint.WasPressedThisFrame())
             {
                 _sprintHoldQualified = false;
+                _rollPressedDuringRoll = _attackComponent.IsRollActive;
                 _sprintHoldTimer
                     .ChangeDuration(SPRINT_HOLD_THRESHOLD)
                     .Start();
             }
 
             bool sprinting = actions.Sprint.IsPressed()
+                && !_rollPressedDuringRoll
                 && (_sprintHoldQualified || _sprintHoldTimer.IsComplete);
 
             if (sprinting)
@@ -185,16 +188,26 @@ namespace SoulsLike.Entities.Character
                 attackCaptured = true;
             }
 
+            bool rollCaptured = !equipmentActionPerformed
+                && actions.Roll.WasReleasedThisFrame()
+                && (!_sprintHoldQualified || _rollPressedDuringRoll);
+            bool jumpCaptured = !equipmentActionPerformed
+                && !attackCaptured
+                && !rollCaptured
+                && actions.Jump.WasPressedThisFrame()
+                && (movementComponent.Model.Grounded || _attackComponent.IsActionActive);
+
             if (attackCaptured)
             {
                 _actionBuffer.Buffer(attackAction);
             }
-
-            if (!equipmentActionPerformed
-                && actions.Roll.WasReleasedThisFrame()
-                && !_sprintHoldQualified)
+            else if (rollCaptured)
             {
                 _actionBuffer.Buffer(BufferedCharacterAction.Roll(moveInput, cameraYaw));
+            }
+            else if (jumpCaptured)
+            {
+                _actionBuffer.Buffer(BufferedCharacterAction.Jump(sprinting));
             }
 
             if (!equipmentActionPerformed)
@@ -209,8 +222,6 @@ namespace SoulsLike.Entities.Character
                 moveInput,
                 cameraYaw,
                 sprinting,
-                actions.Jump.WasPressedThisFrame(),
-                false,
                 actions.Crouch.IsPressed());
 
             bool canBlock = !equipmentActionPerformed
@@ -225,6 +236,7 @@ namespace SoulsLike.Entities.Character
             if (actions.Sprint.WasReleasedThisFrame())
             {
                 _sprintHoldQualified = false;
+                _rollPressedDuringRoll = false;
                 _sprintHoldTimer.Reset();
             }
         }
@@ -252,6 +264,11 @@ namespace SoulsLike.Entities.Character
         public void NotifyGrounded(bool isGrounded)
         {
             animatorComponent.SetGrounded(isGrounded);
+        }
+
+        public void NotifyAirborneMotion(float verticalVelocity, LandingType landingType)
+        {
+            animatorComponent.SetAirborneMotion(verticalVelocity, landingType);
         }
 
         public void NotifyHealthStatsChanged(HealthStats stats)
@@ -320,8 +337,7 @@ namespace SoulsLike.Entities.Character
             _attackComponent.HandleAnimatorState(state);
             HandleEquipmentSwapState(state);
 
-            Debug.Log($"{state.StateMachineName}:{state.State}");
-        if (state.StateMachineName == StateMachineName.Spawn)
+            if (state.StateMachineName == StateMachineName.Spawn)
             {
                 if (state.State == StateMachineState.Enter)
                 {
@@ -339,7 +355,6 @@ namespace SoulsLike.Entities.Character
             }
             else if (state.State == StateMachineState.QueueCheck)
             {
-                Debug.Log("queue check");
                 _actionTransitionOpen = true;
                 TryExecuteBufferedAction(false, false, true);
             }
@@ -605,6 +620,16 @@ namespace SoulsLike.Entities.Character
                     {
                         _actionTransitionOpen = false;
                     }
+                }
+
+                return;
+            }
+
+            if (action.Type == CharacterActionType.Jump)
+            {
+                if (movementComponent.TryStartJump(true, action.IsSprinting))
+                {
+                    _actionBuffer.Consume();
                 }
 
                 return;

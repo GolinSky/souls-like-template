@@ -45,8 +45,13 @@ MonoBehaviour:
   <Gravity>k__BackingField: -15
   <AirControl>k__BackingField: 0.25
   <AirAcceleration>k__BackingField: 8
+  <AirRotationSmoothTime>k__BackingField: 0.25
+  <JumpGroundIgnoreTime>k__BackingField: 0.12
+  <MinimumAirborneTime>k__BackingField: 0.08
+  <JumpApexThreshold>k__BackingField: 0.35
+  <HardLandingMinFallSpeed>k__BackingField: 12
   <JumpTimeout>k__BackingField: 0.5
-  <FallTimeout>k__BackingField: 0.2
+  <FallTimeout>k__BackingField: 0.1
   <Grounded>k__BackingField: 1
   <GroundedOffset>k__BackingField: -0.2
   <GroundedRadius>k__BackingField: 0.28

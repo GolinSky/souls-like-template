@@ -15,6 +15,11 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public float Gravity { get; }
         public float AirControl { get; }
         public float AirAcceleration { get; }
+        public float AirRotationSmoothTime { get; }
+        public float JumpGroundIgnoreTime { get; }
+        public float MinimumAirborneTime { get; }
+        public float JumpApexThreshold { get; }
+        public float HardLandingMinFallSpeed { get; }
         public float JumpTimeout { get; }
         public float FallTimeout { get; }
         public bool Grounded { get; set; }
@@ -44,6 +49,11 @@ namespace SoulsLike.Entities.Character.Components.Movement
             Gravity = movementData.Gravity;
             AirControl = movementData.AirControl;
             AirAcceleration = movementData.AirAcceleration;
+            AirRotationSmoothTime = movementData.AirRotationSmoothTime;
+            JumpGroundIgnoreTime = movementData.JumpGroundIgnoreTime;
+            MinimumAirborneTime = movementData.MinimumAirborneTime;
+            JumpApexThreshold = movementData.JumpApexThreshold;
+            HardLandingMinFallSpeed = movementData.HardLandingMinFallSpeed;
             JumpTimeout = movementData.JumpTimeout;
             FallTimeout = movementData.FallTimeout;
             Grounded = movementData.Grounded;

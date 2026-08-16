@@ -31,15 +31,26 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private float _rotationVelocity;
         private float _speedChangeTime;
         private float _lastTargetSpeed = -1.0f;
+        private float _jumpTime;
+        private float _airborneTime;
+        private float _lowestVerticalVelocity;
         private ITimer _jumpTimer;
         private ITimer _rollTimer;
         private ITimer _fallGraceTimer;
         private float _turnAmount;
         private bool _movementBlocked;
-        private bool _isRisingFromJump;
+        private bool _wasJumpInitiated;
+        private bool _wasSprintingAtTakeoff;
         private bool _isCrouching;
         private bool? _lastNotifiedGrounded;
         private float _defaultControllerHeight;
+
+        public LocomotionState CurrentLocomotionState { get; private set; } = LocomotionState.Grounded;
+        public LandingType CurrentLandingType { get; private set; } = LandingType.None;
+        public float HorizontalSpeed => _horizontalVelocity.magnitude;
+        public float VerticalVelocity => _verticalVelocity;
+        public float JumpTime => _jumpTime;
+        public bool WasSprintingAtTakeoff => _wasSprintingAtTakeoff;
 
         public void Initialize()
         {
@@ -49,6 +60,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _defaultControllerHeight = controller.height;
             _defaultControllerCenter = controller.center;
             SynchronizeGroundedState();
+            _mediator.NotifyAirborneMotion(_verticalVelocity, CurrentLandingType);
         }
 
         public void SetMediator(IComponentMediator mediator)
@@ -65,6 +77,13 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
             _horizontalVelocity = Vector3.zero;
             _verticalVelocity = 0.0f;
+            _jumpTime = 0.0f;
+            _airborneTime = 0.0f;
+            _lowestVerticalVelocity = 0.0f;
+            _wasJumpInitiated = false;
+            _wasSprintingAtTakeoff = false;
+            CurrentLandingType = LandingType.None;
+            SynchronizeGroundedState();
         }
 
         public void SetMovementBlocked(bool blocked)
@@ -87,6 +106,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
         {
             Vector3 planarDelta = new Vector3(deltaPosition.x, 0.0f, deltaPosition.z);
             bool isLockedRoll = _activeRollTarget != null;
+            bool isRollAction = _activeRollDirection.sqrMagnitude > INPUT_DEAD_ZONE;
             if (isLockedRoll)
             {
                 planarDelta = CalculateLockedRollDelta(planarDelta.magnitude);
@@ -97,7 +117,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 planarDelta = Vector3.ProjectOnPlane(planarDelta, _groundNormal);
             }
 
-            controller.Move(planarDelta + Vector3.up * deltaPosition.y);
+            float verticalDelta = isRollAction ? 0.0f : deltaPosition.y;
+            CollisionFlags collisionFlags = controller.Move(planarDelta + Vector3.up * verticalDelta);
+            ResolveMovementCollisions(collisionFlags);
 
             if (isLockedRoll)
             {
@@ -133,14 +155,12 @@ namespace SoulsLike.Entities.Character.Components.Movement
             Vector2 direction,
             float cameraYaw,
             bool sprint,
-            bool jumpRequested,
-            bool rollRequested,
             bool crouchActionHeld)
         {
             float deltaTime = MovementDeltaTime;
             Vector2 moveInput = Vector2.ClampMagnitude(direction, 1.0f);
 
-            UpdateGroundedState(deltaTime);
+            UpdateGroundedState();
 
             if (!_movementBlocked)
             {
@@ -151,25 +171,16 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 SetCrouchState(false);
             }
 
-            TryStartRoll(moveInput, cameraYaw, rollRequested, false);
-            TryStartJump(jumpRequested);
             UpdateVerticalVelocity(deltaTime);
+            UpdateAirborneMetrics(deltaTime);
 
             Vector3 horizontalMotion = CalculateHorizontalMovement(moveInput, cameraYaw, sprint, deltaTime);
             CollisionFlags collisionFlags = controller.Move((horizontalMotion + Vector3.up * _verticalVelocity) * deltaTime);
-
-            if ((collisionFlags & CollisionFlags.Below) != 0 && _verticalVelocity <= 0.0f)
-            {
-                _isRisingFromJump = false;
-                _fallGraceTimer
-                    .ChangeDuration(Model.FallTimeout)
-                    .Start();
-                SetGrounded(true);
-                _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
-            }
+            ResolveMovementCollisions(collisionFlags);
 
             _mediator.NotifyLocomotion(_animationBlend, _animationBlendDirection);
             _mediator.NotifyTurn(_turnAmount);
+            _mediator.NotifyAirborneMotion(_verticalVelocity, CurrentLandingType);
         }
 
         public bool TryStartRoll(
@@ -178,6 +189,15 @@ namespace SoulsLike.Entities.Character.Components.Movement
             bool rollRequested,
             bool canInterruptAnimation)
         {
+            if (rollRequested
+                && !Model.Grounded
+                && _verticalVelocity <= 0.0f
+                && HasWalkableGroundContact()
+                && CanLand())
+            {
+                CompleteLanding();
+            }
+
             if (!rollRequested
                 || (_movementBlocked && !canInterruptAnimation)
                 || !Model.Grounded
@@ -284,11 +304,11 @@ namespace SoulsLike.Entities.Character.Components.Movement
             return new Vector2(0.0f, Mathf.Sign(moveInput.y));
         }
 
-        private void TryStartJump(bool jumpRequested)
+        public bool TryStartJump(bool jumpRequested, bool sprinting)
         {
             if (!jumpRequested || _movementBlocked || !Model.Grounded || (_jumpTimer.IsRunning && !_jumpTimer.IsComplete))
             {
-                return;
+                return false;
             }
 
             SetCrouchState(false);
@@ -296,23 +316,28 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _jumpTimer
                 .ChangeDuration(Model.JumpTimeout)
                 .Start();
-            _isRisingFromJump = true;
+            CurrentLocomotionState = LocomotionState.JumpStart;
+            CurrentLandingType = LandingType.None;
+            _jumpTime = 0.0f;
+            _airborneTime = 0.0f;
+            _lowestVerticalVelocity = 0.0f;
+            _wasJumpInitiated = true;
+            _wasSprintingAtTakeoff = sprinting;
             _fallGraceTimer.Stop();
             SetGrounded(false);
             _mediator.NotifyJump();
+            return true;
         }
 
-        private void UpdateGroundedState(float deltaTime)
+        private void UpdateGroundedState()
         {
-            if (_isRisingFromJump)
+            if (_wasJumpInitiated
+                && (CurrentLocomotionState == LocomotionState.JumpStart
+                    || CurrentLocomotionState == LocomotionState.Airborne)
+                && (_jumpTime < Model.JumpGroundIgnoreTime || _verticalVelocity > 0.0f))
             {
-                if (_verticalVelocity > 0.0f)
-                {
-                    SetGrounded(false);
-                    return;
-                }
-
-                _isRisingFromJump = false;
+                SetGrounded(false);
+                return;
             }
 
             if (HasWalkableGroundContact())
@@ -320,7 +345,17 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 _fallGraceTimer
                     .ChangeDuration(Model.FallTimeout)
                     .Start();
-                SetGrounded(true);
+                if (!Model.Grounded && CanLand())
+                {
+                    CompleteLanding();
+                }
+                else if (Model.Grounded
+                    && (CurrentLocomotionState == LocomotionState.Landing
+                        || CurrentLocomotionState == LocomotionState.HardLanding))
+                {
+                    CurrentLocomotionState = LocomotionState.Grounded;
+                }
+
                 return;
             }
 
@@ -331,7 +366,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
             if (!_fallGraceTimer.IsRunning || _fallGraceTimer.IsComplete)
             {
-                SetGrounded(false);
+                EnterAirborne();
             }
         }
 
@@ -347,6 +382,14 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 {
                     _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
                 }
+
+                CurrentLocomotionState = LocomotionState.Grounded;
+            }
+            else
+            {
+                CurrentLocomotionState = LocomotionState.Airborne;
+                _airborneTime = 0.0f;
+                _lowestVerticalVelocity = _verticalVelocity;
             }
 
             SetGrounded(grounded);
@@ -411,6 +454,80 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 ? Mathf.Abs(Model.TerminalVelocity)
                 : DEFAULT_TERMINAL_VELOCITY;
             _verticalVelocity = Mathf.Max(_verticalVelocity, -terminalVelocity);
+
+            if (CurrentLocomotionState == LocomotionState.JumpStart
+                && _verticalVelocity <= Model.JumpApexThreshold)
+            {
+                CurrentLocomotionState = LocomotionState.Airborne;
+            }
+        }
+
+        private void UpdateAirborneMetrics(float deltaTime)
+        {
+            if (Model.Grounded)
+            {
+                return;
+            }
+
+            _airborneTime += deltaTime;
+            if (_wasJumpInitiated)
+            {
+                _jumpTime += deltaTime;
+            }
+
+            _lowestVerticalVelocity = Mathf.Min(_lowestVerticalVelocity, _verticalVelocity);
+        }
+
+        private void EnterAirborne()
+        {
+            CurrentLocomotionState = LocomotionState.Airborne;
+            CurrentLandingType = LandingType.None;
+            _airborneTime = 0.0f;
+            _lowestVerticalVelocity = _verticalVelocity;
+            _wasJumpInitiated = false;
+            _wasSprintingAtTakeoff = false;
+            SetGrounded(false);
+        }
+
+        private bool CanLand()
+        {
+            return !Model.Grounded
+                && CurrentLocomotionState != LocomotionState.Grounded
+                && _airborneTime >= Model.MinimumAirborneTime
+                && _verticalVelocity <= 0.0f;
+        }
+
+        private void CompleteLanding()
+        {
+            float impactSpeed = Mathf.Abs(Mathf.Min(_lowestVerticalVelocity, _verticalVelocity));
+            CurrentLandingType = impactSpeed >= Model.HardLandingMinFallSpeed
+                ? LandingType.Hard
+                : LandingType.Normal;
+            CurrentLocomotionState = CurrentLandingType == LandingType.Hard
+                ? LocomotionState.HardLanding
+                : LocomotionState.Landing;
+            _wasJumpInitiated = false;
+            _fallGraceTimer
+                .ChangeDuration(Model.FallTimeout)
+                .Start();
+            SetGrounded(true);
+            _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
+        }
+
+        private void ResolveMovementCollisions(CollisionFlags collisionFlags)
+        {
+            if ((collisionFlags & CollisionFlags.Above) != 0 && _verticalVelocity > 0.0f)
+            {
+                _verticalVelocity = 0.0f;
+                CurrentLocomotionState = LocomotionState.Airborne;
+            }
+
+            if ((collisionFlags & CollisionFlags.Below) != 0
+                && _verticalVelocity <= 0.0f
+                && CanLand())
+            {
+                CompleteLanding();
+            }
         }
 
         private Vector3 CalculateHorizontalMovement(Vector2 moveInput, float cameraYaw, bool sprinting, float deltaTime)
@@ -520,6 +637,10 @@ namespace SoulsLike.Entities.Character.Components.Movement
             {
                 facingDirection = GetLockOnForward();
             }
+            else if (!Model.Grounded && _horizontalVelocity.sqrMagnitude > INPUT_DEAD_ZONE)
+            {
+                facingDirection = _horizontalVelocity.normalized;
+            }
             else if (hasMovementInput)
             {
                 facingDirection = worldDirection;
@@ -531,7 +652,10 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
             float targetYaw = Mathf.Atan2(facingDirection.x, facingDirection.z) * Mathf.Rad2Deg;
             float currentYaw = transform.eulerAngles.y;
-            float nextYaw = Mathf.SmoothDampAngle(currentYaw, targetYaw, ref _rotationVelocity, Model.RotationSmoothTime, Mathf.Infinity, deltaTime);
+            float smoothTime = Model.Grounded
+                ? Model.RotationSmoothTime
+                : Model.AirRotationSmoothTime;
+            float nextYaw = Mathf.SmoothDampAngle(currentYaw, targetYaw, ref _rotationVelocity, smoothTime, Mathf.Infinity, deltaTime);
             _turnAmount = Mathf.DeltaAngle(currentYaw, nextYaw) / 180.0f;
             transform.rotation = Quaternion.Euler(0.0f, nextYaw, 0.0f);
         }

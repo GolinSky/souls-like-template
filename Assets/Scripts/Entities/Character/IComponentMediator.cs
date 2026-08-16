@@ -2,6 +2,7 @@ using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Equipment;
+using SoulsLike.Entities.Character.Components.Movement;
 using UnityEngine;
 
 namespace SoulsLike.Entities.Character
@@ -14,6 +15,7 @@ namespace SoulsLike.Entities.Character
         void NotifyBackStep();
         void NotifyCrouch(bool isCrouching);
         void NotifyGrounded(bool isGrounded);
+        void NotifyAirborneMotion(float verticalVelocity, LandingType landingType);
         void NotifyHealthStatsChanged(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
         void NotifyDeath();

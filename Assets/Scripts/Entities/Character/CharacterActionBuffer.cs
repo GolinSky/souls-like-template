@@ -9,7 +9,8 @@ namespace SoulsLike.Entities.Character
         LightAttack = 1,
         HeavyAttack = 2,
         SpecialAttack = 4,
-        Roll = 5
+        Roll = 5,
+        Jump = 6
     }
 
     public readonly struct BufferedCharacterAction
@@ -54,6 +55,16 @@ namespace SoulsLike.Entities.Character
                 moveInput,
                 cameraYaw,
                 false,
+                false);
+        }
+
+        public static BufferedCharacterAction Jump(bool isSprinting)
+        {
+            return new BufferedCharacterAction(
+                CharacterActionType.Jump,
+                Vector2.zero,
+                0.0f,
+                isSprinting,
                 false);
         }
     }
