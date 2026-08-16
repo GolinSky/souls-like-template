@@ -20,28 +20,23 @@
               "icon": "lucide-file",
               "title": "UI_Code_Build_Guide"
             }
-          }
-        ]
-      },
-      {
-        "id": "0aab474546e1a69a",
-        "type": "tabs",
-        "children": [
+          },
           {
-            "id": "78b79ca6c7a56bcc",
+            "id": "97aeffa9e14002e7",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ToDo/First Steps.md",
+                "file": "features/Current Jump and Roll System.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "First Steps"
+              "title": "Current Jump and Roll System"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -205,19 +200,20 @@
       "bases:Create new base": false
     }
   },
-  "active": "1da76326f671a503",
+  "active": "97aeffa9e14002e7",
   "lastOpenFiles": [
+    "features/Locomotion Architecture Technical Specification.md",
+    "features/Current Jump and Roll System.md",
+    "ui/UI_Code_Build_Guide.md",
     "Artifact/elden_ring_inventory_equipment_architecture.md",
     "Artifact",
     "ui/Inventory UI-UX Architecture & Unity Implementation Guide.md",
-    "ui/UI_Code_Build_Guide.md",
     "ui/Equipment UI-UX Architecture & Unity Implementation Guide.md",
     "ToDo/First Steps.md",
     "features/Advanced Locomotion Architecture Prompt Specification.md",
     "features/Technical Specification - Roll & Backstep Vectoring Logic.md",
     "features/System Specification - Souls-like Locomotion & Camera System.md",
     "features/Movement Mechanics Explained.md",
-    "features/Locomotion Architecture Technical Specification.md",
     "Arhitecture/PROJECT_ORGANIZATION.md",
     "Welcome.md",
     "ToDo/Character_Mediator_Architectural_Analysis.md",
