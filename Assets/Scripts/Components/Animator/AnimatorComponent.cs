@@ -126,6 +126,10 @@ namespace SoulsLike.Entities.Character.Components
                 return;
             }
 
+            float fullBodyLayerWeight = animator.GetLayerWeight(
+                GetRequiredLayerIndex(FULL_BODY_LAYER));
+            float upperBodyLayerWeight = animator.GetLayerWeight(
+                GetRequiredLayerIndex(UPPER_BODY_LAYER));
             animator.runtimeAnimatorController = targetController;
             stateMachineReceiver.InitializeStateMachines();
             _hasChargedAttackSpeedParameter = HasParameter(
@@ -133,6 +137,12 @@ namespace SoulsLike.Entities.Character.Components
                 ChargedSpeedParameter,
                 AnimatorControllerParameterType.Float);
             SetHandMode(_targetHandMode);
+            animator.SetLayerWeight(
+                GetRequiredLayerIndex(FULL_BODY_LAYER),
+                fullBodyLayerWeight);
+            animator.SetLayerWeight(
+                GetRequiredLayerIndex(UPPER_BODY_LAYER),
+                upperBodyLayerWeight);
         }
 
         public void ResetAnimationProfile()
@@ -149,6 +159,10 @@ namespace SoulsLike.Entities.Character.Components
                 return;
             }
 
+            float fullBodyLayerWeight = animator.GetLayerWeight(
+                GetRequiredLayerIndex(FULL_BODY_LAYER));
+            float upperBodyLayerWeight = animator.GetLayerWeight(
+                GetRequiredLayerIndex(UPPER_BODY_LAYER));
             animator.runtimeAnimatorController = _defaultController;
             stateMachineReceiver.InitializeStateMachines();
             _hasChargedAttackSpeedParameter = HasParameter(
@@ -156,6 +170,12 @@ namespace SoulsLike.Entities.Character.Components
                 ChargedSpeedParameter,
                 AnimatorControllerParameterType.Float);
             SetHandMode(_targetHandMode);
+            animator.SetLayerWeight(
+                GetRequiredLayerIndex(FULL_BODY_LAYER),
+                fullBodyLayerWeight);
+            animator.SetLayerWeight(
+                GetRequiredLayerIndex(UPPER_BODY_LAYER),
+                upperBodyLayerWeight);
         }
         
         public void SetLockOn(bool isLockedOn)

@@ -458,8 +458,7 @@ namespace SoulsLike.Entities.Character
         {
             movementComponent.SetMovementBlocked(
                 _manualMovementBlocked
-                || _animationMovementBlocked
-                || _pendingEquipmentSwapGroup.HasValue);
+                || _animationMovementBlocked);
         }
 
         private void BeginEquipmentSwap(EquipmentSlotGroup group)

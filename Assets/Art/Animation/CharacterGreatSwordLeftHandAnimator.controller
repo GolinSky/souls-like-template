@@ -2229,6 +2229,12 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 4526759854957777597}
       m_Motion: {fileID: 785052904632696677, guid: a1d47000d8e84d84e9f5d825ea986275, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 535636397700310032}
+      m_Motion: {fileID: 2708193752246649902, guid: 3d946f934a67093458d63caca9c74a33, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 8791282173509486150}
+      m_Motion: {fileID: -7344082651070388836, guid: 83ba7bb552e64eb47a01633aa0f8996a, type: 3}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 4
