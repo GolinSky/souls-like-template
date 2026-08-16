@@ -289,9 +289,9 @@ namespace SoulsLike.Ui.Inventory
                 $"{nameof(InventoryUi)} requires a presenter before use.");
         }
 
-        private static string FormatScaling(SoulsLike.Items.ScalingGrade grade)
+        private static string FormatScaling(Items.ScalingGrade grade)
         {
-            return grade == SoulsLike.Items.ScalingGrade.None ? "-" : grade.ToString();
+            return grade == Items.ScalingGrade.None ? "-" : grade.ToString();
         }
 
         private static void SetRequirementField(TMP_Text field, int requiredValue, int playerValue)

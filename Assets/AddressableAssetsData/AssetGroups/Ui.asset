@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82ce97341c690544dab4eb06b469635f
+    m_Address: PauseNavigationUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c23fde36785c63a4aa7f12212d915ffa
     m_Address: LockOnUi
     m_ReadOnly: 0

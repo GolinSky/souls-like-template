@@ -14,19 +14,24 @@ namespace SoulsLike.Ui.Inventory
         IInitializable,
         ITickable,
         IDisposable,
-        IInventoryPresenter
+        IInventoryPresenter,
+        IInventoryRoute
     {
         private readonly InventoryComponent _inventory;
         private readonly EquipmentComponent _equipment;
         private readonly ItemDatabase _itemDatabase;
         private readonly Character _character;
         private readonly IInputService _inputService;
-        private readonly ICoreGameOrchestrator _gameOrchestrator;
 
         private InventoryUi _view;
         private InventoryPrimaryCategory _primaryCategory = InventoryPrimaryCategory.Weapons;
         private InventorySubCategory _subCategory = InventorySubCategory.MeleeWeapon;
         private bool _useSubCategoryFilter;
+        private bool _isSelectionMode;
+        private readonly HashSet<ItemType> _routeItemTypes = new();
+        private Action<InventoryEntryId> _itemSelected;
+
+        public event Action CloseRequested;
 
         public InventoryUiController(
             IUiService uiService,
@@ -34,16 +39,14 @@ namespace SoulsLike.Ui.Inventory
             EquipmentComponent equipment,
             ItemDatabase itemDatabase,
             Character character,
-            IInputService inputService,
-            ICoreGameOrchestrator gameOrchestrator)
+            IInputService inputService)
             : base(uiService)
         {
-            _inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
-            _equipment = equipment ?? throw new ArgumentNullException(nameof(equipment));
-            _itemDatabase = itemDatabase ?? throw new ArgumentNullException(nameof(itemDatabase));
-            _character = character ?? throw new ArgumentNullException(nameof(character));
-            _inputService = inputService ?? throw new ArgumentNullException(nameof(inputService));
-            _gameOrchestrator = gameOrchestrator ?? throw new ArgumentNullException(nameof(gameOrchestrator));
+            _inventory = inventory;
+            _equipment = equipment;
+            _itemDatabase = itemDatabase;
+            _character = character;
+            _inputService = inputService;
         }
 
         public void Initialize()
@@ -64,18 +67,6 @@ namespace SoulsLike.Ui.Inventory
 
         public void Tick()
         {
-            if (_inputService.OpenInventoryAction.WasPressedThisFrame())
-            {
-                if (_view.IsHidden)
-                {
-                    TryOpen();
-                }
-                else
-                {
-                    CloseInventory();
-                }
-            }
-
             if (_view.IsHidden)
             {
                 return;
@@ -127,6 +118,13 @@ namespace SoulsLike.Ui.Inventory
         public void OnItemSubmitted(InventoryEntryId entryId)
         {
             OnItemFocused(entryId);
+            if (!_isSelectionMode)
+            {
+                return;
+            }
+
+            _itemSelected?.Invoke(entryId);
+            CloseRequested?.Invoke();
         }
 
         public void CloseInventory()
@@ -136,26 +134,43 @@ namespace SoulsLike.Ui.Inventory
                 return;
             }
 
-            _view.Hide();
-            if (_gameOrchestrator.CurrentGameState == GameState.Paused)
-            {
-                _gameOrchestrator.ResumeGame();
-            }
+            CloseRequested?.Invoke();
         }
 
         public void ToggleLoreView() => _view.ToggleLoreView();
         public void ToggleSimpleView() => _view.ToggleSimpleView();
 
-        private void TryOpen()
+        public void Show()
         {
-            if (_gameOrchestrator.CurrentGameState != GameState.Idle)
-            {
-                return;
-            }
-
+            _isSelectionMode = false;
+            _routeItemTypes.Clear();
+            _itemSelected = null;
             Refresh();
             _view.Show();
-            _gameOrchestrator.PauseGame();
+        }
+
+        public void Open(
+            IReadOnlyCollection<ItemType> itemTypes,
+            Action<InventoryEntryId> itemSelected)
+        {
+            _isSelectionMode = true;
+            _routeItemTypes.Clear();
+            foreach (ItemType itemType in itemTypes)
+            {
+                _routeItemTypes.Add(itemType);
+            }
+
+            _itemSelected = itemSelected;
+            Refresh();
+            _view.Show();
+        }
+
+        public void Hide()
+        {
+            _isSelectionMode = false;
+            _routeItemTypes.Clear();
+            _itemSelected = null;
+            _view.Hide();
         }
 
         private void Refresh()
@@ -164,12 +179,19 @@ namespace SoulsLike.Ui.Inventory
             foreach (InventoryEntry entry in _inventory.Entries)
             {
                 InventoryItemViewData item = BuildViewData(entry);
-                if (item.PrimaryCategory != _primaryCategory)
+                if (_isSelectionMode && !_routeItemTypes.Contains(item.Definition.ItemType))
                 {
                     continue;
                 }
 
-                if (_useSubCategoryFilter && !MatchesSubCategory(item.Definition, _subCategory))
+                if (!_isSelectionMode && item.PrimaryCategory != _primaryCategory)
+                {
+                    continue;
+                }
+
+                if (!_isSelectionMode
+                    && _useSubCategoryFilter
+                    && !MatchesSubCategory(item.Definition, _subCategory))
                 {
                     continue;
                 }

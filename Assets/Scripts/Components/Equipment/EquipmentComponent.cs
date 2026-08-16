@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Items;
-using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 

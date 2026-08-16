@@ -6,6 +6,7 @@ using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Items;
 using SoulsLike.Services;
 using SoulsLike.Ui.Inventory.Data;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace SoulsLike.Ui.Equipment
@@ -14,17 +15,20 @@ namespace SoulsLike.Ui.Equipment
         IInitializable,
         ITickable,
         IDisposable,
-        IEquipmentPresenter
+        IEquipmentPresenter,
+        IEquipmentRoute
     {
         private readonly EquipmentComponent _equipment;
         private readonly InventoryComponent _inventory;
         private readonly ItemDatabase _itemDatabase;
         private readonly Character _character;
         private readonly IInputService _inputService;
-        private readonly ICoreGameOrchestrator _gameOrchestrator;
 
         private EquipmentUi _view;
         private EquipmentSlotId? _selectedSlotId;
+
+        public event Action CloseRequested;
+        public event Action<EquipmentSlotId> InventoryRequested;
 
         public EquipmentUiController(
             IUiService uiService,
@@ -32,16 +36,14 @@ namespace SoulsLike.Ui.Equipment
             InventoryComponent inventory,
             ItemDatabase itemDatabase,
             Character character,
-            IInputService inputService,
-            ICoreGameOrchestrator gameOrchestrator)
+            IInputService inputService)
             : base(uiService)
         {
-            _equipment = equipment ?? throw new ArgumentNullException(nameof(equipment));
-            _inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
-            _itemDatabase = itemDatabase ?? throw new ArgumentNullException(nameof(itemDatabase));
-            _character = character ?? throw new ArgumentNullException(nameof(character));
-            _inputService = inputService ?? throw new ArgumentNullException(nameof(inputService));
-            _gameOrchestrator = gameOrchestrator ?? throw new ArgumentNullException(nameof(gameOrchestrator));
+            _equipment = equipment;
+            _inventory = inventory;
+            _itemDatabase = itemDatabase;
+            _character = character;
+            _inputService = inputService;
         }
 
         public void Initialize()
@@ -64,18 +66,6 @@ namespace SoulsLike.Ui.Equipment
 
         public void Tick()
         {
-            if (_inputService.OpenEquipmentAction.WasPressedThisFrame())
-            {
-                if (_view.IsHidden)
-                {
-                    TryOpen();
-                }
-                else
-                {
-                    CloseEquipment();
-                }
-            }
-
             if (_view.IsHidden)
             {
                 return;
@@ -83,14 +73,7 @@ namespace SoulsLike.Ui.Equipment
 
             if (_inputService.UIActions.Cancel.WasPressedThisFrame())
             {
-                if (_view.IsPickerOpen)
-                {
-                    CancelPicker();
-                }
-                else
-                {
-                    CloseEquipment();
-                }
+                CloseEquipment();
             }
             else if (_inputService.UnequipAction.WasPressedThisFrame())
             {
@@ -109,19 +92,23 @@ namespace SoulsLike.Ui.Equipment
         public void SubmitSlot(EquipmentSlotId slotId)
         {
             _selectedSlotId = slotId;
-            IReadOnlyList<InventoryEntry> compatibleEntries = _equipment.GetCompatibleEntries(slotId);
-            var candidates = new List<InventoryItemViewData>(compatibleEntries.Count);
-            foreach (InventoryEntry entry in compatibleEntries)
-            {
-                candidates.Add(BuildViewData(entry));
-            }
+            InventoryRequested?.Invoke(slotId);
+        }
 
-            _view.ShowPicker(candidates);
+        public void Show()
+        {
+            Refresh();
+            _view.Show();
+        }
+
+        public void Hide()
+        {
+            _view.Hide();
         }
 
         public void FocusCandidate(InventoryEntryId entryId)
         {
-            EquipmentSlotId slotId = RequireSelectedSlot();
+            EquipmentSlotId slotId = _selectedSlotId.Value;
             InventoryEntry candidateEntry = _inventory.GetRequiredEntry(entryId);
             InventoryItemViewData candidate = BuildViewData(candidateEntry);
             EquippedItemContext current = _equipment.ResolveSlot(slotId);
@@ -136,16 +123,20 @@ namespace SoulsLike.Ui.Equipment
 
         public void SubmitCandidate(InventoryEntryId entryId)
         {
-            EquipmentSlotId slotId = RequireSelectedSlot();
+            SelectItem(entryId);
+        }
+
+        public void SelectItem(InventoryEntryId entryId)
+        {
+            EquipmentSlotId slotId = _selectedSlotId.Value;
             _equipment.Assign(slotId, entryId);
-            _view.HidePicker();
             Refresh();
             FocusSlot(slotId);
         }
 
         public void UnequipSelectedSlot()
         {
-            if (_view.IsPickerOpen || !_selectedSlotId.HasValue)
+            if (!_selectedSlotId.HasValue)
             {
                 return;
             }
@@ -158,8 +149,7 @@ namespace SoulsLike.Ui.Equipment
 
         public void CancelPicker()
         {
-            _view.HidePicker();
-            FocusSlot(RequireSelectedSlot());
+            FocusSlot(_selectedSlotId.Value);
         }
 
         public void CloseEquipment()
@@ -169,28 +159,7 @@ namespace SoulsLike.Ui.Equipment
                 return;
             }
 
-            if (_view.IsPickerOpen)
-            {
-                _view.HidePicker();
-            }
-
-            _view.Hide();
-            if (_gameOrchestrator.CurrentGameState == GameState.Paused)
-            {
-                _gameOrchestrator.ResumeGame();
-            }
-        }
-
-        private void TryOpen()
-        {
-            if (_gameOrchestrator.CurrentGameState != GameState.Idle)
-            {
-                return;
-            }
-
-            Refresh();
-            _view.Show();
-            _gameOrchestrator.PauseGame();
+            CloseRequested?.Invoke();
         }
 
         private void Refresh()
@@ -238,12 +207,6 @@ namespace SoulsLike.Ui.Equipment
             }
 
             return total;
-        }
-
-        private EquipmentSlotId RequireSelectedSlot()
-        {
-            return _selectedSlotId ?? throw new InvalidOperationException(
-                "Equipment picker requires a selected equipment slot.");
         }
 
         private void HandleEquipmentChanged(EquipmentSlotChange change)

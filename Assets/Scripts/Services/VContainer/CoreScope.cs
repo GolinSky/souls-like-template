@@ -17,7 +17,6 @@ namespace SoulsLike
             Debug.Log("CoreScope Configure");
             builder.RegisterComponent(cameraService).AsSelf().As<ICameraService>();
             builder.Register<TargetingService>(Lifetime.Singleton).As<ITargetingService>();
-            builder.Register<PauseMenuUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<CharacterFactory>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CoreGameOrchestrator>();
         }
