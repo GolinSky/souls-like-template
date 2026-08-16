@@ -16,6 +16,7 @@ namespace SoulsLike.Services.CameraService
         void SetLockOnTarget(Transform lockNodeTarget);
         void ClearLockOnTarget();
         void RecenterCamera();
+        Camera GetMainCamera();
     }
     
     public class CameraService: MonoBehaviour, ICameraService
@@ -55,10 +56,24 @@ namespace SoulsLike.Services.CameraService
         
         [Range(0.1f,10.0f)] [SerializeField] private float mouseSensitivityY = 1.0f;
         [Range(0.1f,10.0f)] [SerializeField] private float mouseSensitivityX = 1.0f;
+
+        [Header("Lock On")]
+        [SerializeField, Range(0f, 0.45f)] private float lockHorizontalDeadZone = 0.12f;
+        [SerializeField, Range(0f, 0.45f)] private float lockVerticalDeadZone = 0.08f;
+        [SerializeField, Range(0f, 1f)] private float lockTargetViewportY = 0.58f;
+        [SerializeField, Min(0f)] private float lockYawSpeed = 150f;
+        [SerializeField, Min(0f)] private float lockPitchSpeed = 90f;
+        [SerializeField] private float lockVerticalArmLength = 0.65f;
+        [SerializeField, Range(0f, 1f)] private float lockCameraSide = 0.5f;
+        [SerializeField, Min(0f)] private float lockRigBlendDuration = 0.2f;
+        [SerializeField] private Ease lockRigBlendEase = Ease.OutSine;
         
         private Transform _lockOnTarget;
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
+        private float _freeVerticalArmLength;
+        private float _freeCameraSide;
+        private Tween _lockRigTween;
 
         public void SetTarget(Transform target)
         {
@@ -114,12 +129,20 @@ namespace SoulsLike.Services.CameraService
 
         public void SetLockOnTarget(Transform lockNodeTarget)
         {
+            if (_lockOnTarget == null)
+            {
+                _freeVerticalArmLength = cinemachineThirdPersonFollow.VerticalArmLength;
+                _freeCameraSide = cinemachineThirdPersonFollow.CameraSide;
+                BlendLockRig(lockVerticalArmLength, lockCameraSide);
+            }
+
             _lockOnTarget = lockNodeTarget;
         }
 
         public void ClearLockOnTarget()
         {
             _lockOnTarget = null;
+            BlendLockRig(_freeVerticalArmLength, _freeCameraSide);
         }
 
         public void RecenterCamera()
@@ -131,27 +154,16 @@ namespace SoulsLike.Services.CameraService
             }
         }
 
+        public Camera GetMainCamera()
+        {
+            return targetCamera;
+        }
+
         public void UpdateRotation(Vector2 look)
         {
             if (_lockOnTarget != null && cinemachineCamera.Follow != null)
             {
-                // Lock-On Mode: Continuously rotate camera to track target
-                Vector3 followPos = cinemachineCamera.Follow.position;
-                Vector3 targetPos = _lockOnTarget.position;
-                Vector3 toTarget = targetPos - followPos;
-
-                if (toTarget.sqrMagnitude > 0.01f)
-                {
-                    float targetYaw = Mathf.Atan2(toTarget.x, toTarget.z) * Mathf.Rad2Deg;
-                    
-                    // Dynamic pitch based on distance and height elevation
-                    float horizontalDistance = new Vector2(toTarget.x, toTarget.z).magnitude;
-                    float heightDiff = toTarget.y;
-                    float targetPitch = -Mathf.Atan2(heightDiff, horizontalDistance) * Mathf.Rad2Deg;
-
-                    _cinemachineTargetYaw = Mathf.LerpAngle(_cinemachineTargetYaw, targetYaw, Time.deltaTime * 10f);
-                    _cinemachineTargetPitch = Mathf.LerpAngle(_cinemachineTargetPitch, targetPitch, Time.deltaTime * 10f);
-                }
+                UpdateLockOnRotation();
             }
             else
             {
@@ -173,6 +185,91 @@ namespace SoulsLike.Services.CameraService
                 cinemachineCamera.Follow.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + cameraAngleOverride,
                     _cinemachineTargetYaw, 0.0f);
             }
+        }
+
+        private void UpdateLockOnRotation()
+        {
+            Vector3 targetViewportPosition = targetCamera.WorldToViewportPoint(_lockOnTarget.position);
+            if (targetViewportPosition.z <= 0f)
+            {
+                RotateLockYawTowardTarget();
+                return;
+            }
+
+            float horizontalError = GetDeadZoneError(
+                targetViewportPosition.x - 0.5f,
+                lockHorizontalDeadZone);
+            float verticalError = GetDeadZoneError(
+                targetViewportPosition.y - lockTargetViewportY,
+                lockVerticalDeadZone);
+
+            float horizontalFieldOfView = GetHorizontalFieldOfView(targetCamera.fieldOfView, targetCamera.aspect);
+            float yawCorrection = ViewportOffsetToAngle(horizontalError, horizontalFieldOfView);
+            float pitchCorrection = ViewportOffsetToAngle(verticalError, targetCamera.fieldOfView);
+
+            _cinemachineTargetYaw = Mathf.MoveTowardsAngle(
+                _cinemachineTargetYaw,
+                _cinemachineTargetYaw + yawCorrection,
+                lockYawSpeed * Time.deltaTime);
+            _cinemachineTargetPitch = Mathf.MoveTowardsAngle(
+                _cinemachineTargetPitch,
+                _cinemachineTargetPitch - pitchCorrection,
+                lockPitchSpeed * Time.deltaTime);
+        }
+
+        private void RotateLockYawTowardTarget()
+        {
+            Vector3 toTarget = _lockOnTarget.position - cinemachineCamera.Follow.position;
+            Vector3 planarToTarget = Vector3.ProjectOnPlane(toTarget, Vector3.up);
+            if (planarToTarget.sqrMagnitude <= THRESHOLD)
+            {
+                return;
+            }
+
+            float targetYaw = Mathf.Atan2(planarToTarget.x, planarToTarget.z) * Mathf.Rad2Deg;
+            _cinemachineTargetYaw = Mathf.MoveTowardsAngle(
+                _cinemachineTargetYaw,
+                targetYaw,
+                lockYawSpeed * Time.deltaTime);
+        }
+
+        private void BlendLockRig(float verticalArmLength, float cameraSide)
+        {
+            _lockRigTween?.Kill();
+            _lockRigTween = DOTween.Sequence()
+                .Join(DOTween.To(
+                    () => cinemachineThirdPersonFollow.VerticalArmLength,
+                    value => cinemachineThirdPersonFollow.VerticalArmLength = value,
+                    verticalArmLength,
+                    lockRigBlendDuration))
+                .Join(DOTween.To(
+                    () => cinemachineThirdPersonFollow.CameraSide,
+                    value => cinemachineThirdPersonFollow.CameraSide = value,
+                    cameraSide,
+                    lockRigBlendDuration))
+                .SetEase(lockRigBlendEase);
+        }
+
+        private static float GetDeadZoneError(float offset, float deadZone)
+        {
+            if (Mathf.Abs(offset) <= deadZone)
+            {
+                return 0f;
+            }
+
+            return offset - Mathf.Sign(offset) * deadZone;
+        }
+
+        private static float ViewportOffsetToAngle(float viewportOffset, float fieldOfView)
+        {
+            float halfFieldOfViewTangent = Mathf.Tan(fieldOfView * 0.5f * Mathf.Deg2Rad);
+            return Mathf.Atan(viewportOffset * 2f * halfFieldOfViewTangent) * Mathf.Rad2Deg;
+        }
+
+        private static float GetHorizontalFieldOfView(float verticalFieldOfView, float aspect)
+        {
+            float halfVerticalFieldOfViewTangent = Mathf.Tan(verticalFieldOfView * 0.5f * Mathf.Deg2Rad);
+            return Mathf.Atan(halfVerticalFieldOfViewTangent * aspect) * 2f * Mathf.Rad2Deg;
         }
         
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)

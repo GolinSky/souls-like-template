@@ -1,82 +1,46 @@
 using System;
 using SoulsLike.Entities.Character;
 using SoulsLike.Services;
+using SoulsLike.Services.CameraService;
 using SoulsLike.Services.Targeting;
 using UnityEngine;
 using VContainer.Unity;
 
 namespace SoulsLike.Ui.LockOn
 {
-    public class LockOnUiController : UiController, IInitializable, ITickable, IDisposable
+    public class LockOnUiController : UiController, IInitializable, IPostLateTickable, IDisposable
     {
         private readonly ITargetingService _targetingService;
+        private readonly ICameraService _cameraService;
         private LockOnUi _lockOnUi;
         private Camera _targetCamera;
 
-        public LockOnUiController(IUiService uiService, ITargetingService targetingService)
+        public LockOnUiController(IUiService uiService, ITargetingService targetingService, ICameraService cameraService)
             : base(uiService)
         {
-            if (targetingService == null)
-            {
-                throw new ArgumentNullException(nameof(targetingService));
-            }
-
             _targetingService = targetingService;
+            _cameraService = cameraService;
         }
 
         public void Initialize()
         {
             _lockOnUi = CreateUi<LockOnUi>();
             _lockOnUi.Hide();
-
-            _targetCamera = Camera.main;
-            if (_targetCamera == null)
-            {
-                throw new InvalidOperationException("LockOnUiController requires a camera tagged MainCamera.");
-            }
-
-            _targetingService.TargetChanged += OnTargetChanged;
-        }
-
-        public void Tick()
-        {
-            UpdateLockOnUi();
+            _targetCamera = _cameraService.GetMainCamera();
         }
 
         public void Dispose()
         {
-            _targetingService.TargetChanged -= OnTargetChanged;
-
-            if (_lockOnUi != null)
-            {
-                _lockOnUi.Hide();
-            }
+            _lockOnUi.Hide();
         }
 
-        private void OnTargetChanged(TargetLockNode target)
+        public void PostLateTick()
         {
-            if (target == null)
-            {
-                _lockOnUi.Hide();
-                return;
-            }
-
             UpdateLockOnUi();
         }
 
         private void UpdateLockOnUi()
         {
-            if (_lockOnUi == null)
-            {
-                throw new InvalidOperationException("LockOnUiController must be initialized before it ticks.");
-            }
-
-            if (!_targetingService.IsLockedOn)
-            {
-                _lockOnUi.Hide();
-                return;
-            }
-
             TargetLockNode currentTarget = _targetingService.CurrentTarget;
             if (currentTarget == null || !currentTarget.isActiveAndEnabled)
             {
@@ -84,20 +48,14 @@ namespace SoulsLike.Ui.LockOn
                 return;
             }
 
-            Transform targetTransform = currentTarget.TargetTransform;
-            if (targetTransform == null)
+            bool isVisible = _lockOnUi.TrySetTargetPosition(currentTarget.TargetTransform, _targetCamera);
+            if (isVisible)
             {
-                _lockOnUi.Hide();
+                _lockOnUi.Show();
                 return;
             }
 
-            if (_targetCamera == null || !_targetCamera.isActiveAndEnabled)
-            {
-                _lockOnUi.Hide();
-                return;
-            }
-
-            _lockOnUi.SetTargetPosition(targetTransform, _targetCamera);
+            _lockOnUi.Hide();
         }
     }
 }

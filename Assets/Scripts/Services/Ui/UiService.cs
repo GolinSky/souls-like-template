@@ -33,7 +33,6 @@ namespace SoulsLike.Services
             TUI uiInstance = UIFactory.CreateUi<TUI>(uiParent ?? this.parent);
             return uiInstance;
         }
-        
 
         public void MarkUiAsOverlay(BaseUi baseUi)
         {

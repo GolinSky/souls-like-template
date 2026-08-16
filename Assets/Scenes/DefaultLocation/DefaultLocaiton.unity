@@ -37100,6 +37100,15 @@ MonoBehaviour:
   lockCameraPosition: 0
   mouseSensitivityY: 5
   mouseSensitivityX: 5
+  lockHorizontalDeadZone: 0.12
+  lockVerticalDeadZone: 0.08
+  lockTargetViewportY: 0.58
+  lockYawSpeed: 150
+  lockPitchSpeed: 90
+  lockVerticalArmLength: 0.65
+  lockCameraSide: 0.5
+  lockRigBlendDuration: 0.2
+  lockRigBlendEase: 3
 --- !u!1 &4941954192799869488
 GameObject:
   m_ObjectHideFlags: 0
