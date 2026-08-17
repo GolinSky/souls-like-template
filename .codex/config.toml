@@ -6,5 +6,25 @@ args = [ "mcp", "--project-path", "F:\\Private\\SoulsLikeTemplate" ]
 url = "http://127.0.0.1:27123/mcp/"
 headers = { Authorization = "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e19342ae1cc0304271a68257e4cc43" }
 
+[mcp_servers.graphify]
+command = "C:\\Users\\golin\\AppData\\Roaming\\uv\\tools\\graphifyy\\Scripts\\python.exe"
+args = [ "-m", "graphify.serve", "F:\\Private\\SoulsLikeTemplate\\graphify-out\\graph.json" ]
+cwd = "F:\\Private\\SoulsLikeTemplate"
+enabled = false
+enabled_tools = [ "query_graph", "get_node", "get_neighbors", "god_nodes", "graph_stats", "shortest_path" ]
+default_tools_approval_mode = "approve"
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+
+[mcp_servers.graphify.env]
+GRAPHIFY_QUERY_LOG_DISABLE = "1"
+
 [features]
-multi_agent = false
+multi_agent = true
+
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 4
+default_subagent_model = "gpt-5.6-luna"
+default_subagent_reasoning_effort = "low"
+interrupt_message = true

@@ -1,236 +1,421 @@
-# Graph Report - Assets/Scripts  (2026-08-07)
+# Graph Report - SoulsLikeTemplate  (2026-08-17)
 
 ## Corpus Check
-- Corpus is ~17,084 words - fits in a single context window. You may not need a graph.
+- cluster-only mode — file stats not available
 
 ## Summary
-- 715 nodes · 815 edges · 64 communities (28 shown, 36 thin omitted)
-- Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
+- 1538 nodes · 3084 edges · 82 communities (69 shown, 13 thin omitted)
+- Extraction: 92% EXTRACTED · 8% INFERRED · 0% AMBIGUOUS · INFERRED: 237 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
+## Graph Freshness
+- Built from commit: `dbd49512`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
+
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Camera Service|Camera Service]]
-- [[_COMMUNITY_Character Input Bindings|Character Input Bindings]]
-- [[_COMMUNITY_Animator Component|Animator Component]]
-- [[_COMMUNITY_Game Orchestrator Contracts|Game Orchestrator Contracts]]
-- [[_COMMUNITY_Character Entity|Character Entity]]
-- [[_COMMUNITY_Custom Button Component|Custom Button Component]]
-- [[_COMMUNITY_UI Asset Mappings|UI Asset Mappings]]
-- [[_COMMUNITY_VContainer Core Scope|VContainer Core Scope]]
-- [[_COMMUNITY_Camera and Layers|Camera and Layers]]
-- [[_COMMUNITY_Character Base Components|Character Base Components]]
-- [[_COMMUNITY_Scene Reference Data|Scene Reference Data]]
-- [[_COMMUNITY_Core Game Orchestrator|Core Game Orchestrator]]
-- [[_COMMUNITY_Component Mediator Events|Component Mediator Events]]
-- [[_COMMUNITY_File Save Service|File Save Service]]
-- [[_COMMUNITY_Main Menu UI|Main Menu UI]]
-- [[_COMMUNITY_Health Component|Health Component]]
-- [[_COMMUNITY_Custom Button Editors|Custom Button Editors]]
-- [[_COMMUNITY_UI Factory Services|UI Factory Services]]
-- [[_COMMUNITY_Base UI Components|Base UI Components]]
-- [[_COMMUNITY_Health Component Contract|Health Component Contract]]
-- [[_COMMUNITY_UI Input Bindings|UI Input Bindings]]
-- [[_COMMUNITY_Button Hierarchy Tools|Button Hierarchy Tools]]
-- [[_COMMUNITY_Pause Menu Controller|Pause Menu Controller]]
-- [[_COMMUNITY_Player Controller|Player Controller]]
-- [[_COMMUNITY_Addressable Asset Service|Addressable Asset Service]]
-- [[_COMMUNITY_Main Menu Controller|Main Menu Controller]]
-- [[_COMMUNITY_Custom Button Contract|Custom Button Contract]]
-- [[_COMMUNITY_Input Service Lifecycle|Input Service Lifecycle]]
-- [[_COMMUNITY_Scene Model|Scene Model]]
-- [[_COMMUNITY_Storage Registry|Storage Registry]]
-- [[_COMMUNITY_Game Orchestrator|Game Orchestrator]]
-- [[_COMMUNITY_Main Menu Orchestration|Main Menu Orchestration]]
-- [[_COMMUNITY_Serialized Key Values|Serialized Key Values]]
-- [[_COMMUNITY_Timer Contract|Timer Contract]]
-- [[_COMMUNITY_Movement Component Contract|Movement Component Contract]]
-- [[_COMMUNITY_Game State Notifier|Game State Notifier]]
-- [[_COMMUNITY_Main Menu Contract|Main Menu Contract]]
-- [[_COMMUNITY_Layer Service Contract|Layer Service Contract]]
-- [[_COMMUNITY_Main Menu Presenter|Main Menu Presenter]]
-- [[_COMMUNITY_Pause Menu Presenter|Pause Menu Presenter]]
-- [[_COMMUNITY_Health Model|Health Model]]
-- [[_COMMUNITY_Movement Model|Movement Model]]
-- [[_COMMUNITY_UI Controller Factory|UI Controller Factory]]
-- [[_COMMUNITY_Occlusion Editor Tool|Occlusion Editor Tool]]
-- [[_COMMUNITY_Game State Observer|Game State Observer]]
-- [[_COMMUNITY_Preview Render Contract|Preview Render Contract]]
-- [[_COMMUNITY_Unity Dictionary Factory|Unity Dictionary Factory]]
-- [[_COMMUNITY_Canvas Group Extensions|Canvas Group Extensions]]
-- [[_COMMUNITY_Timer Factory|Timer Factory]]
-- [[_COMMUNITY_Animator Model|Animator Model]]
-- [[_COMMUNITY_Equipment Model|Equipment Model]]
-- [[_COMMUNITY_Base Model|Base Model]]
-- [[_COMMUNITY_Base Factory|Base Factory]]
-- [[_COMMUNITY_Key Value Contract|Key Value Contract]]
-- [[_COMMUNITY_Damage Request|Damage Request]]
-- [[_COMMUNITY_Damage Result|Damage Result]]
-- [[_COMMUNITY_Health Stats|Health Stats]]
-- [[_COMMUNITY_Health Stat Update|Health Stat Update]]
-- [[_COMMUNITY_Movement State|Movement State]]
-- [[_COMMUNITY_Speed Multiplier Key|Speed Multiplier Key]]
-- [[_COMMUNITY_Game State|Game State]]
-- [[_COMMUNITY_Layer Names|Layer Names]]
-- [[_COMMUNITY_Scene Types|Scene Types]]
-- [[_COMMUNITY_UI Input Types|UI Input Types]]
+- SoulsLike.Items
+- SceneReference
+- HealthStats
+- WeaponDefinition
+- IDisposable
+- AnimatorStateMachineReceiver
+- PreviewRenderService
+- ItemDefinition
+- PlayerHudUiController
+- EquipmentSlotId
+- AnimatorComponent
+- Character
+- MainMenuUiController
+- MovementComponent
+- EquipmentUiController
+- EquipmentUi
+- InventoryUi
+- EquipmentComponent
+- EquipmentSlotUI
+- InventorySlotUI
+- InventoryEntryId
+- PauseMenuUiController
+- AudioService
+- CameraService
+- PauseNavigationUiController
+- SoulsLike
+- OnGuiFpsCounter
+- AttackComponent
+- PlayerController
+- AmbienceService
+- HandMode
+- ITimer
+- CoroutineService
+- CustomButtonToggle
+- AnimatorRootMotionRelay
+- IComponentMediator
+- CharacterActionBuffer
+- UiFactory
+- SoulsLike.Services
+- StorageRegistry
+- IMovementComponent
+- CustomButton
+- InventoryEntry
+- BaseUi
+- IInitializable
+- AmbienceData
+- .Hide
+- .TryStartRoll
+- System.Ui.Base
+- .CreateButton
+- IInventoryPresenter
+- InventoryUiController
+- UiService
+- ICameraService
+- MusicType
+- SoulsLike.Extensions
+- ITargetingService
+- .Refresh
+- TargetLockNode
+- AddressableAssetService
+- SharedSceneScope
+- CustomButtonMapping
+- CoreGameOrchestrator
+- AmbienceManagerWrapper
+- IInputService
+- .BeginRootMotionAction
+- InventoryViewStateController
+- FileService
+- ICustomButton
+- InventoryItemSO
+- PauseNavigationUi
+- AttackType
+- LockOnUi
+- LandingType
+- ScriptableObject
+- Transform
+- CustomButtonEditor
+- EquipmentLoadout
+- .Select
+- IPauseNavigationRouteNavigation
+- MovementMode.cs
 
 ## God Nodes (most connected - your core abstractions)
-1. `Character` - 36 edges
-2. `MovementComponent` - 27 edges
-3. `AnimatorComponent` - 23 edges
-4. `ICharacterActions` - 20 edges
-5. `CoreGameOrchestrator` - 19 edges
-6. `CameraService` - 18 edges
-7. `HealthComponent` - 16 edges
-8. `PlayerController` - 16 edges
-9. `CustomButton` - 16 edges
-10. `IComponentMediator` - 15 edges
+1. `Character` - 63 edges
+2. `AnimatorComponent` - 54 edges
+3. `MovementComponent` - 52 edges
+4. `InventoryEntryId` - 39 edges
+5. `EquipmentUi` - 37 edges
+6. `InventoryUiController` - 37 edges
+7. `EquipmentSlotId` - 33 edges
+8. `EquipmentSlotUI` - 33 edges
+9. `EquipmentUiController` - 33 edges
+10. `EquipmentComponent` - 32 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `MovementComponent` --references--> `Dictionary`  [EXTRACTED]
-  Components/Movement/MovementComponent.cs → Utilities/EditorSerialization/Dictionary/SerializedDictionary.cs
-- `AnimatorComponent` --references--> `float`  [EXTRACTED]
-  Components/Animator/AnimatorComponent.cs → Utilities/Timer/Timer.cs
-- `AnimatorComponent` --references--> `Vector3`  [EXTRACTED]
-  Components/Animator/AnimatorComponent.cs → Services/PreviewRender/PreviewRenderService.cs
-- `AnimatorComponent` --references--> `bool`  [EXTRACTED]
-  Components/Animator/AnimatorComponent.cs → Utilities/Timer/Timer.cs
-- `Character` --references--> `Transform`  [EXTRACTED]
-  Entities/Character/Character.cs → Services/Ui/UiService.cs
+- `MovementComponent` --references--> `LocomotionState`  [EXTRACTED]
+  Assets/Scripts/Components/Movement/MovementComponent.cs → Assets/Scripts/Components/Movement/LocomotionState.cs
+- `MovementComponent` --references--> `MovementMode`  [EXTRACTED]
+  Assets/Scripts/Components/Movement/MovementComponent.cs → Assets/Scripts/Components/Movement/MovementMode.cs
+- `SceneDependency` --references--> `SceneReference`  [EXTRACTED]
+  Assets/Scripts/Services/Scenes/Data/SceneDependency.cs → Assets/Scripts/Services/Scenes/Data/SceneReference.cs
+- `AnimatorStateMachineDto` --references--> `StateMachineState`  [EXTRACTED]
+  Assets/Scripts/Components/Animations/AnimatorStateMachineDto.cs → Assets/Scripts/Components/Animations/StateMachineState.cs
+- `AnimatorComponent` --references--> `AnimatorStateMachineReceiver`  [EXTRACTED]
+  Assets/Scripts/Components/Animator/AnimatorComponent.cs → Assets/Scripts/Components/Animations/AnimatorStateMachineReceiver.cs
 
-## Communities (64 total, 36 thin omitted)
+## Import Cycles
+- None detected.
 
-### Community 0 - "Camera Service"
+## Communities (82 total, 13 thin omitted)
+
+### Community 0 - "SoulsLike.Items"
+Cohesion: 0.06
+Nodes (34): AnimatorModel, HealthData, IHealthData, AnimationCurve, LayerMask, IMovementData, MovementData, AnimationCurve (+26 more)
+
+### Community 1 - "SceneReference"
 Cohesion: 0.05
-Nodes (17): bool, CameraService, ICameraService, SoulsLike.Services.CameraService, CharacterController, CinemachineCamera, CinemachineThirdPersonFollow, Ease (+9 more)
+Nodes (31): UniTask, UniTaskVoid, GameOrchestrator, Scene, SerializedDictionary, SceneData, Scene, SceneModel (+23 more)
 
-### Community 1 - "Character Input Bindings"
+### Community 2 - "HealthStats"
 Cohesion: 0.06
-Nodes (12): IInputActionCollection2, AddCallbacks(), Disable(), Enable(), Get(), ICharacterActions, @ProjectInputActions, RemoveCallbacks() (+4 more)
+Nodes (18): float, int, Vector3, DamageRequest, bool, float, DamageResult, IComponentMediator (+10 more)
 
-### Community 2 - "Animator Component"
+### Community 3 - "WeaponDefinition"
 Cohesion: 0.06
-Nodes (14): Animator, AnimatorComponent, SoulsLike.Entities.Character.Components, BaseComponent, Canvas, EquipmentComponent, SoulsLike.Entities.Character.Components.Equipment, IComponentMediator (+6 more)
+Nodes (34): BaseComponent, IComponent, GameObject, Quaternion, Transform, Vector3, EquipmentPresentation, float (+26 more)
 
-### Community 3 - "Game Orchestrator Contracts"
-Cohesion: 0.06
-Nodes (19): Data, SoulsLike.Services, IGameOrchestrator, SoulsLike.Services, HealthData, IHealthData, SoulsLike.Entities.Character.Components.Health, InventoryData (+11 more)
-
-### Community 4 - "Character Entity"
+### Community 4 - "IDisposable"
 Cohesion: 0.07
-Nodes (10): AnimatorComponent, Character, Character, CharacterScope, SoulsLike.Entities.Character, EquipmentComponent, HealthComponent, InventoryComponent (+2 more)
+Nodes (21): List, Entity, IEntity, EntityCommand, Collider, Dictionary, RaycastHit, EntityLocator (+13 more)
 
-### Community 5 - "Custom Button Component"
+### Community 5 - "AnimatorStateMachineReceiver"
 Cohesion: 0.08
-Nodes (12): CustomButton, System.Ui.Base, CustomButtonToggle, OnValidate(), UI.Base, Button, ColorBlock, GameObject (+4 more)
+Nodes (18): Animator, AnimatorStateInfo, bool, float, int, AnimatorStateMachine, AnimatorStateInfo, AnimatorStateMachineDto (+10 more)
 
-### Community 6 - "UI Asset Mappings"
-Cohesion: 0.07
-Nodes (17): CustomButtonMapping, UI.Base, CustomButtonToggle, AssetMappingData, SoulsLike, LayerData, SoulsLike.Services.Layer.Data, SceneData (+9 more)
+### Community 6 - "PreviewRenderService"
+Cohesion: 0.06
+Nodes (24): Dictionary, LayerMask, LayerName, SerializedDictionary, LayerData, GameObject, LayerMask, ILayerService (+16 more)
 
-### Community 7 - "VContainer Core Scope"
-Cohesion: 0.09
-Nodes (14): CameraService, SoulsLike.Entities.Character, SoulsLike.Entities.Character, LifetimeScope, PreviewRenderService, UiService, CoreScope, SoulsLike (+6 more)
+### Community 7 - "ItemDefinition"
+Cohesion: 0.08
+Nodes (23): Inject, Inject, IReadOnlyList, InventoryComponent, IReadOnlyList, List, InitialInventoryEntry, InventoryData (+15 more)
 
-### Community 8 - "Camera and Layers"
-Cohesion: 0.1
-Nodes (11): Camera, ILayerService, IPreviewRenderService, LayerService, SoulsLike.Services.Layer, LayerData, Light, PreviewRenderService (+3 more)
+### Community 8 - "PlayerHudUiController"
+Cohesion: 0.08
+Nodes (18): CanvasGroup, Color, Image, MPImage, RectTransform, Sprite, TMP_Text, EquipmentSlotHud (+10 more)
 
-### Community 9 - "Character Base Components"
-Cohesion: 0.11
-Nodes (9): BaseComponent, IComponent, SoulsLike.Entities.Character.Components, CoroutineService, ICoroutineService, SoulsLike.Services.Coroutines, InventoryComponent, SoulsLike.Entities.Character.Components.Inventory (+1 more)
-
-### Community 10 - "Scene Reference Data"
-Cohesion: 0.11
-Nodes (11): AutoUpdateReference(), OnAfterDeserializeHandler(), SceneReference, SceneReferencePropertyDrawer, SoulsLike.Services.Scenes.Data, GUIContent, GUIStyle, IComparable (+3 more)
-
-### Community 11 - "Core Game Orchestrator"
-Cohesion: 0.15
-Nodes (3): CoreGameOrchestrator, ICoreGameOrchestrator, SoulsLike.Services
-
-### Community 13 - "File Save Service"
-Cohesion: 0.18
-Nodes (6): IStorageRegistry, FileService, SoulsLike.Services.Save, SoulsLike.Services.Storage, StorageRegistry, string
-
-### Community 14 - "Main Menu UI"
-Cohesion: 0.12
-Nodes (10): ButtonTypeMap, BaseUi, CustomButton, InputTypes, IPauseMenuPresenter, IStartable, MainMenuUi, SoulsLike.Ui.MainMenu (+2 more)
-
-### Community 15 - "Health Component"
-Cohesion: 0.2
-Nodes (4): HealthComponent, SoulsLike.Entities.Character.Components.Health, HealthStats, IHealthComponent
-
-### Community 16 - "Custom Button Editors"
+### Community 9 - "EquipmentSlotId"
 Cohesion: 0.13
-Nodes (7): ButtonEditor, CustomButtonEditor, UI.Base.Editor, CustomButtonToggleEditor, UI.Base.Editor, SerializedProperty, ToggleEditor
+Nodes (10): IReadOnlyList, Dictionary, EquipmentModel, IReadOnlyList, EquipmentSlotCatalog, EquipmentSlotGroup, EquipmentSlotId, CharacterAttributeStats (+2 more)
 
-### Community 17 - "UI Factory Services"
-Cohesion: 0.15
-Nodes (7): AddressableAssetService, AssetMappingData, BaseFactory, SoulsLike.Extensions, VContainerExt, SoulsLike.Services, UiFactory
+### Community 10 - "AnimatorComponent"
+Cohesion: 0.12
+Nodes (13): AnimationEvent, AnimatorControllerParameterType, Animator, bool, float, IComponentMediator, int, RuntimeAnimatorController (+5 more)
 
-### Community 18 - "Base UI Components"
-Cohesion: 0.24
-Nodes (4): BaseUi, IBaseUi, SoulsLike.Ui.Base, CanvasGroup
+### Community 11 - "Character"
+Cohesion: 0.09
+Nodes (8): bool, float, LayerMask, Quaternion, Vector3, Character, EquipmentSwapPhase, EquipmentSwapPhase
 
-### Community 22 - "Pause Menu Controller"
-Cohesion: 0.22
-Nodes (4): ICoreGameOrchestrator, PauseMenuUiController, SoulsLike, PauseMenuUi
+### Community 12 - "MainMenuUiController"
+Cohesion: 0.11
+Nodes (7): IMainMenuOrchestrator, IMainMenuPresenter, MainMenuUi, MainMenuUiController, SoulsLike.Ui.MainMenu, SoulsLike.Orchestrators.MainMenu, IStartable
 
-### Community 23 - "Player Controller"
+### Community 13 - "MovementComponent"
+Cohesion: 0.16
+Nodes (9): bool, Dictionary, float, IComponentMediator, Transform, Vector2, Vector3, MovementComponent (+1 more)
+
+### Community 15 - "EquipmentUi"
+Cohesion: 0.13
+Nodes (8): Dictionary, GameObject, Image, int, IReadOnlyList, TMP_Text, Transform, EquipmentUi
+
+### Community 16 - "InventoryUi"
+Cohesion: 0.13
+Nodes (10): Color, Image, int, IReadOnlyList, List, ScalingGrade, TMP_Text, Transform (+2 more)
+
+### Community 17 - "EquipmentComponent"
 Cohesion: 0.18
-Nodes (6): PlayerController, GameState, ICameraService, IGameStateNotifier, IGameStateObserver, ILateTickable
+Nodes (3): IComponentMediator, EquipmentComponent, CharacterActions
 
-### Community 24 - "Addressable Asset Service"
+### Community 18 - "EquipmentSlotUI"
+Cohesion: 0.13
+Nodes (11): BaseEventData, Color, GameObject, Image, MPImage, PointerEventData, TMP_Text, EquipmentSlotUI (+3 more)
+
+### Community 19 - "InventorySlotUI"
+Cohesion: 0.13
+Nodes (11): AxisEventData, BaseEventData, Image, MPImage, PointerEventData, TMP_Text, InventorySlotUI, IDeselectHandler (+3 more)
+
+### Community 20 - "InventoryEntryId"
+Cohesion: 0.11
+Nodes (4): EquipmentSlotChange, string, InventoryEntryId, IEquipmentPresenter
+
+### Community 21 - "PauseMenuUiController"
+Cohesion: 0.13
+Nodes (4): ICoreGameOrchestrator, IPauseMenuPresenter, PauseMenuUi, PauseMenuUiController
+
+### Community 22 - "AudioService"
+Cohesion: 0.16
+Nodes (8): List, AudioService, bool, float, AudioSettingsData, IAudioSettingsData, IAudioService, IObserver
+
+### Community 23 - "CameraService"
+Cohesion: 0.13
+Nodes (8): bool, Camera, float, Tween, CameraService, CinemachineCamera, CinemachineThirdPersonFollow, Ease
+
+### Community 24 - "PauseNavigationUiController"
+Cohesion: 0.16
+Nodes (5): IEquipmentRoute, IInventoryRoute, IPauseNavigationRoute, PauseNavigationUiController, Stack
+
+### Community 25 - "SoulsLike"
+Cohesion: 0.12
+Nodes (10): AssetMappingData, IKeyValue, KeyValue, Dictionary, List, SerializedDictionary, Dictionary, UnityDictionaryFactory (+2 more)
+
+### Community 26 - "OnGuiFpsCounter"
+Cohesion: 0.13
+Nodes (9): bool, Color, float, GUIStyle, int, OnGuiFpsCounter, SoulsLike.Ui.FpsCounter, Key (+1 more)
+
+### Community 27 - "AttackComponent"
+Cohesion: 0.19
+Nodes (7): bool, CharacterActions, float, IComponentMediator, AttackComponent, BaseComponent, BufferedCharacterAction
+
+### Community 28 - "PlayerController"
+Cohesion: 0.15
+Nodes (5): PlayerController, GameState, IGameStateNotifier, IGameStateObserver, ILateTickable
+
+### Community 29 - "AmbienceService"
+Cohesion: 0.18
+Nodes (5): float, GameObject, Tween, AmbienceService, AudioSource
+
+### Community 30 - "HandMode"
+Cohesion: 0.17
+Nodes (3): HandMode, RuntimeAnimatorController, AnimationProfile
+
+### Community 31 - "ITimer"
+Cohesion: 0.13
+Nodes (6): ITimer, bool, float, Timer, TimerFactory, Prospector.Utility.Timer
+
+### Community 32 - "CoroutineService"
+Cohesion: 0.24
+Nodes (7): Action, CoroutineService, ICoroutineService, Coroutine, SoulsLike.Services.Coroutines, Func, IEnumerator
+
+### Community 33 - "CustomButtonToggle"
+Cohesion: 0.13
+Nodes (9): bool, ColorBlock, GameObject, Image, SelectionState, Sprite, TMP_Text, CustomButtonToggle (+1 more)
+
+### Community 34 - "AnimatorRootMotionRelay"
+Cohesion: 0.15
+Nodes (7): Animator, bool, IComponentMediator, string, AnimatorRootMotionRelay, Quaternion, Vector3
+
+### Community 35 - "IComponentMediator"
+Cohesion: 0.14
+Nodes (4): SpeedMultiplierKey, Vector2, IComponentMediator, SpeedMultiplierKey
+
+### Community 36 - "CharacterActionBuffer"
+Cohesion: 0.19
+Nodes (7): Inject, bool, float, Vector2, BufferedCharacterAction, CharacterActionBuffer, CharacterActionType
+
+### Community 37 - "UiFactory"
+Cohesion: 0.13
+Nodes (11): GameObject, string, CharacterFactory, LifetimeScope, BaseFactory, AssetMappingData, Transform, UiFactory (+3 more)
+
+### Community 38 - "SoulsLike.Services"
+Cohesion: 0.23
+Nodes (6): SceneDependency, SoulsLike.Services, SoulsLike.Services.Scenes.Data, SoulsLike.Services.Scenes, SoulsLike.Services.Audio.Data, SoulsLike.Services.Audio
+
+### Community 39 - "StorageRegistry"
+Cohesion: 0.20
+Nodes (6): Enum, IStorageRegistry, Enum, string, StorageRegistry, SoulsLike.Services.Storage
+
+### Community 40 - "IMovementComponent"
+Cohesion: 0.15
+Nodes (6): Quaternion, SpeedMultiplierKey, Transform, Vector2, Vector3, IMovementComponent
+
+### Community 41 - "CustomButton"
+Cohesion: 0.13
+Nodes (8): bool, ColorBlock, Image, SelectionState, Sprite, TMP_Text, CustomButton, Button
+
+### Community 42 - "InventoryEntry"
 Cohesion: 0.22
-Nodes (3): AddressableAssetService, IAssetService, SoulsLike.Services.Repository
+Nodes (6): InventoryEntry, InventoryInstanceState, Dictionary, IReadOnlyList, List, InventoryModel
 
-### Community 25 - "Main Menu Controller"
-Cohesion: 0.2
-Nodes (5): IMainMenuPresenter, MainMenuUiController, SoulsLike.Ui.MainMenu, MainMenuUi, UiController
+### Community 43 - "BaseUi"
+Cohesion: 0.17
+Nodes (5): bool, CanvasGroup, Transform, BaseUi, IBaseUi
 
-### Community 27 - "Input Service Lifecycle"
+### Community 44 - "IInitializable"
+Cohesion: 0.16
+Nodes (5): UniTask, UniTaskVoid, IGameOrchestrator, MainMenuOrchestrator, IInitializable
+
+### Community 45 - "AmbienceData"
+Cohesion: 0.19
+Nodes (9): float, AmbienceData, MusicEntry, SfxEntry, SfxType, AudioClip, MusicEntry, SceneMusicEntry (+1 more)
+
+### Community 46 - ".Hide"
+Cohesion: 0.18
+Nodes (5): bool, Camera, LockOnUiController, IPostLateTickable, UiController
+
+### Community 48 - "System.Ui.Base"
+Cohesion: 0.17
+Nodes (5): SerializedProperty, CustomButtonToggleEditor, System.Ui.Base, UI.Base.Editor, ToggleEditor
+
+### Community 49 - ".CreateButton"
+Cohesion: 0.41
+Nodes (5): GameObject, CustomButtonHierarchyMenu, CustomButtonMapping, MenuCommand, MenuItem
+
+### Community 50 - "IInventoryPresenter"
+Cohesion: 0.17
+Nodes (3): InventoryPrimaryCategory, InventorySubCategory, IInventoryPresenter
+
+### Community 51 - "InventoryUiController"
+Cohesion: 0.21
+Nodes (5): Action, bool, IReadOnlyCollection, InventoryUiController, HashSet
+
+### Community 52 - "UiService"
+Cohesion: 0.21
+Nodes (6): UiController, List, Transform, IUiService, UiService, Canvas
+
+### Community 53 - "ICameraService"
+Cohesion: 0.17
+Nodes (3): Vector2, ICameraService, Ray
+
+### Community 54 - "MusicType"
+Cohesion: 0.20
+Nodes (3): SceneMusicEntry, MusicType, IAmbienceSystem
+
+### Community 55 - "SoulsLike.Extensions"
+Cohesion: 0.20
+Nodes (7): CanvasGroup, CanvasGroupExt, AssetMappingData, IContainerBuilder, VContainerExt, SoulsLike.Extensions, RegistrationBuilder
+
+### Community 56 - "ITargetingService"
 Cohesion: 0.25
-Nodes (6): IDisposable, IInitializable, IInputService, InputService, SoulsLike.Services, ProjectInputActions
+Nodes (3): Transform, Transform, ITargetingService
 
-### Community 30 - "Game Orchestrator"
+### Community 57 - ".Refresh"
+Cohesion: 0.20
+Nodes (3): InventoryChange, InventoryChangeType, EquipmentGroup
+
+### Community 58 - "TargetLockNode"
+Cohesion: 0.25
+Nodes (5): Transform, TargetLockAnchorType, TargetLockNode, float, TargetingService
+
+### Community 59 - "AddressableAssetService"
+Cohesion: 0.22
+Nodes (4): GameObject, AddressableAssetService, IAssetService, SoulsLike.Services.Repository
+
+### Community 60 - "SharedSceneScope"
+Cohesion: 0.18
+Nodes (7): IContainerBuilder, MainMenuScope, IContainerBuilder, ProjectScope, IContainerBuilder, SharedSceneScope, LifetimeScope
+
+### Community 61 - "CustomButtonMapping"
+Cohesion: 0.22
+Nodes (6): IReadOnlyList, List, ButtonTypeMap, CustomButtonMapping, InputTypes, UI.Base
+
+### Community 63 - "AmbienceManagerWrapper"
+Cohesion: 0.27
+Nodes (3): float, AmbienceManagerWrapper, Component
+
+### Community 64 - "IInputService"
+Cohesion: 0.31
+Nodes (6): CharacterActions, IInputService, InputService, InputAction, ProjectInputActions, UIActions
+
+### Community 67 - "InventoryViewStateController"
+Cohesion: 0.39
+Nodes (3): CanvasGroup, InventoryViewState, InventoryViewStateController
+
+### Community 68 - "FileService"
+Cohesion: 0.36
+Nodes (3): string, FileService, SoulsLike.Services.Save
+
+### Community 70 - "InventoryItemSO"
 Cohesion: 0.29
-Nodes (3): GameOrchestrator, IInputService, ITickable
+Nodes (7): bool, float, int, Sprite, string, InventoryItemSO, ScalingGrade
 
-### Community 31 - "Main Menu Orchestration"
-Cohesion: 0.29
-Nodes (3): IGameOrchestrator, IMainMenuOrchestrator, MainMenuOrchestrator
+### Community 73 - "LockOnUi"
+Cohesion: 0.38
+Nodes (5): Camera, RectTransform, Transform, Vector3, LockOnUi
 
-### Community 32 - "Serialized Key Values"
-Cohesion: 0.29
-Nodes (5): KeyValue, SoulsLike, IKeyValue, TKey, TValue
+### Community 75 - "ScriptableObject"
+Cohesion: 0.33
+Nodes (4): CombatProfile, float, AudioData, ScriptableObject
 
-### Community 40 - "Health Model"
-Cohesion: 0.5
-Nodes (3): HealthModel, SoulsLike.Entities.Character.Components.Health, IHealthData
-
-### Community 41 - "Movement Model"
-Cohesion: 0.5
-Nodes (3): IMovementData, MovementModel, SoulsLike.Entities.Character.Components.Movement
+### Community 77 - "CustomButtonEditor"
+Cohesion: 0.33
+Nodes (3): SerializedProperty, CustomButtonEditor, ButtonEditor
 
 ## Knowledge Gaps
-- **124 isolated node(s):** `SoulsLike.Entities.Character.Components`, `SoulsLike.Entities.Character.Components`, `Animator`, `SoulsLike.Entities.Character.Components`, `AnimatorModel` (+119 more)
+- **5 isolated node(s):** `SoulsLike.Entities.BaseEntity.EntityCommands`, `EquipmentSwapPhase`, `Model`, `SoulsLike.Services.Coroutines`, `SoulsLike.Services.Save`
   These have ≤1 connection - possible missing edges or undocumented components.
-- **36 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Character` connect `Character Entity` to `Camera Service`, `Animator Component`, `VContainer Core Scope`, `Character Base Components`, `Player Controller`, `Input Service Lifecycle`?**
-  _High betweenness centrality (0.111) - this node is a cross-community bridge._
-- **Why does `CoreGameOrchestrator` connect `Core Game Orchestrator` to `UI Asset Mappings`, `Main Menu UI`, `Player Controller`, `Input Service Lifecycle`, `Main Menu Orchestration`?**
-  _High betweenness centrality (0.090) - this node is a cross-community bridge._
-- **Why does `@ProjectInputActions` connect `Character Input Bindings` to `Animator Component`, `Input Service Lifecycle`, `UI Asset Mappings`?**
-  _High betweenness centrality (0.083) - this node is a cross-community bridge._
-- **What connects `SoulsLike.Entities.Character.Components`, `SoulsLike.Entities.Character.Components`, `Animator` to the rest of the system?**
-  _124 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Camera Service` be split into smaller, more focused modules?**
-  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
-- **Should `Character Input Bindings` be split into smaller, more focused modules?**
-  _Cohesion score 0.06 - nodes in this community are weakly interconnected._
-- **Should `Animator Component` be split into smaller, more focused modules?**
-  _Cohesion score 0.06 - nodes in this community are weakly interconnected._
+- **Why does `Character` connect `Character` to `SoulsLike.Items`, `HealthStats`, `WeaponDefinition`, `ItemDefinition`, `EquipmentSlotId`, `AnimatorComponent`, `MovementComponent`, `EquipmentUiController`, `EquipmentComponent`, `AttackComponent`, `PlayerController`, `HandMode`, `ITimer`, `IComponentMediator`, `CharacterActionBuffer`, `IInitializable`, `InventoryUiController`, `ICameraService`, `ITargetingService`, `.Refresh`, `.BeginRootMotionAction`, `AttackType`, `LandingType`, `EquipmentLoadout`?**
+  _High betweenness centrality (0.288) - this node is a cross-community bridge._
+- **Why does `MovementComponent` connect `MovementComponent` to `SoulsLike.Items`, `.Move`, `IComponentMediator`, `IMovementComponent`, `LandingType`, `Character`, `IInitializable`, `.TryStartRoll`, `MovementMode.cs`, `AttackComponent`, `ITimer`?**
+  _High betweenness centrality (0.084) - this node is a cross-community bridge._
+- **Why does `AnimatorComponent` connect `AnimatorComponent` to `SoulsLike.Items`, `.BeginRootMotionAction`, `AnimatorRootMotionRelay`, `WeaponDefinition`, `AnimatorStateMachineReceiver`, `AttackType`, `LandingType`, `Character`, `EquipmentComponent`, `ITargetingService`, `HandMode`?**
+  _High betweenness centrality (0.074) - this node is a cross-community bridge._
+- **What connects `SoulsLike.Entities.BaseEntity.EntityCommands`, `EquipmentSwapPhase`, `Model` to the rest of the system?**
+  _5 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `SoulsLike.Items` be split into smaller, more focused modules?**
+  _Cohesion score 0.05555555555555555 - nodes in this community are weakly interconnected._
+- **Should `SceneReference` be split into smaller, more focused modules?**
+  _Cohesion score 0.05109126984126984 - nodes in this community are weakly interconnected._
+- **Should `HealthStats` be split into smaller, more focused modules?**
+  _Cohesion score 0.058445353594389245 - nodes in this community are weakly interconnected._

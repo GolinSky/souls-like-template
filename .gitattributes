@@ -144,3 +144,4 @@
 # ------------------------------------------------------------------------------
 *.bytes filter=lfs diff=lfs merge=lfs -text
 *.bin filter=lfs diff=lfs merge=lfs -text
+graphify-out/graph.json merge=graphify

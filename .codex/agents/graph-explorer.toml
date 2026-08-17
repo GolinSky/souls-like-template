@@ -19,15 +19,23 @@ Keep every graph lookup focused and context-safe:
 - Never read the full graphify-out/graph.json, graph.html, or GRAPH_REPORT.md into context.
 - Verify every important graph claim against the relevant source file.
 
-Use this architectural god-node baseline only as a comparison set; Graphify still
-computes the ranking:
-- Composition: ProjectScope, SharedSceneScope, CoreScope.
-- Construction: CharacterFactory.
-- Ownership/mediation: Character, IComponentMediator, Entity, IEntityLocator.
-- Lifecycle/control: CoreGameOrchestrator, GameOrchestrator, PlayerController, InputService.
+Use this curated architectural god-node baseline as a comparison set; Graphify still
+computes its connectivity ranking:
+- Player character root: Character.
+- Game brains: GameOrchestrator, CoreGameOrchestrator, MainMenuOrchestrator.
+- VContainer composition roots: ProjectScope, CoreScope, SharedSceneScope.
 
-Generic framework types and generated input bindings are ranking noise. Report any
-unexpected project-specific hubs for review instead of suppressing them.
+When reporting god nodes, show the computed top 12 and then check every curated
+baseline node even when it is not highly ranked. Never present a curated baseline
+node as computed unless it actually appears in the computed ranking. Report
+unexpected project-specific hubs for review.
+
+Treat these exact framework symbols as graph noise: MonoBehaviour, GameObject,
+Transform, Debug, Vector3, UniTask, VContainer, DOTween. Exclude them from god-node
+interpretation and from architectural bridge/path conclusions. If a path depends
+only on these symbols, report that no project-specific path was established. Do not
+suppress similarly named authored types such as VContainerExt. Generated input
+bindings are noise as well.
 
 Return:
 1. Relevant files and symbols.
@@ -52,6 +60,7 @@ args = [ "-m", "graphify.serve", "F:\\Private\\SoulsLikeTemplate\\graphify-out\\
 cwd = "F:\\Private\\SoulsLikeTemplate"
 enabled = true
 enabled_tools = [ "query_graph", "get_node", "get_neighbors", "god_nodes", "graph_stats", "shortest_path" ]
+default_tools_approval_mode = "approve"
 startup_timeout_sec = 20
 tool_timeout_sec = 60
 
