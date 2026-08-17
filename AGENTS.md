@@ -15,6 +15,11 @@
 - Use null-conditional invocation for optional events instead of throwing when no subscriber exists.
 
 
+## Test Execution
+
+- Do not run tests or test suites unless the user directly and explicitly requests test execution.
+- Do not treat tests as an automatic verification step; report that they were not run when relevant.
+
 ## Unity Asset Persistence
 
 Unity assets MUST be left fully imported and saved after every agent mutation.
@@ -102,3 +107,41 @@ After any Unity asset mutation, verify that:
 4. No manual Unity Editor interaction is required from the user.
 
 A task that requires the user to focus Unity and press Save is incomplete.
+
+
+## Unity CLI Argument Rules
+
+When using `unity command`:
+
+- ALWAYS use CLI parameters as `--parameter value`.
+- NEVER use `parameter=value`.
+- NEVER include the parameter name inside the parameter value.
+
+Wrong:
+`unity command get_animator_controller controller=Assets/Foo.controller`
+
+Wrong:
+`unity command get_animator_controller --controller controller=Assets/Foo.controller`
+
+Correct:
+`unity command get_animator_controller --controller "Assets/Foo.controller"`
+
+For ObjectRef parameters, prefer explicit JSON whenever an asset is being referenced:
+
+`unity command get_animator_controller --controller '{"path":"Assets/Foo.controller"}'`
+
+For scene objects use:
+
+`--target '{"hierarchyPath":"/Player/Visual"}'`
+
+Before using an unfamiliar Unity Pipeline command, inspect the registered command schema with:
+
+`unity command`
+
+Do not guess parameter names or CLI syntax.
+
+If a Unity Pipeline error contains a malformed resolved path such as:
+
+`Assets/controller=Assets/...`
+
+STOP and correct the CLI argument serialization. Do not search for another asset, rename the asset, reimport it, or modify the Unity project.

@@ -20,7 +20,7 @@ MonoBehaviour:
   weight: 2
   maxStack: 1
   equipmentGroups: 01000000
-  equippedPrefab: {fileID: 0}
+  equippedPrefab: {fileID: 919132149155446097, guid: 579613c302c01c04baa627b2bd6baf22, type: 3}
   physicalGuard: 60
   magicGuard: 30
   fireGuard: 20

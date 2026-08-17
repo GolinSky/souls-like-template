@@ -52,6 +52,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int LeftRunAttackTrigger = Animator.StringToHash("LeftRunAttack");
         private static readonly int LeftSpecialAttackTrigger = Animator.StringToHash("LeftSpecialAttack");
         private static readonly int WeaponBlockParameter = Animator.StringToHash("WeaponBlock");
+        private static readonly int ShieldBlockParameter = Animator.StringToHash("ShieldBlock");
         private static readonly int EquipmentSwapOutTrigger = Animator.StringToHash("EquipmentSwapOut");
         private static readonly int EquipmentSwapInTrigger = Animator.StringToHash("EquipmentSwapIn");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
@@ -313,6 +314,11 @@ namespace SoulsLike.Entities.Character.Components
         public void SetWeaponBlock(bool isBlocking)
         {
             animator.SetBool(WeaponBlockParameter, isBlocking);
+        }
+
+        public void SetShieldBlock(bool isBlocking)
+        {
+            animator.SetBool(ShieldBlockParameter, isBlocking);
         }
 
         public void TriggerEquipmentSwapOut()

@@ -77,12 +77,6 @@ namespace SoulsLike.Entities.Character
 
         public void Initialize()
         {
-            if (equipmentPresentation == null)
-            {
-                throw new InvalidOperationException(
-                    $"{name} requires an {nameof(EquipmentPresentation)} component.");
-            }
-
             animatorComponent.SetHandMode(equipmentComponent.Model.ActiveHandMode);
             ApplyEquipmentLoadout(equipmentComponent.BuildLoadout());
             Cursor.lockState = CursorLockMode.Locked;
@@ -110,10 +104,17 @@ namespace SoulsLike.Entities.Character
                 input.ControlFrame.CrouchHeld);
 
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
-            bool canGuard = policy.GuardAllowed
-                && loadout.EffectiveLeft?.Definition is ShieldDefinition
+            bool blockRequested = input.ControlFrame.GuardHeld
+                && policy.GuardAllowed
                 && movementComponent.Model.Grounded;
-            animatorComponent.SetWeaponBlock(input.ControlFrame.GuardHeld && canGuard);
+            bool shieldBlock = blockRequested
+                && loadout.HandMode == HandMode.OneHanded
+                && loadout.EffectiveLeft?.Definition is ShieldDefinition;
+            bool weaponBlock = blockRequested
+                && loadout.EffectiveLeft == null
+                && loadout.EffectiveRight?.Definition is WeaponDefinition;
+            animatorComponent.SetShieldBlock(shieldBlock);
+            animatorComponent.SetWeaponBlock(weaponBlock);
         }
 
         public CharacterCommandDisposition Submit(ICharacterCommand command) =>

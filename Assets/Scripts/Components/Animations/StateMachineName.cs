@@ -17,6 +17,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
         HandModeSwitch = 12,
         EquipmentSwapOut = 13,
         EquipmentSwapIn = 14,
+        ShieldBlock = 15,
         None = -1
     }
 }
