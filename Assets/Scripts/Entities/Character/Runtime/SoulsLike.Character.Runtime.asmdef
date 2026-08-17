@@ -1,0 +1,14 @@
+{
+  "name": "SoulsLike.Character.Runtime",
+  "rootNamespace": "SoulsLike.Entities.Character.Runtime",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,31 +1,35 @@
 using System;
+using SoulsLike.Entities.Character.Adapters;
 using SoulsLike.Entities.Character.Components;
-using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Animations;
+using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
-using Prospector.Utility.Timer;
-using SoulsLike.Services.CameraService;
+using SoulsLike.Entities.Character.Ports;
+using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Items;
 using UnityEngine;
-using VContainer;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character
 {
-    public class Character : MonoBehaviour, IInitializable, IComponentMediator
+    public sealed class Character : MonoBehaviour, IInitializable,
+        IAttackCommandReceiver,
+        IMovementCommandReceiver,
+        IEquipmentCommandReceiver,
+        IMovementPresentationSink,
+        IAnimationStateSink,
+        IRootMotionSink,
+        IEquipmentLoadoutSink
     {
-        private enum EquipmentSwapPhase
-        {
-            None = 0,
-            SwapOut = 1,
-            SwapOutCompleted = 2,
-            SwapIn = 3
-        }
-
-        private const float SPRINT_HOLD_THRESHOLD = 0.3f;
+        private const int SWITCH_RIGHT_WEAPON = 0;
+        private const int SWITCH_LEFT_WEAPON = 1;
+        private const int SWITCH_QUICK_ITEM = 2;
+        private const int USE_QUICK_ITEM = 3;
+        private const int TOGGLE_HAND_MODE = 4;
+        private const float NORMAL_ATTACK_SPEED = 1.0f;
 
         [SerializeField] private MovementComponent movementComponent;
         [SerializeField] private AnimatorComponent animatorComponent;
@@ -40,50 +44,39 @@ namespace SoulsLike.Entities.Character
         [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;
         [SerializeField] private LayerMask aimLayerMask;
 
-        private ICameraService _cameraService;
         private AttackComponent _attackComponent;
-        private CharacterActionBuffer _actionBuffer;
-        private ITimer _sprintHoldTimer;
-        private bool _sprintHoldQualified;
-        private bool _rollPressedDuringRoll;
-        private bool _actionTransitionOpen;
-        private bool _manualMovementBlocked;
-        private bool _animationMovementBlocked;
-        private bool _animationRootMotionEnabled;
-        private EquipmentSlotGroup? _pendingEquipmentSwapGroup;
-        private EquipmentSwapPhase _equipmentSwapPhase;
+        private CharacterRuntime _runtime;
+        private CharacterAnimationAdapter _animationAdapter;
+        private EquipmentSwapCoordinator _equipmentSwapCoordinator;
 
         public Transform CameraTarget => cameraTarget;
         public InventoryComponent InventoryComponent => inventoryComponent;
         public HealthStats HealthStats => healthComponent.Stats;
         public int HeldCurrency { get; private set; }
         public CharacterAttributeStats Attributes => attributes;
-        public bool IsInputBlocked { get; private set; }
+        public bool IsInputBlocked => _runtime.IsInputBlocked;
+        public CharacterActionStateId CurrentActionState => _runtime.ActionState;
+        public bool IsEquipmentActionInProgress => _equipmentSwapCoordinator.IsActive;
 
-        [Inject]
-        public void InjectDependencies(
-            ICameraService cameraService,
+        public void ConfigureRuntime(
             AttackComponent attackComponent,
-            CharacterActionBuffer actionBuffer)
+            CharacterRuntime runtime,
+            CharacterAnimationAdapter animationAdapter,
+            EquipmentSwapCoordinator equipmentSwapCoordinator)
         {
-            _cameraService = cameraService;
             _attackComponent = attackComponent;
-            _actionBuffer = actionBuffer;
+            _runtime = runtime;
+            _animationAdapter = animationAdapter;
+            _equipmentSwapCoordinator = equipmentSwapCoordinator;
         }
 
-        public void SetEquipmentPresentation(EquipmentPresentation equipmentPresentation)
+        public void SetEquipmentPresentation(EquipmentPresentation presentation)
         {
-            this.equipmentPresentation = equipmentPresentation
-                ?? throw new ArgumentNullException(nameof(equipmentPresentation));
+            equipmentPresentation = presentation;
         }
 
         public void Initialize()
         {
-            movementComponent.SetMediator(this);
-            animatorComponent.SetMediator(this);
-            _attackComponent.SetMediator(this);
-            equipmentComponent.SetMediator(this);
-            healthComponent.SetMediator(this);
             if (equipmentPresentation == null)
             {
                 throw new InvalidOperationException(
@@ -91,155 +84,200 @@ namespace SoulsLike.Entities.Character
             }
 
             animatorComponent.SetHandMode(equipmentComponent.Model.ActiveHandMode);
-            NotifyEquipmentLoadoutChanged(equipmentComponent.BuildLoadout());
-            _sprintHoldTimer = TimerFactory.ConstructTimer(SPRINT_HOLD_THRESHOLD);
+            ApplyEquipmentLoadout(equipmentComponent.BuildLoadout());
             Cursor.lockState = CursorLockMode.Locked;
-            IsInputBlocked = true;
+            _runtime.SetInputBlocked(true);
             animatorComponent.TriggerSpawn();
         }
 
-        public void UpdateBehaviour(ProjectInputActions.CharacterActions actions)
+        public void Tick(in CharacterInputBatch input)
         {
-            if (actions.Sprint.WasPressedThisFrame())
+            _attackComponent.SetStrongAttackHeld(input.ControlFrame.StrongAttackHeld);
+            if (!input.ControlFrame.StrongAttackHeld)
             {
-                _sprintHoldQualified = false;
-                _rollPressedDuringRoll = _attackComponent.IsRollActive;
-                _sprintHoldTimer
-                    .ChangeDuration(SPRINT_HOLD_THRESHOLD)
-                    .Start();
+                animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
             }
 
-            bool sprinting = actions.Sprint.IsPressed()
-                && !_rollPressedDuringRoll
-                && (_sprintHoldQualified || _sprintHoldTimer.IsComplete);
+            _runtime.Tick(input);
+            _runtime.SetEquipmentSwapActive(_equipmentSwapCoordinator.IsActive);
+            MovementPolicy policy = _runtime.ResolveMovementPolicy(false);
+            movementComponent.SetMovementBlocked(policy.MovementBlocked);
+            movementComponent.Move(
+                input.ControlFrame.MoveInput,
+                input.ControlFrame.CameraYaw,
+                input.ControlFrame.SprintHeld,
+                input.ControlFrame.CrouchHeld);
 
-            if (sprinting)
+            EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
+            bool canGuard = policy.GuardAllowed
+                && loadout.EffectiveLeft?.Definition is ShieldDefinition
+                && movementComponent.Model.Grounded;
+            animatorComponent.SetWeaponBlock(input.ControlFrame.GuardHeld && canGuard);
+        }
+
+        public CharacterCommandDisposition Submit(ICharacterCommand command) =>
+            _runtime.Submit(command);
+
+        public CharacterCommandExecutionStatus TryStartAttack(in AttackRequest request)
+        {
+            bool canInterrupt = _runtime.ActionState is CharacterActionStateId.Attack
+                or CharacterActionStateId.Roll;
+            if (!movementComponent.Model.Grounded
+                || _runtime.MovementGate.IsSet(MovementGateReason.Manual)
+                || _runtime.MovementGate.IsSet(MovementGateReason.Spawn)
+                || _runtime.MovementGate.IsSet(MovementGateReason.EquipmentSwap)
+                || (_runtime.MovementGate.IsSet(MovementGateReason.Animation) && !canInterrupt))
             {
-                _sprintHoldQualified = true;
+                return CharacterCommandExecutionStatus.TemporarilyBlocked;
             }
 
-            Vector2 moveInput = actions.Move.ReadValue<Vector2>();
-            float cameraYaw = _cameraService.GetYaw();
-            bool hasMovementInput = moveInput.sqrMagnitude > 0.0001f;
-            bool canStartAttack = movementComponent.Model.Grounded
-                && !_manualMovementBlocked
-                && !_animationMovementBlocked;
-            bool canBufferAttack = movementComponent.Model.Grounded
-                && !_manualMovementBlocked;
-            bool canBufferSpecialAttack = canBufferAttack;
-
-            bool equipmentActionPerformed = TryAdvanceEquipmentSwap();
-            if (!_attackComponent.IsActionActive && !_pendingEquipmentSwapGroup.HasValue)
+            if (request.Intent == AttackIntent.Special
+                && _runtime.ActionState == CharacterActionStateId.Roll)
             {
-                if (actions.SwitchWeapon.WasPressedThisFrame())
-                {
-                    BeginEquipmentSwap(EquipmentSlotGroup.RightHandArmament);
-                    equipmentActionPerformed = true;
-                }
-                else if (actions.SwitchShield.WasPressedThisFrame())
-                {
-                    equipmentComponent.SwitchActive(EquipmentSlotGroup.LeftHandArmament);
-                    equipmentActionPerformed = true;
-                }
-                else if (actions.SwitchFlask.WasPressedThisFrame())
-                {
-                    equipmentComponent.SwitchActive(EquipmentSlotGroup.QuickItem);
-                    equipmentActionPerformed = true;
-                }
-                else if (actions.UseItem.WasPressedThisFrame())
-                {
-                    equipmentActionPerformed = TryUseActiveQuickItem();
-                }
-            }
-
-            if (actions.TwoHanded.WasPressedThisFrame()
-                && canStartAttack
-                && !_attackComponent.IsActionActive)
-            {
-                equipmentActionPerformed = equipmentComponent.TrySwitchHandMode(out _)
-                    || equipmentActionPerformed;
+                return CharacterCommandExecutionStatus.Invalid;
             }
 
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
             bool hasRightWeapon = loadout.EffectiveRight?.Definition is WeaponDefinition;
             bool hasLeftWeapon = loadout.EffectiveLeft?.Definition is WeaponDefinition;
-            bool attackCaptured = false;
-            BufferedCharacterAction attackAction = default;
-            if (!equipmentActionPerformed && (hasRightWeapon || !hasLeftWeapon))
+            if ((request.IsLeftHand && !hasLeftWeapon)
+                || (!request.IsLeftHand && !hasRightWeapon && hasLeftWeapon))
             {
-                attackCaptured = _attackComponent.TryCaptureAction(
-                    actions,
-                    sprinting && hasMovementInput,
-                    canBufferAttack,
-                    canBufferSpecialAttack,
-                    out attackAction);
+                return CharacterCommandExecutionStatus.Invalid;
             }
 
-            if (!equipmentActionPerformed
-                && !attackCaptured
-                && hasLeftWeapon
-                && canBufferAttack
-                && actions.Guard.WasPressedThisFrame())
-            {
-                attackAction = BufferedCharacterAction.Attack(
-                    CharacterActionType.LightAttack,
-                    false,
-                    true);
-                attackCaptured = true;
-            }
+            AttackExecutionContext context = _attackComponent.CurrentExecutionContext;
+            AttackResolution resolution = _attackComponent.ResolveAttack(request, context);
+            animatorComponent.SetChargedAttackSpeed(resolution.ChargedSpeed);
+            animatorComponent.PlayAttack(
+                resolution.AttackType,
+                resolution.IsLeftHandAttack);
+            return CharacterCommandExecutionStatus.Executed;
+        }
 
-            bool rollCaptured = !equipmentActionPerformed
-                && actions.Roll.WasReleasedThisFrame()
-                && (!_sprintHoldQualified || _rollPressedDuringRoll);
-            bool jumpCaptured = !equipmentActionPerformed
-                && !attackCaptured
-                && !rollCaptured
-                && actions.Jump.WasPressedThisFrame()
-                && (movementComponent.Model.Grounded || _attackComponent.IsActionActive);
+        public void SetStrongAttackHeld(bool held)
+        {
+            _attackComponent.SetStrongAttackHeld(held);
+            if (!held) animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
+        }
 
-            if (attackCaptured)
-            {
-                _actionBuffer.Buffer(attackAction);
-            }
-            else if (rollCaptured)
-            {
-                _actionBuffer.Buffer(BufferedCharacterAction.Roll(moveInput, cameraYaw));
-            }
-            else if (jumpCaptured)
-            {
-                _actionBuffer.Buffer(BufferedCharacterAction.Jump(sprinting));
-            }
+        public CharacterCommandExecutionStatus TryStartRoll(in RollRequest request)
+        {
+            bool canInterrupt = _runtime.ActionState != CharacterActionStateId.Neutral;
+            return movementComponent.TryStartRoll(
+                request.MoveInput,
+                request.CameraYaw,
+                true,
+                canInterrupt)
+                ? CharacterCommandExecutionStatus.Executed
+                : CharacterCommandExecutionStatus.TemporarilyBlocked;
+        }
 
-            if (!equipmentActionPerformed)
+        public CharacterCommandExecutionStatus TryStartJump(in JumpRequest request) =>
+            movementComponent.TryStartJump(true, request.IsSprinting)
+                ? CharacterCommandExecutionStatus.Executed
+                : CharacterCommandExecutionStatus.TemporarilyBlocked;
+
+        public CharacterCommandExecutionStatus TryStartEquipmentAction(
+            in EquipmentActionRequest request)
+        {
+            switch (request.ActionId)
             {
-                TryExecuteBufferedAction(
-                    canStartAttack,
-                    canBufferSpecialAttack,
-                    _actionTransitionOpen && _attackComponent.IsActionActive);
-            }
+                case SWITCH_RIGHT_WEAPON:
+                    return _equipmentSwapCoordinator.StartRightHandSwap();
+                case SWITCH_LEFT_WEAPON:
+                    equipmentComponent.SwitchActive(EquipmentSlotGroup.LeftHandArmament);
+                    return CharacterCommandExecutionStatus.Executed;
+                case SWITCH_QUICK_ITEM:
+                    equipmentComponent.SwitchActive(EquipmentSlotGroup.QuickItem);
+                    return CharacterCommandExecutionStatus.Executed;
+                case USE_QUICK_ITEM:
+                    return TryUseActiveQuickItem()
+                        ? CharacterCommandExecutionStatus.Executed
+                        : CharacterCommandExecutionStatus.Invalid;
+                case TOGGLE_HAND_MODE:
+                    if (!movementComponent.Model.Grounded
+                        || _runtime.MovementGate.IsSet(MovementGateReason.Manual)
+                        || _runtime.MovementGate.IsSet(MovementGateReason.Animation)
+                        || _runtime.MovementGate.IsSet(MovementGateReason.Spawn))
+                    {
+                        return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                    }
 
-            movementComponent.Move(
-                moveInput,
-                cameraYaw,
-                sprinting,
-                actions.Crouch.IsPressed());
-
-            bool canBlock = !equipmentActionPerformed
-                && !_pendingEquipmentSwapGroup.HasValue
-                && loadout.EffectiveLeft?.Definition is ShieldDefinition
-                && movementComponent.Model.Grounded
-                && !_manualMovementBlocked
-                && (!_animationMovementBlocked
-                    || (_actionTransitionOpen && _attackComponent.IsActionActive));
-            animatorComponent.SetWeaponBlock(actions.Guard.IsPressed() && canBlock);
-
-            if (actions.Sprint.WasReleasedThisFrame())
-            {
-                _sprintHoldQualified = false;
-                _rollPressedDuringRoll = false;
-                _sprintHoldTimer.Reset();
+                    return equipmentComponent.TrySwitchHandMode(out _)
+                        ? CharacterCommandExecutionStatus.Executed
+                        : CharacterCommandExecutionStatus.Invalid;
+                default:
+                    return CharacterCommandExecutionStatus.Invalid;
             }
         }
+
+        public CharacterCommandExecutionStatus TryAdvanceEquipmentAction() =>
+            _equipmentSwapCoordinator.TryAdvance();
+
+        public void OnAnimationStateChanged(AnimatorStateMachineDto state)
+        {
+            _attackComponent.HandleAnimatorState(state);
+            if (_equipmentSwapCoordinator.IsActive)
+            {
+                _equipmentSwapCoordinator.HandleAnimationState(state);
+            }
+
+            if (state.StateMachineName == StateMachineName.Spawn)
+            {
+                if (state.State == StateMachineState.Enter) _runtime.SetInputBlocked(true);
+                else if (state.State == StateMachineState.Exit) _runtime.SetInputBlocked(false);
+            }
+
+            if (state.State == StateMachineState.Progress
+                && state.StateMachineName is StateMachineName.HeavyAttack
+                    or StateMachineName.HeavyAttackAlt)
+            {
+                animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
+            }
+
+            if (_animationAdapter.TryAdapt(state, out CharacterAnimationSignal signal))
+            {
+                if (!_runtime.HandleAnimation(signal))
+                {
+                    Debug.LogWarning(
+                        $"Ignoring {signal.ActionState} animation signal while runtime is in "
+                        + $"{_runtime.ActionState}.",
+                        this);
+                }
+            }
+        }
+
+        public void SetMovementBlocked(bool blocked)
+        {
+            _runtime.SetMovementBlocked(blocked);
+            movementComponent.SetMovementBlocked(_runtime.MovementGate.IsBlocked);
+        }
+
+        public void SetAnimationMotionContract(bool movementBlocked, bool useRootMotion)
+        {
+            _runtime.SetAnimationMotionContract(movementBlocked, useRootMotion);
+            movementComponent.SetMovementBlocked(_runtime.MovementGate.IsBlocked);
+        }
+
+        public void ApplyRootMotion(Vector3 deltaPosition, Quaternion deltaRotation)
+        {
+            if (_runtime.CanApplyRootMotion)
+            {
+                movementComponent.ApplyAnimationMovement(deltaPosition, deltaRotation);
+            }
+        }
+
+        public void SetLocomotion(float speed, Vector2 blendDirection) =>
+            animatorComponent.SetLocomotion(speed, blendDirection);
+        public void SetTurn(float turnAmount) => animatorComponent.SetTurn(turnAmount);
+        public void SetGrounded(bool grounded) => animatorComponent.SetGrounded(grounded);
+        public void SetAirborneMotion(float velocity, LandingType landingType) =>
+            animatorComponent.SetAirborneMotion(velocity, landingType);
+        public void PlayJump() => animatorComponent.SetJump();
+        public void PlayRoll(Vector2 direction) => animatorComponent.TriggerRoll(direction);
+        public void PlayBackStep() => animatorComponent.TriggerBackStep();
+        public void SetCrouch(bool crouching) => animatorComponent.SetCrouch(crouching);
 
         public DamageResult ApplyDamage(DamageRequest request)
         {
@@ -249,172 +287,30 @@ namespace SoulsLike.Entities.Character
             return result;
         }
 
-        public void Heal(float amount)
-        {
-            HealthStats stats = healthComponent.CalculateHeal(healthComponent.Stats, amount);
-            healthComponent.ApplyAuthoritativeStats(stats);
-        }
+        public void Heal(float amount) => healthComponent.ApplyAuthoritativeStats(
+            healthComponent.CalculateHeal(healthComponent.Stats, amount));
 
-        public void Revive(float health)
-        {
-            HealthStats stats = healthComponent.CalculateRevive(healthComponent.Stats, health);
-            healthComponent.ApplyAuthoritativeStats(stats);
-        }
+        public void Revive(float health) => healthComponent.ApplyAuthoritativeStats(
+            healthComponent.CalculateRevive(healthComponent.Stats, health));
 
-        public void NotifyGrounded(bool isGrounded)
-        {
-            animatorComponent.SetGrounded(isGrounded);
-        }
-
-        public void NotifyAirborneMotion(float verticalVelocity, LandingType landingType)
-        {
-            animatorComponent.SetAirborneMotion(verticalVelocity, landingType);
-        }
-
-        public void NotifyHealthStatsChanged(HealthStats stats)
-        {
-            healthComponent.Model.ApplyStats(stats);
-        }
-
-        public void NotifyDamageApplied(DamageResult result)
-        {
-            healthComponent.Model.NotifyDamageApplied(result);
-        }
-
-        public void NotifyDeath()
-        {
-            healthComponent.Model.NotifyDeath();
-        }
-
-        public void NotifyLocomotion(float speed, Vector2 blendDirection)
-        {
-            animatorComponent.SetLocomotion(speed, blendDirection);
-        }
-
-        public void NotifyJump()
-        {
-            animatorComponent.SetJump();
-        }
-
-        public void NotifyRoll(Vector2 direction)
-        {
-            animatorComponent.TriggerRoll(direction);
-        }
-
-        public void NotifyBackStep()
-        {
-            animatorComponent.TriggerBackStep();
-        }
-
-        public void NotifyCrouch(bool isCrouching)
-        {
-            animatorComponent.SetCrouch(isCrouching);
-        }
-        
         public void SetLockOnTarget(bool isLockedOn, Transform lockOnTarget)
         {
             movementComponent.SetLockOnTarget(isLockedOn, lockOnTarget);
             animatorComponent.SetLockOn(isLockedOn);
         }
 
-        public void NotifyTurn(float turnAmount)
-        {
-            animatorComponent.SetTurn(turnAmount);
-        }
-
-        public void NotifyAttack(AttackType attackType, bool isLeftHandAttack)
-        {
-            animatorComponent.PlayAttack(attackType, isLeftHandAttack);
-        }
-
-        public void SetChargedAttackSpeed(float speed)
-        {
-            animatorComponent.SetChargedAttackSpeed(speed);
-        }
-
-        public void NotifyAnimatorStateChanged(AnimatorStateMachineDto state)
-        {
-            _attackComponent.HandleAnimatorState(state);
-            HandleEquipmentSwapState(state);
-
-            if (state.StateMachineName == StateMachineName.Spawn)
-            {
-                if (state.State == StateMachineState.Enter)
-                {
-                    IsInputBlocked = true;
-                }
-                else if (state.State == StateMachineState.Exit)
-                {
-                    IsInputBlocked = false;
-                }
-            }
-
-            if (state.State == StateMachineState.Enter)
-            {
-                _actionTransitionOpen = false;
-            }
-            else if (state.State == StateMachineState.QueueCheck)
-            {
-                _actionTransitionOpen = true;
-                TryExecuteBufferedAction(false, false, true);
-            }
-            else if (state.State == StateMachineState.Exit)
-            {
-                _actionTransitionOpen = false;
-            }
-        }
-
-        public void SetMovementBlocked(bool blocked)
-        {
-            _manualMovementBlocked = blocked;
-            SynchronizeMovementBlock();
-        }
-
-        public void NotifyAnimationMovement(Vector3 deltaPosition, Quaternion deltaRotation)
-        {
-            if (_animationRootMotionEnabled)
-            {
-                movementComponent.ApplyAnimationMovement(deltaPosition, deltaRotation);
-            }
-        }
-
-        public void SetAnimationMovementContract(bool movementBlocked, bool useRootMotion)
-        {
-            _animationMovementBlocked = movementBlocked;
-            _animationRootMotionEnabled = useRootMotion;
-            SynchronizeMovementBlock();
-        }
-
-        public void SetSpeedMultiplier(SpeedMultiplierKey key, float multiplier)
-        {
-            movementComponent.SetSpeedMultiplier(key, multiplier);
-        }
-
-        public void RemoveSpeedMultiplier(SpeedMultiplierKey key)
-        {
-            movementComponent.RemoveSpeedMultiplier(key);
-        }
-
-        public void NotifyEquipmentLoadoutChanged(EquipmentLoadout loadout)
+        public void ApplyEquipmentLoadout(EquipmentLoadout loadout)
         {
             equipmentPresentation.ApplyLoadout(loadout);
-
-            //todo: instead of casting ItemDefinition to WeaponDefinition - get item type and id - then get WeaponDefinition,Don't use inheritance on WeaponDefinition->ItemDefinition
             WeaponDefinition rightWeapon = loadout.EffectiveRight?.Definition as WeaponDefinition;
             WeaponDefinition leftWeapon = loadout.EffectiveLeft?.Definition as WeaponDefinition;
-            AnimationProfile animationProfile = rightWeapon?.AnimationProfile
-                ?? leftWeapon?.AnimationProfile;
-            if (animationProfile != null)
-            {
-                animatorComponent.ApplyAnimationProfile(
-                    animationProfile,
-                    rightWeapon != null,
-                    leftWeapon != null);
-            }
-            else
-            {
-                animatorComponent.ResetAnimationProfile();
-            }
+            AnimationProfile profile = rightWeapon?.AnimationProfile ?? leftWeapon?.AnimationProfile;
+            if (profile == null) animatorComponent.ResetAnimationProfile();
+            else animatorComponent.ApplyAnimationProfile(
+                profile,
+                rightWeapon != null,
+                leftWeapon != null);
+
             animatorComponent.TransitionHandMode(loadout.HandMode);
             _attackComponent.SetActiveWeapons(
                 rightWeapon,
@@ -427,11 +323,7 @@ namespace SoulsLike.Entities.Character
         private bool TryUseActiveQuickItem()
         {
             EquippedItemContext quickItem = equipmentComponent.BuildLoadout().ActiveQuickItem;
-            if (quickItem == null)
-            {
-                return false;
-            }
-
+            if (quickItem == null) return false;
             if (quickItem.Definition is not ConsumableDefinition consumable)
             {
                 throw new InvalidOperationException(
@@ -447,211 +339,19 @@ namespace SoulsLike.Entities.Character
                     HeldCurrency = checked(HeldCurrency + Mathf.RoundToInt(consumable.EffectAmount));
                     break;
                 case ItemUseType.InfuseActiveWeapon:
-                    WeaponRuntime weaponRuntime = equipmentPresentation.ActiveRightWeaponRuntime;
-                    if (weaponRuntime == null)
-                    {
-                        return false;
-                    }
-
-                    weaponRuntime.ApplyLightningInfusion(
+                    WeaponRuntime runtime = equipmentPresentation.ActiveRightWeaponRuntime;
+                    if (runtime == null) return false;
+                    runtime.ApplyLightningInfusion(
                         consumable.EffectAmount,
                         consumable.DurationSeconds);
                     break;
-                case ItemUseType.None:
                 default:
                     throw new ArgumentOutOfRangeException(
-                        nameof(consumable.UseType),
-                        consumable.UseType,
-                        $"Consumable '{consumable.DisplayName}' has no supported use behavior.");
+                        nameof(consumable.UseType), consumable.UseType, null);
             }
 
             inventoryComponent.Consume(quickItem.Entry.EntryId);
             return true;
         }
-
-        private void SynchronizeMovementBlock()
-        {
-            movementComponent.SetMovementBlocked(
-                _manualMovementBlocked
-                || _animationMovementBlocked);
-        }
-
-        private void BeginEquipmentSwap(EquipmentSlotGroup group)
-        {
-            if (_pendingEquipmentSwapGroup.HasValue)
-            {
-                throw new InvalidOperationException("An equipment swap is already in progress.");
-            }
-
-            EquipmentSlotId previousActiveSlot = equipmentComponent.Model.GetActiveSlot(group);
-            _pendingEquipmentSwapGroup = group;
-            SynchronizeMovementBlock();
-
-            if (animatorComponent.IsNoWeaponMode)
-            {
-                _equipmentSwapPhase = EquipmentSwapPhase.SwapIn;
-                EquipmentSlotId activeSlot = equipmentComponent.SwitchActive(group);
-                EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
-                bool hasWeapon = loadout.EffectiveRight?.Definition is WeaponDefinition
-                    || loadout.EffectiveLeft?.Definition is WeaponDefinition;
-
-                if (activeSlot == previousActiveSlot || !hasWeapon)
-                {
-                    _equipmentSwapPhase = EquipmentSwapPhase.None;
-                    _pendingEquipmentSwapGroup = null;
-                    SynchronizeMovementBlock();
-                    return;
-                }
-
-                animatorComponent.TriggerEquipmentSwapIn();
-                return;
-            }
-
-            _equipmentSwapPhase = EquipmentSwapPhase.SwapOut;
-            animatorComponent.TriggerEquipmentSwapOut();
-        }
-
-        private bool TryAdvanceEquipmentSwap()
-        {
-            if (_equipmentSwapPhase != EquipmentSwapPhase.SwapOutCompleted)
-            {
-                return false;
-            }
-
-            if (!_pendingEquipmentSwapGroup.HasValue)
-            {
-                throw new InvalidOperationException(
-                    "Equipment swap-out completed without a pending equipment group.");
-            }
-
-            _equipmentSwapPhase = EquipmentSwapPhase.SwapIn;
-            equipmentComponent.SwitchActive(_pendingEquipmentSwapGroup.Value);
-
-            if (animatorComponent.IsNoWeaponMode)
-            {
-                _equipmentSwapPhase = EquipmentSwapPhase.None;
-                _pendingEquipmentSwapGroup = null;
-                SynchronizeMovementBlock();
-                return true;
-            }
-
-            animatorComponent.TriggerEquipmentSwapIn();
-            return true;
-        }
-
-        private void HandleEquipmentSwapState(AnimatorStateMachineDto state)
-        {
-            if (state.State != StateMachineState.Exit)
-            {
-                return;
-            }
-
-            switch (state.StateMachineName)
-            {
-                case StateMachineName.EquipmentSwapOut:
-                    if (_equipmentSwapPhase is EquipmentSwapPhase.SwapOutCompleted
-                        or EquipmentSwapPhase.SwapIn)
-                    {
-                        return;
-                    }
-
-                    if (!_pendingEquipmentSwapGroup.HasValue)
-                    {
-                        throw new InvalidOperationException(
-                            "Equipment swap-out exited without a pending equipment group.");
-                    }
-
-                    if (_equipmentSwapPhase != EquipmentSwapPhase.SwapOut)
-                    {
-                        throw new InvalidOperationException(
-                            $"Equipment swap-out exited during phase '{_equipmentSwapPhase}'.");
-                    }
-
-                    _equipmentSwapPhase = EquipmentSwapPhase.SwapOutCompleted;
-                    break;
-                case StateMachineName.EquipmentSwapIn:
-                    if (_equipmentSwapPhase == EquipmentSwapPhase.None
-                        && !_pendingEquipmentSwapGroup.HasValue)
-                    {
-                        return;
-                    }
-
-                    if (!_pendingEquipmentSwapGroup.HasValue)
-                    {
-                        throw new InvalidOperationException(
-                            "Equipment swap-in exited without a pending equipment group.");
-                    }
-
-                    if (_equipmentSwapPhase != EquipmentSwapPhase.SwapIn)
-                    {
-                        throw new InvalidOperationException(
-                            $"Equipment swap-in exited during phase '{_equipmentSwapPhase}'.");
-                    }
-
-                    _equipmentSwapPhase = EquipmentSwapPhase.None;
-                    _pendingEquipmentSwapGroup = null;
-                    SynchronizeMovementBlock();
-                    break;
-            }
-        }
-
-        private void TryExecuteBufferedAction(
-            bool canStartAttack,
-            bool canUseSpecialAttack,
-            bool canInterruptAnimation)
-        {
-            if (!_actionBuffer.TryPeek(
-                out BufferedCharacterAction action,
-                _attackComponent.IsActionActive))
-            {
-                return;
-            }
-
-            if (action.Type == CharacterActionType.Roll)
-            {
-                if (movementComponent.TryStartRoll(
-                    action.MoveInput,
-                    action.CameraYaw,
-                    true,
-                    canInterruptAnimation))
-                {
-                    _actionBuffer.Consume();
-                    if (canInterruptAnimation)
-                    {
-                        _actionTransitionOpen = false;
-                    }
-                }
-
-                return;
-            }
-
-            if (action.Type == CharacterActionType.Jump)
-            {
-                if (movementComponent.TryStartJump(true, action.IsSprinting))
-                {
-                    _actionBuffer.Consume();
-                }
-
-                return;
-            }
-
-            if (!movementComponent.Model.Grounded
-                || (_attackComponent.IsActionActive && !canInterruptAnimation)
-                || (!canInterruptAnimation && !canStartAttack)
-                || (action.Type == CharacterActionType.SpecialAttack
-                    && !canInterruptAnimation
-                    && !canUseSpecialAttack))
-            {
-                return;
-            }
-
-            _attackComponent.ExecuteAction(action);
-            _actionBuffer.Consume();
-            if (canInterruptAnimation)
-            {
-                _actionTransitionOpen = false;
-            }
-        }
-
     }
 }

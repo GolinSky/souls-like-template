@@ -5,7 +5,8 @@ using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Items;
 using UnityEngine;
-using VContainer.Unity;
+using VContainer;
+using SoulsLike.Entities.Character.Ports;
 
 namespace SoulsLike.Entities.Character.Components
 {
@@ -69,7 +70,8 @@ namespace SoulsLike.Entities.Character.Components
         [field:SerializeField] public Transform RightHandAnchor { get; private set; }
 
         
-        private IComponentMediator _mediator;
+        private IAnimationStateSink _stateSink;
+        private IRootMotionSink _rootMotionSink;
         private Vector2 _targetLocomotion;
         private Vector2 _currentLocomotion;
         private Vector3 _targetAimPosition;
@@ -90,11 +92,13 @@ namespace SoulsLike.Entities.Character.Components
 
         public bool IsNoWeaponMode => Animator.runtimeAnimatorController == _defaultController;
         
-        public void SetMediator(IComponentMediator mediator)
+        [Inject]
+        public void InjectSinks(IAnimationStateSink stateSink, IRootMotionSink rootMotionSink)
         {
-            _mediator = mediator;
+            _stateSink = stateSink;
+            _rootMotionSink = rootMotionSink;
             _defaultController = animator.runtimeAnimatorController;
-            rootMotionRelay.Initialize(mediator);
+            rootMotionRelay.Initialize(rootMotionSink);
             _hasChargedAttackSpeedParameter = HasParameter(
                 animator,
                 ChargedSpeedParameter,
@@ -153,6 +157,7 @@ namespace SoulsLike.Entities.Character.Components
         public void ResetAnimationProfile()
         {
             _supportsLeftHandAttacks = false;
+            //todo: use assert instead
             if (_defaultController == null)
             {
                 throw new InvalidOperationException(
@@ -203,6 +208,7 @@ namespace SoulsLike.Entities.Character.Components
 
         public void PlayAttack(AttackType attackType, bool isLeftHandAttack)
         {
+            //todo: remove noise checks
             if (isLeftHandAttack && !_supportsLeftHandAttacks)
             {
                 throw new InvalidOperationException(
@@ -270,7 +276,7 @@ namespace SoulsLike.Entities.Character.Components
 
         public void UpdateState(AnimatorStateMachineDto state)
         {
-            _mediator.NotifyAnimatorStateChanged(state);
+            _stateSink.OnAnimationStateChanged(state);
         }
 
         public void SetJump()

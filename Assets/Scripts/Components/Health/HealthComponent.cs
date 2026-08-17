@@ -1,5 +1,4 @@
 using System;
-using SoulsLike.Entities.Character.Components;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -7,18 +6,11 @@ namespace SoulsLike.Entities.Character.Components.Health
 {
     public class HealthComponent : BaseComponent<HealthModel>, IHealthComponent, IInitializable
     {
-        private IComponentMediator _mediator;
-
         public HealthStats Stats => Model.Stats;
 
         public void Initialize()
         {
             ApplyAuthoritativeStats(BuildDefaultStats());
-        }
-
-        public void SetMediator(IComponentMediator mediator)
-        {
-            _mediator = mediator;
         }
 
         public HealthStats BuildDefaultStats()
@@ -176,17 +168,17 @@ namespace SoulsLike.Entities.Character.Components.Health
         {
             HealthStats normalizedStats = NormalizeStats(stats);
             bool died = Stats.IsAlive && !normalizedStats.IsAlive;
-            _mediator.NotifyHealthStatsChanged(normalizedStats);
+            Model.ApplyStats(normalizedStats);
 
             if (died)
             {
-                _mediator.NotifyDeath();
+                Model.NotifyDeath();
             }
         }
 
         public void NotifyDamageApplied(DamageResult result)
         {
-            _mediator.NotifyDamageApplied(result);
+            Model.NotifyDamageApplied(result);
         }
 
         private HealthStats NormalizeStats(HealthStats stats)

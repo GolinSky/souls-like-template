@@ -4,7 +4,6 @@ namespace SoulsLike.Entities.Character.Components.Health
     {
         HealthStats Stats { get; }
 
-        void SetMediator(IComponentMediator mediator);
         HealthStats BuildDefaultStats();
         HealthStats ApplyStatUpdate(HealthStats currentStats, HealthStatUpdate update);
         DamageResult CalculateDamage(DamageRequest request, HealthStats currentStats);

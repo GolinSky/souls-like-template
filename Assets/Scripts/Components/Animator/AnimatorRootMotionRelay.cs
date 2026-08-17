@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using SoulsLike.Entities.Character.Ports;
 
 namespace SoulsLike.Entities.Character.Components
 {
@@ -10,7 +11,7 @@ namespace SoulsLike.Entities.Character.Components
         private const string MOVEMENT_BLOCKED_TAG = "MovementBlocked";
 
         private Animator _animator;
-        private IComponentMediator _mediator;
+        private IRootMotionSink _rootMotionSink;
         private bool _movementBlocked;
         private bool _usesRootMotion;
         private bool _initialized;
@@ -24,15 +25,15 @@ namespace SoulsLike.Entities.Character.Components
             }
         }
 
-        public void Initialize(IComponentMediator mediator)
+        public void Initialize(IRootMotionSink rootMotionSink)
         {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _rootMotionSink = rootMotionSink;
             _initialized = true;
         }
 
         public void BeginRootMotionContract()
         {
-            if (!_initialized || _mediator == null)
+            if (!_initialized)
             {
                 throw new InvalidOperationException($"{name} root motion relay is not initialized.");
             }
@@ -47,7 +48,7 @@ namespace SoulsLike.Entities.Character.Components
                 return;
             }
 
-            if (_animator == null || _mediator == null)
+            if (_animator == null)
             {
                 throw new InvalidOperationException($"{name} root motion relay is not initialized.");
             }
@@ -55,7 +56,7 @@ namespace SoulsLike.Entities.Character.Components
             bool usesRootMotion = HasActiveStateTag(ROOT_MOTION_TAG);
             bool movementBlocked = usesRootMotion || HasActiveStateTag(MOVEMENT_BLOCKED_TAG);
             SynchronizeMovementContract(movementBlocked, usesRootMotion);
-            _mediator.NotifyAnimationMovement(_animator.deltaPosition, _animator.deltaRotation);
+            _rootMotionSink.ApplyRootMotion(_animator.deltaPosition, _animator.deltaRotation);
         }
 
         private bool HasActiveStateTag(string tag)
@@ -85,16 +86,16 @@ namespace SoulsLike.Entities.Character.Components
 
             _movementBlocked = movementBlocked;
             _usesRootMotion = usesRootMotion;
-            _mediator.SetAnimationMovementContract(movementBlocked, usesRootMotion);
+            _rootMotionSink.SetAnimationMotionContract(movementBlocked, usesRootMotion);
         }
 
         private void OnDisable()
         {
-            if (_mediator != null && (_movementBlocked || _usesRootMotion))
+            if (_initialized && (_movementBlocked || _usesRootMotion))
             {
                 _movementBlocked = false;
                 _usesRootMotion = false;
-                _mediator.SetAnimationMovementContract(false, false);
+                _rootMotionSink.SetAnimationMotionContract(false, false);
             }
         }
     }

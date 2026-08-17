@@ -4,12 +4,13 @@ using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Items;
 using VContainer;
 using VContainer.Unity;
+using SoulsLike.Entities.Character.Ports;
 
 namespace SoulsLike.Entities.Character.Components.Equipment
 {
     public sealed class EquipmentComponent : BaseComponent<EquipmentModel>, IInitializable, IDisposable
     {
-        private IComponentMediator _componentMediator;
+        private IEquipmentLoadoutSink _loadoutSink;
         private InventoryComponent _inventory;
         private ItemDatabase _itemDatabase;
 
@@ -108,10 +109,10 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             return true;
         }
 
-        public void SetMediator(IComponentMediator componentMediator)
+        [Inject]
+        public void InjectLoadoutSink(IEquipmentLoadoutSink loadoutSink)
         {
-            _componentMediator = componentMediator
-                ?? throw new ArgumentNullException(nameof(componentMediator));
+            _loadoutSink = loadoutSink;
         }
 
         public InventoryEntryId? GetAssignedEntryId(EquipmentSlotId slotId)
@@ -205,13 +206,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             NormalizeHandMode();
             EquipmentLoadout loadout = BuildLoadout();
             LoadoutChanged?.Invoke(loadout);
-            if (_componentMediator == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(EquipmentComponent)} requires its component mediator before publishing changes.");
-            }
-
-            _componentMediator.NotifyEquipmentLoadoutChanged(loadout);
+            _loadoutSink.ApplyEquipmentLoadout(loadout);
         }
 
         private void NormalizeHandMode()

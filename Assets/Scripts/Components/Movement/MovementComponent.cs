@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using Prospector.Utility.Timer;
 using UnityEngine;
 using VContainer.Unity;
+using VContainer;
+using SoulsLike.Entities.Character.Ports;
 
 namespace SoulsLike.Entities.Character.Components.Movement
 {
@@ -17,7 +19,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         private readonly Dictionary<SpeedMultiplierKey, float> _speedMultipliers = new Dictionary<SpeedMultiplierKey, float>();
 
-        private IComponentMediator _mediator;
+        private IMovementPresentationSink _presentationSink;
         private MovementMode _movementMode = MovementMode.Free;
         private Transform _lockOnTarget;
         private Transform _activeRollTarget;
@@ -60,12 +62,13 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _defaultControllerHeight = controller.height;
             _defaultControllerCenter = controller.center;
             SynchronizeGroundedState();
-            _mediator.NotifyAirborneMotion(_verticalVelocity, CurrentLandingType);
+            _presentationSink.SetAirborneMotion(_verticalVelocity, CurrentLandingType);
         }
 
-        public void SetMediator(IComponentMediator mediator)
+        [Inject]
+        public void InjectPresentationSink(IMovementPresentationSink presentationSink)
         {
-            _mediator = mediator;
+            _presentationSink = presentationSink;
         }
 
         public void SetPosition(Vector3 position)
@@ -178,9 +181,9 @@ namespace SoulsLike.Entities.Character.Components.Movement
             CollisionFlags collisionFlags = controller.Move((horizontalMotion + Vector3.up * _verticalVelocity) * deltaTime);
             ResolveMovementCollisions(collisionFlags);
 
-            _mediator.NotifyLocomotion(_animationBlend, _animationBlendDirection);
-            _mediator.NotifyTurn(_turnAmount);
-            _mediator.NotifyAirborneMotion(_verticalVelocity, CurrentLandingType);
+            _presentationSink.SetLocomotion(_animationBlend, _animationBlendDirection);
+            _presentationSink.SetTurn(_turnAmount);
+            _presentationSink.SetAirborneMotion(_verticalVelocity, CurrentLandingType);
         }
 
         public bool TryStartRoll(
@@ -241,11 +244,11 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 .Start();
             if (isBackStep)
             {
-                _mediator.NotifyBackStep();
+                _presentationSink.PlayBackStep();
             }
             else
             {
-                _mediator.NotifyRoll(rollDirection);
+                _presentationSink.PlayRoll(rollDirection);
             }
 
             return true;
@@ -325,7 +328,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _wasSprintingAtTakeoff = sprinting;
             _fallGraceTimer.Stop();
             SetGrounded(false);
-            _mediator.NotifyJump();
+            _presentationSink.PlayJump();
             return true;
         }
 
@@ -438,7 +441,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             }
 
             _lastNotifiedGrounded = grounded;
-            _mediator.NotifyGrounded(grounded);
+            _presentationSink.SetGrounded(grounded);
         }
 
         private void UpdateVerticalVelocity(float deltaTime)
@@ -734,7 +737,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 controller.center = _defaultControllerCenter;
             }
 
-            _mediator.NotifyCrouch(crouched);
+            _presentationSink.SetCrouch(crouched);
         }
 
         private float GetExternalSpeedMultiplier()

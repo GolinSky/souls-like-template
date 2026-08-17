@@ -5,6 +5,9 @@ using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
+using SoulsLike.Entities.Character.Adapters;
+using SoulsLike.Entities.Character.Input;
+using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Extensions;
 using SoulsLike.Factory;
 using SoulsLike.Ui.LockOn;
@@ -81,8 +84,26 @@ namespace SoulsLike.Entities.Character
                 builder.Register<EquipmentUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<PauseNavigationUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
-                builder.Register<CharacterActionBuffer>(Lifetime.Singleton).AsSelf();
+                builder.Register<UnityCharacterClock>(Lifetime.Singleton).As<ICharacterClock>();
+                builder.Register<MovementGate>(Lifetime.Singleton).AsSelf();
+                builder.Register<CharacterCommandBuffer>(Lifetime.Singleton).AsSelf();
+                builder.Register<CharacterActionStateMachine>(Lifetime.Singleton).AsSelf();
+                builder.Register<CharacterRuntime>(Lifetime.Singleton).AsSelf();
+                builder.Register<CharacterCommandFactory>(Lifetime.Singleton).AsSelf();
+                builder.Register<CharacterAnimationAdapter>(Lifetime.Singleton).AsSelf();
+                builder.Register<EquipmentSwapCoordinator>(Lifetime.Singleton).AsSelf();
+                builder.Register<SprintRollGestureResolver>(Lifetime.Singleton).AsSelf();
+                builder.Register<HeavyAttackGestureResolver>(Lifetime.Singleton).AsSelf();
+                builder.Register<PlayerCharacterInputAdapter>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.RegisterBuildCallback(container =>
+                {
+                    container.Resolve<Character>().ConfigureRuntime(
+                        container.Resolve<AttackComponent>(),
+                        container.Resolve<CharacterRuntime>(),
+                        container.Resolve<CharacterAnimationAdapter>(),
+                        container.Resolve<EquipmentSwapCoordinator>());
+                });
             });
 
             instance.transform.SetParent(characterScope.transform, true);
