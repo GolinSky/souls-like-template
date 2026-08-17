@@ -454,6 +454,9 @@ namespace SoulsLike.Entities.Character.Runtime
         public bool HandleAnimation(in CharacterAnimationSignal signal) =>
             _stateMachine.HandleAnimation(in signal);
 
+        public bool TryConsumeRollSprintInterrupt() =>
+            _stateMachine.TryConsumeRollSprintInterrupt();
+
         public void SetInputBlocked(bool blocked)
         {
             _stateMachine.SetInputBlocked(blocked);

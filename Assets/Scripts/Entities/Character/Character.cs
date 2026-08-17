@@ -99,6 +99,7 @@ namespace SoulsLike.Entities.Character
             }
 
             _runtime.Tick(input);
+            ApplyRuntimeAnimationRequests();
             _runtime.SetEquipmentSwapActive(_equipmentSwapCoordinator.IsActive);
             MovementPolicy policy = _runtime.ResolveMovementPolicy(false);
             movementComponent.SetMovementBlocked(policy.MovementBlocked);
@@ -245,6 +246,16 @@ namespace SoulsLike.Entities.Character
                         + $"{_runtime.ActionState}.",
                         this);
                 }
+
+                ApplyRuntimeAnimationRequests();
+            }
+        }
+
+        private void ApplyRuntimeAnimationRequests()
+        {
+            if (_runtime.TryConsumeRollSprintInterrupt())
+            {
+                animatorComponent.InterruptRollForSprint();
             }
         }
 

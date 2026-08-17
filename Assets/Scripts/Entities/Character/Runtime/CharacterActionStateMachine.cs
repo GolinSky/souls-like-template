@@ -6,6 +6,7 @@ namespace SoulsLike.Entities.Character.Runtime
         private readonly CharacterActionState[] _states;
         private CharacterActionState _active;
         private bool _inputBlocked;
+        private bool _rollSprintInterruptRequested;
 
         public CharacterActionStateId CurrentState => _active.Id;
         public bool IsInputBlocked => _inputBlocked;
@@ -27,9 +28,23 @@ namespace SoulsLike.Entities.Character.Runtime
         }
 
         public void SetInputBlocked(bool blocked) => _inputBlocked = blocked;
+        public bool TryConsumeRollSprintInterrupt()
+        {
+            if (!_rollSprintInterruptRequested) return false;
+
+            _rollSprintInterruptRequested = false;
+            return true;
+        }
+
         internal void Complete(CharacterActionStateId id)
         {
             if (_active.Id == id) Enter(CharacterActionStateId.Neutral);
+        }
+
+        internal void InterruptRollForSprint()
+        {
+            _rollSprintInterruptRequested = true;
+            Complete(CharacterActionStateId.Roll);
         }
 
         public CharacterCommandDisposition Submit(ICharacterCommand command)
@@ -185,12 +200,12 @@ namespace SoulsLike.Entities.Character.Runtime
         public override void Tick(in CharacterControlFrame controlFrame)
         {
             _sprintHeld = controlFrame.SprintHeld;
-            if (_queueWindowOpen && _sprintHeld) Machine.Complete(Id);
+            if (_queueWindowOpen && _sprintHeld) Machine.InterruptRollForSprint();
         }
         public override void OpenQueueWindow()
         {
             _queueWindowOpen = true;
-            if (_sprintHeld) Machine.Complete(Id);
+            if (_sprintHeld) Machine.InterruptRollForSprint();
         }
         public override CharacterCommandExecutionResult TryExecute(ICharacterCommand command) =>
             _queueWindowOpen && command.Kind != CharacterCommandKind.Equipment

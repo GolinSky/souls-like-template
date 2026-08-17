@@ -13,3 +13,92 @@
 - Assign injected dependencies directly. Do not add `?? throw new ArgumentNullException(nameof(...))` constructor boilerplate.
 - Do not add defensive null guards, routine guard exceptions, or exception-heavy control flow. Let required-reference failures surface naturally at the point of use.
 - Use null-conditional invocation for optional events instead of throwing when no subscriber exists.
+
+
+## Unity Asset Persistence
+
+Unity assets MUST be left fully imported and saved after every agent mutation.
+Never require the user to focus Unity, open an asset, press Ctrl+S, or manually
+save the project.
+
+### External Unity asset edits
+
+If any serialized Unity asset is modified directly on disk, including:
+
+- `.prefab`
+- `.unity`
+- `.asset`
+- `.mat`
+- `.controller`
+- `.anim`
+- `.overrideController`
+
+the agent MUST synchronize the changed asset through Unity before completing
+the task.
+
+For each changed asset:
+
+1. Run:
+
+   `unity-cli editor refresh`
+
+2. Re-serialize the specific changed asset:
+
+   `unity-cli reserialize <asset-path>`
+
+Example:
+
+`unity-cli reserialize Assets/Prefabs/Character.prefab`
+
+Do NOT use project-wide `unity-cli reserialize` unless explicitly necessary.
+
+3. Check the Unity console for serialization/import errors.
+
+The task is NOT complete merely because the YAML file was written to disk.
+
+### Unity API asset mutations
+
+When modifying assets using `unity-cli exec`, save changes inside the same
+Unity operation.
+
+For ScriptableObjects and normal asset objects:
+
+- modify the object
+- call `EditorUtility.SetDirty(asset)`
+- call `AssetDatabase.SaveAssets()`
+
+Prefer `SerializedObject` / `SerializedProperty` where appropriate.
+
+### Prefab mutations
+
+For structural prefab changes, prefer Unity APIs over direct YAML editing.
+
+Use:
+
+- `PrefabUtility.LoadPrefabContents(path)`
+- modify the prefab contents
+- `PrefabUtility.SaveAsPrefabAsset(root, path)`
+- `PrefabUtility.UnloadPrefabContents(root)`
+- `AssetDatabase.SaveAssets()`
+
+Do not rely on the user opening or saving the prefab afterward.
+
+### Scene mutations
+
+When changing a scene through Unity APIs:
+
+- mark the scene dirty if necessary
+- save it with `EditorSceneManager.SaveScene(...)`
+
+Do not leave scene changes only in Editor memory.
+
+### Completion requirement
+
+After any Unity asset mutation, verify that:
+
+1. Unity has imported the change.
+2. The asset has been persisted to disk.
+3. Unity reports no import/serialization errors.
+4. No manual Unity Editor interaction is required from the user.
+
+A task that requires the user to focus Unity and press Save is incomplete.

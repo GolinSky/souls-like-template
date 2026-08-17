@@ -311,6 +311,8 @@ namespace SoulsLike.Tests.CharacterRuntime
                 CharacterActionStateId.Roll));
 
             Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Neutral));
+            Assert.That(machine.TryConsumeRollSprintInterrupt(), Is.True);
+            Assert.That(machine.TryConsumeRollSprintInterrupt(), Is.False);
             gesture.Update(false, false, true, 0f);
             Assert.That(gesture.ShouldRoll(true), Is.False);
         }

@@ -23,6 +23,8 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int AnimIdLandingType = Animator.StringToHash("LandingType");
         private static readonly int AnimIdJump = Animator.StringToHash("Jump");
         private static readonly int AnimIdRoll = Animator.StringToHash("Roll");
+        private static readonly int SprintRollInterruptTrigger =
+            Animator.StringToHash("SprintRollInterrupt");
         private static readonly int AnimIdBackStep = Animator.StringToHash("BackStep");
         private static readonly int AnimIdRollHorizontal = Animator.StringToHash("RollHorizontal");
         private static readonly int AnimIdRollVertical = Animator.StringToHash("RollVertical");
@@ -282,6 +284,11 @@ namespace SoulsLike.Entities.Character.Components
         public void SetJump()
         {
             animator.SetTrigger(AnimIdJump);
+        }
+
+        public void InterruptRollForSprint()
+        {
+            animator.SetTrigger(SprintRollInterruptTrigger);
         }
 
         public void TriggerSpawn()
