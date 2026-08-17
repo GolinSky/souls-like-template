@@ -14,6 +14,7 @@ namespace SoulsLike.Ui.LockOn
         private readonly ICameraService _cameraService;
         private LockOnUi _lockOnUi;
         private Camera _targetCamera;
+        private bool _isDisposed;
 
         public LockOnUiController(IUiService uiService, ITargetingService targetingService, ICameraService cameraService)
             : base(uiService)
@@ -31,11 +32,18 @@ namespace SoulsLike.Ui.LockOn
 
         public void Dispose()
         {
-            _lockOnUi.Hide();
+            _isDisposed = true;
+
+            if (_lockOnUi != null)
+            {
+                _lockOnUi.Hide();
+            }
         }
 
         public void PostLateTick()
         {
+            if (_isDisposed || _lockOnUi == null) return;
+
             UpdateLockOnUi();
         }
 
