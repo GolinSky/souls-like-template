@@ -277,26 +277,42 @@ namespace SoulsLike.Tests.CharacterRuntime
         public void SprintTapRequestsRollButQualifiedHoldDoesNot()
         {
             SprintRollGestureResolver gesture = new SprintRollGestureResolver();
-            gesture.Update(true, true, false, false, 0f);
-            gesture.Update(false, false, true, false, 0.1f);
+            gesture.Update(true, true, false, 0f);
+            gesture.Update(false, false, true, 0.1f);
             Assert.That(gesture.ShouldRoll(true), Is.True);
 
-            gesture.Update(true, true, false, false, 0f);
-            gesture.Update(false, true, false, false, 0.31f);
+            gesture.Update(true, true, false, 0f);
+            gesture.Update(false, true, false, 0.31f);
             Assert.That(gesture.IsSprinting, Is.True);
-            gesture.Update(false, false, true, false, 0f);
+            gesture.Update(false, false, true, 0f);
             Assert.That(gesture.ShouldRoll(true), Is.False);
         }
 
         [Test]
-        public void SprintPressedDuringRollRequestsRollOnRelease()
+        public void SprintHeldDuringRollCompletesAtQueueWindowWithoutRequestingAnotherRoll()
         {
             SprintRollGestureResolver gesture = new SprintRollGestureResolver();
-            gesture.Update(true, true, false, true, 0f);
-            gesture.Update(false, true, false, true, 0.31f);
-            Assert.That(gesture.IsSprinting, Is.False);
-            gesture.Update(false, false, true, true, 0f);
-            Assert.That(gesture.ShouldRoll(true), Is.True);
+            gesture.Update(true, true, false, 0f);
+            gesture.Update(false, true, false, 0.31f);
+            Assert.That(gesture.IsSprinting, Is.True);
+            CharacterCommandBuffer buffer = new CharacterCommandBuffer(new FakeClock());
+            CharacterActionStateMachine machine = CreateMachine(buffer);
+            CharacterCommandFactory factory = new CharacterCommandFactory(
+                new AttackReceiver(),
+                new MovementReceiver(),
+                new EquipmentReceiver());
+            machine.Submit(factory.CreateRoll(default, 0f, true));
+            CharacterControlFrame sprintFrame = new CharacterControlFrame(
+                default, 0f, gesture.IsSprinting, false, false, false);
+
+            machine.Tick(new CharacterInputBatch(sprintFrame));
+            machine.HandleAnimation(new CharacterAnimationSignal(
+                CharacterAnimationSignalKind.QueueWindowOpened,
+                CharacterActionStateId.Roll));
+
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Neutral));
+            gesture.Update(false, false, true, 0f);
+            Assert.That(gesture.ShouldRoll(true), Is.False);
         }
 
         [Test]

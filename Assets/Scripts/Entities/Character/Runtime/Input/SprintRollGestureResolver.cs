@@ -6,16 +6,14 @@ namespace SoulsLike.Entities.Character.Input
 
         private float _holdTime;
         private bool _qualified;
-        private bool _pressedDuringRoll;
         private bool _rollRequestedOnRelease;
 
-        public bool IsSprinting => _qualified && !_pressedDuringRoll;
+        public bool IsSprinting => _qualified;
 
         public void Update(
             bool pressedThisFrame,
             bool isPressed,
             bool releasedThisFrame,
-            bool rollActive,
             float deltaTime)
         {
             _rollRequestedOnRelease = false;
@@ -23,7 +21,6 @@ namespace SoulsLike.Entities.Character.Input
             {
                 _holdTime = 0f;
                 _qualified = false;
-                _pressedDuringRoll = rollActive;
             }
 
             if (isPressed)
@@ -34,10 +31,9 @@ namespace SoulsLike.Entities.Character.Input
 
             if (releasedThisFrame)
             {
-                _rollRequestedOnRelease = !_qualified || _pressedDuringRoll;
+                _rollRequestedOnRelease = !_qualified;
                 _holdTime = 0f;
                 _qualified = false;
-                _pressedDuringRoll = false;
             }
         }
 

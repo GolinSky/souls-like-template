@@ -64,7 +64,7 @@ namespace SoulsLike.Entities.Character.Runtime
 
         public void Tick(in CharacterInputBatch batch)
         {
-            _active.Tick();
+            _active.Tick(batch.ControlFrame);
             if (batch.CommandCount > 0 && batch.FirstCommand != null) Submit(batch.FirstCommand);
             if (batch.CommandCount > 1 && batch.SecondCommand != null) Submit(batch.SecondCommand);
 
@@ -130,7 +130,7 @@ namespace SoulsLike.Entities.Character.Runtime
         public virtual bool CanPruneExpiredCommand => Id == CharacterActionStateId.Neutral;
         public virtual bool CanGuardDuringAnimationBlock => false;
         public virtual void Activate(bool chained) { }
-        public virtual void Tick() { }
+        public virtual void Tick(in CharacterControlFrame controlFrame) { }
         public virtual void OpenQueueWindow() { }
         public virtual void HandleEntered(in CharacterAnimationSignal signal) { }
         public virtual bool HandleExited(in CharacterAnimationSignal signal) => true;
@@ -172,12 +172,26 @@ namespace SoulsLike.Entities.Character.Runtime
     public sealed class RollState : CharacterActionState
     {
         private bool _queueWindowOpen;
+        private bool _sprintHeld;
         public RollState(CharacterActionStateMachine machine) : base(machine) { }
         public override CharacterActionStateId Id => CharacterActionStateId.Roll;
         public override bool CanConsumeBufferedCommand => _queueWindowOpen;
         public override bool CanPruneExpiredCommand => false;
-        public override void Activate(bool chained) => _queueWindowOpen = false;
-        public override void OpenQueueWindow() => _queueWindowOpen = true;
+        public override void Activate(bool chained)
+        {
+            _queueWindowOpen = false;
+            _sprintHeld = false;
+        }
+        public override void Tick(in CharacterControlFrame controlFrame)
+        {
+            _sprintHeld = controlFrame.SprintHeld;
+            if (_queueWindowOpen && _sprintHeld) Machine.Complete(Id);
+        }
+        public override void OpenQueueWindow()
+        {
+            _queueWindowOpen = true;
+            if (_sprintHeld) Machine.Complete(Id);
+        }
         public override CharacterCommandExecutionResult TryExecute(ICharacterCommand command) =>
             _queueWindowOpen && command.Kind != CharacterCommandKind.Equipment
                 ? command.TryExecute()
@@ -193,7 +207,7 @@ namespace SoulsLike.Entities.Character.Runtime
         public override bool CanPruneExpiredCommand => false;
         public override bool HandleExited(in CharacterAnimationSignal signal) => false;
         public override void Activate(bool chained) => _acceptCompanionCommand = true;
-        public override void Tick()
+        public override void Tick(in CharacterControlFrame controlFrame)
         {
             _acceptCompanionCommand = false;
             if (_receiver.TryAdvanceEquipmentAction() == CharacterCommandExecutionStatus.Executed)

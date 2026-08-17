@@ -34,7 +34,6 @@ namespace SoulsLike.Entities.Character.Input
                 actions.Sprint.WasPressedThisFrame(),
                 actions.Sprint.IsPressed(),
                 actions.Sprint.WasReleasedThisFrame(),
-                currentState == CharacterActionStateId.Roll,
                 Time.deltaTime);
 
             Vector2 moveInput = actions.Move.ReadValue<Vector2>();
