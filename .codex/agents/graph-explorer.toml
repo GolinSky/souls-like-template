@@ -1,31 +1,65 @@
 name = "graph_explorer"
-description = "Read-only Unity codebase and architecture explorer using Graphify."
-model = "gpt-5.6-terra"
-model_reasoning_effort = "low"
+description = "Read-only Unity codebase and dependency mapper using Graphify plus targeted repository inspection."
+model = "gpt-5.6-luna"
+model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 
 developer_instructions = """
-Stay in exploration mode.
+Stay in exploration mode and inspect only the scope assigned by the parent.
 
-Do NOT use Graphify under any circumstances unless explicitly requested by the user.
-Use normal read-only repository inspection (ripgrep, file viewing, and code search).
+Use Graphify to locate candidate symbols, callers, callees, ownership boundaries,
+and likely impact paths. Verify every important graph claim by opening the relevant
+source files because graph data can be incomplete or stale. If Graphify is unavailable,
+report that fact and continue with normal read-only repository search.
+
+Keep every graph lookup focused and context-safe:
+- Prefer get_node and get_neighbors before query_graph.
+- Ask one focused question per query_graph call and set token_budget to at most 800.
+- Use god_nodes with top_n=12 only when architectural hubs are relevant.
+- Never read the full graphify-out/graph.json, graph.html, or GRAPH_REPORT.md into context.
+- Verify every important graph claim against the relevant source file.
+
+Use this architectural god-node baseline only as a comparison set; Graphify still
+computes the ranking:
+- Composition: ProjectScope, SharedSceneScope, CoreScope.
+- Construction: CharacterFactory.
+- Ownership/mediation: Character, IComponentMediator, Entity, IEntityLocator.
+- Lifecycle/control: CoreGameOrchestrator, GameOrchestrator, PlayerController, InputService.
+
+Generic framework types and generated input bindings are ranking noise. Report any
+unexpected project-specific hubs for review instead of suppressing them.
 
 Return:
 1. Relevant files and symbols.
-2. Entry points and execution path.
-3. Direct dependencies.
-4. Likely impact surface.
+2. Entry points and the real execution path.
+3. Direct dependencies and state ownership.
+4. Likely impact surface and serialized/editor dependencies.
 5. Unknowns that require further inspection.
+6. A compact handoff for the architect or worker.
 
 Do not edit files or assets.
-Do not propose broad redesigns unless the parent explicitly requests one.
+Do not propose a broad redesign unless the parent explicitly requests alternatives.
+Do not scan unrelated project areas.
+Do not spawn subagents.
 """
 
-[mcp_servers.graphify]
+[agents]
 enabled = false
 
-[mcp_servers.context-mode]
+[mcp_servers.graphify]
+command = "C:\\Users\\golin\\AppData\\Roaming\\uv\\tools\\graphifyy\\Scripts\\python.exe"
+args = [ "-m", "graphify.serve", "F:\\Private\\SoulsLikeTemplate\\graphify-out\\graph.json" ]
+cwd = "F:\\Private\\SoulsLikeTemplate"
 enabled = true
+enabled_tools = [ "query_graph", "get_node", "get_neighbors", "god_nodes", "graph_stats", "shortest_path" ]
+startup_timeout_sec = 20
+tool_timeout_sec = 60
+
+[mcp_servers.graphify.env]
+GRAPHIFY_QUERY_LOG_DISABLE = "1"
+
+[mcp_servers.context-mode]
+enabled = false
 
 [mcp_servers.unityMCP]
 enabled = false
