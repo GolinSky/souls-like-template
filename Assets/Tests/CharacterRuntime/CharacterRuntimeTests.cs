@@ -1,6 +1,6 @@
 using NUnit.Framework;
-using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Entities.Character.Input;
+using SoulsLike.Entities.Character.Runtime;
 using CharacterRuntimeType = SoulsLike.Entities.Character.Runtime.CharacterRuntime;
 
 namespace SoulsLike.Tests.CharacterRuntime
@@ -12,42 +12,54 @@ namespace SoulsLike.Tests.CharacterRuntime
             public float Now { get; set; }
         }
 
-        private sealed class AttackReceiver : IAttackCommandReceiver
+        private sealed class ActionExecutor : ICharacterActionExecutor
         {
-            public int Calls { get; private set; }
-            public CharacterCommandExecutionStatus Result { get; set; } =
+            public int AttackCalls { get; private set; }
+            public int RollCalls { get; private set; }
+            public int JumpCalls { get; private set; }
+            public int EquipmentStartCalls { get; private set; }
+            public AttackIntent LastAttackIntent { get; private set; }
+            public CharacterCommandExecutionStatus AttackResult { get; set; } =
                 CharacterCommandExecutionStatus.Executed;
+            public CharacterCommandExecutionStatus RollResult { get; set; } =
+                CharacterCommandExecutionStatus.Executed;
+            public CharacterCommandExecutionStatus JumpResult { get; set; } =
+                CharacterCommandExecutionStatus.Executed;
+            public CharacterCommandExecutionStatus EquipmentStartResult { get; set; } =
+                CharacterCommandExecutionStatus.Executed;
+            public CharacterCommandExecutionStatus EquipmentAdvanceResult { get; set; } =
+                CharacterCommandExecutionStatus.Executed;
+            public bool IsEquipmentActionInProgress { get; set; }
 
             public CharacterCommandExecutionStatus TryStartAttack(
                 in AttackRequest request)
             {
-                Calls++;
-                return Result;
+                AttackCalls++;
+                LastAttackIntent = request.Intent;
+                return AttackResult;
             }
 
-            public void SetStrongAttackHeld(bool held) { }
-        }
+            public CharacterCommandExecutionStatus TryStartRoll(in RollRequest request)
+            {
+                RollCalls++;
+                return RollResult;
+            }
 
-        private sealed class MovementReceiver : IMovementCommandReceiver
-        {
-            public CharacterCommandExecutionStatus TryStartRoll(
-                in RollRequest request) => CharacterCommandExecutionStatus.Executed;
-            public CharacterCommandExecutionStatus TryStartJump(
-                in JumpRequest request) => CharacterCommandExecutionStatus.Executed;
-        }
+            public CharacterCommandExecutionStatus TryStartJump(in JumpRequest request)
+            {
+                JumpCalls++;
+                return JumpResult;
+            }
 
-        private sealed class EquipmentReceiver : IEquipmentCommandReceiver
-        {
-            public int StartCalls { get; private set; }
-            public bool IsEquipmentActionInProgress { get; set; }
             public CharacterCommandExecutionStatus TryStartEquipmentAction(
                 in EquipmentActionRequest request)
             {
-                StartCalls++;
-                return CharacterCommandExecutionStatus.Executed;
+                EquipmentStartCalls++;
+                return EquipmentStartResult;
             }
+
             public CharacterCommandExecutionStatus TryAdvanceEquipmentAction() =>
-                CharacterCommandExecutionStatus.Executed;
+                EquipmentAdvanceResult;
         }
 
         [Test]
@@ -55,101 +67,83 @@ namespace SoulsLike.Tests.CharacterRuntime
         {
             FakeClock clock = new FakeClock();
             CharacterCommandBuffer buffer = new CharacterCommandBuffer(clock);
-            AttackReceiver receiver = new AttackReceiver();
-            ICharacterCommand first = new AttackCommand(
-                receiver,
-                new AttackRequest(AttackIntent.Light, false, false));
-            ICharacterCommand second = new AttackCommand(
-                receiver,
-                new AttackRequest(AttackIntent.Heavy, false, false));
+            ActionExecutor executor = new ActionExecutor();
+            CharacterCommand first = CharacterCommand.Attack(
+                AttackIntent.Light,
+                false,
+                false);
+            CharacterCommand second = CharacterCommand.Attack(
+                AttackIntent.Heavy,
+                false,
+                false);
 
             buffer.Store(first);
             buffer.Store(second);
 
-            Assert.That(buffer.TryPeek(out ICharacterCommand actual), Is.True);
-            Assert.That(actual, Is.SameAs(second));
+            Assert.That(buffer.TryPeek(out CharacterCommand actual), Is.True);
+            actual.TryExecute(executor);
+            Assert.That(executor.LastAttackIntent, Is.EqualTo(AttackIntent.Heavy));
             clock.Now = 1f;
             Assert.That(buffer.IsExpired(), Is.True);
-        }
-
-        [Test]
-        public void TakingCommandConsumesItExactlyOnce()
-        {
-            CharacterCommandBuffer buffer = new CharacterCommandBuffer(new FakeClock());
-            ICharacterCommand command = new AttackCommand(
-                new AttackReceiver(),
-                new AttackRequest(AttackIntent.Light, false, false));
-            buffer.Store(command);
-
-            Assert.That(buffer.TryTake(out ICharacterCommand first), Is.True);
-            Assert.That(first, Is.SameAs(command));
-            Assert.That(buffer.TryTake(out _), Is.False);
         }
 
         [Test]
         public void AttackStateRetainsExpiredCommandUntilQueueWindow()
         {
             FakeClock clock = new FakeClock();
-            AttackReceiver attack = new AttackReceiver();
+            ActionExecutor executor = new ActionExecutor();
             CharacterCommandBuffer buffer = new CharacterCommandBuffer(clock);
             CharacterActionStateMachine machine = CreateMachine(buffer);
-            CharacterCommandFactory factory = new CharacterCommandFactory(
-                attack,
-                new MovementReceiver(),
-                new EquipmentReceiver());
 
-            Assert.That(machine.Submit(factory.CreateAttack(
-                AttackIntent.Light, false, false)), Is.EqualTo(
+            Assert.That(machine.Submit(CharacterCommand.Attack(
+                AttackIntent.Light, false, false), executor), Is.EqualTo(
                 CharacterCommandDisposition.Executed));
-            Assert.That(machine.Submit(factory.CreateAttack(
-                AttackIntent.Heavy, false, false)), Is.EqualTo(
+            Assert.That(machine.Submit(CharacterCommand.Attack(
+                AttackIntent.Heavy, false, false), executor), Is.EqualTo(
                 CharacterCommandDisposition.Buffered));
 
             clock.Now = 2f;
-            machine.Tick(default);
+            machine.Tick(default, executor);
             Assert.That(buffer.HasCommand, Is.True);
 
             machine.HandleAnimation(new CharacterAnimationSignal(
                 CharacterAnimationSignalKind.QueueWindowOpened,
-                CharacterActionStateId.Attack));
+                CharacterActionStateId.Attack), executor);
             Assert.That(buffer.HasCommand, Is.False);
-            Assert.That(attack.Calls, Is.EqualTo(2));
+            Assert.That(executor.AttackCalls, Is.EqualTo(2));
         }
 
         [Test]
-        public void FakeAiCanSubmitAttackWithoutInputSystem()
+        public void FakeAiCanSubmitAttackDataWithoutInputSystem()
         {
-            AttackReceiver attack = new AttackReceiver();
+            ActionExecutor executor = new ActionExecutor();
             MovementGate gate = new MovementGate();
-            CharacterActionStateMachine machine = new CharacterActionStateMachine(
-                new EquipmentReceiver(),
+            CharacterActionStateMachine machine = CreateMachine(
                 new CharacterCommandBuffer(new FakeClock()));
             CharacterRuntimeType runtime = new CharacterRuntimeType(machine, gate);
 
             CharacterCommandDisposition disposition = runtime.Submit(
-                new AttackCommand(
-                    attack,
-                    new AttackRequest(AttackIntent.Light, false, false)));
+                CharacterCommand.Attack(AttackIntent.Light, false, false),
+                executor);
 
             Assert.That(disposition, Is.EqualTo(CharacterCommandDisposition.Executed));
-            Assert.That(attack.Calls, Is.EqualTo(1));
+            Assert.That(executor.AttackCalls, Is.EqualTo(1));
         }
 
         [Test]
         public void InputBlockRejectsNewCommandsWithoutBufferingThem()
         {
-            AttackReceiver attack = new AttackReceiver();
+            ActionExecutor executor = new ActionExecutor();
             CharacterCommandBuffer buffer = new CharacterCommandBuffer(new FakeClock());
             CharacterActionStateMachine machine = CreateMachine(buffer);
             machine.SetInputBlocked(true);
 
             CharacterCommandDisposition disposition = machine.Submit(
-                new AttackCommand(
-                    attack,
-                    new AttackRequest(AttackIntent.Light, false, false)));
+                CharacterCommand.Attack(AttackIntent.Light, false, false),
+                executor);
 
             Assert.That(disposition, Is.EqualTo(CharacterCommandDisposition.Ignored));
-            Assert.That(attack.Calls, Is.Zero);
+            Assert.That(executor.AttackCalls, Is.Zero);
             Assert.That(buffer.HasCommand, Is.False);
         }
 
@@ -157,20 +151,19 @@ namespace SoulsLike.Tests.CharacterRuntime
         public void NeutralStatePrunesExpiredTemporarilyBlockedCommand()
         {
             FakeClock clock = new FakeClock();
-            AttackReceiver attack = new AttackReceiver
+            ActionExecutor executor = new ActionExecutor
             {
-                Result = CharacterCommandExecutionStatus.TemporarilyBlocked
+                AttackResult = CharacterCommandExecutionStatus.TemporarilyBlocked
             };
             CharacterCommandBuffer buffer = new CharacterCommandBuffer(clock);
             CharacterActionStateMachine machine = CreateMachine(buffer);
 
-            Assert.That(machine.Submit(new AttackCommand(
-                attack,
-                new AttackRequest(AttackIntent.Light, false, false))),
+            Assert.That(machine.Submit(CharacterCommand.Attack(
+                AttackIntent.Light, false, false), executor),
                 Is.EqualTo(CharacterCommandDisposition.Buffered));
 
             clock.Now = 1f;
-            machine.Tick(default);
+            machine.Tick(default, executor);
 
             Assert.That(buffer.HasCommand, Is.False);
         }
@@ -178,22 +171,20 @@ namespace SoulsLike.Tests.CharacterRuntime
         [Test]
         public void AttackQueueAllowsGuardThroughAnimationBlockOnly()
         {
-            AttackReceiver attack = new AttackReceiver();
+            ActionExecutor executor = new ActionExecutor();
             MovementGate gate = new MovementGate();
-            CharacterActionStateMachine machine = new CharacterActionStateMachine(
-                new EquipmentReceiver(),
+            CharacterActionStateMachine machine = CreateMachine(
                 new CharacterCommandBuffer(new FakeClock()));
             CharacterRuntimeType runtime = new CharacterRuntimeType(machine, gate);
 
-            runtime.Submit(new AttackCommand(
-                attack,
-                new AttackRequest(AttackIntent.Light, false, false)));
+            runtime.Submit(CharacterCommand.Attack(
+                AttackIntent.Light, false, false), executor);
             runtime.SetAnimationMotionContract(true, false);
             Assert.That(runtime.ResolveMovementPolicy(false).GuardAllowed, Is.False);
 
             runtime.HandleAnimation(new CharacterAnimationSignal(
                 CharacterAnimationSignalKind.QueueWindowOpened,
-                CharacterActionStateId.Attack));
+                CharacterActionStateId.Attack), executor);
             Assert.That(runtime.ResolveMovementPolicy(false).GuardAllowed, Is.True);
 
             runtime.SetMovementBlocked(true);
@@ -201,64 +192,105 @@ namespace SoulsLike.Tests.CharacterRuntime
         }
 
         [Test]
-        public void ContradictoryAnimationSignalIsReported()
+        public void ContradictoryAnimationSignalDoesNotAlterCurrentState()
         {
+            ActionExecutor executor = new ActionExecutor();
             CharacterActionStateMachine machine = CreateMachine(
                 new CharacterCommandBuffer(new FakeClock()));
 
             bool handled = machine.HandleAnimation(new CharacterAnimationSignal(
                 CharacterAnimationSignalKind.Exited,
-                CharacterActionStateId.Roll));
+                CharacterActionStateId.Roll), executor);
 
             Assert.That(handled, Is.False);
             Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Neutral));
         }
 
         [Test]
-        public void AttackQueueDoesNotExecuteEquipmentCommand()
+        public void AttackQueueDoesNotExecuteOrBufferEquipmentCommand()
         {
-            AttackReceiver attack = new AttackReceiver();
-            EquipmentReceiver equipment = new EquipmentReceiver();
-            CharacterActionStateMachine machine = new CharacterActionStateMachine(
-                equipment,
-                new CharacterCommandBuffer(new FakeClock()));
-            machine.Submit(new AttackCommand(
-                attack,
-                new AttackRequest(AttackIntent.Light, false, false)));
+            ActionExecutor executor = new ActionExecutor();
+            CharacterCommandBuffer buffer = new CharacterCommandBuffer(new FakeClock());
+            CharacterActionStateMachine machine = CreateMachine(buffer);
+            machine.Submit(CharacterCommand.Attack(
+                AttackIntent.Light, false, false), executor);
             machine.HandleAnimation(new CharacterAnimationSignal(
                 CharacterAnimationSignalKind.QueueWindowOpened,
-                CharacterActionStateId.Attack));
+                CharacterActionStateId.Attack), executor);
 
             CharacterCommandDisposition disposition = machine.Submit(
-                new EquipmentCommand(equipment, new EquipmentActionRequest(0)));
+                CharacterCommand.Equipment(EquipmentActionKind.SwitchRightWeapon),
+                executor);
 
             Assert.That(disposition, Is.EqualTo(CharacterCommandDisposition.Ignored));
-            Assert.That(equipment.StartCalls, Is.Zero);
+            Assert.That(executor.EquipmentStartCalls, Is.Zero);
+            Assert.That(buffer.HasCommand, Is.False);
         }
 
         [Test]
-        public void EquipmentSwapAcceptsOneSameFrameCompanionCommand()
+        public void EquipmentSwapAcceptsExactlyOneSameFrameCompanionCommand()
         {
-            EquipmentReceiver equipment = new EquipmentReceiver
+            ActionExecutor executor = new ActionExecutor
             {
                 IsEquipmentActionInProgress = true
             };
-            CharacterActionStateMachine machine = new CharacterActionStateMachine(
-                equipment,
+            CharacterActionStateMachine machine = CreateMachine(
                 new CharacterCommandBuffer(new FakeClock()));
 
             CharacterInputBatch batch = new CharacterInputBatch(
                 default,
-                new EquipmentCommand(equipment, new EquipmentActionRequest(0)),
-                new EquipmentCommand(equipment, new EquipmentActionRequest(4)),
-                2);
-            machine.Tick(batch);
+                CharacterCommand.Equipment(EquipmentActionKind.SwitchRightWeapon),
+                CharacterCommand.Equipment(EquipmentActionKind.ToggleHandMode));
+            machine.Tick(batch, executor);
             CharacterCommandDisposition thirdDisposition = machine.Submit(
-                new EquipmentCommand(equipment, new EquipmentActionRequest(2)));
+                CharacterCommand.Equipment(EquipmentActionKind.SwitchQuickItem),
+                executor);
 
-            Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.EquipmentSwap));
-            Assert.That(equipment.StartCalls, Is.EqualTo(2));
+            Assert.That(machine.CurrentState, Is.EqualTo(
+                CharacterActionStateId.EquipmentSwap));
+            Assert.That(executor.EquipmentStartCalls, Is.EqualTo(2));
             Assert.That(thirdDisposition, Is.EqualTo(CharacterCommandDisposition.Ignored));
+        }
+
+        [Test]
+        public void ChainedAttackIgnoresPreviousAnimationsExitCallback()
+        {
+            ActionExecutor executor = new ActionExecutor();
+            CharacterActionStateMachine machine = CreateMachine(
+                new CharacterCommandBuffer(new FakeClock()));
+            machine.Submit(CharacterCommand.Attack(
+                AttackIntent.Light, false, false), executor);
+            machine.HandleAnimation(new CharacterAnimationSignal(
+                CharacterAnimationSignalKind.QueueWindowOpened,
+                CharacterActionStateId.Attack), executor);
+            machine.Submit(CharacterCommand.Attack(
+                AttackIntent.Heavy, false, false), executor);
+
+            machine.HandleAnimation(new CharacterAnimationSignal(
+                CharacterAnimationSignalKind.Exited,
+                CharacterActionStateId.Attack), executor);
+
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Attack));
+
+            machine.HandleAnimation(new CharacterAnimationSignal(
+                CharacterAnimationSignalKind.Exited,
+                CharacterActionStateId.Attack), executor);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Neutral));
+        }
+
+        [Test]
+        public void JumpStartsWithoutChangingActionStateFromNeutral()
+        {
+            ActionExecutor executor = new ActionExecutor();
+            CharacterActionStateMachine machine = CreateMachine(
+                new CharacterCommandBuffer(new FakeClock()));
+
+            CharacterCommandDisposition disposition = machine.Submit(
+                CharacterCommand.Jump(false), executor);
+
+            Assert.That(disposition, Is.EqualTo(CharacterCommandDisposition.Executed));
+            Assert.That(executor.JumpCalls, Is.EqualTo(1));
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Neutral));
         }
 
         [Test]
@@ -289,30 +321,31 @@ namespace SoulsLike.Tests.CharacterRuntime
         }
 
         [Test]
-        public void SprintHeldDuringRollCompletesAtQueueWindowWithoutRequestingAnotherRoll()
+        public void SprintHeldDuringRollInterruptsOnlyWhenQueueWindowOpens()
         {
             SprintRollGestureResolver gesture = new SprintRollGestureResolver();
             gesture.Update(true, true, false, 0f);
             gesture.Update(false, true, false, 0.31f);
             Assert.That(gesture.IsSprinting, Is.True);
-            CharacterCommandBuffer buffer = new CharacterCommandBuffer(new FakeClock());
-            CharacterActionStateMachine machine = CreateMachine(buffer);
-            CharacterCommandFactory factory = new CharacterCommandFactory(
-                new AttackReceiver(),
-                new MovementReceiver(),
-                new EquipmentReceiver());
-            machine.Submit(factory.CreateRoll(default, 0f, true));
+            ActionExecutor executor = new ActionExecutor();
+            CharacterActionStateMachine machine = CreateMachine(
+                new CharacterCommandBuffer(new FakeClock()));
+            machine.Submit(CharacterCommand.Roll(default, 0f, true), executor);
             CharacterControlFrame sprintFrame = new CharacterControlFrame(
                 default, 0f, gesture.IsSprinting, false, false, false);
 
-            machine.Tick(new CharacterInputBatch(sprintFrame));
+            machine.Tick(new CharacterInputBatch(sprintFrame), executor);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Roll));
+            Assert.That(machine.TryConsumeRollSprintInterrupt(), Is.False);
+
             machine.HandleAnimation(new CharacterAnimationSignal(
                 CharacterAnimationSignalKind.QueueWindowOpened,
-                CharacterActionStateId.Roll));
+                CharacterActionStateId.Roll), executor);
 
             Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Neutral));
             Assert.That(machine.TryConsumeRollSprintInterrupt(), Is.True);
             Assert.That(machine.TryConsumeRollSprintInterrupt(), Is.False);
+            Assert.That(executor.RollCalls, Is.EqualTo(1));
             gesture.Update(false, false, true, 0f);
             Assert.That(gesture.ShouldRoll(true), Is.False);
         }
@@ -332,9 +365,7 @@ namespace SoulsLike.Tests.CharacterRuntime
         private static CharacterActionStateMachine CreateMachine(
             CharacterCommandBuffer buffer)
         {
-            return new CharacterActionStateMachine(
-                new EquipmentReceiver(),
-                buffer);
+            return new CharacterActionStateMachine(buffer);
         }
     }
 }

@@ -11,24 +11,18 @@ using SoulsLike.Entities.Character.Ports;
 using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Items;
 using UnityEngine;
+using VContainer;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character
 {
     public sealed class Character : MonoBehaviour, IInitializable,
-        IAttackCommandReceiver,
-        IMovementCommandReceiver,
-        IEquipmentCommandReceiver,
+        ICharacterActionExecutor,
         IMovementPresentationSink,
         IAnimationStateSink,
         IRootMotionSink,
         IEquipmentLoadoutSink
     {
-        private const int SWITCH_RIGHT_WEAPON = 0;
-        private const int SWITCH_LEFT_WEAPON = 1;
-        private const int SWITCH_QUICK_ITEM = 2;
-        private const int USE_QUICK_ITEM = 3;
-        private const int TOGGLE_HAND_MODE = 4;
         private const float NORMAL_ATTACK_SPEED = 1.0f;
 
         [SerializeField] private MovementComponent movementComponent;
@@ -58,20 +52,18 @@ namespace SoulsLike.Entities.Character
         public CharacterActionStateId CurrentActionState => _runtime.ActionState;
         public bool IsEquipmentActionInProgress => _equipmentSwapCoordinator.IsActive;
 
+        [Inject]
         public void ConfigureRuntime(
             AttackComponent attackComponent,
             CharacterRuntime runtime,
             CharacterAnimationAdapter animationAdapter,
-            EquipmentSwapCoordinator equipmentSwapCoordinator)
+            EquipmentSwapCoordinator equipmentSwapCoordinator,
+            EquipmentPresentation presentation)
         {
             _attackComponent = attackComponent;
             _runtime = runtime;
             _animationAdapter = animationAdapter;
             _equipmentSwapCoordinator = equipmentSwapCoordinator;
-        }
-
-        public void SetEquipmentPresentation(EquipmentPresentation presentation)
-        {
             equipmentPresentation = presentation;
         }
 
@@ -92,7 +84,7 @@ namespace SoulsLike.Entities.Character
                 animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
             }
 
-            _runtime.Tick(input);
+            _runtime.Tick(input, this);
             ApplyRuntimeAnimationRequests();
             _runtime.SetEquipmentSwapActive(_equipmentSwapCoordinator.IsActive);
             MovementPolicy policy = _runtime.ResolveMovementPolicy(false);
@@ -117,8 +109,8 @@ namespace SoulsLike.Entities.Character
             animatorComponent.SetWeaponBlock(weaponBlock);
         }
 
-        public CharacterCommandDisposition Submit(ICharacterCommand command) =>
-            _runtime.Submit(command);
+        public CharacterCommandDisposition Submit(CharacterCommand command) =>
+            _runtime.Submit(command, this);
 
         public CharacterCommandExecutionStatus TryStartAttack(in AttackRequest request)
         {
@@ -157,12 +149,6 @@ namespace SoulsLike.Entities.Character
             return CharacterCommandExecutionStatus.Executed;
         }
 
-        public void SetStrongAttackHeld(bool held)
-        {
-            _attackComponent.SetStrongAttackHeld(held);
-            if (!held) animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
-        }
-
         public CharacterCommandExecutionStatus TryStartRoll(in RollRequest request)
         {
             bool canInterrupt = _runtime.ActionState != CharacterActionStateId.Neutral;
@@ -183,21 +169,23 @@ namespace SoulsLike.Entities.Character
         public CharacterCommandExecutionStatus TryStartEquipmentAction(
             in EquipmentActionRequest request)
         {
-            switch (request.ActionId)
+            switch (request.Kind)
             {
-                case SWITCH_RIGHT_WEAPON:
-                    return _equipmentSwapCoordinator.StartRightHandSwap();
-                case SWITCH_LEFT_WEAPON:
+                case EquipmentActionKind.SwitchRightWeapon:
+                    return _equipmentSwapCoordinator.StartRightHandSwap(
+                        equipmentComponent,
+                        animatorComponent);
+                case EquipmentActionKind.SwitchLeftWeapon:
                     equipmentComponent.SwitchActive(EquipmentSlotGroup.LeftHandArmament);
                     return CharacterCommandExecutionStatus.Executed;
-                case SWITCH_QUICK_ITEM:
+                case EquipmentActionKind.SwitchQuickItem:
                     equipmentComponent.SwitchActive(EquipmentSlotGroup.QuickItem);
                     return CharacterCommandExecutionStatus.Executed;
-                case USE_QUICK_ITEM:
+                case EquipmentActionKind.UseQuickItem:
                     return TryUseActiveQuickItem()
                         ? CharacterCommandExecutionStatus.Executed
                         : CharacterCommandExecutionStatus.Invalid;
-                case TOGGLE_HAND_MODE:
+                case EquipmentActionKind.ToggleHandMode:
                     if (!movementComponent.Model.Grounded
                         || _runtime.MovementGate.IsSet(MovementGateReason.Manual)
                         || _runtime.MovementGate.IsSet(MovementGateReason.Animation)
@@ -215,7 +203,9 @@ namespace SoulsLike.Entities.Character
         }
 
         public CharacterCommandExecutionStatus TryAdvanceEquipmentAction() =>
-            _equipmentSwapCoordinator.TryAdvance();
+            _equipmentSwapCoordinator.TryAdvance(
+                equipmentComponent,
+                animatorComponent);
 
         public void OnAnimationStateChanged(AnimatorStateMachineDto state)
         {
@@ -240,7 +230,7 @@ namespace SoulsLike.Entities.Character
 
             if (_animationAdapter.TryAdapt(state, out CharacterAnimationSignal signal))
             {
-                if (!_runtime.HandleAnimation(signal))
+                if (!_runtime.HandleAnimation(signal, this))
                 {
                     Debug.LogWarning(
                         $"Ignoring {signal.ActionState} animation signal while runtime is in "

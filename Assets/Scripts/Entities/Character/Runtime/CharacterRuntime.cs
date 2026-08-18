@@ -32,20 +32,17 @@ namespace SoulsLike.Entities.Character.Runtime
     public readonly struct CharacterInputBatch
     {
         public CharacterControlFrame ControlFrame { get; }
-        public ICharacterCommand FirstCommand { get; }
-        public ICharacterCommand SecondCommand { get; }
-        public int CommandCount { get; }
+        public CharacterCommand? FirstCommand { get; }
+        public CharacterCommand? SecondCommand { get; }
 
         public CharacterInputBatch(
             CharacterControlFrame controlFrame,
-            ICharacterCommand firstCommand = null,
-            ICharacterCommand secondCommand = null,
-            int commandCount = 0)
+            CharacterCommand? firstCommand = null,
+            CharacterCommand? secondCommand = null)
         {
             ControlFrame = controlFrame;
             FirstCommand = firstCommand;
             SecondCommand = secondCommand;
-            CommandCount = Mathf.Clamp(commandCount, 0, 2);
         }
     }
 
@@ -62,13 +59,6 @@ namespace SoulsLike.Entities.Character.Runtime
         Light,
         Heavy,
         Special
-    }
-
-    public enum CharacterCommandBufferPolicy
-    {
-        Never,
-        RetainUntilQueueWindow,
-        RetainUntilExpiry
     }
 
     public enum CharacterCommandExecutionStatus
@@ -168,143 +158,131 @@ namespace SoulsLike.Entities.Character.Runtime
 
     public readonly struct EquipmentActionRequest
     {
-        public int ActionId { get; }
+        public EquipmentActionKind Kind { get; }
 
-        public EquipmentActionRequest(int actionId)
+        public EquipmentActionRequest(EquipmentActionKind kind)
         {
-            ActionId = actionId;
+            Kind = kind;
         }
     }
 
-    public interface ICharacterCommand
+    public enum EquipmentActionKind
     {
-        CharacterCommandKind Kind { get; }
-        CharacterCommandBufferPolicy BufferPolicy { get; }
-        CharacterCommandExecutionResult TryExecute();
+        SwitchRightWeapon,
+        SwitchLeftWeapon,
+        SwitchQuickItem,
+        UseQuickItem,
+        ToggleHandMode
     }
 
-    public interface IAttackCommandReceiver
-    {
-        CharacterCommandExecutionStatus TryStartAttack(in AttackRequest request);
-        void SetStrongAttackHeld(bool held);
-    }
-
-    public interface IMovementCommandReceiver
-    {
-        CharacterCommandExecutionStatus TryStartRoll(in RollRequest request);
-        CharacterCommandExecutionStatus TryStartJump(in JumpRequest request);
-    }
-
-    public interface IEquipmentCommandReceiver
+    public interface ICharacterActionExecutor
     {
         bool IsEquipmentActionInProgress { get; }
+        CharacterCommandExecutionStatus TryStartAttack(in AttackRequest request);
+        CharacterCommandExecutionStatus TryStartRoll(in RollRequest request);
+        CharacterCommandExecutionStatus TryStartJump(in JumpRequest request);
         CharacterCommandExecutionStatus TryStartEquipmentAction(
             in EquipmentActionRequest request);
         CharacterCommandExecutionStatus TryAdvanceEquipmentAction();
     }
 
-    public sealed class AttackCommand : ICharacterCommand
+    public readonly struct CharacterCommand
     {
-        private readonly IAttackCommandReceiver _receiver;
-        private readonly AttackRequest _request;
+        private readonly AttackRequest _attackRequest;
+        private readonly RollRequest _rollRequest;
+        private readonly JumpRequest _jumpRequest;
+        private readonly EquipmentActionRequest _equipmentRequest;
 
-        public CharacterCommandKind Kind => CharacterCommandKind.Attack;
-        public CharacterCommandBufferPolicy BufferPolicy { get; }
+        public CharacterCommandKind Kind { get; }
+        public bool CanBuffer => Kind != CharacterCommandKind.Equipment;
 
-        public AttackCommand(
-            IAttackCommandReceiver receiver,
-            in AttackRequest request,
-            CharacterCommandBufferPolicy policy =
-                CharacterCommandBufferPolicy.RetainUntilQueueWindow)
+        private CharacterCommand(
+            CharacterCommandKind kind,
+            AttackRequest attackRequest = default,
+            RollRequest rollRequest = default,
+            JumpRequest jumpRequest = default,
+            EquipmentActionRequest equipmentRequest = default)
         {
-            _receiver = receiver;
-            _request = request;
-            BufferPolicy = policy;
+            Kind = kind;
+            _attackRequest = attackRequest;
+            _rollRequest = rollRequest;
+            _jumpRequest = jumpRequest;
+            _equipmentRequest = equipmentRequest;
         }
 
-        public CharacterCommandExecutionResult TryExecute() =>
-            new CharacterCommandExecutionResult(
-                _receiver.TryStartAttack(in _request),
-                CharacterActionStateId.Attack);
-    }
-
-    public sealed class RollCommand : ICharacterCommand
-    {
-        private readonly IMovementCommandReceiver _receiver;
-        private readonly RollRequest _request;
-
-        public CharacterCommandKind Kind => CharacterCommandKind.Roll;
-        public CharacterCommandBufferPolicy BufferPolicy { get; }
-
-        public RollCommand(
-            IMovementCommandReceiver receiver,
-            in RollRequest request,
-            CharacterCommandBufferPolicy policy =
-                CharacterCommandBufferPolicy.RetainUntilExpiry)
+        public static CharacterCommand Attack(
+            AttackIntent intent,
+            bool isLeftHand,
+            bool isSprinting)
         {
-            _receiver = receiver;
-            _request = request;
-            BufferPolicy = policy;
+            AttackRequest request = new AttackRequest(
+                intent,
+                isLeftHand,
+                isSprinting);
+            return new CharacterCommand(
+                CharacterCommandKind.Attack,
+                attackRequest: request);
         }
 
-        public CharacterCommandExecutionResult TryExecute() =>
-            new CharacterCommandExecutionResult(
-                _receiver.TryStartRoll(in _request),
-                CharacterActionStateId.Roll);
-    }
-
-    public sealed class JumpCommand : ICharacterCommand
-    {
-        private readonly IMovementCommandReceiver _receiver;
-        private readonly JumpRequest _request;
-
-        public CharacterCommandKind Kind => CharacterCommandKind.Jump;
-        public CharacterCommandBufferPolicy BufferPolicy { get; }
-
-        public JumpCommand(
-            IMovementCommandReceiver receiver,
-            in JumpRequest request,
-            CharacterCommandBufferPolicy policy =
-                CharacterCommandBufferPolicy.RetainUntilExpiry)
+        public static CharacterCommand Roll(
+            Vector2 moveInput,
+            float cameraYaw,
+            bool canInterrupt)
         {
-            _receiver = receiver;
-            _request = request;
-            BufferPolicy = policy;
+            RollRequest request = new RollRequest(
+                moveInput,
+                cameraYaw,
+                canInterrupt);
+            return new CharacterCommand(
+                CharacterCommandKind.Roll,
+                rollRequest: request);
         }
 
-        public CharacterCommandExecutionResult TryExecute() =>
-            new CharacterCommandExecutionResult(
-                _receiver.TryStartJump(in _request),
-                CharacterActionStateId.Neutral);
-    }
-
-    public sealed class EquipmentCommand : ICharacterCommand
-    {
-        private readonly IEquipmentCommandReceiver _receiver;
-        private readonly EquipmentActionRequest _request;
-
-        public CharacterCommandKind Kind => CharacterCommandKind.Equipment;
-        public CharacterCommandBufferPolicy BufferPolicy =>
-            CharacterCommandBufferPolicy.Never;
-
-        public EquipmentCommand(
-            IEquipmentCommandReceiver receiver,
-            in EquipmentActionRequest request)
+        public static CharacterCommand Jump(bool isSprinting)
         {
-            _receiver = receiver;
-            _request = request;
+            JumpRequest request = new JumpRequest(isSprinting);
+            return new CharacterCommand(
+                CharacterCommandKind.Jump,
+                jumpRequest: request);
         }
 
-        public CharacterCommandExecutionResult TryExecute()
+        public static CharacterCommand Equipment(EquipmentActionKind kind)
         {
-            CharacterCommandExecutionStatus status =
-                _receiver.TryStartEquipmentAction(in _request);
-            CharacterActionStateId startedState =
-                status == CharacterCommandExecutionStatus.Executed
-                && _receiver.IsEquipmentActionInProgress
-                    ? CharacterActionStateId.EquipmentSwap
-                    : CharacterActionStateId.Neutral;
-            return new CharacterCommandExecutionResult(status, startedState);
+            EquipmentActionRequest request = new EquipmentActionRequest(kind);
+            return new CharacterCommand(
+                CharacterCommandKind.Equipment,
+                equipmentRequest: request);
+        }
+
+        public CharacterCommandExecutionResult TryExecute(
+            ICharacterActionExecutor executor)
+        {
+            switch (Kind)
+            {
+                case CharacterCommandKind.Attack:
+                    return new CharacterCommandExecutionResult(
+                        executor.TryStartAttack(in _attackRequest),
+                        CharacterActionStateId.Attack);
+                case CharacterCommandKind.Roll:
+                    return new CharacterCommandExecutionResult(
+                        executor.TryStartRoll(in _rollRequest),
+                        CharacterActionStateId.Roll);
+                case CharacterCommandKind.Jump:
+                    return new CharacterCommandExecutionResult(
+                        executor.TryStartJump(in _jumpRequest),
+                        CharacterActionStateId.Neutral);
+                case CharacterCommandKind.Equipment:
+                    CharacterCommandExecutionStatus status =
+                        executor.TryStartEquipmentAction(in _equipmentRequest);
+                    CharacterActionStateId startedState =
+                        status == CharacterCommandExecutionStatus.Executed
+                        && executor.IsEquipmentActionInProgress
+                            ? CharacterActionStateId.EquipmentSwap
+                            : CharacterActionStateId.Neutral;
+                    return new CharacterCommandExecutionResult(status, startedState);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 
@@ -318,36 +296,29 @@ namespace SoulsLike.Entities.Character.Runtime
         private const float BUFFER_DURATION_SECONDS = 1f;
 
         private readonly ICharacterClock _clock;
-        private ICharacterCommand _command;
+        private CharacterCommand? _command;
         private float _expiresAt;
 
-        public bool HasCommand => _command != null;
+        public bool HasCommand => _command.HasValue;
 
         public CharacterCommandBuffer(ICharacterClock clock)
         {
             _clock = clock;
         }
 
-        public void Store(ICharacterCommand command)
+        public void Store(CharacterCommand command)
         {
             _command = command;
             _expiresAt = _clock.Now + BUFFER_DURATION_SECONDS;
         }
 
-        public bool TryPeek(out ICharacterCommand command)
+        public bool TryPeek(out CharacterCommand command)
         {
-            command = _command;
-            return command != null;
+            command = _command.GetValueOrDefault();
+            return _command.HasValue;
         }
 
-        public bool TryTake(out ICharacterCommand command)
-        {
-            command = _command;
-            _command = null;
-            return command != null;
-        }
-
-        public bool IsExpired() => _command != null && _clock.Now >= _expiresAt;
+        public bool IsExpired() => _command.HasValue && _clock.Now >= _expiresAt;
 
         public void Clear()
         {
@@ -443,16 +414,22 @@ namespace SoulsLike.Entities.Character.Runtime
             MovementGate = movementGate;
         }
 
-        public CharacterCommandDisposition Submit(ICharacterCommand command) =>
-            _stateMachine.Submit(command);
+        public CharacterCommandDisposition Submit(
+            CharacterCommand command,
+            ICharacterActionExecutor executor) =>
+            _stateMachine.Submit(command, executor);
 
-        public void Tick(in CharacterInputBatch batch)
+        public void Tick(
+            in CharacterInputBatch batch,
+            ICharacterActionExecutor executor)
         {
-            _stateMachine.Tick(in batch);
+            _stateMachine.Tick(in batch, executor);
         }
 
-        public bool HandleAnimation(in CharacterAnimationSignal signal) =>
-            _stateMachine.HandleAnimation(in signal);
+        public bool HandleAnimation(
+            in CharacterAnimationSignal signal,
+            ICharacterActionExecutor executor) =>
+            _stateMachine.HandleAnimation(in signal, executor);
 
         public bool TryConsumeRollSprintInterrupt() =>
             _stateMachine.TryConsumeRollSprintInterrupt();

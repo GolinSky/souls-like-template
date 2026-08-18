@@ -17,40 +17,32 @@ namespace SoulsLike.Entities.Character.Adapters
             SwapIn
         }
 
-        private readonly EquipmentComponent _equipment;
-        private readonly AnimatorComponent _animator;
         private SwapPhase _phase;
 
         public bool IsActive => _phase != SwapPhase.None;
 
-        public EquipmentSwapCoordinator(
+        public CharacterCommandExecutionStatus StartRightHandSwap(
             EquipmentComponent equipment,
             AnimatorComponent animator)
-        {
-            _equipment = equipment;
-            _animator = animator;
-        }
-
-        public CharacterCommandExecutionStatus StartRightHandSwap()
         {
             if (_phase != SwapPhase.None)
             {
                 return CharacterCommandExecutionStatus.TemporarilyBlocked;
             }
 
-            EquipmentSlotId previous = _equipment.Model.GetActiveSlot(
+            EquipmentSlotId previous = equipment.Model.GetActiveSlot(
                 EquipmentSlotGroup.RightHandArmament);
-            if (!_animator.IsNoWeaponMode)
+            if (!animator.IsNoWeaponMode)
             {
                 _phase = SwapPhase.SwapOut;
-                _animator.TriggerEquipmentSwapOut();
+                animator.TriggerEquipmentSwapOut();
                 return CharacterCommandExecutionStatus.Executed;
             }
 
             _phase = SwapPhase.SwapIn;
-            EquipmentSlotId active = _equipment.SwitchActive(
+            EquipmentSlotId active = equipment.SwitchActive(
                 EquipmentSlotGroup.RightHandArmament);
-            EquipmentLoadout loadout = _equipment.BuildLoadout();
+            EquipmentLoadout loadout = equipment.BuildLoadout();
             bool hasWeapon = loadout.EffectiveRight?.Definition is WeaponDefinition
                 || loadout.EffectiveLeft?.Definition is WeaponDefinition;
             if (active == previous || !hasWeapon)
@@ -59,11 +51,13 @@ namespace SoulsLike.Entities.Character.Adapters
                 return CharacterCommandExecutionStatus.Executed;
             }
 
-            _animator.TriggerEquipmentSwapIn();
+            animator.TriggerEquipmentSwapIn();
             return CharacterCommandExecutionStatus.Executed;
         }
 
-        public CharacterCommandExecutionStatus TryAdvance()
+        public CharacterCommandExecutionStatus TryAdvance(
+            EquipmentComponent equipment,
+            AnimatorComponent animator)
         {
             if (_phase == SwapPhase.None)
             {
@@ -76,14 +70,14 @@ namespace SoulsLike.Entities.Character.Adapters
             }
 
             _phase = SwapPhase.SwapIn;
-            _equipment.SwitchActive(EquipmentSlotGroup.RightHandArmament);
-            if (_animator.IsNoWeaponMode)
+            equipment.SwitchActive(EquipmentSlotGroup.RightHandArmament);
+            if (animator.IsNoWeaponMode)
             {
                 _phase = SwapPhase.None;
                 return CharacterCommandExecutionStatus.Executed;
             }
 
-            _animator.TriggerEquipmentSwapIn();
+            animator.TriggerEquipmentSwapIn();
             return CharacterCommandExecutionStatus.TemporarilyBlocked;
         }
 

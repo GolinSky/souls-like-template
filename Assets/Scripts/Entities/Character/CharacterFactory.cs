@@ -49,7 +49,6 @@ namespace SoulsLike.Entities.Character
             EquipmentComponent equipmentComponent = GetRequiredComponent<EquipmentComponent>(instance);
             EquipmentPresentation equipmentPresentation =
                 GetRequiredComponent<EquipmentPresentation>(instance);
-            character.SetEquipmentPresentation(equipmentPresentation);
             InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
 
@@ -89,21 +88,12 @@ namespace SoulsLike.Entities.Character
                 builder.Register<CharacterCommandBuffer>(Lifetime.Singleton).AsSelf();
                 builder.Register<CharacterActionStateMachine>(Lifetime.Singleton).AsSelf();
                 builder.Register<CharacterRuntime>(Lifetime.Singleton).AsSelf();
-                builder.Register<CharacterCommandFactory>(Lifetime.Singleton).AsSelf();
                 builder.Register<CharacterAnimationAdapter>(Lifetime.Singleton).AsSelf();
                 builder.Register<EquipmentSwapCoordinator>(Lifetime.Singleton).AsSelf();
                 builder.Register<SprintRollGestureResolver>(Lifetime.Singleton).AsSelf();
                 builder.Register<HeavyAttackGestureResolver>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerCharacterInputAdapter>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.RegisterBuildCallback(container =>
-                {
-                    container.Resolve<Character>().ConfigureRuntime(
-                        container.Resolve<AttackComponent>(),
-                        container.Resolve<CharacterRuntime>(),
-                        container.Resolve<CharacterAnimationAdapter>(),
-                        container.Resolve<EquipmentSwapCoordinator>());
-                });
             });
 
             instance.transform.SetParent(characterScope.transform, true);

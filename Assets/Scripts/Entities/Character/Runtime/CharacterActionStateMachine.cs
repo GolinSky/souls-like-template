@@ -1,33 +1,31 @@
+using System;
+
 namespace SoulsLike.Entities.Character.Runtime
 {
     public sealed class CharacterActionStateMachine
     {
         private readonly CharacterCommandBuffer _buffer;
-        private readonly CharacterActionState[] _states;
-        private CharacterActionState _active;
+        private CharacterActionStateId _currentState;
         private bool _inputBlocked;
+        private bool _queueWindowOpen;
+        private bool _ignoreNextAttackExit;
+        private bool _sprintHeldDuringRoll;
+        private bool _acceptEquipmentCompanion;
         private bool _rollSprintInterruptRequested;
 
-        public CharacterActionStateId CurrentState => _active.Id;
+        public CharacterActionStateId CurrentState => _currentState;
         public bool IsInputBlocked => _inputBlocked;
-        public bool CanGuardDuringAnimationBlock => _active.CanGuardDuringAnimationBlock;
+        public bool CanGuardDuringAnimationBlock =>
+            _currentState == CharacterActionStateId.Attack && _queueWindowOpen;
 
-        public CharacterActionStateMachine(
-            IEquipmentCommandReceiver equipment,
-            CharacterCommandBuffer buffer)
+        public CharacterActionStateMachine(CharacterCommandBuffer buffer)
         {
             _buffer = buffer;
-            _states = new CharacterActionState[]
-            {
-                new NeutralState(this),
-                new AttackState(this),
-                new RollState(this),
-                new EquipmentSwapState(this, equipment)
-            };
-            _active = _states[0];
+            _currentState = CharacterActionStateId.Neutral;
         }
 
         public void SetInputBlocked(bool blocked) => _inputBlocked = blocked;
+
         public bool TryConsumeRollSprintInterrupt()
         {
             if (!_rollSprintInterruptRequested) return false;
@@ -36,37 +34,32 @@ namespace SoulsLike.Entities.Character.Runtime
             return true;
         }
 
-        internal void Complete(CharacterActionStateId id)
-        {
-            if (_active.Id == id) Enter(CharacterActionStateId.Neutral);
-        }
-
-        internal void InterruptRollForSprint()
-        {
-            _rollSprintInterruptRequested = true;
-            Complete(CharacterActionStateId.Roll);
-        }
-
-        public CharacterCommandDisposition Submit(ICharacterCommand command)
+        public CharacterCommandDisposition Submit(
+            CharacterCommand command,
+            ICharacterActionExecutor executor)
         {
             if (_inputBlocked)
             {
                 return CharacterCommandDisposition.Ignored;
             }
 
-            CharacterCommandExecutionResult result = _active.TryExecute(command);
+            CharacterCommandExecutionResult result = CanExecute(command)
+                ? Execute(command, executor)
+                : new CharacterCommandExecutionResult(
+                    CharacterCommandExecutionStatus.TemporarilyBlocked);
             if (result.Status == CharacterCommandExecutionStatus.Executed)
             {
-                if (_active.Id != CharacterActionStateId.EquipmentSwap
+                if (_currentState != CharacterActionStateId.EquipmentSwap
                     || result.StartedState != CharacterActionStateId.EquipmentSwap)
                 {
                     Enter(result.StartedState);
                 }
+
                 return CharacterCommandDisposition.Executed;
             }
 
             if (result.Status == CharacterCommandExecutionStatus.TemporarilyBlocked
-                && command.BufferPolicy != CharacterCommandBufferPolicy.Never)
+                && command.CanBuffer)
             {
                 _buffer.Store(command);
                 return CharacterCommandDisposition.Buffered;
@@ -77,19 +70,34 @@ namespace SoulsLike.Entities.Character.Runtime
                 : CharacterCommandDisposition.Ignored;
         }
 
-        public void Tick(in CharacterInputBatch batch)
+        public void Tick(
+            in CharacterInputBatch batch,
+            ICharacterActionExecutor executor)
         {
-            _active.Tick(batch.ControlFrame);
-            if (batch.CommandCount > 0 && batch.FirstCommand != null) Submit(batch.FirstCommand);
-            if (batch.CommandCount > 1 && batch.SecondCommand != null) Submit(batch.SecondCommand);
+            HandleTick(batch.ControlFrame, executor);
+            if (batch.FirstCommand.HasValue)
+            {
+                Submit(batch.FirstCommand.Value, executor);
+            }
+            if (batch.SecondCommand.HasValue)
+            {
+                Submit(batch.SecondCommand.Value, executor);
+            }
 
-            if (_active.CanPruneExpiredCommand && _buffer.IsExpired()) _buffer.Clear();
-            TryExecuteBufferedCommand();
+            if (_currentState == CharacterActionStateId.Neutral
+                && _buffer.IsExpired())
+            {
+                _buffer.Clear();
+            }
+
+            TryExecuteBufferedCommand(executor);
         }
 
-        public bool HandleAnimation(in CharacterAnimationSignal signal)
+        public bool HandleAnimation(
+            in CharacterAnimationSignal signal,
+            ICharacterActionExecutor executor)
         {
-            if (signal.ActionState != _active.Id)
+            if (signal.ActionState != _currentState)
             {
                 return false;
             }
@@ -97,33 +105,145 @@ namespace SoulsLike.Entities.Character.Runtime
             switch (signal.Kind)
             {
                 case CharacterAnimationSignalKind.Entered:
-                    _active.HandleEntered(signal);
+                    if (_currentState == CharacterActionStateId.Attack)
+                    {
+                        _queueWindowOpen = false;
+                    }
                     break;
                 case CharacterAnimationSignalKind.QueueWindowOpened:
-                    _active.OpenQueueWindow();
-                    TryExecuteBufferedCommand();
+                    HandleQueueWindow();
+                    TryExecuteBufferedCommand(executor);
                     break;
                 case CharacterAnimationSignalKind.Exited:
-                    if (_active.HandleExited(signal)) Enter(CharacterActionStateId.Neutral);
+                    if (HandleExit()) Enter(CharacterActionStateId.Neutral);
                     break;
             }
 
             return true;
         }
 
-        private void Enter(CharacterActionStateId id)
+        private bool CanExecute(CharacterCommand command)
         {
-            bool chained = _active.Id == id && id != CharacterActionStateId.Neutral;
-            _active = _states[(int)id];
-            _active.Activate(chained);
+            switch (_currentState)
+            {
+                case CharacterActionStateId.Neutral:
+                    return true;
+                case CharacterActionStateId.Attack:
+                case CharacterActionStateId.Roll:
+                    return _queueWindowOpen
+                        && command.Kind != CharacterCommandKind.Equipment;
+                case CharacterActionStateId.EquipmentSwap:
+                    return _acceptEquipmentCompanion
+                        && command.Kind == CharacterCommandKind.Equipment;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
-        private void TryExecuteBufferedCommand()
+        private CharacterCommandExecutionResult Execute(
+            CharacterCommand command,
+            ICharacterActionExecutor executor)
         {
-            if (!_active.CanConsumeBufferedCommand
-                || !_buffer.TryPeek(out ICharacterCommand command)) return;
+            if (_currentState == CharacterActionStateId.EquipmentSwap)
+            {
+                _acceptEquipmentCompanion = false;
+            }
 
-            CharacterCommandExecutionResult result = _active.TryExecute(command);
+            return command.TryExecute(executor);
+        }
+
+        private void HandleTick(
+            in CharacterControlFrame frame,
+            ICharacterActionExecutor executor)
+        {
+            switch (_currentState)
+            {
+                case CharacterActionStateId.Roll:
+                    _sprintHeldDuringRoll = frame.SprintHeld;
+                    if (_queueWindowOpen && _sprintHeldDuringRoll)
+                    {
+                        InterruptRollForSprint();
+                    }
+                    break;
+                case CharacterActionStateId.EquipmentSwap:
+                    _acceptEquipmentCompanion = false;
+                    if (executor.TryAdvanceEquipmentAction()
+                        == CharacterCommandExecutionStatus.Executed)
+                    {
+                        Enter(CharacterActionStateId.Neutral);
+                    }
+                    break;
+            }
+        }
+
+        private void HandleQueueWindow()
+        {
+            if (_currentState != CharacterActionStateId.Attack
+                && _currentState != CharacterActionStateId.Roll)
+            {
+                return;
+            }
+
+            _queueWindowOpen = true;
+            if (_currentState == CharacterActionStateId.Roll
+                && _sprintHeldDuringRoll)
+            {
+                InterruptRollForSprint();
+            }
+        }
+
+        private bool HandleExit()
+        {
+            if (_currentState == CharacterActionStateId.EquipmentSwap)
+            {
+                return false;
+            }
+
+            _queueWindowOpen = false;
+            if (_currentState != CharacterActionStateId.Attack
+                || !_ignoreNextAttackExit)
+            {
+                return true;
+            }
+
+            _ignoreNextAttackExit = false;
+            return false;
+        }
+
+        private void Enter(CharacterActionStateId state)
+        {
+            bool chained = _currentState == state
+                && state != CharacterActionStateId.Neutral;
+            _currentState = state;
+
+            switch (state)
+            {
+                case CharacterActionStateId.Attack:
+                    _queueWindowOpen = false;
+                    _ignoreNextAttackExit = chained;
+                    break;
+                case CharacterActionStateId.Roll:
+                    _queueWindowOpen = false;
+                    _sprintHeldDuringRoll = false;
+                    break;
+                case CharacterActionStateId.EquipmentSwap:
+                    _acceptEquipmentCompanion = true;
+                    break;
+            }
+        }
+
+        private void TryExecuteBufferedCommand(ICharacterActionExecutor executor)
+        {
+            bool canConsume = _currentState == CharacterActionStateId.Neutral
+                || ((_currentState == CharacterActionStateId.Attack
+                    || _currentState == CharacterActionStateId.Roll)
+                    && _queueWindowOpen);
+            if (!canConsume || !_buffer.TryPeek(out CharacterCommand command))
+            {
+                return;
+            }
+
+            CharacterCommandExecutionResult result = Execute(command, executor);
             if (result.Status == CharacterCommandExecutionStatus.Executed)
             {
                 _buffer.Clear();
@@ -134,112 +254,14 @@ namespace SoulsLike.Entities.Character.Runtime
                 _buffer.Clear();
             }
         }
-    }
 
-    public abstract class CharacterActionState
-    {
-        protected CharacterActionStateMachine Machine { get; }
-        protected CharacterActionState(CharacterActionStateMachine machine) => Machine = machine;
-        public abstract CharacterActionStateId Id { get; }
-        public virtual bool CanConsumeBufferedCommand => Id == CharacterActionStateId.Neutral;
-        public virtual bool CanPruneExpiredCommand => Id == CharacterActionStateId.Neutral;
-        public virtual bool CanGuardDuringAnimationBlock => false;
-        public virtual void Activate(bool chained) { }
-        public virtual void Tick(in CharacterControlFrame controlFrame) { }
-        public virtual void OpenQueueWindow() { }
-        public virtual void HandleEntered(in CharacterAnimationSignal signal) { }
-        public virtual bool HandleExited(in CharacterAnimationSignal signal) => true;
-        public abstract CharacterCommandExecutionResult TryExecute(ICharacterCommand command);
-    }
-
-    public sealed class NeutralState : CharacterActionState
-    {
-        public NeutralState(CharacterActionStateMachine machine) : base(machine) { }
-        public override CharacterActionStateId Id => CharacterActionStateId.Neutral;
-        public override CharacterCommandExecutionResult TryExecute(ICharacterCommand command) => command.TryExecute();
-    }
-
-    public sealed class AttackState : CharacterActionState
-    {
-        private bool _queueWindowOpen;
-        private bool _ignoreNextExit;
-        public AttackState(CharacterActionStateMachine machine) : base(machine) { }
-        public override CharacterActionStateId Id => CharacterActionStateId.Attack;
-        public override bool CanConsumeBufferedCommand => _queueWindowOpen;
-        public override bool CanPruneExpiredCommand => false;
-        public override bool CanGuardDuringAnimationBlock => _queueWindowOpen;
-        public override void Activate(bool chained) { _queueWindowOpen = false; _ignoreNextExit = chained; }
-        public override void HandleEntered(in CharacterAnimationSignal signal) => _queueWindowOpen = false;
-        public override void OpenQueueWindow() => _queueWindowOpen = true;
-        public override bool HandleExited(in CharacterAnimationSignal signal)
+        private void InterruptRollForSprint()
         {
-            _queueWindowOpen = false;
-            if (!_ignoreNextExit) return true;
-            _ignoreNextExit = false;
-            return false;
-        }
-        public override CharacterCommandExecutionResult TryExecute(ICharacterCommand command) =>
-            _queueWindowOpen && command.Kind != CharacterCommandKind.Equipment
-                ? command.TryExecute()
-                : new CharacterCommandExecutionResult(CharacterCommandExecutionStatus.TemporarilyBlocked);
-    }
-
-    public sealed class RollState : CharacterActionState
-    {
-        private bool _queueWindowOpen;
-        private bool _sprintHeld;
-        public RollState(CharacterActionStateMachine machine) : base(machine) { }
-        public override CharacterActionStateId Id => CharacterActionStateId.Roll;
-        public override bool CanConsumeBufferedCommand => _queueWindowOpen;
-        public override bool CanPruneExpiredCommand => false;
-        public override void Activate(bool chained)
-        {
-            _queueWindowOpen = false;
-            _sprintHeld = false;
-        }
-        public override void Tick(in CharacterControlFrame controlFrame)
-        {
-            _sprintHeld = controlFrame.SprintHeld;
-            if (_queueWindowOpen && _sprintHeld) Machine.InterruptRollForSprint();
-        }
-        public override void OpenQueueWindow()
-        {
-            _queueWindowOpen = true;
-            if (_sprintHeld) Machine.InterruptRollForSprint();
-        }
-        public override CharacterCommandExecutionResult TryExecute(ICharacterCommand command) =>
-            _queueWindowOpen && command.Kind != CharacterCommandKind.Equipment
-                ? command.TryExecute()
-                : new CharacterCommandExecutionResult(CharacterCommandExecutionStatus.TemporarilyBlocked);
-    }
-
-    public sealed class EquipmentSwapState : CharacterActionState
-    {
-        private readonly IEquipmentCommandReceiver _receiver;
-        private bool _acceptCompanionCommand;
-        public EquipmentSwapState(CharacterActionStateMachine machine, IEquipmentCommandReceiver receiver) : base(machine) => _receiver = receiver;
-        public override CharacterActionStateId Id => CharacterActionStateId.EquipmentSwap;
-        public override bool CanPruneExpiredCommand => false;
-        public override bool HandleExited(in CharacterAnimationSignal signal) => false;
-        public override void Activate(bool chained) => _acceptCompanionCommand = true;
-        public override void Tick(in CharacterControlFrame controlFrame)
-        {
-            _acceptCompanionCommand = false;
-            if (_receiver.TryAdvanceEquipmentAction() == CharacterCommandExecutionStatus.Executed)
+            _rollSprintInterruptRequested = true;
+            if (_currentState == CharacterActionStateId.Roll)
             {
-                Machine.Complete(Id);
+                Enter(CharacterActionStateId.Neutral);
             }
-        }
-        public override CharacterCommandExecutionResult TryExecute(ICharacterCommand command)
-        {
-            if (!_acceptCompanionCommand || command.Kind != CharacterCommandKind.Equipment)
-            {
-                return new CharacterCommandExecutionResult(
-                    CharacterCommandExecutionStatus.TemporarilyBlocked);
-            }
-
-            _acceptCompanionCommand = false;
-            return command.TryExecute();
         }
     }
 }
