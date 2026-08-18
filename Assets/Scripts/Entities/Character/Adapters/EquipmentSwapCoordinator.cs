@@ -1,9 +1,7 @@
-using System;
 using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Runtime;
-using SoulsLike.Items;
 
 namespace SoulsLike.Entities.Character.Adapters
 {
@@ -13,15 +11,16 @@ namespace SoulsLike.Entities.Character.Adapters
         {
             None,
             SwapOut,
-            SwapOutCompleted,
             SwapIn
         }
 
         private SwapPhase _phase;
+        private EquipmentSlotGroup _slotGroup;
 
         public bool IsActive => _phase != SwapPhase.None;
 
-        public CharacterCommandExecutionStatus StartRightHandSwap(
+        public CharacterCommandExecutionStatus StartSwap(
+            EquipmentSlotGroup slotGroup,
             EquipmentComponent equipment,
             AnimatorComponent animator)
         {
@@ -30,84 +29,59 @@ namespace SoulsLike.Entities.Character.Adapters
                 return CharacterCommandExecutionStatus.TemporarilyBlocked;
             }
 
-            EquipmentSlotId previous = equipment.Model.GetActiveSlot(
-                EquipmentSlotGroup.RightHandArmament);
+            _slotGroup = slotGroup;
             if (!animator.IsNoWeaponMode)
             {
                 _phase = SwapPhase.SwapOut;
-                animator.TriggerEquipmentSwapOut();
+                animator.TriggerEquipmentSwapOut(slotGroup);
                 return CharacterCommandExecutionStatus.Executed;
             }
 
-            _phase = SwapPhase.SwapIn;
-            EquipmentSlotId active = equipment.SwitchActive(
-                EquipmentSlotGroup.RightHandArmament);
-            EquipmentLoadout loadout = equipment.BuildLoadout();
-            bool hasWeapon = loadout.EffectiveRight?.Definition is WeaponDefinition
-                || loadout.EffectiveLeft?.Definition is WeaponDefinition;
-            if (active == previous || !hasWeapon)
-            {
-                _phase = SwapPhase.None;
-                return CharacterCommandExecutionStatus.Executed;
-            }
-
-            animator.TriggerEquipmentSwapIn();
+            SwapEquipment(equipment, animator);
             return CharacterCommandExecutionStatus.Executed;
         }
 
-        public CharacterCommandExecutionStatus TryAdvance(
+        public void HandleAnimationState(
+            in AnimatorStateMachineDto state,
             EquipmentComponent equipment,
             AnimatorComponent animator)
-        {
-            if (_phase == SwapPhase.None)
-            {
-                return CharacterCommandExecutionStatus.Executed;
-            }
-
-            if (_phase != SwapPhase.SwapOutCompleted)
-            {
-                return CharacterCommandExecutionStatus.TemporarilyBlocked;
-            }
-
-            _phase = SwapPhase.SwapIn;
-            equipment.SwitchActive(EquipmentSlotGroup.RightHandArmament);
-            if (animator.IsNoWeaponMode)
-            {
-                _phase = SwapPhase.None;
-                return CharacterCommandExecutionStatus.Executed;
-            }
-
-            animator.TriggerEquipmentSwapIn();
-            return CharacterCommandExecutionStatus.TemporarilyBlocked;
-        }
-
-        public void HandleAnimationState(in AnimatorStateMachineDto state)
         {
             if (state.State != StateMachineState.Exit)
             {
                 return;
             }
 
-            if (state.StateMachineName == StateMachineName.EquipmentSwapOut)
+            if (state.StateMachineName == StateMachineName.EquipmentSwapOut
+                && _phase == SwapPhase.SwapOut)
             {
-                if (_phase != SwapPhase.SwapOut)
-                {
-                    throw new InvalidOperationException(
-                        $"Equipment swap-out exited during phase '{_phase}'.");
-                }
-
-                _phase = SwapPhase.SwapOutCompleted;
+                SwapEquipment(equipment, animator);
             }
-            else if (state.StateMachineName == StateMachineName.EquipmentSwapIn)
+            else if (state.StateMachineName == StateMachineName.EquipmentSwapIn
+                && _phase == SwapPhase.SwapIn)
             {
-                if (_phase != SwapPhase.SwapIn)
-                {
-                    throw new InvalidOperationException(
-                        $"Equipment swap-in exited during phase '{_phase}'.");
-                }
-
                 _phase = SwapPhase.None;
             }
+        }
+
+        private void SwapEquipment(
+            EquipmentComponent equipment,
+            AnimatorComponent animator)
+        {
+            EquipmentSlotId previous = equipment.Model.GetActiveSlot(_slotGroup);
+            EquipmentSlotId active = equipment.SwitchActive(_slotGroup);
+            EquipmentLoadout loadout = equipment.BuildLoadout();
+            EquippedItemContext equippedItem =
+                _slotGroup == EquipmentSlotGroup.LeftHandArmament
+                    ? loadout.EffectiveLeft
+                    : loadout.EffectiveRight;
+            if (active == previous || equippedItem == null)
+            {
+                _phase = SwapPhase.None;
+                return;
+            }
+
+            _phase = SwapPhase.SwapIn;
+            animator.TriggerEquipmentSwapIn(_slotGroup);
         }
     }
 }

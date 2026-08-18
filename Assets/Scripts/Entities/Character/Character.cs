@@ -86,7 +86,6 @@ namespace SoulsLike.Entities.Character
 
             _runtime.Tick(input, this);
             ApplyRuntimeAnimationRequests();
-            _runtime.SetEquipmentSwapActive(_equipmentSwapCoordinator.IsActive);
             MovementPolicy policy = _runtime.ResolveMovementPolicy(false);
             movementComponent.SetMovementBlocked(policy.MovementBlocked);
             movementComponent.Move(
@@ -119,7 +118,6 @@ namespace SoulsLike.Entities.Character
             if (!movementComponent.Model.Grounded
                 || _runtime.MovementGate.IsSet(MovementGateReason.Manual)
                 || _runtime.MovementGate.IsSet(MovementGateReason.Spawn)
-                || _runtime.MovementGate.IsSet(MovementGateReason.EquipmentSwap)
                 || (_runtime.MovementGate.IsSet(MovementGateReason.Animation) && !canInterrupt))
             {
                 return CharacterCommandExecutionStatus.TemporarilyBlocked;
@@ -181,12 +179,15 @@ namespace SoulsLike.Entities.Character
             switch (request.Kind)
             {
                 case EquipmentActionKind.SwitchRightWeapon:
-                    return _equipmentSwapCoordinator.StartRightHandSwap(
+                    return _equipmentSwapCoordinator.StartSwap(
+                        EquipmentSlotGroup.RightHandArmament,
                         equipmentComponent,
                         animatorComponent);
                 case EquipmentActionKind.SwitchLeftWeapon:
-                    equipmentComponent.SwitchActive(EquipmentSlotGroup.LeftHandArmament);
-                    return CharacterCommandExecutionStatus.Executed;
+                    return _equipmentSwapCoordinator.StartSwap(
+                        EquipmentSlotGroup.LeftHandArmament,
+                        equipmentComponent,
+                        animatorComponent);
                 case EquipmentActionKind.SwitchQuickItem:
                     equipmentComponent.SwitchActive(EquipmentSlotGroup.QuickItem);
                     return CharacterCommandExecutionStatus.Executed;
@@ -212,16 +213,19 @@ namespace SoulsLike.Entities.Character
         }
 
         public CharacterCommandExecutionStatus TryAdvanceEquipmentAction() =>
-            _equipmentSwapCoordinator.TryAdvance(
-                equipmentComponent,
-                animatorComponent);
+            _equipmentSwapCoordinator.IsActive
+                ? CharacterCommandExecutionStatus.TemporarilyBlocked
+                : CharacterCommandExecutionStatus.Executed;
 
         public void OnAnimationStateChanged(AnimatorStateMachineDto state)
         {
             _attackComponent.HandleAnimatorState(state);
             if (_equipmentSwapCoordinator.IsActive)
             {
-                _equipmentSwapCoordinator.HandleAnimationState(state);
+                _equipmentSwapCoordinator.HandleAnimationState(
+                    state,
+                    equipmentComponent,
+                    animatorComponent);
             }
 
             if (state.StateMachineName == StateMachineName.Spawn)

@@ -55,6 +55,8 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int ShieldBlockParameter = Animator.StringToHash("ShieldBlock");
         private static readonly int EquipmentSwapOutTrigger = Animator.StringToHash("EquipmentSwapOut");
         private static readonly int EquipmentSwapInTrigger = Animator.StringToHash("EquipmentSwapIn");
+        private static readonly int LeftEquipmentSwapOutTrigger = Animator.StringToHash("LeftEquipmentSwapOut");
+        private static readonly int LeftEquipmentSwapInTrigger = Animator.StringToHash("LeftEquipmentSwapIn");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_LAYER = "UpperBody";
@@ -287,14 +289,18 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetTrigger(ParryTrigger);
         }
 
-        public void TriggerEquipmentSwapOut()
+        public void TriggerEquipmentSwapOut(EquipmentSlotGroup slotGroup)
         {
-            animator.SetTrigger(EquipmentSwapOutTrigger);
+            animator.SetTrigger(slotGroup == EquipmentSlotGroup.LeftHandArmament
+                ? LeftEquipmentSwapOutTrigger
+                : EquipmentSwapOutTrigger);
         }
 
-        public void TriggerEquipmentSwapIn()
+        public void TriggerEquipmentSwapIn(EquipmentSlotGroup slotGroup)
         {
-            animator.SetTrigger(EquipmentSwapInTrigger);
+            animator.SetTrigger(slotGroup == EquipmentSlotGroup.LeftHandArmament
+                ? LeftEquipmentSwapInTrigger
+                : EquipmentSwapInTrigger);
         }
 
         public void TransitionHandMode(HandMode handMode)

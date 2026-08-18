@@ -98,7 +98,6 @@ namespace SoulsLike.Entities.Character.Runtime
         None = 0,
         Manual = 1 << 0,
         Animation = 1 << 1,
-        EquipmentSwap = 1 << 2,
         Spawn = 1 << 3,
         Stagger = 1 << 4,
         Parry = 1 << 5
@@ -457,9 +456,6 @@ namespace SoulsLike.Entities.Character.Runtime
             MovementGate.Set(MovementGateReason.Animation, movementBlocked);
             _animationRootMotionEnabled = useRootMotion;
         }
-
-        public void SetEquipmentSwapActive(bool active) =>
-            MovementGate.Set(MovementGateReason.EquipmentSwap, active);
 
         public MovementPolicy ResolveMovementPolicy(bool useRootMotion) =>
             MovementGate.Resolve(
