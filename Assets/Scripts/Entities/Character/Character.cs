@@ -182,12 +182,14 @@ namespace SoulsLike.Entities.Character
                     return _equipmentSwapCoordinator.StartSwap(
                         EquipmentSlotGroup.RightHandArmament,
                         equipmentComponent,
-                        animatorComponent);
+                        animatorComponent,
+                        equipmentPresentation);
                 case EquipmentActionKind.SwitchLeftWeapon:
                     return _equipmentSwapCoordinator.StartSwap(
                         EquipmentSlotGroup.LeftHandArmament,
                         equipmentComponent,
-                        animatorComponent);
+                        animatorComponent,
+                        equipmentPresentation);
                 case EquipmentActionKind.SwitchQuickItem:
                     equipmentComponent.SwitchActive(EquipmentSlotGroup.QuickItem);
                     return CharacterCommandExecutionStatus.Executed;
@@ -225,7 +227,8 @@ namespace SoulsLike.Entities.Character
                 _equipmentSwapCoordinator.HandleAnimationState(
                     state,
                     equipmentComponent,
-                    animatorComponent);
+                    animatorComponent,
+                    equipmentPresentation);
             }
 
             if (state.StateMachineName == StateMachineName.Spawn)

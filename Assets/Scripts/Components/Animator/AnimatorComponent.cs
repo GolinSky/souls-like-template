@@ -94,8 +94,6 @@ namespace SoulsLike.Entities.Character.Components
 
         private Animator Animator => animator;
 
-        public bool IsNoWeaponMode => Animator.runtimeAnimatorController == _defaultController;
-        
         [Inject]
         public void InjectSinks(IAnimationStateSink stateSink, IRootMotionSink rootMotionSink)
         {

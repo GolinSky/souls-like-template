@@ -11,6 +11,7 @@ namespace SoulsLike.Entities.Character.Adapters
         {
             None,
             SwapOut,
+            SwapOutHidden,
             SwapIn
         }
 
@@ -22,7 +23,8 @@ namespace SoulsLike.Entities.Character.Adapters
         public CharacterCommandExecutionStatus StartSwap(
             EquipmentSlotGroup slotGroup,
             EquipmentComponent equipment,
-            AnimatorComponent animator)
+            AnimatorComponent animator,
+            EquipmentPresentation presentation)
         {
             if (_phase != SwapPhase.None)
             {
@@ -30,31 +32,53 @@ namespace SoulsLike.Entities.Character.Adapters
             }
 
             _slotGroup = slotGroup;
-            if (!animator.IsNoWeaponMode)
+            EquippedItemContext equippedItem = GetEquippedItem(
+                equipment.BuildLoadout(),
+                slotGroup);
+            if (equippedItem != null)
             {
                 _phase = SwapPhase.SwapOut;
                 animator.TriggerEquipmentSwapOut(slotGroup);
                 return CharacterCommandExecutionStatus.Executed;
             }
 
-            SwapEquipment(equipment, animator);
+            SwapEquipment(equipment, animator, presentation);
             return CharacterCommandExecutionStatus.Executed;
         }
 
         public void HandleAnimationState(
             in AnimatorStateMachineDto state,
             EquipmentComponent equipment,
-            AnimatorComponent animator)
+            AnimatorComponent animator,
+            EquipmentPresentation presentation)
         {
+            if (state.State == StateMachineState.Progress)
+            {
+                if (state.StateMachineName == StateMachineName.EquipmentSwapOut
+                    && _phase == SwapPhase.SwapOut)
+                {
+                    presentation.SetArmamentVisible(_slotGroup, false);
+                    _phase = SwapPhase.SwapOutHidden;
+                }
+                else if (state.StateMachineName == StateMachineName.EquipmentSwapIn
+                    && _phase == SwapPhase.SwapIn)
+                {
+                    presentation.SetArmamentVisible(_slotGroup, true);
+                }
+
+                return;
+            }
+
             if (state.State != StateMachineState.Exit)
             {
                 return;
             }
 
             if (state.StateMachineName == StateMachineName.EquipmentSwapOut
-                && _phase == SwapPhase.SwapOut)
+                && _phase == SwapPhase.SwapOutHidden)
             {
-                SwapEquipment(equipment, animator);
+                _phase = SwapPhase.None;
+                SwapEquipment(equipment, animator, presentation);
             }
             else if (state.StateMachineName == StateMachineName.EquipmentSwapIn
                 && _phase == SwapPhase.SwapIn)
@@ -65,23 +89,40 @@ namespace SoulsLike.Entities.Character.Adapters
 
         private void SwapEquipment(
             EquipmentComponent equipment,
-            AnimatorComponent animator)
+            AnimatorComponent animator,
+            EquipmentPresentation presentation)
         {
             EquipmentSlotId previous = equipment.Model.GetActiveSlot(_slotGroup);
+            presentation.SetArmamentVisible(_slotGroup, false);
             EquipmentSlotId active = equipment.SwitchActive(_slotGroup);
             EquipmentLoadout loadout = equipment.BuildLoadout();
-            EquippedItemContext equippedItem =
-                _slotGroup == EquipmentSlotGroup.LeftHandArmament
-                    ? loadout.EffectiveLeft
-                    : loadout.EffectiveRight;
-            if (active == previous || equippedItem == null)
+            EquippedItemContext equippedItem = GetEquippedItem(loadout, _slotGroup);
+            if (active == previous)
             {
+                presentation.SetArmamentVisible(_slotGroup, true);
                 _phase = SwapPhase.None;
                 return;
             }
 
+            if (equippedItem == null)
+            {
+                presentation.SetArmamentVisible(_slotGroup, true);
+                _phase = SwapPhase.None;
+                return;
+            }
+
+            presentation.SetArmamentVisible(_slotGroup, false);
             _phase = SwapPhase.SwapIn;
             animator.TriggerEquipmentSwapIn(_slotGroup);
+        }
+
+        private static EquippedItemContext GetEquippedItem(
+            in EquipmentLoadout loadout,
+            EquipmentSlotGroup slotGroup)
+        {
+            return slotGroup == EquipmentSlotGroup.LeftHandArmament
+                ? loadout.EffectiveLeft
+                : loadout.EffectiveRight;
         }
     }
 }

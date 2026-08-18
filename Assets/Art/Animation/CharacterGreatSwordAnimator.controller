@@ -604,7 +604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 13
-  isReportingProgress: 0
+  isReportingProgress: 1
   progressNormalizedTime: 0.5
   reportsQueueCheck: 0
   queueCheckNormalizedTime: 0.55
@@ -669,7 +669,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 13
-  isReportingProgress: 0
+  isReportingProgress: 1
   progressNormalizedTime: 0.5
   reportsQueueCheck: 0
   queueCheckNormalizedTime: 0.55
@@ -1202,7 +1202,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 14
-  isReportingProgress: 0
+  isReportingProgress: 1
   progressNormalizedTime: 0.5
   reportsQueueCheck: 0
   queueCheckNormalizedTime: 0.55
@@ -1289,7 +1289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 14
-  isReportingProgress: 0
+  isReportingProgress: 1
   progressNormalizedTime: 0.5
   reportsQueueCheck: 0
   queueCheckNormalizedTime: 0.55
@@ -1745,7 +1745,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 14
-  isReportingProgress: 0
+  isReportingProgress: 1
   progressNormalizedTime: 0.5
   reportsQueueCheck: 0
   queueCheckNormalizedTime: 0.55
@@ -2974,31 +2974,31 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 7706201106982403208}
-    m_Position: {x: 360, y: -40, z: 0}
+    m_Position: {x: 620, y: 240, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6724603695796569902}
-    m_Position: {x: 290, y: -110, z: 0}
+    m_Position: {x: 480, y: -80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8671138620857537411}
-    m_Position: {x: 280, y: -200, z: 0}
+    m_Position: {x: 250, y: -80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4526759854957777597}
     m_Position: {x: 30, y: -80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2950078383690903846}
-    m_Position: {x: 770, y: 10, z: 0}
+    m_Position: {x: 920, y: -70, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 765096925935034780}
-    m_Position: {x: 770, y: 100, z: 0}
+    m_Position: {x: 1180, y: -70, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -2578161286275721590}
     m_Position: {x: -220, y: -80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7841947863961548636}
-    m_Position: {x: 340, y: 200, z: 0}
+    m_Position: {x: 680, y: -50, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1772534279310573612}
-    m_Position: {x: 70, y: 200, z: 0}
+    m_Position: {x: 1440, y: -60, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 7182253657828556132}
@@ -3012,9 +3012,9 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 50, y: 20, z: 0}
-  m_EntryPosition: {x: 610, y: -120, z: 0}
-  m_ExitPosition: {x: 50, y: -170, z: 0}
+  m_AnyStatePosition: {x: 250, y: -300, z: 0}
+  m_EntryPosition: {x: 630, y: 350, z: 0}
+  m_ExitPosition: {x: -50, y: 110, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 7706201106982403208}
 --- !u!1101 &1105586927618134063
@@ -4720,7 +4720,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
   stateMachineName: 13
-  isReportingProgress: 0
+  isReportingProgress: 1
   progressNormalizedTime: 0.5
   reportsQueueCheck: 0
   queueCheckNormalizedTime: 0.55

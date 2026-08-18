@@ -15,6 +15,8 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         private GameObject _rightInstance;
         private GameObject _leftInstance;
+        private bool _isRightHandVisible = true;
+        private bool _isLeftHandVisible = true;
 
         public WeaponRuntime ActiveRightWeaponRuntime { get; private set; }
         public WeaponRuntime ActiveLeftWeaponRuntime { get; private set; }
@@ -38,6 +40,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             if (loadout.EffectiveRight != null)
             {
                 _rightInstance = CreatePresentation(loadout.EffectiveRight, rightHandAnchor, false);
+                _rightInstance.SetActive(_isRightHandVisible);
                 if (loadout.EffectiveRight.Definition is WeaponDefinition rightWeapon)
                 {
                     ActiveRightWeaponRuntime = RequireWeaponRuntime(
@@ -50,6 +53,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             if (loadout.EffectiveLeft != null)
             {
                 _leftInstance = CreatePresentation(loadout.EffectiveLeft, leftHandAnchor, true);
+                _leftInstance.SetActive(_isLeftHandVisible);
                 if (loadout.EffectiveLeft.Definition is WeaponDefinition leftWeapon)
                 {
                     ActiveLeftWeaponRuntime = RequireWeaponRuntime(
@@ -57,6 +61,29 @@ namespace SoulsLike.Entities.Character.Components.Equipment
                         loadout.EffectiveLeft,
                         leftWeapon);
                 }
+            }
+        }
+
+        public void SetArmamentVisible(EquipmentSlotGroup slotGroup, bool isVisible)
+        {
+            switch (slotGroup)
+            {
+                case EquipmentSlotGroup.RightHandArmament:
+                    _isRightHandVisible = isVisible;
+                    if (_rightInstance != null)
+                    {
+                        _rightInstance.SetActive(isVisible);
+                    }
+                    break;
+                case EquipmentSlotGroup.LeftHandArmament:
+                    _isLeftHandVisible = isVisible;
+                    if (_leftInstance != null)
+                    {
+                        _leftInstance.SetActive(isVisible);
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(slotGroup), slotGroup, null);
             }
         }
 
