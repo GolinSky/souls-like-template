@@ -15,6 +15,13 @@
 - Use null-conditional invocation for optional events instead of throwing when no subscriber exists.
 
 
+## Code Simplicity
+
+- Keep one source of truth for identifiers. Do not pass duplicate string names alongside typed, hashed, or otherwise canonical identifiers solely for validation or error messages.
+- Do not wrap direct framework calls in helpers that only pre-check state and throw. Call the framework API directly and let required-state failures surface naturally.
+- Add conditions and validation only when they change required behavior or are explicitly requested; do not add routine defensive checks around straightforward code.
+
+
 ## Test Execution
 
 - Do not run tests or test suites unless the user directly and explicitly requests test execution.

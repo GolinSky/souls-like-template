@@ -324,17 +324,17 @@ namespace SoulsLike.Entities.Character.Components
 
         public void TriggerParry()
         {
-            SetRequiredTrigger(ParryTrigger, "Parry");
+            animator.SetTrigger(ParryTrigger);
         }
 
         public void TriggerEquipmentSwapOut()
         {
-            SetRequiredTrigger(EquipmentSwapOutTrigger, "EquipmentSwapOut");
+            animator.SetTrigger(EquipmentSwapOutTrigger);
         }
 
         public void TriggerEquipmentSwapIn()
         {
-            SetRequiredTrigger(EquipmentSwapInTrigger, "EquipmentSwapIn");
+            animator.SetTrigger(EquipmentSwapInTrigger);
         }
 
         public void TransitionHandMode(HandMode handMode)
@@ -532,20 +532,6 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             return false;
-        }
-
-        private void SetRequiredTrigger(int triggerHash, string parameterName)
-        {
-            if (!HasParameter(
-                    animator,
-                    triggerHash,
-                    AnimatorControllerParameterType.Trigger))
-            {
-                throw new InvalidOperationException(
-                    $"Animator controller '{animator.runtimeAnimatorController.name}' requires trigger '{parameterName}'.");
-            }
-
-            animator.SetTrigger(triggerHash);
         }
 
         private int GetRequiredLayerIndex(string layerName)
