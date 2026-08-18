@@ -43,6 +43,7 @@ namespace SoulsLike.Entities.Character.Adapters
                 case StateMachineName.BackStepAttack:
                 case StateMachineName.RunAttack:
                 case StateMachineName.SpecialAttack:
+                case StateMachineName.Parry:
                     actionState = CharacterActionStateId.Attack;
                     return true;
                 case StateMachineName.Roll:

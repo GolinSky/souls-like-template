@@ -43,6 +43,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int BackStepAttackTrigger = Animator.StringToHash("BackStepAttack");
         private static readonly int RunAttackTrigger = Animator.StringToHash("RunAttack");
         private static readonly int SpecialAttackTrigger = Animator.StringToHash("SpecialAttack");
+        private static readonly int ParryTrigger = Animator.StringToHash("Parry");
         private static readonly int LeftLightAttackTrigger = Animator.StringToHash("LeftLightAttack");
         private static readonly int LeftLightAttackAltTrigger = Animator.StringToHash("LeftLightAttackAlt");
         private static readonly int LeftHeavyAttackTrigger = Animator.StringToHash("LeftHeavyAttack");
@@ -319,6 +320,11 @@ namespace SoulsLike.Entities.Character.Components
         public void SetShieldBlock(bool isBlocking)
         {
             animator.SetBool(ShieldBlockParameter, isBlocking);
+        }
+
+        public void TriggerParry()
+        {
+            SetRequiredTrigger(ParryTrigger, "Parry");
         }
 
         public void TriggerEquipmentSwapOut()

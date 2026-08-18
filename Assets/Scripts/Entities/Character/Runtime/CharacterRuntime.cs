@@ -100,7 +100,8 @@ namespace SoulsLike.Entities.Character.Runtime
         Animation = 1 << 1,
         EquipmentSwap = 1 << 2,
         Spawn = 1 << 3,
-        Stagger = 1 << 4
+        Stagger = 1 << 4,
+        Parry = 1 << 5
     }
 
     public readonly struct CharacterCommandExecutionResult
@@ -438,6 +439,12 @@ namespace SoulsLike.Entities.Character.Runtime
         {
             _stateMachine.SetInputBlocked(blocked);
             MovementGate.Set(MovementGateReason.Spawn, blocked);
+        }
+
+        public void SetParryLocked(bool locked)
+        {
+            _stateMachine.SetInputBlocked(locked);
+            MovementGate.Set(MovementGateReason.Parry, locked);
         }
 
         public void SetMovementBlocked(bool blocked) =>

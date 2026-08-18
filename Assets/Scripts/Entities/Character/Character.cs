@@ -132,6 +132,15 @@ namespace SoulsLike.Entities.Character
             }
 
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
+            if (request.Intent == AttackIntent.Special
+                && loadout.HandMode == HandMode.OneHanded
+                && loadout.EffectiveLeft?.Definition is ShieldDefinition)
+            {
+                animatorComponent.TriggerParry();
+                _runtime.SetParryLocked(true);
+                return CharacterCommandExecutionStatus.Executed;
+            }
+
             bool hasRightWeapon = loadout.EffectiveRight?.Definition is WeaponDefinition;
             bool hasLeftWeapon = loadout.EffectiveLeft?.Definition is WeaponDefinition;
             if ((request.IsLeftHand && !hasLeftWeapon)
@@ -219,6 +228,12 @@ namespace SoulsLike.Entities.Character
             {
                 if (state.State == StateMachineState.Enter) _runtime.SetInputBlocked(true);
                 else if (state.State == StateMachineState.Exit) _runtime.SetInputBlocked(false);
+            }
+
+            if (state.StateMachineName == StateMachineName.Parry)
+            {
+                if (state.State == StateMachineState.Enter) _runtime.SetParryLocked(true);
+                else if (state.State == StateMachineState.Exit) _runtime.SetParryLocked(false);
             }
 
             if (state.State == StateMachineState.Progress
