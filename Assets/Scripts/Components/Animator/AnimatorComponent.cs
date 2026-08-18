@@ -23,8 +23,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int AnimIdLandingType = Animator.StringToHash("LandingType");
         private static readonly int AnimIdJump = Animator.StringToHash("Jump");
         private static readonly int AnimIdRoll = Animator.StringToHash("Roll");
-        private static readonly int SprintRollInterruptTrigger =
-            Animator.StringToHash("SprintRollInterrupt");
+        private static readonly int SprintRollInterruptTrigger = Animator.StringToHash("SprintRollInterrupt");
         private static readonly int AnimIdBackStep = Animator.StringToHash("BackStep");
         private static readonly int AnimIdRollHorizontal = Animator.StringToHash("RollHorizontal");
         private static readonly int AnimIdRollVertical = Animator.StringToHash("RollVertical");
@@ -87,7 +86,6 @@ namespace SoulsLike.Entities.Character.Components
         private float _targetRiffleLayerWeight;
         private float _targetChargedAttackSpeed = 1.0f;
         private bool _aimTargetInitialized;
-        private bool _hasChargedAttackSpeedParameter;
         private bool _observingStateMachine;
         private RuntimeAnimatorController _defaultController;
         private bool _supportsLeftHandAttacks;
@@ -103,15 +101,7 @@ namespace SoulsLike.Entities.Character.Components
             _rootMotionSink = rootMotionSink;
             _defaultController = animator.runtimeAnimatorController;
             rootMotionRelay.Initialize(rootMotionSink);
-            _hasChargedAttackSpeedParameter = HasParameter(
-                animator,
-                ChargedSpeedParameter,
-                AnimatorControllerParameterType.Float);
-
-            if (_hasChargedAttackSpeedParameter)
-            {
-                _targetChargedAttackSpeed = animator.GetFloat(ChargedSpeedParameter);
-            }
+            _targetChargedAttackSpeed = animator.GetFloat(ChargedSpeedParameter);
 
             if (!_observingStateMachine)
             {
@@ -137,37 +127,21 @@ namespace SoulsLike.Entities.Character.Components
                 return;
             }
 
-            float fullBodyLayerWeight = animator.GetLayerWeight(
-                GetRequiredLayerIndex(FULL_BODY_LAYER));
-            float upperBodyLayerWeight = animator.GetLayerWeight(
-                GetRequiredLayerIndex(UPPER_BODY_LAYER));
+            float fullBodyLayerWeight = animator.GetLayerWeight(GetRequiredLayerIndex(FULL_BODY_LAYER));
+            float upperBodyLayerWeight = animator.GetLayerWeight(GetRequiredLayerIndex(UPPER_BODY_LAYER));
             bool isGrounded = animator.GetBool(AnimIdGrounded);
             animator.runtimeAnimatorController = targetController;
             SetGrounded(isGrounded);
             stateMachineReceiver.InitializeStateMachines();
-            _hasChargedAttackSpeedParameter = HasParameter(
-                animator,
-                ChargedSpeedParameter,
-                AnimatorControllerParameterType.Float);
             SetHandMode(_targetHandMode);
+            animator.SetLayerWeight(GetRequiredLayerIndex(FULL_BODY_LAYER), fullBodyLayerWeight);
             animator.SetLayerWeight(
-                GetRequiredLayerIndex(FULL_BODY_LAYER),
-                fullBodyLayerWeight);
-            animator.SetLayerWeight(
-                GetRequiredLayerIndex(UPPER_BODY_LAYER),
-                upperBodyLayerWeight);
+                GetRequiredLayerIndex(UPPER_BODY_LAYER), upperBodyLayerWeight);
         }
 
         public void ResetAnimationProfile()
         {
             _supportsLeftHandAttacks = false;
-            //todo: use assert instead
-            if (_defaultController == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(AnimatorComponent)} requires a default animator controller.");
-            }
-
             if (animator.runtimeAnimatorController == _defaultController)
             {
                 return;
@@ -181,10 +155,6 @@ namespace SoulsLike.Entities.Character.Components
             animator.runtimeAnimatorController = _defaultController;
             SetGrounded(isGrounded);
             stateMachineReceiver.InitializeStateMachines();
-            _hasChargedAttackSpeedParameter = HasParameter(
-                animator,
-                ChargedSpeedParameter,
-                AnimatorControllerParameterType.Float);
             SetHandMode(_targetHandMode);
             animator.SetLayerWeight(
                 GetRequiredLayerIndex(FULL_BODY_LAYER),
@@ -261,16 +231,6 @@ namespace SoulsLike.Entities.Character.Components
 
         public void SetChargedAttackSpeed(float speed)
         {
-            if (speed <= 0.0f)
-            {
-                throw new ArgumentOutOfRangeException(nameof(speed), speed, "Attack speed must be greater than zero.");
-            }
-
-            if (!_hasChargedAttackSpeedParameter)
-            {
-                return;
-            }
-
             _targetChargedAttackSpeed = speed;
             if (speed < animator.GetFloat(ChargedSpeedParameter))
             {
@@ -387,14 +347,11 @@ namespace SoulsLike.Entities.Character.Components
         {
             float dt = Time.deltaTime;
 
-            if (_hasChargedAttackSpeedParameter)
-            {
-                animator.SetFloat(
-                    ChargedSpeedParameter,
-                    _targetChargedAttackSpeed,
-                    chargedAttackSpeedSmoothTime,
-                    dt);
-            }
+            animator.SetFloat(
+                ChargedSpeedParameter,
+                _targetChargedAttackSpeed,
+                chargedAttackSpeedSmoothTime,
+                dt);
 
             _currentTurnAmount = Mathf.Lerp(_currentTurnAmount, _targetTurnAmount, dt * turnSmoothSpeed);
             animator.SetFloat(AnimIdTurn, _currentTurnAmount);
@@ -500,9 +457,6 @@ namespace SoulsLike.Entities.Character.Components
                 if (source.IsParameterControlledByCurve(param.nameHash))
                     continue;
 
-                if (!HasParameter(target, param.nameHash, param.type))
-                    continue;
-
                 switch (param.type)
                 {
                     case AnimatorControllerParameterType.Float:
@@ -516,22 +470,6 @@ namespace SoulsLike.Entities.Character.Components
                         break;
                 }
             }
-        }
-
-        private static bool HasParameter(
-            Animator target,
-            int parameterHash,
-            AnimatorControllerParameterType parameterType)
-        {
-            foreach (AnimatorControllerParameter parameter in target.parameters)
-            {
-                if (parameter.nameHash == parameterHash && parameter.type == parameterType)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
 
         private int GetRequiredLayerIndex(string layerName)
