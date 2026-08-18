@@ -1,6 +1,5 @@
 using System;
 using DG.Tweening;
-using SoulsLike.Services;
 using SoulsLike.Services.Audio.Data;
 using SoulsLike.Services.Scenes;
 using SoulsLike.Services.Scenes.Data;
@@ -9,7 +8,7 @@ using VContainer.Unity;
 
 namespace SoulsLike.Services.Audio
 {
-    public class AmbienceService : IAmbienceSystem, IInitializable, IDisposable, IObserver<IAudioSettingsData>
+    public class AmbienceService : IAmbienceSystem, IInitializable, ITickable, IDisposable, IObserver<IAudioSettingsData>
     {
         private readonly AmbienceData _data;
         private readonly IAudioService _audioService;
@@ -22,6 +21,8 @@ namespace SoulsLike.Services.Audio
 
         private MusicType _currentMusic = MusicType.None;
         private MusicType _currentAmbience = MusicType.None;
+        private AudioClip[] _sceneAmbienceClips;
+        private int _sceneAmbienceIndex;
         private float _musicSettingsVolume = 1f;
         private float _sfxSettingsVolume = 1f;
 
@@ -49,7 +50,7 @@ namespace SoulsLike.Services.Audio
 
             _ambienceSource = _hostGo.AddComponent<AudioSource>();
             _ambienceSource.playOnAwake = false;
-            _ambienceSource.loop = true;
+            _ambienceSource.loop = false;
             _ambienceSource.spatialBlend = 0f;
 
             _sfxSource = _hostGo.AddComponent<AudioSource>();
@@ -64,6 +65,16 @@ namespace SoulsLike.Services.Audio
             }
 
             _audioService?.AddObserver(this);
+        }
+
+        public void Tick()
+        {
+            if (_sceneAmbienceClips == null || _sceneAmbienceClips.Length <= 1 || _ambienceSource.isPlaying)
+            {
+                return;
+            }
+
+            PlayNextSceneAmbience();
         }
 
         public void Dispose()
@@ -84,6 +95,8 @@ namespace SoulsLike.Services.Audio
                 _ambienceSource = null;
                 _sfxSource = null;
             }
+
+            _sceneAmbienceClips = null;
         }
 
         public void UpdateState(IAudioSettingsData arg)
@@ -107,23 +120,6 @@ namespace SoulsLike.Services.Audio
 
         public void PlayMusic(MusicType type)
         {
-            if (_musicSource == null)
-            {
-                Debug.LogError($"{nameof(AmbienceService)}.PlayMusic({type}) called before Initialize.");
-                return;
-            }
-
-            if (type == MusicType.None)
-            {
-                return;
-            }
-
-            if (_data == null)
-            {
-                Debug.LogError($"{nameof(AmbienceService)}.PlayMusic({type}): {nameof(AmbienceData)} is null.");
-                return;
-            }
-
             var clip = _data.GetMusicClip(type);
             if (clip == null)
             {
@@ -153,21 +149,9 @@ namespace SoulsLike.Services.Audio
 
         public void PlayAmbience(MusicType type)
         {
-            if (_ambienceSource == null)
-            {
-                Debug.LogError($"{nameof(AmbienceService)}.PlayAmbience({type}) called before Initialize.");
-                return;
-            }
-
             if (type == MusicType.None)
             {
                 StopAmbience();
-                return;
-            }
-
-            if (_data == null)
-            {
-                Debug.LogError($"{nameof(AmbienceService)}.PlayAmbience({type}): {nameof(AmbienceData)} is null.");
                 return;
             }
 
@@ -178,6 +162,9 @@ namespace SoulsLike.Services.Audio
                 StopAmbience();
                 return;
             }
+
+            ClearSceneAmbiencePlaylist();
+            _ambienceSource.loop = true;
 
             if (_currentAmbience == type && _ambienceSource.clip == clip && _ambienceSource.isPlaying)
             {
@@ -194,6 +181,7 @@ namespace SoulsLike.Services.Audio
         public void StopAmbience()
         {
             _currentAmbience = MusicType.None;
+            ClearSceneAmbiencePlaylist();
             if (_ambienceSource == null) return;
             _ambienceSource.Stop();
             _ambienceSource.clip = null;
@@ -201,16 +189,6 @@ namespace SoulsLike.Services.Audio
 
         public void PlaySfx(SfxType type)
         {
-            if (_sfxSource == null)
-            {
-                Debug.LogError($"{nameof(AmbienceService)}.PlaySfx({type}) called before Initialize.");
-                return;
-            }
-            if (_data == null)
-            {
-                Debug.LogError($"{nameof(AmbienceService)}.PlaySfx({type}): {nameof(AmbienceData)} is null.");
-                return;
-            }
             var clip = _data.GetSfxClip(type);
             if (clip == null)
             {
@@ -247,13 +225,53 @@ namespace SoulsLike.Services.Audio
 
         private void OnSceneChanged(SceneType sceneType)
         {
-            var ambience = _data != null ? _data.GetMusicForScene(sceneType) : MusicType.None;
-            if (ambience == MusicType.None)
+            var clips = _data.GetAmbienceClipsForScene(sceneType);
+            if (clips == null || clips.Length == 0)
             {
                 StopAmbience();
                 return;
             }
-            PlayAmbience(ambience);
+
+            _currentAmbience = MusicType.None;
+            _sceneAmbienceClips = (AudioClip[])clips.Clone();
+            _sceneAmbienceIndex = 0;
+            _ambienceSource.Stop();
+            _ambienceSource.loop = _sceneAmbienceClips.Length == 1;
+            ShuffleSceneAmbience();
+            PlayNextSceneAmbience();
+        }
+
+        private void PlayNextSceneAmbience()
+        {
+            if (_sceneAmbienceIndex >= _sceneAmbienceClips.Length)
+            {
+                ShuffleSceneAmbience();
+                _sceneAmbienceIndex = 0;
+            }
+
+            _ambienceSource.clip = _sceneAmbienceClips[_sceneAmbienceIndex++];
+            ApplyAmbienceVolume();
+            _ambienceSource.Play();
+        }
+
+        private void ShuffleSceneAmbience()
+        {
+            for (var i = _sceneAmbienceClips.Length - 1; i > 0; i--)
+            {
+                var swapIndex = UnityEngine.Random.Range(0, i + 1);
+                (_sceneAmbienceClips[i], _sceneAmbienceClips[swapIndex]) =
+                    (_sceneAmbienceClips[swapIndex], _sceneAmbienceClips[i]);
+            }
+        }
+
+        private void ClearSceneAmbiencePlaylist()
+        {
+            _sceneAmbienceClips = null;
+            _sceneAmbienceIndex = 0;
+            if (_ambienceSource != null)
+            {
+                _ambienceSource.loop = false;
+            }
         }
 
         private void ApplyMusicVolume()

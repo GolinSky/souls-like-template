@@ -11,7 +11,7 @@ namespace SoulsLike.Services.Audio.Data
         public class SceneMusicEntry
         {
             public SceneType sceneType = SceneType.Undefined;
-            public MusicType musicType = MusicType.None;
+            public AudioClip[] clips;
         }
 
         [Serializable]
@@ -28,7 +28,7 @@ namespace SoulsLike.Services.Audio.Data
             public AudioClip clip;
         }
 
-        [Header("Scene → Music")]
+        [Header("Scene ambience")]
         [SerializeField] private SceneMusicEntry[] sceneMusic;
 
         [Header("Music clips")]
@@ -42,15 +42,15 @@ namespace SoulsLike.Services.Audio.Data
         public float MusicClipVolume => musicClipVolume;
         public float SfxClipVolume => sfxClipVolume;
 
-        public MusicType GetMusicForScene(SceneType sceneType)
+        public AudioClip[] GetAmbienceClipsForScene(SceneType sceneType)
         {
-            if (sceneMusic == null) return MusicType.None;
+            if (sceneMusic == null) return null;
             for (var i = 0; i < sceneMusic.Length; i++)
             {
                 if (sceneMusic[i] != null && sceneMusic[i].sceneType == sceneType)
-                    return sceneMusic[i].musicType;
+                    return sceneMusic[i].clips;
             }
-            return MusicType.None;
+            return null;
         }
 
         public AudioClip GetMusicClip(MusicType musicType)

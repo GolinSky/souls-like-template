@@ -34,11 +34,11 @@ namespace SoulsLike
             builder.RegisterScriptableObject<LayerData>();
             builder.Register<LayerService>(Lifetime.Singleton).As<ILayerService>();
             
-            // // audio system
-            // builder.RegisterScriptableObject<AudioData>();
-            // builder.RegisterScriptableObject<AmbienceData>();
-            // builder.Register<AudioService>(Lifetime.Singleton).As<IAudioService>().AsImplementedInterfaces();
-            // builder.Register<AmbienceService>(Lifetime.Singleton).As<IAmbienceSystem>().AsImplementedInterfaces();
+            // audio system
+            builder.RegisterScriptableObject<AudioData>();
+            builder.RegisterScriptableObject<AmbienceData>();
+            builder.Register<AudioService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<AmbienceService>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<AddressableAssetService>(Lifetime.Singleton).As<IAssetService>();
             builder.Register<StorageRegistry>(Lifetime.Singleton).As<IStorageRegistry>();

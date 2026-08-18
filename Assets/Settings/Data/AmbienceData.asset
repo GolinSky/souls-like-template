@@ -12,7 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79349d44acfa48458ae925dce299f21, type: 3}
   m_Name: AmbienceData
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.Audio.Data.AmbienceData
-  sceneMusic: []
+  sceneMusic:
+  - sceneType: 0
+    clips:
+    - {fileID: 8300000, guid: fb273957e7edc6a4fb4bc7a4449bd241, type: 3}
+  - sceneType: 2
+    clips:
+    - {fileID: 8300000, guid: 3aa8f1d7601a19d4c88dcaaa262c2e06, type: 3}
+    - {fileID: 8300000, guid: 40ac39dff6e2f354f81de00e760e72fd, type: 3}
+    - {fileID: 8300000, guid: c6c5cd0ee2d7db447be3ac0e13978c23, type: 3}
+    - {fileID: 8300000, guid: b82b0d87309722341a8926c780d9426d, type: 3}
+    - {fileID: 8300000, guid: c38584c2f7da9da44a2c277f1cb756d6, type: 3}
+    - {fileID: 8300000, guid: f7c94b00546f2484ea827051a05081a4, type: 3}
+    - {fileID: 8300000, guid: 8b9cb98176c68a2409b2dc72d30e95a3, type: 3}
+    - {fileID: 8300000, guid: 5be79b7e84c957149b703e849e1e5752, type: 3}
+    - {fileID: 8300000, guid: 882f38efd0b3ac648b6aad20ea575499, type: 3}
   musicClips: []
   musicClipVolume: 1
   sfxClips: []
