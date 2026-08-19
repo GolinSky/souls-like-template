@@ -8,7 +8,7 @@ namespace SoulsLike.Entities.Character.Runtime
         private CharacterActionStateId _currentState;
         private bool _inputBlocked;
         private bool _queueWindowOpen;
-        private bool _ignoreNextAttackExit;
+        private bool _ignoreNextActionExit;
         private bool _sprintHeldDuringRoll;
         private bool _acceptEquipmentCompanion;
         private bool _rollSprintInterruptRequested;
@@ -200,13 +200,12 @@ namespace SoulsLike.Entities.Character.Runtime
             }
 
             _queueWindowOpen = false;
-            if (_currentState != CharacterActionStateId.Attack
-                || !_ignoreNextAttackExit)
+            if (!_ignoreNextActionExit)
             {
                 return true;
             }
 
-            _ignoreNextAttackExit = false;
+            _ignoreNextActionExit = false;
             return false;
         }
 
@@ -220,11 +219,12 @@ namespace SoulsLike.Entities.Character.Runtime
             {
                 case CharacterActionStateId.Attack:
                     _queueWindowOpen = false;
-                    _ignoreNextAttackExit = chained;
+                    _ignoreNextActionExit = chained;
                     break;
                 case CharacterActionStateId.Roll:
                     _queueWindowOpen = false;
                     _sprintHeldDuringRoll = false;
+                    _ignoreNextActionExit = chained;
                     break;
                 case CharacterActionStateId.EquipmentSwap:
                     _acceptEquipmentCompanion = true;

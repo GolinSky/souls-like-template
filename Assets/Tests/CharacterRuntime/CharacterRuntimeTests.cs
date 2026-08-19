@@ -279,6 +279,36 @@ namespace SoulsLike.Tests.CharacterRuntime
         }
 
         [Test]
+        public void RollInputDuringRollExecutesAtQueueWindow()
+        {
+            ActionExecutor executor = new ActionExecutor();
+            CharacterActionStateMachine machine = CreateMachine(
+                new CharacterCommandBuffer(new FakeClock()));
+            machine.Submit(CharacterCommand.Roll(default, 0f, true), executor);
+            CharacterCommandDisposition disposition = machine.Submit(
+                CharacterCommand.Roll(default, 0f, true), executor);
+
+            Assert.That(disposition, Is.EqualTo(CharacterCommandDisposition.Buffered));
+            Assert.That(executor.RollCalls, Is.EqualTo(1));
+
+            machine.HandleAnimation(new CharacterAnimationSignal(
+                CharacterAnimationSignalKind.QueueWindowOpened,
+                CharacterActionStateId.Roll), executor);
+            Assert.That(executor.RollCalls, Is.EqualTo(2));
+
+            machine.HandleAnimation(new CharacterAnimationSignal(
+                CharacterAnimationSignalKind.Exited,
+                CharacterActionStateId.Roll), executor);
+
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Roll));
+
+            machine.HandleAnimation(new CharacterAnimationSignal(
+                CharacterAnimationSignalKind.Exited,
+                CharacterActionStateId.Roll), executor);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterActionStateId.Neutral));
+        }
+
+        [Test]
         public void JumpStartsWithoutChangingActionStateFromNeutral()
         {
             ActionExecutor executor = new ActionExecutor();

@@ -23213,7 +23213,7 @@ MonoBehaviour:
   lowestSubdivLevelOverride: 0
   highestSubdivLevelOverride: 3
   overridesSubdivLevels: 0
-  mightNeedRebaking: 0
+  mightNeedRebaking: 1
   cachedTransform:
     e00: 1
     e01: 0
@@ -37049,7 +37049,6 @@ MonoBehaviour:
   lockCameraPosition: 0
   mouseSensitivityY: 5
   mouseSensitivityX: 5
-  lockHorizontalDeadZone: 0.12
   lockVerticalDeadZone: 0.08
   lockTargetViewportY: 0.58
   lockYawSpeed: 150
