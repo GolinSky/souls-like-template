@@ -92,15 +92,19 @@ namespace SoulsLike.Entities.Character.Components.Attack
             in AttackExecutionContext context)
         {
             SetActionWeapon(request.IsLeftHand);
-            AttackType attackType = request.Intent switch
-            {
-                AttackIntent.Light => ResolveLightAttack(request.IsSprinting, context),
-                AttackIntent.Heavy => ResolveHeavyAttack(context.ActiveState),
-                AttackIntent.Special => AttackType.SpecialAttack,
-                _ => throw new ArgumentOutOfRangeException(
-                    nameof(request.Intent), request.Intent, null)
-            };
-            float chargedSpeed = request.IsHeavy && _strongInputActive
+            AttackType attackType = request.IsLeftHand
+                ? ResolveLeftHandAttack(context.ActiveState)
+                : request.Intent switch
+                {
+                    AttackIntent.Light => ResolveLightAttack(request.IsSprinting, context),
+                    AttackIntent.Heavy => ResolveHeavyAttack(context.ActiveState),
+                    AttackIntent.Special => AttackType.SpecialAttack,
+                    _ => throw new ArgumentOutOfRangeException(
+                        nameof(request.Intent), request.Intent, null)
+                };
+            float chargedSpeed = !request.IsLeftHand
+                && request.IsHeavy
+                && _strongInputActive
                 ? CHARGED_HEAVY_SPEED
                 : NORMAL_ATTACK_SPEED;
 
@@ -163,6 +167,11 @@ namespace SoulsLike.Entities.Character.Components.Attack
             activeState == StateMachineName.HeavyAttack
                 ? AttackType.HeavyAttackAlt
                 : AttackType.HeavyAttack;
+
+        private static AttackType ResolveLeftHandAttack(StateMachineName activeState) =>
+            activeState == StateMachineName.LightAttack
+                ? AttackType.LightAttackAlt
+                : AttackType.LightAttack;
 
         private AttackType ResolveLightAttack(
             bool isSprinting,

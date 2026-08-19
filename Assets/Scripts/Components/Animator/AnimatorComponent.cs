@@ -45,12 +45,6 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int ParryTrigger = Animator.StringToHash("Parry");
         private static readonly int LeftLightAttackTrigger = Animator.StringToHash("LeftLightAttack");
         private static readonly int LeftLightAttackAltTrigger = Animator.StringToHash("LeftLightAttackAlt");
-        private static readonly int LeftHeavyAttackTrigger = Animator.StringToHash("LeftHeavyAttack");
-        private static readonly int LeftHeavyAttackAltTrigger = Animator.StringToHash("LeftChargedHeavyAttack");
-        private static readonly int LeftRollAttackTrigger = Animator.StringToHash("LeftRollAttack");
-        private static readonly int LeftBackStepAttackTrigger = Animator.StringToHash("LeftBackStepAttack");
-        private static readonly int LeftRunAttackTrigger = Animator.StringToHash("LeftRunAttack");
-        private static readonly int LeftSpecialAttackTrigger = Animator.StringToHash("LeftSpecialAttack");
         private static readonly int WeaponBlockParameter = Animator.StringToHash("WeaponBlock");
         private static readonly int ShieldBlockParameter = Animator.StringToHash("ShieldBlock");
         private static readonly int EquipmentSwapOutTrigger = Animator.StringToHash("EquipmentSwapOut");
@@ -219,12 +213,6 @@ namespace SoulsLike.Entities.Character.Components
             {
                 AttackType.LightAttack => LeftLightAttackTrigger,
                 AttackType.LightAttackAlt => LeftLightAttackAltTrigger,
-                AttackType.RollingLightAttack => LeftRollAttackTrigger,
-                AttackType.SprintingAttack => LeftRunAttackTrigger,
-                AttackType.HeavyAttack => LeftHeavyAttackTrigger,
-                AttackType.HeavyAttackAlt => LeftHeavyAttackAltTrigger,
-                AttackType.SpecialAttack => LeftSpecialAttackTrigger,
-                AttackType.BackStepAttack => LeftBackStepAttackTrigger,
                 _ => throw new ArgumentOutOfRangeException(nameof(attackType), attackType, null)
             };
         }
