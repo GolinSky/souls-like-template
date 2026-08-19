@@ -1,10 +1,12 @@
+using System;
 using UnityEngine;
 
 namespace SoulsLike.Items
 {
-    [CreateAssetMenu(fileName = "ShieldDefinition", menuName = "Data/Items/Shield")]
-    public sealed class ShieldDefinition : ItemDefinition
+    [Serializable]
+    public sealed class ShieldDefinition
     {
+        [SerializeField] private ItemId itemId;
         [SerializeField] private GameObject equippedPrefab;
         [SerializeField, Min(0f)] private float physicalGuard;
         [SerializeField, Min(0f)] private float magicGuard;
@@ -14,10 +16,10 @@ namespace SoulsLike.Items
         [SerializeField, Min(0f)] private float guardBoost;
         [SerializeField] private AttributeRequirements requirements;
 
-        public override ItemType ItemType => ItemType.Shield;
+        public ItemId ItemId => itemId;
         public GameObject EquippedPrefab => equippedPrefab;
 
-        public override ItemStatSnapshot Stats => new ItemStatSnapshot(
+        public ItemStatSnapshot Stats => new(
             0, 0, 0, 0, 0, 0,
             physicalGuard,
             magicGuard,
@@ -29,5 +31,13 @@ namespace SoulsLike.Items
             default,
             string.Empty,
             0);
+
+        public void ValidateDefinition()
+        {
+            if (itemId == ItemId.None)
+            {
+                throw new InvalidOperationException("Shield definition requires a non-None ItemId.");
+            }
+        }
     }
 }

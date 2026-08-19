@@ -20,7 +20,7 @@ namespace SoulsLike.Ui.Equipment
     {
         private readonly EquipmentComponent _equipment;
         private readonly InventoryComponent _inventory;
-        private readonly ItemDatabase _itemDatabase;
+        private readonly ItemCatalog _itemCatalog;
         private readonly Character _character;
         private readonly IInputService _inputService;
 
@@ -34,14 +34,14 @@ namespace SoulsLike.Ui.Equipment
             IUiService uiService,
             EquipmentComponent equipment,
             InventoryComponent inventory,
-            ItemDatabase itemDatabase,
+            ItemCatalog itemCatalog,
             Character character,
             IInputService inputService)
             : base(uiService)
         {
             _equipment = equipment;
             _inventory = inventory;
-            _itemDatabase = itemDatabase;
+            _itemCatalog = itemCatalog;
             _character = character;
             _inputService = inputService;
         }
@@ -112,13 +112,17 @@ namespace SoulsLike.Ui.Equipment
             InventoryEntry candidateEntry = _inventory.GetRequiredEntry(entryId);
             InventoryItemViewData candidate = BuildViewData(candidateEntry);
             EquippedItemContext current = _equipment.ResolveSlot(slotId);
-            int currentAttack = current == null ? 0 : current.Definition.Stats.PhysicalAttack;
-            float currentWeight = current == null ? 0f : current.Definition.Weight;
+            int currentAttack = current == null
+                ? 0
+                : _itemCatalog.GetStats(current.ItemId).PhysicalAttack;
+            float currentWeight = current == null
+                ? 0f
+                : _itemCatalog.GetItem(current.ItemId).Weight;
             _view.DisplaySlot(slotId, candidate, _character.Attributes);
             _view.UpdateComparison(
                 currentAttack,
-                candidate.Definition.Stats.PhysicalAttack,
-                candidate.Definition.Weight - currentWeight);
+                candidate.Stats.PhysicalAttack,
+                candidate.Weight - currentWeight);
         }
 
         public void SubmitCandidate(InventoryEntryId entryId)
@@ -178,14 +182,25 @@ namespace SoulsLike.Ui.Equipment
             EquipmentLoadout loadout = _equipment.BuildLoadout();
             float equipWeight = CalculateEquipmentWeight();
             float maxEquipWeight = 45f + _character.Attributes.Endurance * 1.5f;
-            _view.DisplayCharacterStatus(_character, loadout, equipWeight, maxEquipWeight);
+            int rightAttack = loadout.AssignedRight == null
+                ? 0
+                : _itemCatalog.GetStats(loadout.AssignedRight.ItemId).PhysicalAttack;
+            int leftAttack = loadout.AssignedLeft == null
+                ? 0
+                : _itemCatalog.GetStats(loadout.AssignedLeft.ItemId).PhysicalAttack;
+            _view.DisplayCharacterStatus(
+                _character,
+                equipWeight,
+                maxEquipWeight,
+                rightAttack,
+                leftAttack);
         }
 
         private InventoryItemViewData BuildViewData(InventoryEntry entry)
         {
             return InventoryItemViewData.Create(
                 entry,
-                _itemDatabase.GetRequired(entry.ItemId),
+                _itemCatalog,
                 _equipment,
                 _character.Attributes);
         }
@@ -203,7 +218,7 @@ namespace SoulsLike.Ui.Equipment
                 }
 
                 InventoryEntry entry = _inventory.GetRequiredEntry(entryId.Value);
-                total += _itemDatabase.GetRequired(entry.ItemId).Weight;
+                total += _itemCatalog.GetItem(entry.ItemId).Weight;
             }
 
             return total;

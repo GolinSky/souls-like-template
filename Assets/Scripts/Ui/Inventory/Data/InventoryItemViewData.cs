@@ -3,57 +3,67 @@ using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Items;
+using UnityEngine;
 
 namespace SoulsLike.Ui.Inventory.Data
 {
     public sealed class InventoryItemViewData
     {
         public InventoryEntryId EntryId { get; }
-        public ItemDefinition Definition { get; }
+        public ItemId ItemId { get; }
+        public ItemType ItemType { get; }
+        public string DisplayName { get; }
+        public string Description { get; }
+        public string LoreDescription { get; }
+        public Sprite Icon { get; }
+        public float Weight { get; }
+        public bool IsStackable { get; }
+        public ItemStatSnapshot Stats { get; }
+        public Sprite SkillIcon { get; }
         public int Quantity { get; }
         public bool IsEquipped { get; }
         public string EquipmentLabel { get; }
         public bool MeetsRequirements { get; }
 
-        public InventoryItemViewData(
+        private InventoryItemViewData(
             InventoryEntry entry,
             ItemDefinition definition,
+            ItemStatSnapshot stats,
+            Sprite skillIcon,
             bool isEquipped,
             string equipmentLabel,
             bool meetsRequirements)
         {
-            if (entry == null)
-            {
-                throw new ArgumentNullException(nameof(entry));
-            }
-
             EntryId = entry.EntryId;
-            Definition = definition ?? throw new ArgumentNullException(nameof(definition));
+            ItemId = entry.ItemId;
+            ItemType = definition.ItemType;
+            DisplayName = definition.DisplayName;
+            Description = definition.Description;
+            LoreDescription = definition.LoreDescription;
+            Icon = definition.Icon;
+            Weight = definition.Weight;
+            IsStackable = definition.IsStackable;
+            Stats = stats;
+            SkillIcon = skillIcon;
             Quantity = entry.Quantity;
             IsEquipped = isEquipped;
-            EquipmentLabel = equipmentLabel ?? throw new ArgumentNullException(nameof(equipmentLabel));
+            EquipmentLabel = equipmentLabel;
             MeetsRequirements = meetsRequirements;
         }
 
         public static InventoryItemViewData Create(
             InventoryEntry entry,
-            ItemDefinition definition,
+            ItemCatalog itemCatalog,
             EquipmentComponent equipment,
             CharacterAttributeStats attributes)
         {
-            if (equipment == null)
-            {
-                throw new ArgumentNullException(nameof(equipment));
-            }
-
-            if (definition == null)
-            {
-                throw new ArgumentNullException(nameof(definition));
-            }
-
-            bool equipped = equipment.TryGetFirstAssignedSlot(entry.EntryId, out EquipmentSlotId slotId);
+            ItemDefinition definition = itemCatalog.GetItem(entry.ItemId);
+            ItemStatSnapshot stats = itemCatalog.GetStats(entry.ItemId);
+            bool equipped = equipment.TryGetFirstAssignedSlot(
+                entry.EntryId,
+                out EquipmentSlotId slotId);
             string label = equipped ? GetShortSlotLabel(slotId) : string.Empty;
-            AttributeRequirements requirements = definition.Stats.Requirements;
+            AttributeRequirements requirements = stats.Requirements;
             bool meetsRequirements = attributes.Strength >= requirements.Strength
                 && attributes.Dexterity >= requirements.Dexterity
                 && attributes.Intelligence >= requirements.Intelligence
@@ -62,12 +72,14 @@ namespace SoulsLike.Ui.Inventory.Data
             return new InventoryItemViewData(
                 entry,
                 definition,
+                stats,
+                itemCatalog.GetSkillIcon(entry.ItemId),
                 equipped,
                 label,
                 meetsRequirements);
         }
 
-        public InventoryPrimaryCategory PrimaryCategory => Definition.ItemType switch
+        public InventoryPrimaryCategory PrimaryCategory => ItemType switch
         {
             ItemType.Weapon or ItemType.Shield or ItemType.Ammunition
                 => InventoryPrimaryCategory.Weapons,
@@ -76,10 +88,7 @@ namespace SoulsLike.Ui.Inventory.Data
             ItemType.Consumable or ItemType.Material or ItemType.Currency
                 => InventoryPrimaryCategory.Consumables,
             ItemType.KeyItem => InventoryPrimaryCategory.KeyItems,
-            _ => throw new ArgumentOutOfRangeException(
-                nameof(Definition.ItemType),
-                Definition.ItemType,
-                null)
+            _ => throw new ArgumentOutOfRangeException(nameof(ItemType), ItemType, null)
         };
 
         private static string GetShortSlotLabel(EquipmentSlotId slotId)

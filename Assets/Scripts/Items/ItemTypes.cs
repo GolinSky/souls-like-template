@@ -5,7 +5,7 @@ namespace SoulsLike.Items
     public enum ItemId
     {
         None = 0,
-        LongSword = 1,
+        GreatSword = 1,
         WoodenShield = 2,
         CrimsonFlask = 3,
         LightningGrease = 4,

@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using System;
-using System.Collections.Generic;
 using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Equipment;
@@ -22,12 +21,22 @@ namespace SoulsLike.Editor
     {
         private const string ITEM_FOLDER = "Assets/Settings/Items";
         private const string ITEM_DATABASE_PATH = ITEM_FOLDER + "/ItemDatabase.asset";
+        private const string WEAPON_DATABASE_PATH = ITEM_FOLDER + "/WeaponDatabase.asset";
+        private const string SHIELD_DATABASE_PATH = ITEM_FOLDER + "/ShieldDatabase.asset";
+        private const string CONSUMABLE_DATABASE_PATH = ITEM_FOLDER + "/ConsumableDatabase.asset";
         private const string INVENTORY_DATA_PATH = "Assets/Settings/Data/InventoryData.asset";
         private const string ASSET_MAPPING_PATH = "Assets/Settings/Data/AssetMappingData.asset";
         private const string CHARACTER_PREFAB_PATH = "Assets/Prefabs/Character/Character.prefab";
         private const string INVENTORY_UI_PREFAB_PATH = "Assets/Prefabs/Ui/Inventory/InventoryUi.prefab";
         private const string INVENTORY_SLOT_PREFAB_PATH = "Assets/Prefabs/Ui/Inventory/InventorySlot.prefab";
         private const string EQUIPMENT_UI_PREFAB_PATH = "Assets/Prefabs/Ui/Equipment/EquipmentUi.prefab";
+        private const string SWORD_PREFAB_PATH = "Assets/Prefabs/Swords/LongSword.prefab";
+        private const string SHIELD_PREFAB_PATH = "Assets/Prefabs/Shields/WoodenShield.prefab";
+        private const string SWORD_ICON_PATH = "Assets/Art/Textures/ItemIcons/GreatSwordIcon.png";
+        private const string SHIELD_ICON_PATH = "Assets/Art/Textures/ItemIcons/ShieldIcon.png";
+        private const string FLASK_ICON_PATH = "Assets/Art/Textures/ItemIcons/CrimsonFlaskIcon.png";
+        private const string GREASE_ICON_PATH = "Assets/Art/Textures/ItemIcons/LightningGreaseIcon.png";
+        private const string RUNE_ICON_PATH = "Assets/Art/Textures/ItemIcons/GoldenRuneSmallIcon.png";
         private const string NO_WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/NoWeaponAnimator.controller";
         private const string WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterGreatSwordAnimator.controller";
         private const string LEFT_WEAPON_CONTROLLER_PATH =
@@ -42,52 +51,70 @@ namespace SoulsLike.Editor
 
             AnimationProfile animationProfile = CreateAnimationProfile();
             CombatProfile combatProfile = CreateCombatProfile();
-            WeaponDefinition sword = CreateSword(animationProfile, combatProfile);
-            ShieldDefinition shield = CreateShield();
-            ConsumableDefinition flask = CreateConsumable(
-                "CrimsonFlask",
-                ItemId.CrimsonFlask,
-                "Crimson Flask",
-                "Restores HP.",
-                ItemUseType.Heal,
-                60f,
-                0f,
-                10);
-            ConsumableDefinition grease = CreateConsumable(
-                "LightningGrease",
-                ItemId.LightningGrease,
-                "Lightning Grease",
-                "Temporarily coats the active weapon in lightning.",
-                ItemUseType.InfuseActiveWeapon,
-                40f,
-                60f,
-                10);
-            ConsumableDefinition rune = CreateConsumable(
-                "GoldenRuneSmall",
-                ItemId.GoldenRuneSmall,
-                "Golden Rune [1]",
-                "Grants a small number of runes.",
-                ItemUseType.GrantCurrency,
-                200f,
-                0f,
-                99);
-
-            ItemDatabase database = LoadOrCreate<ItemDatabase>(ITEM_DATABASE_PATH);
-            SetObjectArray(
-                new SerializedObject(database),
-                "_items",
-                new UnityEngine.Object[] { sword, shield, flask, grease, rune });
-            database.ValidateDatabase();
+            ItemDatabase itemDatabase = LoadOrCreate<ItemDatabase>(ITEM_DATABASE_PATH);
+            WeaponDatabase weaponDatabase = LoadOrCreate<WeaponDatabase>(WEAPON_DATABASE_PATH);
+            ShieldDatabase shieldDatabase = LoadOrCreate<ShieldDatabase>(SHIELD_DATABASE_PATH);
+            ConsumableDatabase consumableDatabase =
+                LoadOrCreate<ConsumableDatabase>(CONSUMABLE_DATABASE_PATH);
+            ConfigureItemDatabase(itemDatabase);
+            ConfigureWeaponDatabase(weaponDatabase, animationProfile, combatProfile);
+            ConfigureShieldDatabase(shieldDatabase);
+            ConfigureConsumableDatabase(consumableDatabase);
+            itemDatabase.ValidateDatabase();
+            weaponDatabase.ValidateDatabase();
+            shieldDatabase.ValidateDatabase();
+            consumableDatabase.ValidateDatabase();
 
             ConfigureInitialInventory();
             ConfigureCharacterPrefab();
             ConfigureEquipmentUiPrefab();
-            ConfigureAddressables(database);
+            ConfigureAddressables(
+                itemDatabase,
+                weaponDatabase,
+                shieldDatabase,
+                consumableDatabase);
 
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             BuildAddressableContent();
             Debug.Log("Inventory and Equipment bootstrap completed successfully.");
+        }
+
+        [MenuItem("Tools/SoulsLike/Migrate Item Databases")]
+        public static void MigrateItemDatabases()
+        {
+            EnsureFolder(ITEM_FOLDER);
+
+            AnimationProfile animationProfile = LoadRequiredAsset<AnimationProfile>(
+                ITEM_FOLDER + "/StraightSwordAnimationProfile.asset");
+            CombatProfile combatProfile = LoadRequiredAsset<CombatProfile>(
+                ITEM_FOLDER + "/StraightSwordCombatProfile.asset");
+            ItemDatabase itemDatabase = LoadOrCreate<ItemDatabase>(ITEM_DATABASE_PATH);
+            WeaponDatabase weaponDatabase = LoadOrCreate<WeaponDatabase>(WEAPON_DATABASE_PATH);
+            ShieldDatabase shieldDatabase = LoadOrCreate<ShieldDatabase>(SHIELD_DATABASE_PATH);
+            ConsumableDatabase consumableDatabase =
+                LoadOrCreate<ConsumableDatabase>(CONSUMABLE_DATABASE_PATH);
+
+            ConfigureItemDatabase(itemDatabase);
+            ConfigureWeaponDatabase(weaponDatabase, animationProfile, combatProfile);
+            ConfigureShieldDatabase(shieldDatabase);
+            ConfigureConsumableDatabase(consumableDatabase);
+            new ItemCatalog(
+                    itemDatabase,
+                    weaponDatabase,
+                    shieldDatabase,
+                    consumableDatabase)
+                .ValidateCatalog();
+            ConfigureAddressables(
+                itemDatabase,
+                weaponDatabase,
+                shieldDatabase,
+                consumableDatabase);
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            BuildAddressableContent();
+            Debug.Log("Item database migration completed successfully.");
         }
 
         private static AnimationProfile CreateAnimationProfile()
@@ -119,86 +146,142 @@ namespace SoulsLike.Editor
             return profile;
         }
 
-        private static WeaponDefinition CreateSword(
-            AnimationProfile animationProfile,
-            CombatProfile combatProfile)
+        private static void ConfigureItemDatabase(ItemDatabase database)
         {
-            WeaponDefinition definition = LoadOrCreate<WeaponDefinition>(
-                ITEM_FOLDER + "/LongSword.asset");
-            var serialized = new SerializedObject(definition);
-            SetCommon(
-                serialized,
-                ItemId.LongSword,
+            var serialized = new SerializedObject(database);
+            SerializedProperty items = RequireProperty(serialized, "items");
+            items.arraySize = 5;
+            SetCommonItem(
+                items.GetArrayElementAtIndex(0),
+                ItemId.GreatSword,
+                ItemType.Weapon,
                 "Long Sword",
                 "A dependable straight sword suited to one- or two-handed combat.",
                 "A plain sword carried by soldiers across the realm.",
+                SWORD_ICON_PATH,
                 3.5f,
                 1,
                 EquipmentGroup.Armament);
-            SetObject(serialized, "_animationProfile", animationProfile, false);
-            SetObject(serialized, "_combatProfile", combatProfile, false);
-            SetBool(serialized, "_canTwoHand", true, false);
-            SetInt(serialized, "_physicalAttack", 110, false);
-            SetInt(serialized, "_critical", 100, false);
-            SetInt(serialized, "_requirements.Strength", 10, false);
-            SetInt(serialized, "_requirements.Dexterity", 10, false);
-            SetInt(serialized, "_scaling.Strength", (int)SoulsLike.Items.ScalingGrade.D, false);
-            SetInt(serialized, "_scaling.Dexterity", (int)SoulsLike.Items.ScalingGrade.D, false);
-            SetString(serialized, "_skillName", "Square Off", false);
-            SetInt(serialized, "_skillFocusCost", 8);
-            return definition;
-        }
-
-        private static ShieldDefinition CreateShield()
-        {
-            ShieldDefinition definition = LoadOrCreate<ShieldDefinition>(
-                ITEM_FOLDER + "/WoodenShield.asset");
-            var serialized = new SerializedObject(definition);
-            SetCommon(
-                serialized,
+            SetCommonItem(
+                items.GetArrayElementAtIndex(1),
                 ItemId.WoodenShield,
+                ItemType.Shield,
                 "Wooden Shield",
                 "A light wooden shield with modest physical protection.",
                 "Common protection for travelers and militia.",
+                SHIELD_ICON_PATH,
                 2f,
                 1,
                 EquipmentGroup.Armament);
-            SetFloat(serialized, "_physicalGuard", 60f, false);
-            SetFloat(serialized, "_magicGuard", 30f, false);
-            SetFloat(serialized, "_fireGuard", 20f, false);
-            SetFloat(serialized, "_lightningGuard", 35f, false);
-            SetFloat(serialized, "_holyGuard", 30f, false);
-            SetFloat(serialized, "_guardBoost", 40f, false);
-            SetInt(serialized, "_requirements.Strength", 8);
-            return definition;
+            SetCommonItem(
+                items.GetArrayElementAtIndex(2),
+                ItemId.CrimsonFlask,
+                ItemType.Consumable,
+                "Crimson Flask",
+                "Restores HP.",
+                "Restores HP.",
+                FLASK_ICON_PATH,
+                0f,
+                10,
+                EquipmentGroup.QuickItem);
+            SetCommonItem(
+                items.GetArrayElementAtIndex(3),
+                ItemId.LightningGrease,
+                ItemType.Consumable,
+                "Lightning Grease",
+                "Temporarily coats the active weapon in lightning.",
+                "Temporarily coats the active weapon in lightning.",
+                GREASE_ICON_PATH,
+                0f,
+                10,
+                EquipmentGroup.QuickItem);
+            SetCommonItem(
+                items.GetArrayElementAtIndex(4),
+                ItemId.GoldenRuneSmall,
+                ItemType.Consumable,
+                "Golden Rune [1]",
+                "Grants a small number of runes.",
+                "Grants a small number of runes.",
+                RUNE_ICON_PATH,
+                0f,
+                99,
+                EquipmentGroup.QuickItem);
+            Apply(serialized, true);
         }
 
-        private static ConsumableDefinition CreateConsumable(
-            string assetName,
-            ItemId itemId,
-            string displayName,
-            string description,
-            ItemUseType useType,
-            float amount,
-            float duration,
-            int maxStack)
+        private static void ConfigureWeaponDatabase(
+            WeaponDatabase database,
+            AnimationProfile animationProfile,
+            CombatProfile combatProfile)
         {
-            ConsumableDefinition definition = LoadOrCreate<ConsumableDefinition>(
-                $"{ITEM_FOLDER}/{assetName}.asset");
-            var serialized = new SerializedObject(definition);
-            SetCommon(
-                serialized,
-                itemId,
-                displayName,
-                description,
-                description,
-                0f,
-                maxStack,
-                EquipmentGroup.QuickItem);
-            SetInt(serialized, "_useType", (int)useType, false);
-            SetFloat(serialized, "_effectAmount", amount, false);
-            SetFloat(serialized, "_durationSeconds", duration);
-            return definition;
+            var serialized = new SerializedObject(database);
+            SerializedProperty items = RequireProperty(serialized, "items");
+            items.arraySize = 1;
+            SerializedProperty sword = items.GetArrayElementAtIndex(0);
+            SetRelativeInt(sword, "itemId", (int)ItemId.GreatSword);
+            SetRelativeObject(sword, "animationProfile", animationProfile);
+            SetRelativeObject(sword, "combatProfile", combatProfile);
+            SetRelativeObject(
+                sword,
+                "equippedPrefab",
+                LoadRequiredAsset<GameObject>(SWORD_PREFAB_PATH));
+            SetRelativeBool(sword, "canTwoHand", true);
+            SetRelativeInt(sword, "physicalAttack", 110);
+            SetRelativeInt(sword, "critical", 100);
+            SetRelativeInt(sword, "requirements.Strength", 10);
+            SetRelativeInt(sword, "requirements.Dexterity", 10);
+            SetRelativeInt(sword, "scaling.Strength", (int)ScalingGrade.D);
+            SetRelativeInt(sword, "scaling.Dexterity", (int)ScalingGrade.D);
+            SetRelativeString(sword, "skillName", "Square Off");
+            SetRelativeInt(sword, "skillFocusCost", 8);
+            Apply(serialized, true);
+        }
+
+        private static void ConfigureShieldDatabase(ShieldDatabase database)
+        {
+            var serialized = new SerializedObject(database);
+            SerializedProperty items = RequireProperty(serialized, "items");
+            items.arraySize = 1;
+            SerializedProperty shield = items.GetArrayElementAtIndex(0);
+            SetRelativeInt(shield, "itemId", (int)ItemId.WoodenShield);
+            SetRelativeObject(
+                shield,
+                "equippedPrefab",
+                LoadRequiredAsset<GameObject>(SHIELD_PREFAB_PATH));
+            SetRelativeFloat(shield, "physicalGuard", 60f);
+            SetRelativeFloat(shield, "magicGuard", 30f);
+            SetRelativeFloat(shield, "fireGuard", 20f);
+            SetRelativeFloat(shield, "lightningGuard", 35f);
+            SetRelativeFloat(shield, "holyGuard", 30f);
+            SetRelativeFloat(shield, "guardBoost", 40f);
+            SetRelativeInt(shield, "requirements.Strength", 8);
+            Apply(serialized, true);
+        }
+
+        private static void ConfigureConsumableDatabase(ConsumableDatabase database)
+        {
+            var serialized = new SerializedObject(database);
+            SerializedProperty items = RequireProperty(serialized, "items");
+            items.arraySize = 3;
+            SetConsumable(
+                items.GetArrayElementAtIndex(0),
+                ItemId.CrimsonFlask,
+                ItemUseType.Heal,
+                60f,
+                0f);
+            SetConsumable(
+                items.GetArrayElementAtIndex(1),
+                ItemId.LightningGrease,
+                ItemUseType.InfuseActiveWeapon,
+                40f,
+                60f);
+            SetConsumable(
+                items.GetArrayElementAtIndex(2),
+                ItemId.GoldenRuneSmall,
+                ItemUseType.GrantCurrency,
+                200f,
+                0f);
+            Apply(serialized, true);
         }
 
         private static void ConfigureInitialInventory()
@@ -206,9 +289,9 @@ namespace SoulsLike.Editor
             InventoryData inventoryData = AssetDatabase.LoadAssetAtPath<InventoryData>(INVENTORY_DATA_PATH);
             RequireAsset(inventoryData, INVENTORY_DATA_PATH);
             var serialized = new SerializedObject(inventoryData);
-            SerializedProperty entries = RequireProperty(serialized, "_initialEntries");
+            SerializedProperty entries = RequireProperty(serialized, "initialEntries");
             entries.arraySize = 5;
-            SetInitialEntry(entries.GetArrayElementAtIndex(0), ItemId.LongSword, 1);
+            SetInitialEntry(entries.GetArrayElementAtIndex(0), ItemId.GreatSword, 1);
             SetInitialEntry(entries.GetArrayElementAtIndex(1), ItemId.WoodenShield, 1);
             SetInitialEntry(entries.GetArrayElementAtIndex(2), ItemId.CrimsonFlask, 5);
             SetInitialEntry(entries.GetArrayElementAtIndex(3), ItemId.LightningGrease, 3);
@@ -325,7 +408,11 @@ namespace SoulsLike.Editor
             }
         }
 
-        private static void ConfigureAddressables(ItemDatabase database)
+        private static void ConfigureAddressables(
+            ItemDatabase itemDatabase,
+            WeaponDatabase weaponDatabase,
+            ShieldDatabase shieldDatabase,
+            ConsumableDatabase consumableDatabase)
         {
             AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
             if (settings == null)
@@ -334,15 +421,36 @@ namespace SoulsLike.Editor
             }
 
             AddAddressable(settings, "Data", ITEM_DATABASE_PATH, nameof(ItemDatabase));
+            AddAddressable(settings, "Data", WEAPON_DATABASE_PATH, nameof(WeaponDatabase));
+            AddAddressable(settings, "Data", SHIELD_DATABASE_PATH, nameof(ShieldDatabase));
+            AddAddressable(settings, "Data", CONSUMABLE_DATABASE_PATH, nameof(ConsumableDatabase));
             AddAddressable(settings, "Ui", INVENTORY_UI_PREFAB_PATH, nameof(InventoryUi));
             AddAddressable(settings, "Ui", EQUIPMENT_UI_PREFAB_PATH, nameof(EquipmentUi));
 
             AssetMappingData mapping = AssetDatabase.LoadAssetAtPath<AssetMappingData>(ASSET_MAPPING_PATH);
             RequireAsset(mapping, ASSET_MAPPING_PATH);
             SetMapping(mapping, "scriptableObjectMappings", nameof(ItemDatabase), ITEM_DATABASE_PATH);
+            SetMapping(
+                mapping,
+                "scriptableObjectMappings",
+                nameof(WeaponDatabase),
+                WEAPON_DATABASE_PATH);
+            SetMapping(
+                mapping,
+                "scriptableObjectMappings",
+                nameof(ShieldDatabase),
+                SHIELD_DATABASE_PATH);
+            SetMapping(
+                mapping,
+                "scriptableObjectMappings",
+                nameof(ConsumableDatabase),
+                CONSUMABLE_DATABASE_PATH);
             SetMapping(mapping, "uiMappings", nameof(InventoryUi), INVENTORY_UI_PREFAB_PATH);
             SetMapping(mapping, "uiMappings", nameof(EquipmentUi), EQUIPMENT_UI_PREFAB_PATH);
-            EditorUtility.SetDirty(database);
+            EditorUtility.SetDirty(itemDatabase);
+            EditorUtility.SetDirty(weaponDatabase);
+            EditorUtility.SetDirty(shieldDatabase);
+            EditorUtility.SetDirty(consumableDatabase);
             EditorUtility.SetDirty(mapping);
             EditorUtility.SetDirty(settings);
         }
@@ -451,31 +559,111 @@ namespace SoulsLike.Editor
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void SetCommon(
-            SerializedObject serialized,
+        private static void SetCommonItem(
+            SerializedProperty property,
             ItemId itemId,
+            ItemType itemType,
             string displayName,
             string description,
             string lore,
+            string iconPath,
             float weight,
             int maxStack,
             params EquipmentGroup[] groups)
         {
-            SetInt(serialized, "_itemId", (int)itemId, false);
-            SetString(serialized, "_displayName", displayName, false);
-            SetString(serialized, "_description", description, false);
-            SetString(serialized, "_loreDescription", lore, false);
-            SetFloat(serialized, "_weight", weight, false);
-            SetInt(serialized, "_maxStack", maxStack, false);
-            SerializedProperty equipmentGroups = RequireProperty(serialized, "_equipmentGroups");
+            SetRelativeInt(property, "itemId", (int)itemId);
+            SetRelativeInt(property, "itemType", (int)itemType);
+            SetRelativeString(property, "displayName", displayName);
+            SetRelativeString(property, "description", description);
+            SetRelativeString(property, "loreDescription", lore);
+            SetRelativeObject(property, "icon", LoadRequiredAsset<Sprite>(iconPath));
+            SetRelativeFloat(property, "weight", weight);
+            SetRelativeInt(property, "maxStack", maxStack);
+            SerializedProperty equipmentGroups = RequireRelative(property, "equipmentGroups");
             equipmentGroups.arraySize = groups.Length;
             for (int index = 0; index < groups.Length; index++)
             {
                 equipmentGroups.GetArrayElementAtIndex(index).enumValueIndex = (int)groups[index];
             }
+        }
 
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(serialized.targetObject);
+        private static void SetConsumable(
+            SerializedProperty property,
+            ItemId itemId,
+            ItemUseType useType,
+            float effectAmount,
+            float durationSeconds)
+        {
+            SetRelativeInt(property, "itemId", (int)itemId);
+            SetRelativeInt(property, "useType", (int)useType);
+            SetRelativeFloat(property, "effectAmount", effectAmount);
+            SetRelativeFloat(property, "durationSeconds", durationSeconds);
+        }
+
+        private static void SetRelativeObject(
+            SerializedProperty property,
+            string propertyName,
+            UnityEngine.Object value)
+        {
+            RequireRelative(property, propertyName).objectReferenceValue = value;
+        }
+
+        private static void SetRelativeString(
+            SerializedProperty property,
+            string propertyName,
+            string value)
+        {
+            RequireRelative(property, propertyName).stringValue = value;
+        }
+
+        private static void SetRelativeFloat(
+            SerializedProperty property,
+            string propertyName,
+            float value)
+        {
+            RequireRelative(property, propertyName).floatValue = value;
+        }
+
+        private static void SetRelativeInt(
+            SerializedProperty property,
+            string propertyName,
+            int value)
+        {
+            SerializedProperty target = RequireRelative(property, propertyName);
+            if (target.propertyType == SerializedPropertyType.Enum)
+            {
+                target.enumValueIndex = value;
+            }
+            else
+            {
+                target.intValue = value;
+            }
+        }
+
+        private static void SetRelativeBool(
+            SerializedProperty property,
+            string propertyName,
+            bool value)
+        {
+            RequireRelative(property, propertyName).boolValue = value;
+        }
+
+        private static SerializedProperty RequireRelative(
+            SerializedProperty property,
+            string propertyPath)
+        {
+            SerializedProperty current = property;
+            foreach (string segment in propertyPath.Split('.'))
+            {
+                current = current.FindPropertyRelative(segment);
+                if (current == null)
+                {
+                    throw new InvalidOperationException(
+                        $"Serialized row has no property '{propertyPath}'.");
+                }
+            }
+
+            return current;
         }
 
         private static void SetInitialEntry(
@@ -555,22 +743,6 @@ namespace SoulsLike.Editor
             property.objectReferenceValue = image;
         }
 
-        private static void SetObjectArray(
-            SerializedObject serialized,
-            string propertyName,
-            IReadOnlyList<UnityEngine.Object> values)
-        {
-            SerializedProperty property = RequireProperty(serialized, propertyName);
-            property.arraySize = values.Count;
-            for (int index = 0; index < values.Count; index++)
-            {
-                property.GetArrayElementAtIndex(index).objectReferenceValue = values[index];
-            }
-
-            serialized.ApplyModifiedPropertiesWithoutUndo();
-            EditorUtility.SetDirty(serialized.targetObject);
-        }
-
         private static void SetObject(
             SerializedObject serialized,
             string propertyName,
@@ -620,16 +792,6 @@ namespace SoulsLike.Editor
             Apply(serialized, apply);
         }
 
-        private static void SetBool(
-            SerializedObject serialized,
-            string propertyName,
-            bool value,
-            bool apply = true)
-        {
-            RequireProperty(serialized, propertyName).boolValue = value;
-            Apply(serialized, apply);
-        }
-
         private static void Apply(SerializedObject serialized, bool apply)
         {
             if (apply)
@@ -664,6 +826,14 @@ namespace SoulsLike.Editor
 
             asset = ScriptableObject.CreateInstance<T>();
             AssetDatabase.CreateAsset(asset, path);
+            return asset;
+        }
+
+        private static T LoadRequiredAsset<T>(string path)
+            where T : UnityEngine.Object
+        {
+            T asset = AssetDatabase.LoadAssetAtPath<T>(path);
+            RequireAsset(asset, path);
             return asset;
         }
 

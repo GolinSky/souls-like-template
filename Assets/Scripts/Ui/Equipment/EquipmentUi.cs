@@ -120,12 +120,11 @@ namespace SoulsLike.Ui.Equipment
                 return;
             }
 
-            ItemDefinition definition = item.Definition;
-            ItemStatSnapshot stats = definition.Stats;
-            inspectorItemIcon.sprite = definition.Icon;
-            inspectorItemIcon.enabled = definition.Icon != null;
-            inspectorItemName.text = definition.DisplayName;
-            inspectorItemCategory.text = definition.ItemType.ToString();
+            ItemStatSnapshot stats = item.Stats;
+            inspectorItemIcon.sprite = item.Icon;
+            inspectorItemIcon.enabled = item.Icon != null;
+            inspectorItemName.text = item.DisplayName;
+            inspectorItemCategory.text = item.ItemType.ToString();
             inspectorSkillName.text = string.IsNullOrWhiteSpace(stats.SkillName)
                 ? "-"
                 : stats.SkillName;
@@ -140,14 +139,15 @@ namespace SoulsLike.Ui.Equipment
             SetRequirement(inspectorReqArc, stats.Requirements.Arcane, attributes.Arcane);
             inspectorScalingText.text = $"STR {FormatScaling(stats.Scaling.Strength)}  "
                 + $"DEX {FormatScaling(stats.Scaling.Dexterity)}";
-            inspectorWeightText.text = $"Weight {definition.Weight:F1}";
+            inspectorWeightText.text = $"Weight {item.Weight:F1}";
         }
 
         public void DisplayCharacterStatus(
             Character character,
-            EquipmentLoadout loadout,
             float equipWeight,
-            float maxEquipWeight)
+            float maxEquipWeight,
+            int rightAttack,
+            int leftAttack)
         {
             vitalsHpText.text = $"HP {character.HealthStats.CurrentHealth:F0} / {character.HealthStats.MaxHealth:F0}";
             vitalsFpText.text = $"FP {character.HealthStats.CurrentFocus:F0} / {character.HealthStats.MaxFocus:F0}";
@@ -162,8 +162,8 @@ namespace SoulsLike.Ui.Equipment
                 <= 1f => "Heavy Load",
                 _ => "Overencumbered"
             };
-            attackPowerRightText.text = $"R-Armament {GetAttack(loadout.AssignedRight)}";
-            attackPowerLeftText.text = $"L-Armament {GetAttack(loadout.AssignedLeft)}";
+            attackPowerRightText.text = $"R-Armament {rightAttack}";
+            attackPowerLeftText.text = $"L-Armament {leftAttack}";
             defenseNegationText.text = "Defense Negation -";
             resistancesText.text = "Resistances -";
             playerSummaryText.text = $"Runes {character.HeldCurrency:N0}";
@@ -375,11 +375,6 @@ namespace SoulsLike.Ui.Equipment
                 throw new InvalidOperationException(
                     $"{nameof(EquipmentUi)} '{name}' has an invalid equipment-slot topology.");
             }
-        }
-
-        private static int GetAttack(EquippedItemContext context)
-        {
-            return context == null ? 0 : context.Definition.Stats.PhysicalAttack;
         }
 
         private static string FormatScaling(SoulsLike.Items.ScalingGrade grade)

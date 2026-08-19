@@ -22,6 +22,12 @@
 - Add conditions and validation only when they change required behavior or are explicitly requested; do not add routine defensive checks around straightforward code.
 
 
+## Naming
+
+- Use `_camelCase` for non-serialized private fields.
+- Unity `[SerializeField]` fields use unprefixed `camelCase` so serialized property names remain stable.
+
+
 ## Test Execution
 
 - Do not run tests or test suites unless the user directly and explicitly requests test execution.

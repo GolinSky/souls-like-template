@@ -4,6 +4,7 @@ using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Items;
+using VContainer;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character.Components.Attack
@@ -49,12 +50,13 @@ namespace SoulsLike.Entities.Character.Components.Attack
         private StateMachineName _contextualState = StateMachineName.None;
         private ITimer _contextualAttackTimer;
         private bool _strongInputActive;
-        private WeaponDefinition _rightWeaponDefinition;
-        private WeaponDefinition _leftWeaponDefinition;
+        private ItemId? _rightWeaponId;
+        private ItemId? _leftWeaponId;
         private WeaponRuntime _rightWeaponRuntime;
         private WeaponRuntime _leftWeaponRuntime;
+        private ItemCatalog _itemCatalog;
 
-        public WeaponDefinition ActiveWeaponDefinition { get; private set; }
+        public ItemId? ActiveWeaponId { get; private set; }
         public CombatProfile ActiveCombatProfile { get; private set; }
         public WeaponRuntime ActiveWeaponRuntime { get; private set; }
         public HandMode ActiveHandMode { get; private set; } = HandMode.OneHanded;
@@ -67,16 +69,22 @@ namespace SoulsLike.Entities.Character.Components.Attack
                 CONTEXTUAL_ATTACK_WINDOW);
         }
 
+        [Inject]
+        public void InjectDependencies(ItemCatalog itemCatalog)
+        {
+            _itemCatalog = itemCatalog;
+        }
+
         public void SetActiveWeapons(
-            WeaponDefinition rightDefinition,
+            ItemId? rightItemId,
             WeaponRuntime rightWeaponRuntime,
-            WeaponDefinition leftDefinition,
+            ItemId? leftItemId,
             WeaponRuntime leftWeaponRuntime,
             HandMode handMode)
         {
-            _rightWeaponDefinition = rightDefinition;
+            _rightWeaponId = rightItemId;
             _rightWeaponRuntime = rightWeaponRuntime;
-            _leftWeaponDefinition = leftDefinition;
+            _leftWeaponId = leftItemId;
             _leftWeaponRuntime = leftWeaponRuntime;
             ActiveHandMode = handMode;
             SetActionWeapon(false);
@@ -152,15 +160,15 @@ namespace SoulsLike.Entities.Character.Components.Attack
 
         private void SetActionWeapon(bool isLeftHandAttack)
         {
-            ActiveWeaponDefinition = isLeftHandAttack
-                ? _leftWeaponDefinition
-                : _rightWeaponDefinition;
+            ActiveWeaponId = isLeftHandAttack
+                ? _leftWeaponId
+                : _rightWeaponId;
             ActiveWeaponRuntime = isLeftHandAttack
                 ? _leftWeaponRuntime
                 : _rightWeaponRuntime;
-            ActiveCombatProfile = ActiveWeaponDefinition == null
+            ActiveCombatProfile = !ActiveWeaponId.HasValue
                 ? null
-                : ActiveWeaponDefinition.CombatProfile;
+                : _itemCatalog.GetWeapon(ActiveWeaponId.Value).CombatProfile;
         }
 
         private static AttackType ResolveHeavyAttack(StateMachineName activeState) =>

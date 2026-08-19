@@ -12,17 +12,17 @@ namespace SoulsLike.Entities.Character.Components.Equipment
     {
         private IEquipmentLoadoutSink _loadoutSink;
         private InventoryComponent _inventory;
-        private ItemDatabase _itemDatabase;
+        private ItemCatalog _itemCatalog;
 
         public event Action<EquipmentSlotChange> SlotChanged;
         public event Action<EquipmentLoadout> LoadoutChanged;
 
         //todo: avoid other component dependency (InventoryComponent)
         [Inject]
-        public void InjectDependencies(InventoryComponent inventory, ItemDatabase itemDatabase)
+        public void InjectDependencies(InventoryComponent inventory, ItemCatalog itemCatalog)
         {
-            _inventory = inventory ?? throw new ArgumentNullException(nameof(inventory));
-            _itemDatabase = itemDatabase ?? throw new ArgumentNullException(nameof(itemDatabase));
+            _inventory = inventory;
+            _itemCatalog = itemCatalog;
         }
 
         public void Initialize()
@@ -41,7 +41,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
         public void Assign(EquipmentSlotId slotId, InventoryEntryId entryId)
         {
             InventoryEntry entry = _inventory.GetRequiredEntry(entryId);
-            ItemDefinition definition = _itemDatabase.GetRequired(entry.ItemId);
+            ItemDefinition definition = _itemCatalog.GetItem(entry.ItemId);
             EquipmentGroup requiredGroup = EquipmentSlotCatalog.GetCompatibilityGroup(slotId);
             if (!definition.CanEquipIn(requiredGroup))
             {
@@ -88,8 +88,8 @@ namespace SoulsLike.Entities.Character.Components.Equipment
         {
             EquippedItemContext right = ResolveActiveItem(EquipmentSlotGroup.RightHandArmament);
             if (right == null
-                || right.Definition is not WeaponDefinition weaponDefinition
-                || !weaponDefinition.CanTwoHand)
+                || _itemCatalog.GetItem(right.ItemId).ItemType != ItemType.Weapon
+                || !_itemCatalog.GetWeapon(right.ItemId).CanTwoHand)
             {
                 handMode = Model.ActiveHandMode;
                 return false;
@@ -168,8 +168,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             }
 
             InventoryEntry entry = _inventory.GetRequiredEntry(entryId.Value);
-            ItemDefinition definition = _itemDatabase.GetRequired(entry.ItemId);
-            return new EquippedItemContext(slotId, entry, definition);
+            return new EquippedItemContext(slotId, entry);
         }
 
         public IReadOnlyList<InventoryEntry> GetCompatibleEntries(EquipmentSlotId slotId)
@@ -178,7 +177,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             var result = new List<InventoryEntry>();
             foreach (InventoryEntry entry in _inventory.Entries)
             {
-                if (_itemDatabase.GetRequired(entry.ItemId).CanEquipIn(group))
+                if (_itemCatalog.GetItem(entry.ItemId).CanEquipIn(group))
                 {
                     result.Add(entry);
                 }
@@ -218,7 +217,9 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
             EquippedItemContext right = ResolveActiveItem(
                 EquipmentSlotGroup.RightHandArmament);
-            if (right?.Definition is WeaponDefinition { CanTwoHand: true })
+            if (right != null
+                && _itemCatalog.GetItem(right.ItemId).ItemType == ItemType.Weapon
+                && _itemCatalog.GetWeapon(right.ItemId).CanTwoHand)
             {
                 return;
             }

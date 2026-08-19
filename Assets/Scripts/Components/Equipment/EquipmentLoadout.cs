@@ -8,16 +8,14 @@ namespace SoulsLike.Entities.Character.Components.Equipment
     {
         public EquipmentSlotId SlotId { get; }
         public InventoryEntry Entry { get; }
-        public ItemDefinition Definition { get; }
+        public ItemId ItemId => Entry.ItemId;
 
         public EquippedItemContext(
             EquipmentSlotId slotId,
-            InventoryEntry entry,
-            ItemDefinition definition)
+            InventoryEntry entry)
         {
             SlotId = slotId;
-            Entry = entry ?? throw new ArgumentNullException(nameof(entry));
-            Definition = definition ?? throw new ArgumentNullException(nameof(definition));
+            Entry = entry;
         }
     }
 

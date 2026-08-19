@@ -42,6 +42,7 @@ namespace SoulsLike.Entities.Character
         private CharacterRuntime _runtime;
         private CharacterAnimationAdapter _animationAdapter;
         private EquipmentSwapCoordinator _equipmentSwapCoordinator;
+        private ItemCatalog _itemCatalog;
 
         public Transform CameraTarget => cameraTarget;
         public InventoryComponent InventoryComponent => inventoryComponent;
@@ -58,13 +59,15 @@ namespace SoulsLike.Entities.Character
             CharacterRuntime runtime,
             CharacterAnimationAdapter animationAdapter,
             EquipmentSwapCoordinator equipmentSwapCoordinator,
-            EquipmentPresentation presentation)
+            EquipmentPresentation presentation,
+            ItemCatalog itemCatalog)
         {
             _attackComponent = attackComponent;
             _runtime = runtime;
             _animationAdapter = animationAdapter;
             _equipmentSwapCoordinator = equipmentSwapCoordinator;
             equipmentPresentation = presentation;
+            _itemCatalog = itemCatalog;
         }
 
         public void Initialize()
@@ -100,10 +103,12 @@ namespace SoulsLike.Entities.Character
                 && movementComponent.Model.Grounded;
             bool shieldBlock = blockRequested
                 && loadout.HandMode == HandMode.OneHanded
-                && loadout.EffectiveLeft?.Definition is ShieldDefinition;
+                && loadout.EffectiveLeft != null
+                && _itemCatalog.GetItem(loadout.EffectiveLeft.ItemId).ItemType == ItemType.Shield;
             bool weaponBlock = blockRequested
                 && loadout.EffectiveLeft == null
-                && loadout.EffectiveRight?.Definition is WeaponDefinition;
+                && loadout.EffectiveRight != null
+                && _itemCatalog.GetItem(loadout.EffectiveRight.ItemId).ItemType == ItemType.Weapon;
             animatorComponent.SetShieldBlock(shieldBlock);
             animatorComponent.SetWeaponBlock(weaponBlock);
         }
@@ -132,15 +137,16 @@ namespace SoulsLike.Entities.Character
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
             if (request.Intent == AttackIntent.Special
                 && loadout.HandMode == HandMode.OneHanded
-                && loadout.EffectiveLeft?.Definition is ShieldDefinition)
+                && loadout.EffectiveLeft != null
+                && _itemCatalog.GetItem(loadout.EffectiveLeft.ItemId).ItemType == ItemType.Shield)
             {
                 animatorComponent.TriggerParry();
                 _runtime.SetParryLocked(true);
                 return CharacterCommandExecutionStatus.Executed;
             }
 
-            bool hasRightWeapon = loadout.EffectiveRight?.Definition is WeaponDefinition;
-            bool hasLeftWeapon = loadout.EffectiveLeft?.Definition is WeaponDefinition;
+            bool hasRightWeapon = GetWeaponId(loadout.EffectiveRight).HasValue;
+            bool hasLeftWeapon = GetWeaponId(loadout.EffectiveLeft).HasValue;
             if ((request.IsLeftHand && !hasLeftWeapon)
                 || (!request.IsLeftHand && !hasRightWeapon && hasLeftWeapon))
             {
@@ -326,20 +332,24 @@ namespace SoulsLike.Entities.Character
         public void ApplyEquipmentLoadout(EquipmentLoadout loadout)
         {
             equipmentPresentation.ApplyLoadout(loadout);
-            WeaponDefinition rightWeapon = loadout.EffectiveRight?.Definition as WeaponDefinition;
-            WeaponDefinition leftWeapon = loadout.EffectiveLeft?.Definition as WeaponDefinition;
-            AnimationProfile profile = rightWeapon?.AnimationProfile ?? leftWeapon?.AnimationProfile;
+            ItemId? rightWeaponId = GetWeaponId(loadout.EffectiveRight);
+            ItemId? leftWeaponId = GetWeaponId(loadout.EffectiveLeft);
+            AnimationProfile profile = rightWeaponId.HasValue
+                ? _itemCatalog.GetWeapon(rightWeaponId.Value).AnimationProfile
+                : leftWeaponId.HasValue
+                    ? _itemCatalog.GetWeapon(leftWeaponId.Value).AnimationProfile
+                    : null;
             if (profile == null) animatorComponent.ResetAnimationProfile();
             else animatorComponent.ApplyAnimationProfile(
                 profile,
-                rightWeapon != null,
-                leftWeapon != null);
+                rightWeaponId.HasValue,
+                leftWeaponId.HasValue);
 
             animatorComponent.TransitionHandMode(loadout.HandMode);
             _attackComponent.SetActiveWeapons(
-                rightWeapon,
+                rightWeaponId,
                 equipmentPresentation.ActiveRightWeaponRuntime,
-                leftWeapon,
+                leftWeaponId,
                 equipmentPresentation.ActiveLeftWeaponRuntime,
                 loadout.HandMode);
         }
@@ -348,11 +358,14 @@ namespace SoulsLike.Entities.Character
         {
             EquippedItemContext quickItem = equipmentComponent.BuildLoadout().ActiveQuickItem;
             if (quickItem == null) return false;
-            if (quickItem.Definition is not ConsumableDefinition consumable)
+            ItemDefinition item = _itemCatalog.GetItem(quickItem.ItemId);
+            if (item.ItemType != ItemType.Consumable)
             {
                 throw new InvalidOperationException(
-                    $"Quick-item slot contains non-consumable '{quickItem.Definition.DisplayName}'.");
+                    $"Quick-item slot contains non-consumable '{item.DisplayName}'.");
             }
+
+            ConsumableDefinition consumable = _itemCatalog.GetConsumable(quickItem.ItemId);
 
             switch (consumable.UseType)
             {
@@ -376,6 +389,18 @@ namespace SoulsLike.Entities.Character
 
             inventoryComponent.Consume(quickItem.Entry.EntryId);
             return true;
+        }
+
+        private ItemId? GetWeaponId(EquippedItemContext context)
+        {
+            if (context == null)
+            {
+                return null;
+            }
+
+            return _itemCatalog.GetItem(context.ItemId).ItemType == ItemType.Weapon
+                ? context.ItemId
+                : null;
         }
     }
 }

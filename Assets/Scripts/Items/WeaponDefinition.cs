@@ -1,10 +1,13 @@
+using System;
 using UnityEngine;
 
 namespace SoulsLike.Items
 {
-    [CreateAssetMenu(fileName = "WeaponDefinition", menuName = "Data/Items/Weapon")]
-    public sealed class WeaponDefinition : ItemDefinition
+    [Serializable]
+    public sealed class WeaponDefinition
     {
+        [SerializeField] private ItemId itemId;
+
         [Header("Runtime")]
         [SerializeField] private AnimationProfile animationProfile;
         [SerializeField] private CombatProfile combatProfile;
@@ -36,14 +39,14 @@ namespace SoulsLike.Items
         [SerializeField] private Sprite skillIcon;
         [SerializeField, Min(0)] private int skillFocusCost;
 
-        public override ItemType ItemType => ItemType.Weapon;
+        public ItemId ItemId => itemId;
         public AnimationProfile AnimationProfile => animationProfile;
         public CombatProfile CombatProfile => combatProfile;
         public GameObject EquippedPrefab => equippedPrefab;
         public bool CanTwoHand => canTwoHand;
         public Sprite SkillIcon => skillIcon;
 
-        public override ItemStatSnapshot Stats => new ItemStatSnapshot(
+        public ItemStatSnapshot Stats => new(
             physicalAttack,
             magicAttack,
             fireAttack,
@@ -60,5 +63,13 @@ namespace SoulsLike.Items
             scaling,
             skillName,
             skillFocusCost);
+
+        public void ValidateDefinition()
+        {
+            if (itemId == ItemId.None)
+            {
+                throw new InvalidOperationException("Weapon definition requires a non-None ItemId.");
+            }
+        }
     }
 }

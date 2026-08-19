@@ -13,8 +13,48 @@ MonoBehaviour:
   m_Name: ItemDatabase
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.ItemDatabase
   items:
-  - {fileID: 11400000, guid: 8c9f7a18d5f42c94e89937f75cf7398f, type: 2}
-  - {fileID: 11400000, guid: b2d2bc095be1d984c9d51d87a7269e03, type: 2}
-  - {fileID: 11400000, guid: 02339affd34623d46967b21154408763, type: 2}
-  - {fileID: 11400000, guid: f2d24a38c7eaec747abdee8aaeca1ac0, type: 2}
-  - {fileID: 11400000, guid: 5ef4351171c9bfc46909c6209d9a99f0, type: 2}
+  - itemId: 1
+    itemType: 0
+    displayName: Long Sword
+    description: A dependable straight sword suited to one- or two-handed combat.
+    loreDescription: A plain sword carried by soldiers across the realm.
+    icon: {fileID: 21300000, guid: 4c64b7a6d876a4146880587b20cfc4c6, type: 3}
+    weight: 3.5
+    maxStack: 1
+    equipmentGroups: 01000000
+  - itemId: 2
+    itemType: 1
+    displayName: Wooden Shield
+    description: A light wooden shield with modest physical protection.
+    loreDescription: Common protection for travelers and militia.
+    icon: {fileID: 21300000, guid: 174e4cb3c44b58243bd4cf3a6b1499f5, type: 3}
+    weight: 2
+    maxStack: 1
+    equipmentGroups: 01000000
+  - itemId: 3
+    itemType: 5
+    displayName: Crimson Flask
+    description: Restores HP.
+    loreDescription: Restores HP.
+    icon: {fileID: 21300000, guid: b8dd92f11f6bdcb468bf094ff75ff713, type: 3}
+    weight: 0
+    maxStack: 10
+    equipmentGroups: 09000000
+  - itemId: 4
+    itemType: 5
+    displayName: Lightning Grease
+    description: Temporarily coats the active weapon in lightning.
+    loreDescription: Temporarily coats the active weapon in lightning.
+    icon: {fileID: 21300000, guid: abde50543dd47974db2c11390eac3e80, type: 3}
+    weight: 0
+    maxStack: 10
+    equipmentGroups: 09000000
+  - itemId: 5
+    itemType: 5
+    displayName: 'Golden Rune [1]'
+    description: Grants a small number of runes.
+    loreDescription: Grants a small number of runes.
+    icon: {fileID: 21300000, guid: d024dedecb3e6db4081dc7fea7a60128, type: 3}
+    weight: 0
+    maxStack: 99
+    equipmentGroups: 09000000

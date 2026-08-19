@@ -70,6 +70,27 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: WeaponDatabase
+      value:
+        m_AssetGUID: 68d7c89f3a5f7d544b27a5d44f2df42d
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: ShieldDatabase
+      value:
+        m_AssetGUID: 08e419991ccab494ea8932a876a370aa
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: ConsumableDatabase
+      value:
+        m_AssetGUID: c0bd69b40a1489244a630f7b31f50b46
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
   uiMappings:
     keyValue:
     - key: MainMenuUi

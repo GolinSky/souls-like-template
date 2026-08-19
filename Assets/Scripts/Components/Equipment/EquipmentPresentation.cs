@@ -1,6 +1,7 @@
 using System;
 using SoulsLike.Items;
 using UnityEngine;
+using VContainer;
 
 namespace SoulsLike.Entities.Character.Components.Equipment
 {
@@ -17,9 +18,16 @@ namespace SoulsLike.Entities.Character.Components.Equipment
         private GameObject _leftInstance;
         private bool _isRightHandVisible = true;
         private bool _isLeftHandVisible = true;
+        private ItemCatalog _itemCatalog;
 
         public WeaponRuntime ActiveRightWeaponRuntime { get; private set; }
         public WeaponRuntime ActiveLeftWeaponRuntime { get; private set; }
+
+        [Inject]
+        public void InjectDependencies(ItemCatalog itemCatalog)
+        {
+            _itemCatalog = itemCatalog;
+        }
 
         private void Awake()
         {
@@ -41,12 +49,11 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             {
                 _rightInstance = CreatePresentation(loadout.EffectiveRight, rightHandAnchor, false);
                 _rightInstance.SetActive(_isRightHandVisible);
-                if (loadout.EffectiveRight.Definition is WeaponDefinition rightWeapon)
+                if (_itemCatalog.GetItem(loadout.EffectiveRight.ItemId).ItemType == ItemType.Weapon)
                 {
                     ActiveRightWeaponRuntime = RequireWeaponRuntime(
                         _rightInstance,
-                        loadout.EffectiveRight,
-                        rightWeapon);
+                        loadout.EffectiveRight);
                 }
             }
 
@@ -54,12 +61,11 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             {
                 _leftInstance = CreatePresentation(loadout.EffectiveLeft, leftHandAnchor, true);
                 _leftInstance.SetActive(_isLeftHandVisible);
-                if (loadout.EffectiveLeft.Definition is WeaponDefinition leftWeapon)
+                if (_itemCatalog.GetItem(loadout.EffectiveLeft.ItemId).ItemType == ItemType.Weapon)
                 {
                     ActiveLeftWeaponRuntime = RequireWeaponRuntime(
                         _leftInstance,
-                        loadout.EffectiveLeft,
-                        leftWeapon);
+                        loadout.EffectiveLeft);
                 }
             }
         }
@@ -87,22 +93,23 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             }
         }
 
-        private static GameObject CreatePresentation(
+        private GameObject CreatePresentation(
             EquippedItemContext context,
             Transform anchor,
             bool isLeftHand)
         {
-            GameObject prefab = context.Definition switch
+            ItemType itemType = _itemCatalog.GetItem(context.ItemId).ItemType;
+            GameObject prefab = itemType switch
             {
-                WeaponDefinition weapon => weapon.EquippedPrefab,
-                ShieldDefinition shield => shield.EquippedPrefab,
+                ItemType.Weapon => _itemCatalog.GetWeapon(context.ItemId).EquippedPrefab,
+                ItemType.Shield => _itemCatalog.GetShield(context.ItemId).EquippedPrefab,
                 _ => null
             };
 
             GameObject instance;
             if (prefab == null)
             {
-                instance = new GameObject($"Runtime_{context.Definition.ItemId}");
+                instance = new GameObject($"Runtime_{context.ItemId}");
                 instance.transform.SetParent(anchor, false);
             }
             else
@@ -110,7 +117,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
                 instance = Instantiate(prefab, anchor, false);
             }
 
-            if (isLeftHand && context.Definition is WeaponDefinition)
+            if (isLeftHand && itemType == ItemType.Weapon)
             {
                 instance.transform.localPosition = _leftHandSwordLocalPosition;
                 instance.transform.localRotation = _leftHandSwordLocalRotation;
@@ -121,15 +128,14 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         private static WeaponRuntime RequireWeaponRuntime(
             GameObject instance,
-            EquippedItemContext context,
-            WeaponDefinition definition)
+            EquippedItemContext context)
         {
             if (!instance.TryGetComponent(out WeaponRuntime weaponRuntime))
             {
                 weaponRuntime = instance.AddComponent<WeaponRuntime>();
             }
 
-            weaponRuntime.Initialize(context.Entry.EntryId, definition);
+            weaponRuntime.Initialize(context.Entry.EntryId, context.ItemId);
             return weaponRuntime;
         }
 

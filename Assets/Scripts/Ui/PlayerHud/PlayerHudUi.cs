@@ -205,12 +205,17 @@ namespace SoulsLike.Ui.PlayerHud
             _targetAlpha = 1f;
         }
 
-        public void UpdateEquipment(EquipmentLoadout loadout)
+        public void UpdateEquipment(
+            Sprite rightIcon,
+            Sprite leftIcon,
+            Sprite quickItemIcon,
+            int quickItemQuantity,
+            bool isTwoHanded)
         {
             // Right Hand Armament (Main Weapon)
-            if (loadout.AssignedRight?.Definition != null)
+            if (rightIcon != null)
             {
-                rightSlot.SetItem(loadout.AssignedRight.Definition.Icon);
+                rightSlot.SetItem(rightIcon);
             }
             else
             {
@@ -218,10 +223,9 @@ namespace SoulsLike.Ui.PlayerHud
             }
 
             // Left Hand Armament (Shield / Offhand)
-            bool isTwoHanded = loadout.HandMode == HandMode.TwoHanded;
-            if (loadout.AssignedLeft?.Definition != null)
+            if (leftIcon != null)
             {
-                leftSlot.SetItem(loadout.AssignedLeft.Definition.Icon, 0, isTwoHanded);
+                leftSlot.SetItem(leftIcon, 0, isTwoHanded);
             }
             else
             {
@@ -232,10 +236,9 @@ namespace SoulsLike.Ui.PlayerHud
             topSlot.SetEmpty();
 
             // Bottom Slot (Quick Item / Consumable)
-            if (loadout.ActiveQuickItem?.Definition != null)
+            if (quickItemIcon != null)
             {
-                int quantity = loadout.ActiveQuickItem.Entry.Quantity;
-                bottomSlot.SetItem(loadout.ActiveQuickItem.Definition.Icon, quantity);
+                bottomSlot.SetItem(quickItemIcon, quickItemQuantity);
             }
             else
             {

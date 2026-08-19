@@ -10,19 +10,18 @@ namespace SoulsLike.Entities.Character.Components.Inventory
 {
     public sealed class InventoryComponent : BaseComponent<InventoryModel>, IInitializable
     {
-        private ItemDatabase _itemDatabase;
+        private ItemCatalog _itemCatalog;
         private InventoryData _inventoryData;
 
         [Inject]
-        public void InjectDependencies(ItemDatabase itemDatabase, InventoryData inventoryData)
+        public void InjectDependencies(ItemCatalog itemCatalog, InventoryData inventoryData)
         {
-            _itemDatabase = itemDatabase ?? throw new ArgumentNullException(nameof(itemDatabase));
-            _inventoryData = inventoryData ?? throw new ArgumentNullException(nameof(inventoryData));
+            _itemCatalog = itemCatalog;
+            _inventoryData = inventoryData;
         }
 
         public void Initialize()
         {
-            _itemDatabase.ValidateDatabase();
             foreach (InitialInventoryEntry initialEntry in _inventoryData.InitialEntries)
             {
                 Add(initialEntry.ItemId, initialEntry.Quantity);
@@ -38,7 +37,7 @@ namespace SoulsLike.Entities.Character.Components.Inventory
                 throw new ArgumentOutOfRangeException(nameof(quantity), quantity, null);
             }
 
-            ItemDefinition definition = _itemDatabase.GetRequired(itemId);
+            ItemDefinition definition = _itemCatalog.GetItem(itemId);
             var affectedEntries = new List<InventoryEntry>();
             int remaining = quantity;
 
@@ -105,8 +104,8 @@ namespace SoulsLike.Entities.Character.Components.Inventory
         public void Consume(InventoryEntryId entryId, int quantity = 1)
         {
             InventoryEntry entry = Model.GetRequiredEntry(entryId);
-            ItemDefinition definition = _itemDatabase.GetRequired(entry.ItemId);
-            if (definition is not ConsumableDefinition)
+            ItemDefinition definition = _itemCatalog.GetItem(entry.ItemId);
+            if (definition.ItemType != ItemType.Consumable)
             {
                 throw new InvalidOperationException($"Item '{definition.DisplayName}' is not consumable.");
             }

@@ -4,9 +4,11 @@ using UnityEngine;
 
 namespace SoulsLike.Items
 {
-    public abstract class ItemDefinition : ScriptableObject
+    [Serializable]
+    public sealed class ItemDefinition
     {
         [SerializeField] private ItemId itemId;
+        [SerializeField] private ItemType itemType;
         [SerializeField] private string displayName;
         [SerializeField, TextArea(2, 5)] private string description;
         [SerializeField, TextArea(4, 10)] private string loreDescription;
@@ -16,7 +18,7 @@ namespace SoulsLike.Items
         [SerializeField] private List<EquipmentGroup> equipmentGroups = new();
 
         public ItemId ItemId => itemId;
-        public abstract ItemType ItemType { get; }
+        public ItemType ItemType => itemType;
         public string DisplayName => displayName;
         public string Description => description;
         public string LoreDescription => loreDescription;
@@ -25,7 +27,6 @@ namespace SoulsLike.Items
         public int MaxStack => maxStack;
         public bool IsStackable => maxStack > 1;
         public IReadOnlyList<EquipmentGroup> EquipmentGroups => equipmentGroups;
-        public virtual ItemStatSnapshot Stats => ItemStatSnapshot.Empty;
 
         public bool CanEquipIn(EquipmentGroup group)
         {
@@ -41,17 +42,17 @@ namespace SoulsLike.Items
         {
             if (itemId == ItemId.None)
             {
-                throw new InvalidOperationException($"Item definition '{name}' requires a non-None ItemId.");
+                throw new InvalidOperationException("Item definition requires a non-None ItemId.");
             }
 
             if (string.IsNullOrWhiteSpace(displayName))
             {
-                throw new InvalidOperationException($"Item definition '{name}' requires a display name.");
+                throw new InvalidOperationException($"Item definition '{itemId}' requires a display name.");
             }
 
             if (maxStack < 1)
             {
-                throw new InvalidOperationException($"Item definition '{name}' requires MaxStack >= 1.");
+                throw new InvalidOperationException($"Item definition '{itemId}' requires MaxStack >= 1.");
             }
         }
     }

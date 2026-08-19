@@ -71,6 +71,10 @@ namespace SoulsLike.Entities.Character
 
                 builder.RegisterScriptableObject<InventoryData>();
                 builder.RegisterScriptableObject<ItemDatabase>();
+                builder.RegisterScriptableObject<WeaponDatabase>();
+                builder.RegisterScriptableObject<ShieldDatabase>();
+                builder.RegisterScriptableObject<ConsumableDatabase>();
+                builder.Register<ItemCatalog>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<InventoryModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(inventoryComponent).AsSelf().AsImplementedInterfaces();
 

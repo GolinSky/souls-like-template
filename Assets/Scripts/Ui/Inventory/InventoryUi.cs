@@ -132,13 +132,12 @@ namespace SoulsLike.Ui.Inventory
                 throw new ArgumentNullException(nameof(item));
             }
 
-            ItemDefinition definition = item.Definition;
-            ItemStatSnapshot stats = definition.Stats;
-            detailItemArtwork.sprite = definition.Icon;
-            detailItemArtwork.enabled = definition.Icon != null;
-            detailItemName.text = definition.DisplayName;
-            detailItemType.text = definition.ItemType.ToString();
-            detailItemWeight.text = definition.Weight.ToString("F1");
+            ItemStatSnapshot stats = item.Stats;
+            detailItemArtwork.sprite = item.Icon;
+            detailItemArtwork.enabled = item.Icon != null;
+            detailItemName.text = item.DisplayName;
+            detailItemType.text = item.ItemType.ToString();
+            detailItemWeight.text = item.Weight.ToString("F1");
             detailAttackPhysical.text = stats.PhysicalAttack.ToString();
             detailAttackMagic.text = stats.MagicAttack.ToString();
             detailAttackFire.text = stats.FireAttack.ToString();
@@ -158,12 +157,12 @@ namespace SoulsLike.Ui.Inventory
             SetRequirementField(detailReqArc, stats.Requirements.Arcane, attributes.Arcane);
             detailSkillName.text = string.IsNullOrWhiteSpace(stats.SkillName) ? "-" : stats.SkillName;
             detailSkillFpCost.text = stats.SkillFocusCost > 0 ? $"FP {stats.SkillFocusCost}" : "-";
-            detailEffectDescription.text = definition.Description;
+            detailEffectDescription.text = item.Description;
 
-            loreItemName.text = definition.DisplayName;
-            loreItemArtwork.sprite = definition.Icon;
-            loreItemArtwork.enabled = definition.Icon != null;
-            loreFullText.text = $"{definition.Description}\n\n{definition.LoreDescription}";
+            loreItemName.text = item.DisplayName;
+            loreItemArtwork.sprite = item.Icon;
+            loreItemArtwork.enabled = item.Icon != null;
+            loreFullText.text = $"{item.Description}\n\n{item.LoreDescription}";
         }
 
         public void DisplayCharacterStats(Character character, float equipWeight, float maxEquipWeight)

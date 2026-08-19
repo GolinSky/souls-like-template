@@ -1,6 +1,5 @@
 using System;
 using MPUIKIT;
-using SoulsLike.Items;
 using SoulsLike.Ui.Inventory.Data;
 using TMPro;
 using UnityEngine;
@@ -58,12 +57,11 @@ namespace SoulsLike.Ui.Inventory
         public void Bind(InventoryItemViewData item)
         {
             CurrentItem = item ?? throw new ArgumentNullException(nameof(item));
-            ItemDefinition definition = item.Definition;
 
-            itemIcon.sprite = definition.Icon;
-            itemIcon.enabled = definition.Icon != null;
+            itemIcon.sprite = item.Icon;
+            itemIcon.enabled = item.Icon != null;
 
-            bool showQuantity = definition.IsStackable && item.Quantity > 1;
+            bool showQuantity = item.IsStackable && item.Quantity > 1;
             quantityText.text = showQuantity ? $"x{item.Quantity}" : string.Empty;
             quantityText.gameObject.SetActive(showQuantity);
 
@@ -71,9 +69,8 @@ namespace SoulsLike.Ui.Inventory
             equippedBadgeText.text = item.IsEquipped ? item.EquipmentLabel : string.Empty;
             unmetRequirementOverlay.gameObject.SetActive(!item.MeetsRequirements);
 
-            Sprite skillIcon = definition is WeaponDefinition weapon ? weapon.SkillIcon : null;
-            ashOfWarIcon.sprite = skillIcon;
-            ashOfWarIcon.gameObject.SetActive(skillIcon != null);
+            ashOfWarIcon.sprite = item.SkillIcon;
+            ashOfWarIcon.gameObject.SetActive(item.SkillIcon != null);
             SetFocusState(false);
         }
 

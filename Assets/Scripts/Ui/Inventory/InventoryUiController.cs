@@ -19,7 +19,7 @@ namespace SoulsLike.Ui.Inventory
     {
         private readonly InventoryComponent _inventory;
         private readonly EquipmentComponent _equipment;
-        private readonly ItemDatabase _itemDatabase;
+        private readonly ItemCatalog _itemCatalog;
         private readonly Character _character;
         private readonly IInputService _inputService;
 
@@ -37,14 +37,14 @@ namespace SoulsLike.Ui.Inventory
             IUiService uiService,
             InventoryComponent inventory,
             EquipmentComponent equipment,
-            ItemDatabase itemDatabase,
+            ItemCatalog itemCatalog,
             Character character,
             IInputService inputService)
             : base(uiService)
         {
             _inventory = inventory;
             _equipment = equipment;
-            _itemDatabase = itemDatabase;
+            _itemCatalog = itemCatalog;
             _character = character;
             _inputService = inputService;
         }
@@ -109,10 +109,10 @@ namespace SoulsLike.Ui.Inventory
             EquippedItemContext activeRight = _equipment.BuildLoadout().AssignedRight;
             if (activeRight != null)
             {
-                currentAttack = activeRight.Definition.Stats.PhysicalAttack;
+                currentAttack = _itemCatalog.GetStats(activeRight.ItemId).PhysicalAttack;
             }
 
-            _view.UpdateStatComparison(currentAttack, item.Definition.Stats.PhysicalAttack);
+            _view.UpdateStatComparison(currentAttack, item.Stats.PhysicalAttack);
         }
 
         public void OnItemSubmitted(InventoryEntryId entryId)
@@ -179,7 +179,7 @@ namespace SoulsLike.Ui.Inventory
             foreach (InventoryEntry entry in _inventory.Entries)
             {
                 InventoryItemViewData item = BuildViewData(entry);
-                if (_isSelectionMode && !_routeItemTypes.Contains(item.Definition.ItemType))
+                if (_isSelectionMode && !_routeItemTypes.Contains(item.ItemType))
                 {
                     continue;
                 }
@@ -191,7 +191,7 @@ namespace SoulsLike.Ui.Inventory
 
                 if (!_isSelectionMode
                     && _useSubCategoryFilter
-                    && !MatchesSubCategory(item.Definition, _subCategory))
+                    && !MatchesSubCategory(item, _subCategory))
                 {
                     continue;
                 }
@@ -211,10 +211,9 @@ namespace SoulsLike.Ui.Inventory
 
         private InventoryItemViewData BuildViewData(InventoryEntry entry)
         {
-            ItemDefinition definition = _itemDatabase.GetRequired(entry.ItemId);
             return InventoryItemViewData.Create(
                 entry,
-                definition,
+                _itemCatalog,
                 _equipment,
                 _character.Attributes);
         }
@@ -232,29 +231,33 @@ namespace SoulsLike.Ui.Inventory
                 }
 
                 InventoryEntry entry = _inventory.GetRequiredEntry(entryId.Value);
-                total += _itemDatabase.GetRequired(entry.ItemId).Weight;
+                total += _itemCatalog.GetItem(entry.ItemId).Weight;
             }
 
             return total;
         }
 
-        private static bool MatchesSubCategory(
-            ItemDefinition definition,
+        private bool MatchesSubCategory(
+            InventoryItemViewData item,
             InventorySubCategory category)
         {
             return category switch
             {
-                InventorySubCategory.MeleeWeapon => definition.ItemType == ItemType.Weapon,
-                InventorySubCategory.RangedWeapon => definition.ItemType == ItemType.Ammunition,
-                InventorySubCategory.Shield => definition.ItemType == ItemType.Shield,
-                InventorySubCategory.HeadArmor => definition.CanEquipIn(EquipmentGroup.HeadArmor),
-                InventorySubCategory.ChestArmor => definition.CanEquipIn(EquipmentGroup.ChestArmor),
-                InventorySubCategory.ArmArmor => definition.CanEquipIn(EquipmentGroup.ArmArmor),
-                InventorySubCategory.LegArmor => definition.CanEquipIn(EquipmentGroup.LegArmor),
-                InventorySubCategory.Talisman => definition.ItemType == ItemType.Talisman,
-                InventorySubCategory.CraftingMaterial => definition.ItemType == ItemType.Material,
-                InventorySubCategory.ConsumableItem => definition.ItemType == ItemType.Consumable,
-                InventorySubCategory.KeyItem => definition.ItemType == ItemType.KeyItem,
+                InventorySubCategory.MeleeWeapon => item.ItemType == ItemType.Weapon,
+                InventorySubCategory.RangedWeapon => item.ItemType == ItemType.Ammunition,
+                InventorySubCategory.Shield => item.ItemType == ItemType.Shield,
+                InventorySubCategory.HeadArmor =>
+                    _itemCatalog.GetItem(item.ItemId).CanEquipIn(EquipmentGroup.HeadArmor),
+                InventorySubCategory.ChestArmor =>
+                    _itemCatalog.GetItem(item.ItemId).CanEquipIn(EquipmentGroup.ChestArmor),
+                InventorySubCategory.ArmArmor =>
+                    _itemCatalog.GetItem(item.ItemId).CanEquipIn(EquipmentGroup.ArmArmor),
+                InventorySubCategory.LegArmor =>
+                    _itemCatalog.GetItem(item.ItemId).CanEquipIn(EquipmentGroup.LegArmor),
+                InventorySubCategory.Talisman => item.ItemType == ItemType.Talisman,
+                InventorySubCategory.CraftingMaterial => item.ItemType == ItemType.Material,
+                InventorySubCategory.ConsumableItem => item.ItemType == ItemType.Consumable,
+                InventorySubCategory.KeyItem => item.ItemType == ItemType.KeyItem,
                 _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
             };
         }

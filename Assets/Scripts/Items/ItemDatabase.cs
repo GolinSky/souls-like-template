@@ -25,12 +25,6 @@ namespace SoulsLike.Items
             return definition;
         }
 
-        public bool TryGet(ItemId itemId, out ItemDefinition definition)
-        {
-            EnsureIndex();
-            return _itemsById.TryGetValue(itemId, out definition);
-        }
-
         public void ValidateDatabase()
         {
             _itemsById = BuildIndex();

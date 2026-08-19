@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Data
   m_GUID: 58a4e168ab35b084e96389349307bd45
   m_SerializeEntries:
+  - m_GUID: 08e419991ccab494ea8932a876a370aa
+    m_Address: ShieldDatabase
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 18802c4d91d7f9943b0bd9f4db66c7da
     m_Address: SceneData
     m_ReadOnly: 0
@@ -27,6 +32,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3c390ac6056d48f458008ed236dfc1e8
     m_Address: 3c390ac6056d48f458008ed236dfc1e8
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 68d7c89f3a5f7d544b27a5d44f2df42d
+    m_Address: WeaponDatabase
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -52,6 +62,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a97370572ad588f4c838302528fe6672
     m_Address: HealthData
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0bd69b40a1489244a630f7b31f50b46
+    m_Address: ConsumableDatabase
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

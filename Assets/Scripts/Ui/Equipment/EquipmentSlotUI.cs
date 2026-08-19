@@ -64,11 +64,11 @@ namespace SoulsLike.Ui.Equipment
             IsLocked = isLocked;
             lockOverlay.SetActive(isLocked);
 
-            iconImage.sprite = item == null ? null : item.Definition.Icon;
-            iconImage.enabled = !isLocked && item?.Definition.Icon != null;
+            iconImage.sprite = item == null ? null : item.Icon;
+            iconImage.enabled = !isLocked && item?.Icon != null;
             bool showQuantity = !isLocked
                 && item != null
-                && item.Definition.IsStackable
+                && item.IsStackable
                 && item.Quantity > 1;
             quantityText.text = showQuantity ? item.Quantity.ToString() : string.Empty;
             quantityText.gameObject.SetActive(showQuantity);
