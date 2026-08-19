@@ -147,28 +147,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1265772780}
   m_Mesh: {fileID: 4300002, guid: abc00000000003915185315483141541, type: 3}
---- !u!64 &1519
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1222172421}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!4 &3871
 Transform:
   m_ObjectHideFlags: 0
@@ -357,6 +335,7 @@ GameObject:
   - component: {fileID: 30985}
   - component: {fileID: 30984}
   - component: {fileID: 30991}
+  - component: {fileID: 30993}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -364,28 +343,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 127
   m_IsActive: 1
---- !u!64 &30987
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 803708416}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!23 &30988
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -493,6 +450,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 30990}
   m_Mesh: {fileID: 4300002, guid: abc00000000003915185315483141541, type: 3}
+--- !u!64 &30993
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 30986}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!23 &31000
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -691,6 +670,7 @@ GameObject:
   - component: {fileID: 237905}
   - component: {fileID: 237904}
   - component: {fileID: 517742916}
+  - component: {fileID: 517742917}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -970,7 +950,6 @@ GameObject:
   m_Component:
   - component: {fileID: 237933}
   - component: {fileID: 237932}
-  - component: {fileID: 237935}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_21
   m_TagString: Untagged
@@ -978,28 +957,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 127
   m_IsActive: 1
---- !u!64 &237935
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 237934}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &238164
 LODGroup:
   m_ObjectHideFlags: 0
@@ -1066,7 +1023,6 @@ GameObject:
   m_Component:
   - component: {fileID: 238165}
   - component: {fileID: 238164}
-  - component: {fileID: 238187}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_7
   m_TagString: Untagged
@@ -1356,6 +1312,7 @@ GameObject:
   - component: {fileID: 238185}
   - component: {fileID: 238184}
   - component: {fileID: 238191}
+  - component: {fileID: 238192}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -1363,28 +1320,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 127
   m_IsActive: 1
---- !u!64 &238187
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 238166}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!23 &238188
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1483,6 +1418,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 238186}
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
+--- !u!64 &238192
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 238186}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!23 &238200
 MeshRenderer:
@@ -1600,7 +1557,6 @@ GameObject:
   m_Component:
   - component: {fileID: 238854}
   - component: {fileID: 238855}
-  - component: {fileID: 238852}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_22
   m_TagString: Untagged
@@ -1608,28 +1564,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 127
   m_IsActive: 1
---- !u!64 &238852
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 238849}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000017615741103271811460, type: 3}
 --- !u!1 &238853
 GameObject:
   m_ObjectHideFlags: 0
@@ -1641,6 +1575,7 @@ GameObject:
   - component: {fileID: 238858}
   - component: {fileID: 238859}
   - component: {fileID: 238856}
+  - component: {fileID: 1679744416}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_01_LOD0
   m_TagString: Untagged
@@ -4947,7 +4882,6 @@ GameObject:
   m_Component:
   - component: {fileID: 271287166}
   - component: {fileID: 271287168}
-  - component: {fileID: 271287167}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_19
   m_TagString: Untagged
@@ -4975,28 +4909,6 @@ Transform:
   - {fileID: 490745745}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &271287167
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 271287165}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &271287168
 LODGroup:
   m_ObjectHideFlags: 0
@@ -7709,6 +7621,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 237906}
   m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
+--- !u!64 &517742917
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237906}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &522493983
 GameObject:
   m_ObjectHideFlags: 0
@@ -8299,6 +8233,7 @@ GameObject:
   - component: {fileID: 601812471}
   - component: {fileID: 601812473}
   - component: {fileID: 601812472}
+  - component: {fileID: 601812474}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -8387,6 +8322,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &601812474
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601812470}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &605585982
 GameObject:
   m_ObjectHideFlags: 0
@@ -9118,6 +9075,7 @@ GameObject:
   - component: {fileID: 662277680}
   - component: {fileID: 662277682}
   - component: {fileID: 662277681}
+  - component: {fileID: 662277683}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -9206,6 +9164,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &662277683
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 662277679}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &674604585
 GameObject:
   m_ObjectHideFlags: 0
@@ -10755,6 +10735,7 @@ GameObject:
   - component: {fileID: 732730250}
   - component: {fileID: 732730252}
   - component: {fileID: 732730251}
+  - component: {fileID: 732730253}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -10843,6 +10824,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &732730253
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 732730249}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &751805020
 GameObject:
   m_ObjectHideFlags: 0
@@ -11433,6 +11436,7 @@ GameObject:
   - component: {fileID: 793750561}
   - component: {fileID: 793750563}
   - component: {fileID: 793750562}
+  - component: {fileID: 793750564}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -11521,6 +11525,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &793750564
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 793750560}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &793817858
 GameObject:
   m_ObjectHideFlags: 0
@@ -12110,7 +12136,6 @@ GameObject:
   m_Component:
   - component: {fileID: 803708417}
   - component: {fileID: 803708418}
-  - component: {fileID: 30987}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_3
   m_TagString: Untagged
@@ -12721,7 +12746,6 @@ GameObject:
   m_Component:
   - component: {fileID: 869792894}
   - component: {fileID: 869792896}
-  - component: {fileID: 869792895}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_16
   m_TagString: Untagged
@@ -12749,28 +12773,6 @@ Transform:
   - {fileID: 1166641534}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &869792895
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 869792893}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &869792896
 LODGroup:
   m_ObjectHideFlags: 0
@@ -13133,7 +13135,6 @@ GameObject:
   m_Component:
   - component: {fileID: 924992214}
   - component: {fileID: 924992216}
-  - component: {fileID: 924992215}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_18
   m_TagString: Untagged
@@ -13161,28 +13162,6 @@ Transform:
   - {fileID: 703282526}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &924992215
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 924992213}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &924992216
 LODGroup:
   m_ObjectHideFlags: 0
@@ -13533,7 +13512,6 @@ GameObject:
   m_Component:
   - component: {fileID: 969476995}
   - component: {fileID: 969476997}
-  - component: {fileID: 969476996}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_15
   m_TagString: Untagged
@@ -13561,28 +13539,6 @@ Transform:
   - {fileID: 1166334161}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &969476996
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 969476994}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &969476997
 LODGroup:
   m_ObjectHideFlags: 0
@@ -14167,6 +14123,7 @@ GameObject:
   - component: {fileID: 1052411936}
   - component: {fileID: 1052411938}
   - component: {fileID: 1052411937}
+  - component: {fileID: 1052411939}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -14255,6 +14212,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1052411939
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052411935}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &1094686210
 GameObject:
   m_ObjectHideFlags: 0
@@ -15534,7 +15513,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1210033078}
   - component: {fileID: 1210033080}
-  - component: {fileID: 1210033079}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_5
   m_TagString: Untagged
@@ -15562,28 +15540,6 @@ Transform:
   - {fileID: 307588850}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1210033079
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1210033077}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000017615741103271811460, type: 3}
 --- !u!205 &1210033080
 LODGroup:
   m_ObjectHideFlags: 0
@@ -15729,7 +15685,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1222172422}
   - component: {fileID: 1222172423}
-  - component: {fileID: 1519}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_12
   m_TagString: Untagged
@@ -16822,6 +16777,7 @@ GameObject:
   - component: {fileID: 1345712726}
   - component: {fileID: 1345712728}
   - component: {fileID: 1345712727}
+  - component: {fileID: 1345712729}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_01_LOD0
   m_TagString: Untagged
@@ -16910,6 +16866,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1345712729
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1345712725}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000017615741103271811460, type: 3}
 --- !u!1 &1349737157
 GameObject:
   m_ObjectHideFlags: 0
@@ -16920,7 +16898,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1349737158}
   - component: {fileID: 1349737160}
-  - component: {fileID: 1349737159}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_20
   m_TagString: Untagged
@@ -16948,28 +16925,6 @@ Transform:
   - {fileID: 363085186}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1349737159
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1349737157}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000017615741103271811460, type: 3}
 --- !u!205 &1349737160
 LODGroup:
   m_ObjectHideFlags: 0
@@ -18249,6 +18204,7 @@ GameObject:
   - component: {fileID: 1450199172}
   - component: {fileID: 1450199174}
   - component: {fileID: 1450199173}
+  - component: {fileID: 1450199175}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -18337,6 +18293,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1450199175
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450199171}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &1476245498
 GameObject:
   m_ObjectHideFlags: 0
@@ -18927,6 +18905,7 @@ GameObject:
   - component: {fileID: 1523423102}
   - component: {fileID: 1523423104}
   - component: {fileID: 1523423103}
+  - component: {fileID: 1523423105}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -19015,6 +18994,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1523423105
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1523423101}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &1531486665
 GameObject:
   m_ObjectHideFlags: 0
@@ -19505,7 +19506,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1554555767}
   - component: {fileID: 1554555769}
-  - component: {fileID: 1554555768}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_11
   m_TagString: Untagged
@@ -19533,28 +19533,6 @@ Transform:
   - {fileID: 1826672770}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1554555768
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1554555766}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &1554555769
 LODGroup:
   m_ObjectHideFlags: 0
@@ -21046,6 +21024,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1679744416
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 238853}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000017615741103271811460, type: 3}
 --- !u!1 &1683682140
 GameObject:
   m_ObjectHideFlags: 0
@@ -21114,7 +21114,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1701480786}
   - component: {fileID: 1701480788}
-  - component: {fileID: 1701480787}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_2
   m_TagString: Untagged
@@ -21142,28 +21141,6 @@ Transform:
   - {fileID: 1370017348}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1701480787
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1701480785}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &1701480788
 LODGroup:
   m_ObjectHideFlags: 0
@@ -21211,6 +21188,7 @@ GameObject:
   - component: {fileID: 1713757285}
   - component: {fileID: 1713757287}
   - component: {fileID: 1713757286}
+  - component: {fileID: 1713757288}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -21299,6 +21277,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1713757288
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713757284}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &1715258126
 GameObject:
   m_ObjectHideFlags: 0
@@ -21507,6 +21507,7 @@ GameObject:
   - component: {fileID: 1741595386}
   - component: {fileID: 1741595388}
   - component: {fileID: 1741595387}
+  - component: {fileID: 1741595389}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -21595,6 +21596,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1741595389
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1741595385}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &1763588244
 GameObject:
   m_ObjectHideFlags: 0
@@ -22900,7 +22923,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1885030881}
   - component: {fileID: 1885030883}
-  - component: {fileID: 1885030882}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_13
   m_TagString: Untagged
@@ -22928,28 +22950,6 @@ Transform:
   - {fileID: 463948493}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1885030882
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1885030880}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &1885030883
 LODGroup:
   m_ObjectHideFlags: 0
@@ -22996,7 +22996,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1893933596}
   - component: {fileID: 1893933598}
-  - component: {fileID: 1893933597}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_4
   m_TagString: Untagged
@@ -23024,28 +23023,6 @@ Transform:
   - {fileID: 92606434}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1893933597
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1893933595}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &1893933598
 LODGroup:
   m_ObjectHideFlags: 0
@@ -23530,7 +23507,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1933506334}
   - component: {fileID: 1933506336}
-  - component: {fileID: 1933506335}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_2565
   m_TagString: Untagged
@@ -23558,28 +23534,6 @@ Transform:
   - {fileID: 1137072844}
   m_Father: {fileID: 1797408638}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!64 &1933506335
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1933506333}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &1933506336
 LODGroup:
   m_ObjectHideFlags: 0
@@ -24347,6 +24301,7 @@ GameObject:
   - component: {fileID: 1975776146}
   - component: {fileID: 1975776148}
   - component: {fileID: 1975776147}
+  - component: {fileID: 1975776149}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_01_LOD0
   m_TagString: Untagged
@@ -24435,6 +24390,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &1975776149
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975776145}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000017615741103271811460, type: 3}
 --- !u!1 &2061702880
 GameObject:
   m_ObjectHideFlags: 0
@@ -24545,6 +24522,7 @@ GameObject:
   - component: {fileID: 2075963467}
   - component: {fileID: 2075963468}
   - component: {fileID: 3951}
+  - component: {fileID: 2075963469}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -24625,6 +24603,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2075963469
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075963466}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &2089278163
 GameObject:
   m_ObjectHideFlags: 0
@@ -24735,6 +24735,7 @@ GameObject:
   - component: {fileID: 2115782038}
   - component: {fileID: 2115782040}
   - component: {fileID: 2115782039}
+  - component: {fileID: 2115782041}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_02_LOD0
   m_TagString: Untagged
@@ -24823,6 +24824,28 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &2115782041
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2115782037}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
 --- !u!1 &2116009465
 GameObject:
   m_ObjectHideFlags: 0
@@ -25073,7 +25096,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1279}
   - component: {fileID: 2117651949}
-  - component: {fileID: 2117651948}
   m_Layer: 0
   m_Name: SM_CastleSideBridge_17
   m_TagString: Untagged
@@ -25081,28 +25103,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 127
   m_IsActive: 1
---- !u!64 &2117651948
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2117651947}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300010, guid: abc00000000003915185315483141541, type: 3}
 --- !u!205 &2117651949
 LODGroup:
   m_ObjectHideFlags: 0
