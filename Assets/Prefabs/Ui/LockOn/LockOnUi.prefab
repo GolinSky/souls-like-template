@@ -100,7 +100,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 16, y: 16}
+  m_SizeDelta: {x: 128, y: 128}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4382550469910669372
 CanvasRenderer:
@@ -123,14 +123,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.94509804}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 6a9731b00549d064fb65fa3eb4d1e859, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -144,9 +144,9 @@ MonoBehaviour:
   m_ImageType: 0
   m_MaterialMode: 0
   m_StrokeWidth: 0
-  m_OutlineWidth: 0.1
+  m_OutlineWidth: 0
   m_OutlineColor: {r: 0.2028302, g: 1, b: 0.9343508, a: 1}
-  m_FalloffDistance: 0.5
+  m_FalloffDistance: 0
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
   m_FlipHorizontal: 0
@@ -163,7 +163,7 @@ MonoBehaviour:
     m_Skew: 0
     m_CornerRadius: 0
   m_Circle:
-    m_Radius: 8
+    m_Radius: 64
     m_FitRadius: 1
   m_Pentagon:
     m_CornerRadius: {x: 0, y: 0, z: 0, w: 0}
