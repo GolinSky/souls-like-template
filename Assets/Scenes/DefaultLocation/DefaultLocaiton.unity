@@ -23204,7 +23204,7 @@ MonoBehaviour:
   version: 2
   globalVolume: 0
   mode: 1
-  size: {x: 604.6201, y: 357.2578, z: 388.02277}
+  size: {x: 3, y: 3, z: 3}
   overrideRendererFilters: 0
   minRendererVolumeSize: 0.1
   objectLayerMask:
@@ -23242,7 +23242,7 @@ Transform:
   m_GameObject: {fileID: 1245510309}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 61.40233, y: 366.34027, z: -139.57639}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24836,8 +24836,8 @@ MonoBehaviour:
     volumeMask: {fileID: 0}
     textureScrollingSpeed: {x: 0, y: 0, z: 0}
     textureTiling: {x: 1, y: 1, z: 1}
-    positiveFade: {x: 0.42900002, y: 0.42900002, z: 0.42900002}
-    negativeFade: {x: 0.42900002, y: 0.42900002, z: 0.42900002}
+    positiveFade: {x: 0.1236, y: 0.1236, z: 0.1236}
+    negativeFade: {x: 0.1236, y: 0.1236, z: 0.1236}
     m_EditorUniformFade: 12.36
     m_EditorPositiveFade: {x: 0, y: 0, z: 0}
     m_EditorNegativeFade: {x: 0, y: 0, z: 0}
@@ -25942,7 +25942,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 19
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1445873941
 Transform:
   m_ObjectHideFlags: 0
@@ -28525,7 +28525,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 19
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1624289005
 Transform:
   m_ObjectHideFlags: 0
@@ -31383,7 +31383,7 @@ Camera:
     height: 1
   near clip plane: 0.2
   far clip plane: 500
-  field of view: 40
+  field of view: 48
   orthographic: 0
   orthographic size: 10
   m_Depth: 0
@@ -36963,7 +36963,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 40
+    FieldOfView: 48
     OrthographicSize: 10
     NearClipPlane: 0.2
     FarClipPlane: 500
@@ -37188,7 +37188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
   Damping: {x: 0.1, y: 0.25, z: 2}
-  ShoulderOffset: {x: 1, y: 0.25, z: 0}
+  ShoulderOffset: {x: 1, y: 0.48, z: 0}
   VerticalArmLength: -0.31
   CameraSide: 0.5
   CameraDistance: 4

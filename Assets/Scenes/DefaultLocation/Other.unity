@@ -159176,7 +159176,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7862654719319889149}
   - component: {fileID: 7862654719319889150}
-  - component: {fileID: 7862654719319889148}
   m_Layer: 0
   m_Name: SM_carpet_759
   m_TagString: Untagged
@@ -248645,27 +248644,6 @@ LODGroup:
     - renderer: {fileID: 1120583048}
     - renderer: {fileID: 0}
   m_Enabled: 1
---- !u!65 &7862654719319889148
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 359713366}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 26.08955, y: 0.1, z: 3.514073}
-  m_Center: {x: -6.5223866, y: 0.037386924, z: -0.043228865}
 --- !u!4 &7862654719319889149
 Transform:
   m_ObjectHideFlags: 0
