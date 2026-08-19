@@ -58,7 +58,6 @@ namespace SoulsLike.Services.CameraService
         [Range(0.1f,10.0f)] [SerializeField] private float mouseSensitivityX = 1.0f;
 
         [Header("Lock On")]
-        [SerializeField, Range(0f, 0.45f)] private float lockHorizontalDeadZone = 0.12f;
         [SerializeField, Range(0f, 0.45f)] private float lockVerticalDeadZone = 0.08f;
         [SerializeField, Range(0f, 1f)] private float lockTargetViewportY = 0.58f;
         [SerializeField, Min(0f)] private float lockYawSpeed = 150f;
@@ -189,28 +188,20 @@ namespace SoulsLike.Services.CameraService
 
         private void UpdateLockOnRotation()
         {
+            RotateLockYawTowardTarget();
+
             Vector3 targetViewportPosition = targetCamera.WorldToViewportPoint(_lockOnTarget.position);
             if (targetViewportPosition.z <= 0f)
             {
-                RotateLockYawTowardTarget();
                 return;
             }
 
-            float horizontalError = GetDeadZoneError(
-                targetViewportPosition.x - 0.5f,
-                lockHorizontalDeadZone);
             float verticalError = GetDeadZoneError(
                 targetViewportPosition.y - lockTargetViewportY,
                 lockVerticalDeadZone);
 
-            float horizontalFieldOfView = GetHorizontalFieldOfView(targetCamera.fieldOfView, targetCamera.aspect);
-            float yawCorrection = ViewportOffsetToAngle(horizontalError, horizontalFieldOfView);
             float pitchCorrection = ViewportOffsetToAngle(verticalError, targetCamera.fieldOfView);
 
-            _cinemachineTargetYaw = Mathf.MoveTowardsAngle(
-                _cinemachineTargetYaw,
-                _cinemachineTargetYaw + yawCorrection,
-                lockYawSpeed * Time.deltaTime);
             _cinemachineTargetPitch = Mathf.MoveTowardsAngle(
                 _cinemachineTargetPitch,
                 _cinemachineTargetPitch - pitchCorrection,
@@ -266,12 +257,6 @@ namespace SoulsLike.Services.CameraService
             return Mathf.Atan(viewportOffset * 2f * halfFieldOfViewTangent) * Mathf.Rad2Deg;
         }
 
-        private static float GetHorizontalFieldOfView(float verticalFieldOfView, float aspect)
-        {
-            float halfVerticalFieldOfViewTangent = Mathf.Tan(verticalFieldOfView * 0.5f * Mathf.Deg2Rad);
-            return Mathf.Atan(halfVerticalFieldOfViewTangent * aspect) * 2f * Mathf.Rad2Deg;
-        }
-        
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
         {
             if (lfAngle < -360f) lfAngle += 360f;
