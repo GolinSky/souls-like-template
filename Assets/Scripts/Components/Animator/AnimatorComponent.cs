@@ -53,8 +53,8 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int LeftEquipmentSwapInTrigger = Animator.StringToHash("LeftEquipmentSwapIn");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
-        private const string UPPER_BODY_LAYER = "UpperBody";
-        private const string FULL_BODY_LAYER = "FullBody";
+        private const string UPPER_BODY_ACTIONS_LAYER = "UpperBodyActions";
+        private const string FULL_BODY_ACTIONS_LAYER = "FullBodyActions";
         
         [SerializeField] private Animator animator;
         [SerializeField] private AnimatorStateMachineReceiver stateMachineReceiver;
@@ -104,6 +104,7 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             animator.applyRootMotion = true;
+            SetActionLayerWeights(animator.GetBool(AnimIdMoving));
         }
 
         public void ApplyAnimationProfile(
@@ -121,16 +122,16 @@ namespace SoulsLike.Entities.Character.Components
                 return;
             }
 
-            float fullBodyLayerWeight = animator.GetLayerWeight(GetRequiredLayerIndex(FULL_BODY_LAYER));
-            float upperBodyLayerWeight = animator.GetLayerWeight(GetRequiredLayerIndex(UPPER_BODY_LAYER));
+            float upperBodyActionsLayerWeight = animator.GetLayerWeight(
+                GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER));
             bool isGrounded = animator.GetBool(AnimIdGrounded);
+            bool isMoving = animator.GetBool(AnimIdMoving);
             animator.runtimeAnimatorController = targetController;
             SetGrounded(isGrounded);
+            animator.SetBool(AnimIdMoving, isMoving);
             stateMachineReceiver.InitializeStateMachines();
             SetHandMode(_targetHandMode);
-            animator.SetLayerWeight(GetRequiredLayerIndex(FULL_BODY_LAYER), fullBodyLayerWeight);
-            animator.SetLayerWeight(
-                GetRequiredLayerIndex(UPPER_BODY_LAYER), upperBodyLayerWeight);
+            SetActionLayerWeights(upperBodyActionsLayerWeight);
         }
 
         public void ResetAnimationProfile()
@@ -141,21 +142,16 @@ namespace SoulsLike.Entities.Character.Components
                 return;
             }
 
-            float fullBodyLayerWeight = animator.GetLayerWeight(
-                GetRequiredLayerIndex(FULL_BODY_LAYER));
-            float upperBodyLayerWeight = animator.GetLayerWeight(
-                GetRequiredLayerIndex(UPPER_BODY_LAYER));
+            float upperBodyActionsLayerWeight = animator.GetLayerWeight(
+                GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER));
             bool isGrounded = animator.GetBool(AnimIdGrounded);
+            bool isMoving = animator.GetBool(AnimIdMoving);
             animator.runtimeAnimatorController = _defaultController;
             SetGrounded(isGrounded);
+            animator.SetBool(AnimIdMoving, isMoving);
             stateMachineReceiver.InitializeStateMachines();
             SetHandMode(_targetHandMode);
-            animator.SetLayerWeight(
-                GetRequiredLayerIndex(FULL_BODY_LAYER),
-                fullBodyLayerWeight);
-            animator.SetLayerWeight(
-                GetRequiredLayerIndex(UPPER_BODY_LAYER),
-                upperBodyLayerWeight);
+            SetActionLayerWeights(upperBodyActionsLayerWeight);
         }
         
         public void SetLockOn(bool isLockedOn)
@@ -359,7 +355,7 @@ namespace SoulsLike.Entities.Character.Components
             bool isMoving = _targetSpeed > 0.01f || _targetLocomotion.sqrMagnitude > 0.0001f || _currentLocomotion.sqrMagnitude > 0.0001f;
             animator.SetBool(AnimIdMoving, isMoving);
             UpdateHandModeLayerWeights(dt);
-            UpdateHandModeSwitchLayerWeights(isMoving, dt);
+            UpdateActionLayerWeights(isMoving, dt);
         }
 
         private void SetHandModeTarget(HandMode handMode)
@@ -398,26 +394,32 @@ namespace SoulsLike.Entities.Character.Components
             }
         }
 
-        private void UpdateHandModeSwitchLayerWeights(bool isMoving, float deltaTime)
+        private void SetActionLayerWeights(bool isMoving)
         {
-            int fullBodyLayerIndex = GetRequiredLayerIndex(FULL_BODY_LAYER);
-            int upperBodyLayerIndex = GetRequiredLayerIndex(UPPER_BODY_LAYER);
-            float maxDelta = deltaTime * layerTransitionSpeed;
-
-            animator.SetLayerWeight(
-                fullBodyLayerIndex,
-                Mathf.MoveTowards(
-                    animator.GetLayerWeight(fullBodyLayerIndex),
-                    isMoving ? 0.0f : 1.0f,
-                    maxDelta));
-            animator.SetLayerWeight(
-                upperBodyLayerIndex,
-                Mathf.MoveTowards(
-                    animator.GetLayerWeight(upperBodyLayerIndex),
-                    isMoving ? 1.0f : 0.0f,
-                    maxDelta));
+            SetActionLayerWeights(isMoving ? 1.0f : 0.0f);
         }
-        
+
+        private void UpdateActionLayerWeights(bool isMoving, float deltaTime)
+        {
+            int upperBodyActionsLayerIndex = GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER);
+            float upperBodyActionsLayerWeight = Mathf.MoveTowards(
+                animator.GetLayerWeight(upperBodyActionsLayerIndex),
+                isMoving ? 1.0f : 0.0f,
+                deltaTime * layerTransitionSpeed);
+
+            SetActionLayerWeights(upperBodyActionsLayerWeight);
+        }
+
+        private void SetActionLayerWeights(float upperBodyActionsLayerWeight)
+        {
+            animator.SetLayerWeight(
+                GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER),
+                upperBodyActionsLayerWeight);
+            animator.SetLayerWeight(
+                GetRequiredLayerIndex(FULL_BODY_ACTIONS_LAYER),
+                1.0f - upperBodyActionsLayerWeight);
+        }
+
         public void SetTurn(float turnAmount)
         {
             _targetTurnAmount = turnAmount;

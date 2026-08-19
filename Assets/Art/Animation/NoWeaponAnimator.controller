@@ -2637,7 +2637,7 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: UpperBody
+    m_Name: UpperBodyActions
     m_StateMachine: {fileID: -1406826057023039466}
     m_Mask: {fileID: 31900000, guid: 8b944ba0c7bd09c4eafc892ef312f357, type: 2}
     m_Motions:
@@ -2654,20 +2654,8 @@ AnimatorController:
       m_State: {fileID: 4526759854957777597}
       m_Motion: {fileID: 785052904632696677, guid: a1d47000d8e84d84e9f5d825ea986275, type: 3}
     - serializedVersion: 2
-      m_State: {fileID: 0}
-      m_Motion: {fileID: 2708193752246649902, guid: 3d946f934a67093458d63caca9c74a33, type: 3}
-    - serializedVersion: 2
-      m_State: {fileID: 0}
-      m_Motion: {fileID: -7344082651070388836, guid: 83ba7bb552e64eb47a01633aa0f8996a, type: 3}
-    - serializedVersion: 2
       m_State: {fileID: -9141984022020347636}
       m_Motion: {fileID: 1635371524486223473, guid: b5b0b671546bc754da5b1dbbf33c90ac, type: 3}
-    - serializedVersion: 2
-      m_State: {fileID: 0}
-      m_Motion: {fileID: 2708193752246649902, guid: 3d946f934a67093458d63caca9c74a33, type: 3}
-    - serializedVersion: 2
-      m_State: {fileID: 0}
-      m_Motion: {fileID: -7344082651070388836, guid: 83ba7bb552e64eb47a01633aa0f8996a, type: 3}
     - serializedVersion: 2
       m_State: {fileID: -6645073035514793061}
       m_Motion: {fileID: 2708193752246649902, guid: 3d946f934a67093458d63caca9c74a33, type: 3}
@@ -2680,6 +2668,9 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 3633566555546996950}
       m_Motion: {fileID: -7344082651070388836, guid: 83ba7bb552e64eb47a01633aa0f8996a, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: -8621324728090330953}
+      m_Motion: {fileID: 1635371524486223473, guid: b5b0b671546bc754da5b1dbbf33c90ac, type: 3}
     m_Behaviours:
     - m_State: {fileID: -4659332958106073385}
       m_StateMachineBehaviours: []
@@ -2687,21 +2678,23 @@ AnimatorController:
       m_StateMachineBehaviours: []
     - m_State: {fileID: 3633566555546996950}
       m_StateMachineBehaviours: []
+    - m_State: {fileID: -8621324728090330953}
+      m_StateMachineBehaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 4
-    m_DefaultWeight: 1
+    m_DefaultWeight: 0
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 1
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: FullBody
+    m_Name: FullBodyActions
     m_StateMachine: {fileID: 1019618621651108516}
     m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: -1
-    m_DefaultWeight: 0
+    m_DefaultWeight: 1
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
@@ -3033,7 +3026,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FullBody
+  m_Name: FullBodyActions
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 7706201106982403208}
