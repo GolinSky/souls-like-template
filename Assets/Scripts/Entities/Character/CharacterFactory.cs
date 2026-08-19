@@ -1,4 +1,5 @@
 using System;
+using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Equipment;
@@ -13,6 +14,7 @@ using SoulsLike.Factory;
 using SoulsLike.Ui.LockOn;
 using SoulsLike.Ui.PlayerHud;
 using SoulsLike.Items;
+using SoulsLike.Services.IdGeneration;
 using SoulsLike.Ui.Inventory;
 using SoulsLike.Ui.Equipment;
 using SoulsLike.Ui.PauseNavigation;
@@ -98,6 +100,9 @@ namespace SoulsLike.Entities.Character
                 builder.Register<HeavyAttackGestureResolver>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerCharacterInputAdapter>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                
+                
+                builder.RegisterEntitySystemExt(EntityType.Player, RootScope.Container.Resolve<IUniqueIdGenerator>().GenerateUniqueId());
             });
 
             instance.transform.SetParent(characterScope.transform, true);

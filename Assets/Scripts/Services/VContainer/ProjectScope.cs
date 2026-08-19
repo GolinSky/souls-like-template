@@ -1,7 +1,9 @@
+using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Extensions;
 using SoulsLike.Services;
 using SoulsLike.Services.Audio;
 using SoulsLike.Services.Audio.Data;
+using SoulsLike.Services.IdGeneration;
 using SoulsLike.Services.Repository;
 using SoulsLike.Services.Scenes;
 using SoulsLike.Services.Scenes.Data;
@@ -42,6 +44,8 @@ namespace SoulsLike
 
             builder.Register<AddressableAssetService>(Lifetime.Singleton).As<IAssetService>();
             builder.Register<StorageRegistry>(Lifetime.Singleton).As<IStorageRegistry>();
+            builder.Register<UniqueIdGenerator>(Lifetime.Singleton).As<IUniqueIdGenerator>();
+            builder.Register<EntityLocator>(Lifetime.Singleton).As<IEntityLocator>();
 
             // Wire OnGuiFpsCounter in ProjectScope
             if (fpsCounter != null)
