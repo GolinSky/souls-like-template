@@ -1,5 +1,6 @@
 ﻿using SoulsLike.Services.Repository;
 using SoulsLike.Services;
+using SoulsLike.Services.GenericPopupService;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -27,6 +28,8 @@ namespace SoulsLike
             {
                 builder.RegisterComponent(uiService).As<IUiService>();
             }
+
+            builder.Register<GenericPopupService>(Lifetime.Singleton).As<IGenericPopupService>();
 
             // if (previewRenderService == null)
             // {

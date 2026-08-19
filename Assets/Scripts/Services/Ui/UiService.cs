@@ -9,6 +9,8 @@ namespace SoulsLike.Services
     {
         TUI CreateUi<TUI>(Transform uiParent = null)
             where TUI : IBaseUi;
+
+        void MarkUiAsOverlay(BaseUi baseUi);
     }
 
     public class UiService: MonoBehaviour, IUiService
