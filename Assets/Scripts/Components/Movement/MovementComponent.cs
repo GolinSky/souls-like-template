@@ -14,10 +14,14 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private const float MIN_LOCK_ON_ROLL_RADIUS = 0.01f;
         private const float GROUNDED_VERTICAL_VELOCITY = -2.0f;
         private const float DEFAULT_TERMINAL_VELOCITY = 53.0f;
+        private const float GROUND_SNAP_DEAD_ZONE = 0.005f;
+        private const int GROUND_PROBE_HIT_CAPACITY = 8;
 
         [SerializeField] private CharacterController controller;
+        [SerializeField] private bool drawGroundDebug;
 
         private readonly Dictionary<SpeedMultiplierKey, float> _speedMultipliers = new Dictionary<SpeedMultiplierKey, float>();
+        private readonly RaycastHit[] _groundProbeHits = new RaycastHit[GROUND_PROBE_HIT_CAPACITY];
 
         private IMovementPresentationSink _presentationSink;
         private MovementMode _movementMode = MovementMode.Free;
@@ -46,6 +50,13 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private bool _isCrouching;
         private bool? _lastNotifiedGrounded;
         private float _defaultControllerHeight;
+        private Vector3 _lastGroundProbeOrigin;
+        private float _lastGroundProbeRadius;
+        private float _lastGroundProbeDistance;
+        private RaycastHit _lastGroundProbeHit;
+        private bool _hasGroundProbeSample;
+        private bool _hasGroundProbeHit;
+        private bool _lastGroundProbeWasWalkable;
 
         public LocomotionState CurrentLocomotionState { get; private set; } = LocomotionState.Grounded;
         public LandingType CurrentLandingType { get; private set; } = LandingType.None;
@@ -117,12 +128,13 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
             if (Model.Grounded)
             {
-                planarDelta = Vector3.ProjectOnPlane(planarDelta, _groundNormal);
+                planarDelta = ProjectOnGround(planarDelta);
             }
 
-            float verticalDelta = isRollAction ? 0.0f : deltaPosition.y;
+            float verticalDelta = Model.Grounded || isRollAction ? 0.0f : deltaPosition.y;
             CollisionFlags collisionFlags = controller.Move(planarDelta + Vector3.up * verticalDelta);
             ResolveMovementCollisions(collisionFlags);
+            MaintainGroundContact();
 
             if (isLockedRoll)
             {
@@ -180,6 +192,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             Vector3 horizontalMotion = CalculateHorizontalMovement(moveInput, cameraYaw, sprint, deltaTime);
             CollisionFlags collisionFlags = controller.Move((horizontalMotion + Vector3.up * _verticalVelocity) * deltaTime);
             ResolveMovementCollisions(collisionFlags);
+            MaintainGroundContact();
 
             _presentationSink.SetLocomotion(_animationBlend, _animationBlendDirection);
             _presentationSink.SetTurn(_turnAmount);
@@ -400,36 +413,101 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         private bool HasWalkableGroundContact()
         {
-            Vector3 groundCheckPosition = transform.position + Vector3.up * Model.GroundedOffset;
-            bool hasGroundContact = Physics.CheckSphere(
-                groundCheckPosition,
-                Model.GroundedRadius,
-                Model.GroundLayers,
-                QueryTriggerInteraction.Ignore);
-            return hasGroundContact && TryUpdateGroundNormal();
+            float probeDistance = Mathf.Abs(Model.GroundedOffset) + controller.skinWidth;
+            return TryProbeGround(probeDistance, out _);
         }
 
-        private bool TryUpdateGroundNormal()
+        private bool TryProbeGround(float probeDistance, out RaycastHit groundHit)
         {
-            float castRadius = Model.GroundedRadius * 0.9f;
-            Vector3 castOrigin = transform.position + Vector3.up * (Model.GroundedRadius + 0.1f);
-            float castDistance = Model.GroundedRadius + Mathf.Abs(Model.GroundedOffset) + 0.2f;
+            float castRadius = Mathf.Min(Model.GroundedRadius, controller.radius) * 0.9f;
+            float lowerSphereOffset = Mathf.Max(controller.height * 0.5f - controller.radius, 0.0f);
+            Vector3 castOrigin = transform.TransformPoint(controller.center) - Vector3.up * lowerSphereOffset;
+            float castDistance = Mathf.Max(probeDistance, controller.skinWidth);
+            int hitCount = Physics.SphereCastNonAlloc(
+                castOrigin,
+                castRadius,
+                Vector3.down,
+                _groundProbeHits,
+                castDistance,
+                Model.GroundLayers,
+                QueryTriggerInteraction.Ignore);
 
-            if (Physics.SphereCast(
-                    castOrigin,
-                    castRadius,
-                    Vector3.down,
-                    out RaycastHit hit,
-                    castDistance,
-                    Model.GroundLayers,
-                    QueryTriggerInteraction.Ignore))
+            bool foundWalkableGround = false;
+            bool foundAnyGround = false;
+            float closestWalkableDistance = float.PositiveInfinity;
+            float closestGroundDistance = float.PositiveInfinity;
+            RaycastHit closestGroundHit = default;
+            groundHit = default;
+
+            for (int index = 0; index < hitCount; index++)
             {
-                _groundNormal = hit.normal;
-                return Vector3.Angle(_groundNormal, Vector3.up) <= controller.slopeLimit;
+                RaycastHit hit = _groundProbeHits[index];
+                if (hit.collider == controller)
+                {
+                    continue;
+                }
+
+                if (hit.distance < closestGroundDistance)
+                {
+                    foundAnyGround = true;
+                    closestGroundDistance = hit.distance;
+                    closestGroundHit = hit;
+                }
+
+                bool isWalkable = Vector3.Angle(hit.normal, Vector3.up) <= controller.slopeLimit;
+                if (isWalkable && hit.distance < closestWalkableDistance)
+                {
+                    foundWalkableGround = true;
+                    closestWalkableDistance = hit.distance;
+                    groundHit = hit;
+                }
             }
 
-            _groundNormal = Vector3.up;
-            return false;
+            _lastGroundProbeOrigin = castOrigin;
+            _lastGroundProbeRadius = castRadius;
+            _lastGroundProbeDistance = castDistance;
+            _lastGroundProbeHit = foundWalkableGround ? groundHit : closestGroundHit;
+            _hasGroundProbeSample = true;
+            _hasGroundProbeHit = foundWalkableGround || foundAnyGround;
+            _lastGroundProbeWasWalkable = foundWalkableGround;
+
+            if (foundWalkableGround)
+            {
+                _groundNormal = groundHit.normal;
+            }
+
+            return foundWalkableGround;
+        }
+
+        private void MaintainGroundContact()
+        {
+            if (!Model.Grounded || _wasJumpInitiated || _verticalVelocity > 0.0f)
+            {
+                return;
+            }
+
+            if (!TryProbeGround(Model.GroundSnapDistance, out RaycastHit groundHit))
+            {
+                return;
+            }
+
+            float capsuleBottom = transform.TransformPoint(controller.center).y - controller.height * 0.5f;
+            float snapDistance = capsuleBottom - groundHit.point.y - controller.skinWidth;
+            if (snapDistance > Model.GroundSnapDistance)
+            {
+                return;
+            }
+
+            if (snapDistance > GROUND_SNAP_DEAD_ZONE)
+            {
+                CollisionFlags collisionFlags = controller.Move(Vector3.down * snapDistance);
+                ResolveMovementCollisions(collisionFlags);
+            }
+
+            _fallGraceTimer
+                .ChangeDuration(Model.FallTimeout)
+                .Start();
+            _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
         }
 
         private void SetGrounded(bool grounded)
@@ -542,6 +620,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
             if (Model.Grounded)
             {
+                desiredVelocity = ProjectOnGround(desiredVelocity);
                 if (_movementBlocked)
                 {
                     _horizontalVelocity = Vector3.zero;
@@ -551,7 +630,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                     UpdateGroundVelocity(desiredVelocity, targetSpeed, deltaTime);
                 }
 
-                _horizontalVelocity = Vector3.ProjectOnPlane(_horizontalVelocity, _groundNormal);
+                _horizontalVelocity = ProjectOnGround(_horizontalVelocity);
             }
             else if (!_movementBlocked && hasMovementInput)
             {
@@ -562,6 +641,23 @@ namespace SoulsLike.Entities.Character.Components.Movement
             UpdateFacing(worldDirection, hasMovementInput, deltaTime);
             UpdateAnimationBlend(worldDirection, hasMovementInput, targetSpeed, sprinting, deltaTime);
             return _horizontalVelocity;
+        }
+
+        private Vector3 ProjectOnGround(Vector3 velocity)
+        {
+            float speed = velocity.magnitude;
+            if (speed <= INPUT_DEAD_ZONE)
+            {
+                return Vector3.zero;
+            }
+
+            Vector3 projectedVelocity = Vector3.ProjectOnPlane(velocity, _groundNormal);
+            if (projectedVelocity.sqrMagnitude <= INPUT_DEAD_ZONE * INPUT_DEAD_ZONE)
+            {
+                return Vector3.zero;
+            }
+
+            return projectedVelocity.normalized * speed;
         }
 
         private void UpdateGroundVelocity(Vector3 desiredVelocity, float targetSpeed, float deltaTime)
@@ -749,6 +845,35 @@ namespace SoulsLike.Entities.Character.Components.Movement
             }
 
             return total;
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (!drawGroundDebug || !_hasGroundProbeSample)
+            {
+                return;
+            }
+
+            Gizmos.color = _lastGroundProbeWasWalkable
+                ? Color.green
+                : _hasGroundProbeHit
+                    ? Color.red
+                    : Color.yellow;
+            Gizmos.DrawWireSphere(_lastGroundProbeOrigin, _lastGroundProbeRadius);
+            Gizmos.DrawLine(
+                _lastGroundProbeOrigin,
+                _lastGroundProbeOrigin + Vector3.down * _lastGroundProbeDistance);
+            Gizmos.DrawWireSphere(
+                _lastGroundProbeOrigin + Vector3.down * _lastGroundProbeDistance,
+                _lastGroundProbeRadius);
+
+            if (_hasGroundProbeHit)
+            {
+                Gizmos.DrawSphere(_lastGroundProbeHit.point, 0.025f);
+                Gizmos.DrawLine(
+                    _lastGroundProbeHit.point,
+                    _lastGroundProbeHit.point + _lastGroundProbeHit.normal * 0.25f);
+            }
         }
 
         private static float MovementDeltaTime => Mathf.Min(Time.deltaTime, MAX_MOVEMENT_DELTA_TIME);

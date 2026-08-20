@@ -55,6 +55,7 @@ MonoBehaviour:
   <Grounded>k__BackingField: 1
   <GroundedOffset>k__BackingField: -0.2
   <GroundedRadius>k__BackingField: 0.28
+  <GroundSnapDistance>k__BackingField: 0.35
   <TerminalVelocity>k__BackingField: 0
   <GroundLayers>k__BackingField:
     serializedVersion: 2

@@ -25,6 +25,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
         bool Grounded { get; }
         float GroundedOffset { get; }
         float GroundedRadius { get; }
+        float GroundSnapDistance { get; }
         float TerminalVelocity { get; set; }
         LayerMask GroundLayers { get; }
         float RollCooldown { get; }
@@ -122,6 +123,10 @@ namespace SoulsLike.Entities.Character.Components.Movement
         [Tooltip("The radius of the grounded check. Should match the radius of the CharacterController")]
         [field: SerializeField]
         public float GroundedRadius { get; private set; } = 0.28f;
+
+        [Tooltip("Maximum distance the controller follows walkable ground downward while already grounded")]
+        [field: SerializeField]
+        public float GroundSnapDistance { get; private set; } = 0.35f;
 
         [field: SerializeField] public float TerminalVelocity { get; set; }
 
