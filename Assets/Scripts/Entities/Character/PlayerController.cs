@@ -1,5 +1,6 @@
 using System;
 using SoulsLike.Entities.Character.Input;
+using SoulsLike.Interactions;
 using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
 using SoulsLike.Services.Targeting;
@@ -16,6 +17,7 @@ namespace SoulsLike.Entities.Character
         private readonly ITargetingService _targetingService;
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly PlayerCharacterInputAdapter _inputAdapter;
+        private readonly InteractionController _interactionController;
 
         private GameState _currentGameState;
 
@@ -25,7 +27,8 @@ namespace SoulsLike.Entities.Character
             ICameraService cameraService,
             ITargetingService targetingService,
             IGameStateNotifier gameStateNotifier,
-            PlayerCharacterInputAdapter inputAdapter)
+            PlayerCharacterInputAdapter inputAdapter,
+            InteractionController interactionController)
         {
             _inputService = inputService;
             _character = character;
@@ -33,6 +36,7 @@ namespace SoulsLike.Entities.Character
             _targetingService = targetingService;
             _gameStateNotifier = gameStateNotifier;
             _inputAdapter = inputAdapter;
+            _interactionController = interactionController;
         }
 
         public void Initialize()
@@ -56,10 +60,12 @@ namespace SoulsLike.Entities.Character
         {
             if (_currentGameState != GameState.Idle || _character.IsInputBlocked)
             {
+                _interactionController.ClearTarget();
                 return;
             }
 
             HandleLockOnInput();
+            _interactionController.Tick();
             _character.Tick(_inputAdapter.Read(_character.CurrentActionState));
         }
 

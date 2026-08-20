@@ -1,5 +1,6 @@
 using System;
 using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Equipment;
@@ -11,6 +12,7 @@ using SoulsLike.Entities.Character.Input;
 using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Extensions;
 using SoulsLike.Factory;
+using SoulsLike.Interactions;
 using SoulsLike.Ui.LockOn;
 using SoulsLike.Ui.PlayerHud;
 using SoulsLike.Items;
@@ -45,6 +47,12 @@ namespace SoulsLike.Entities.Character
             instance.name = $"{nameof(Character)}_Instance";
 
             Character character = GetRequiredComponent<Character>(instance);
+            ViewEntity viewEntity = instance.GetComponent<ViewEntity>();
+            if (viewEntity == null)
+            {
+                viewEntity = instance.AddComponent<ViewEntity>();
+            }
+
             AnimatorComponent animatorComponent = GetRequiredComponent<AnimatorComponent>(instance);
             AttackComponent attackComponent = GetRequiredComponent<AttackComponent>(instance);
             MovementComponent movementComponent = GetRequiredComponent<MovementComponent>(instance);
@@ -53,9 +61,14 @@ namespace SoulsLike.Entities.Character
                 GetRequiredComponent<EquipmentPresentation>(instance);
             InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
+            long entityId = RootScope.Container.Resolve<IUniqueIdGenerator>().GenerateUniqueId();
 
             LifetimeScope characterScope = RootScope.CreateChild(builder =>
             {
+                builder.RegisterEntitySystemExt(EntityType.Player, entityId);
+                builder.RegisterComponent(viewEntity).AsSelf().AsImplementedInterfaces();
+                builder.Register<InteractionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+
                 builder.RegisterComponent(character).AsSelf().AsImplementedInterfaces();
 
                 builder.Register<AnimatorModel>(Lifetime.Singleton).AsSelf();
@@ -99,10 +112,8 @@ namespace SoulsLike.Entities.Character
                 builder.Register<SprintRollGestureResolver>(Lifetime.Singleton).AsSelf();
                 builder.Register<HeavyAttackGestureResolver>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerCharacterInputAdapter>(Lifetime.Singleton).AsSelf();
+                builder.Register<InteractionController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                
-                
-                builder.RegisterEntitySystemExt(EntityType.Player, RootScope.Container.Resolve<IUniqueIdGenerator>().GenerateUniqueId());
             });
 
             instance.transform.SetParent(characterScope.transform, true);
