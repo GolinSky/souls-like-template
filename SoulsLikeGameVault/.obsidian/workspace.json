@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "features/Current Jump and Roll System.md",
+                "file": "ui/UI_Code_Build_Guide.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Current Jump and Roll System"
+              "title": "UI_Code_Build_Guide"
             }
           }
         ],
@@ -202,8 +202,8 @@
   },
   "active": "97aeffa9e14002e7",
   "lastOpenFiles": [
-    "features/Locomotion Architecture Technical Specification.md",
     "features/Current Jump and Roll System.md",
+    "features/Locomotion Architecture Technical Specification.md",
     "ui/UI_Code_Build_Guide.md",
     "Artifact/elden_ring_inventory_equipment_architecture.md",
     "Artifact",

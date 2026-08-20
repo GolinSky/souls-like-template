@@ -19,6 +19,7 @@ using SoulsLike.Items;
 using SoulsLike.Services.IdGeneration;
 using SoulsLike.Ui.Inventory;
 using SoulsLike.Ui.Equipment;
+using SoulsLike.Ui.Interaction;
 using SoulsLike.Ui.PauseNavigation;
 using UnityEngine;
 using VContainer;
@@ -114,6 +115,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<HeavyAttackGestureResolver>(Lifetime.Singleton).AsSelf();
                 builder.Register<PlayerCharacterInputAdapter>(Lifetime.Singleton).AsSelf();
                 builder.Register<InteractionController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<InteractionUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             });
 
