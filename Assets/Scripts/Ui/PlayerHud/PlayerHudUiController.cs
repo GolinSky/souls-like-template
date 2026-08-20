@@ -3,6 +3,7 @@ using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Items;
+using SoulsLike.Interactions;
 using SoulsLike.Services;
 using SoulsLike.Services.Targeting;
 using UnityEngine;
@@ -17,6 +18,7 @@ namespace SoulsLike.Ui.PlayerHud
         private readonly EquipmentComponent _equipmentComponent;
         private readonly InventoryComponent _inventoryComponent;
         private readonly ItemCatalog _itemCatalog;
+        private readonly InteractionController _interactionController;
         private PlayerHudUi _playerHudUi;
         private HealthStats _healthStats;
 
@@ -24,12 +26,14 @@ namespace SoulsLike.Ui.PlayerHud
             IUiService uiService,
             HealthModel healthModel,
             ItemCatalog itemCatalog,
+            InteractionController interactionController,
             EquipmentComponent equipmentComponent = null,
             InventoryComponent inventoryComponent = null,
             ITargetingService targetingService = null) : base(uiService)
         {
             _healthModel = healthModel;
             _itemCatalog = itemCatalog;
+            _interactionController = interactionController;
             _equipmentComponent = equipmentComponent;
             _inventoryComponent = inventoryComponent;
             _targetingService = targetingService;
@@ -41,6 +45,7 @@ namespace SoulsLike.Ui.PlayerHud
             _playerHudUi.AssignPresenter(this);
             _healthStats = _healthModel.Stats;
             _healthModel.OnStatsChanged += OnStatsChanged;
+            _interactionController.InteractionFailed += OnInteractionFailed;
 
             if (_equipmentComponent != null)
             {
@@ -116,9 +121,20 @@ namespace SoulsLike.Ui.PlayerHud
                 loadout.HandMode == HandMode.TwoHanded);
         }
 
+        public void ShowAcquisition(string itemName, Sprite icon, int quantity)
+        {
+            _playerHudUi.ShowAcquisition(itemName, icon, quantity);
+        }
+
+        private void OnInteractionFailed(InteractionPrompt prompt)
+        {
+            _playerHudUi.ShowInteractionFailure(prompt.Text);
+        }
+
         public void Dispose()
         {
             _healthModel.OnStatsChanged -= OnStatsChanged;
+            _interactionController.InteractionFailed -= OnInteractionFailed;
 
             if (_equipmentComponent != null)
             {

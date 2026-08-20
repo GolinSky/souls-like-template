@@ -20,6 +20,9 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         public InteractionPrompt GetPrompt(IInteractable interactable) =>
             interactable.GetPrompt(_actor);
 
+        public InteractionPrompt GetFailurePrompt(IInteractable interactable) =>
+            interactable.GetFailurePrompt(_actor);
+
         public UniTask InteractAsync(IInteractable interactable, CancellationToken token) =>
             interactable.InteractAsync(_actor, token);
     }

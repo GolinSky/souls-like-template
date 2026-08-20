@@ -33,6 +33,7 @@ namespace SoulsLike.Interactions
         private bool _selectionCycled;
 
         public event Action<InteractionPrompt> PromptChanged;
+        public event Action<InteractionPrompt> InteractionFailed;
 
         public InteractionPrompt CurrentPrompt { get; private set; }
 
@@ -119,8 +120,7 @@ namespace SoulsLike.Interactions
                 IInteractable interactable = collider.GetComponentInParent<IInteractable>();
                 if (interactable == null
                     || !_candidateInteractables.Add(interactable)
-                    || interactable is Behaviour behaviour && !behaviour.isActiveAndEnabled
-                    || !_interactionCommand.CanInteract(interactable))
+                    || interactable is Behaviour behaviour && !behaviour.isActiveAndEnabled)
                 {
                     continue;
                 }
@@ -192,6 +192,13 @@ namespace SoulsLike.Interactions
 
         private async UniTask InteractAsync(IInteractable interactable)
         {
+            if (!_interactionCommand.CanInteract(interactable))
+            {
+                InteractionFailed?.Invoke(
+                    _interactionCommand.GetFailurePrompt(interactable));
+                return;
+            }
+
             _isInteracting = true;
             try
             {

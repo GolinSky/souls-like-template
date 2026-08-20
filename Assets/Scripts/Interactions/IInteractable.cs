@@ -9,6 +9,7 @@ namespace SoulsLike.Interactions
     {
         bool CanInteract(IEntity actor);
         InteractionPrompt GetPrompt(IEntity actor);
+        InteractionPrompt GetFailurePrompt(IEntity actor);
         UniTask InteractAsync(IEntity actor, CancellationToken token);
         Transform InteractionAnchor { get; }
         int Priority { get; }

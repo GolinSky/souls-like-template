@@ -68,6 +68,7 @@ namespace SoulsLike.Entities.Character
                 builder.RegisterEntitySystemExt(EntityType.Player, entityId);
                 builder.RegisterComponent(viewEntity).AsSelf().AsImplementedInterfaces();
                 builder.Register<InteractionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<GroundItemCollectionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterComponent(character).AsSelf().AsImplementedInterfaces();
 

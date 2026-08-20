@@ -320,6 +320,11 @@ namespace SoulsLike.Entities.Character
         public void Heal(float amount) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateHeal(healthComponent.Stats, amount));
 
+        public void GrantCurrency(int amount)
+        {
+            HeldCurrency = checked(HeldCurrency + amount);
+        }
+
         public void Revive(float health) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateRevive(healthComponent.Stats, health));
 
@@ -373,7 +378,7 @@ namespace SoulsLike.Entities.Character
                     Heal(consumable.EffectAmount);
                     break;
                 case ItemUseType.GrantCurrency:
-                    HeldCurrency = checked(HeldCurrency + Mathf.RoundToInt(consumable.EffectAmount));
+                    GrantCurrency(Mathf.RoundToInt(consumable.EffectAmount));
                     break;
                 case ItemUseType.InfuseActiveWeapon:
                     WeaponRuntime runtime = equipmentPresentation.ActiveRightWeaponRuntime;

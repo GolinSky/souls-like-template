@@ -1,43 +1,90 @@
-using System;
-using SoulsLike.Entities.Character;
-using SoulsLike.Entities.Character.Components.Inventory;
+using System.Threading;
+using Cysharp.Threading.Tasks;
+using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
+using SoulsLike.Interactions;
 using UnityEngine;
 
 namespace SoulsLike.Items
 {
-    //todo: instead of some single GroundItem use main single GroundItemsSystem - which will invoked in OnTriggerEnter and by itself use entity locator etc....
-    public sealed class GroundItem : MonoBehaviour
+    public enum GroundItemRewardType
     {
+        Item = 0,
+        Currency = 1
+    }
+
+    public enum GroundItemState
+    {
+        Available = 0,
+        Busy = 1,
+        Collected = 2
+    }
+
+    public sealed class GroundItem : MonoBehaviour, IInteractable
+    {
+        [SerializeField] private GroundItemRewardType rewardType;
         [SerializeField] private ItemId itemId;
         [SerializeField, Min(1)] private int quantity = 1;
+        [SerializeField, Min(1)] private int currencyAmount = 1;
+        [SerializeField] private string saveIdentifier;
+        [SerializeField] private Collider interactionCollider;
+        [SerializeField] private Transform interactionAnchor;
+        [SerializeField] private GroundItemVfx pickupVfx;
+        [SerializeField] private int priority = 100;
 
+        public GroundItemRewardType RewardType => rewardType;
+        public GroundItemState State { get; private set; }
         public ItemId ItemId => itemId;
         public int Quantity => quantity;
+        public int CurrencyAmount => currencyAmount;
+        public string SaveIdentifier => saveIdentifier;
+        public Transform InteractionAnchor => interactionAnchor;
+        public int Priority => priority;
 
-        public void Collect(InventoryComponent inventory)
+        public bool CanInteract(IEntity actor) =>
+            State == GroundItemState.Available
+            && actor.EntityType == EntityType.Player;
+
+        public InteractionPrompt GetPrompt(IEntity actor) => State switch
         {
-            if (inventory == null)
+            GroundItemState.Available => new InteractionPrompt(
+                rewardType == GroundItemRewardType.Currency
+                    ? "Recover runes"
+                    : "Pick up item"),
+            GroundItemState.Busy => new InteractionPrompt("Busy"),
+            _ => default
+        };
+
+        public InteractionPrompt GetFailurePrompt(IEntity actor) => State switch
+        {
+            GroundItemState.Busy => new InteractionPrompt("Item is busy"),
+            GroundItemState.Collected => new InteractionPrompt("Item already collected"),
+            _ => new InteractionPrompt("Cannot collect item")
+        };
+
+        public async UniTask InteractAsync(IEntity actor, CancellationToken token)
+        {
+            if (!CanInteract(actor))
             {
-                throw new ArgumentNullException(nameof(inventory));
+                return;
             }
 
-            if (itemId == ItemId.None)
+            State = GroundItemState.Busy;
+            interactionCollider.enabled = false;
+
+            if (!actor.TryGetComponent(out GroundItemCollectionCommand collectionCommand))
             {
-                throw new InvalidOperationException($"Ground item '{name}' requires an ItemId.");
+                throw new System.InvalidOperationException(
+                    $"{nameof(GroundItemCollectionCommand)} is not registered on entity {actor.Id}.");
             }
 
-            inventory.Add(itemId, quantity);
+            collectionCommand.Collect(this);
+            State = GroundItemState.Collected;
+
+            await pickupVfx.PlayPickupAsync(
+                collectionCommand.CollectionTarget,
+                CancellationToken.None);
             Destroy(gameObject);
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            //todo: use entity locator to get ientity - then type of entity - compare if player entity - then access collect command and collect
-            Character character = other.GetComponentInParent<Character>();
-            if (character != null)
-            {
-                Collect(character.InventoryComponent);
-            }
         }
     }
 }

@@ -154,6 +154,9 @@ namespace SoulsLike.Ui.PlayerHud
         [SerializeField] private EquipmentSlotHud rightSlot = new EquipmentSlotHud();
         [SerializeField] private EquipmentSlotHud bottomSlot = new EquipmentSlotHud();
 
+        [Header("Acquisition Panel")]
+        [SerializeField] private ItemAcquisitionPanel acquisitionPanel;
+
         [Header("HUD Visibility State Machine")]
         [SerializeField] private float fadeDuration = 0.5f;
         [SerializeField] private float autoHideDelay = 3.0f;
@@ -244,6 +247,16 @@ namespace SoulsLike.Ui.PlayerHud
             {
                 bottomSlot.SetEmpty();
             }
+        }
+
+        public void ShowAcquisition(string itemName, Sprite icon, int quantity)
+        {
+            acquisitionPanel.ShowAcquisition(itemName, icon, quantity);
+        }
+
+        public void ShowInteractionFailure(string message)
+        {
+            acquisitionPanel.ShowMessage(message);
         }
 
         private void Update()
