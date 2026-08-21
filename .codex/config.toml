@@ -2,6 +2,24 @@
 command = "unity"
 args = [ "mcp", "--project-path", "F:\\Private\\SoulsLikeTemplate" ]
 
+[mcp_servers.serena]
+command = "uvx"
+args = [
+  "-p", "3.13",
+  "--from", "serena-agent==1.7.0",
+  "serena", "start-mcp-server",
+  "--context", "codex",
+  "--project-from-cwd",
+  "--open-web-dashboard", "false",
+]
+cwd = "F:\\Private\\SoulsLikeTemplate"
+startup_timeout_sec = 60
+tool_timeout_sec = 120
+
+[mcp_servers.serena.env]
+SERENA_HOME = "F:\\Private\\SoulsLikeTemplate\\.serena\\home"
+PYTHONUTF8 = "1"
+
 [mcp_servers.obsidian]
 url = "http://127.0.0.1:27123/mcp/"
 headers = { Authorization = "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e19342ae1cc0304271a68257e4cc43" }
