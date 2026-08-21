@@ -13,6 +13,8 @@ namespace SoulsLike.Entities.Combat
         [SerializeField] private Collider hitbox;
         [SerializeField] private int hitZone;
 
+        public event Action OnHitConfirmed;
+
         private readonly HashSet<long> _hitEntityIds = new();
         private IEntityLocator _entityLocator;
         private long _ownerEntityId;
@@ -86,6 +88,7 @@ namespace SoulsLike.Entities.Combat
             if (result.HealthDamageAmount > 0f)
             {
                 _hitEntityIds.Add(target.Id);
+                OnHitConfirmed?.Invoke();
             }
         }
 

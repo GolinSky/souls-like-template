@@ -33,6 +33,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int AnimIdSpeed = Animator.StringToHash("Speed");
         private static readonly int AnimIdLockOn = Animator.StringToHash("LockOn");
         private static readonly int SpawnTrigger = Animator.StringToHash("Spawn");
+        private static readonly int HitTrigger = Animator.StringToHash("Hit");
         private static readonly int LightAttackTrigger = Animator.StringToHash("LightAttack");
         private static readonly int LightAttackAltTrigger = Animator.StringToHash("LightAttackAlt");
         private static readonly int HeavyAttackTrigger = Animator.StringToHash("HeavyAttack");
@@ -240,6 +241,11 @@ namespace SoulsLike.Entities.Character.Components
         public void TriggerSpawn()
         {
             animator.SetTrigger(SpawnTrigger);
+        }
+
+        public void TriggerHit()
+        {
+            animator.SetTrigger(HitTrigger);
         }
         
         public void TriggerRoll(Vector2 direction)
@@ -478,12 +484,5 @@ namespace SoulsLike.Entities.Character.Components
             return layerIndex;
         }
 
-        private void OnFootstep(AnimationEvent animationEvent)
-        {
-        }
-
-        private void OnLand(AnimationEvent animationEvent)
-        {
-        }
     }
 }

@@ -60,6 +60,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         public LocomotionState CurrentLocomotionState { get; private set; } = LocomotionState.Grounded;
         public LandingType CurrentLandingType { get; private set; } = LandingType.None;
+        public bool IsMoving => Model.Grounded
+            && _horizontalVelocity.sqrMagnitude > INPUT_DEAD_ZONE * INPUT_DEAD_ZONE;
         public float HorizontalSpeed => _horizontalVelocity.magnitude;
         public float VerticalVelocity => _verticalVelocity;
         public float JumpTime => _jumpTime;
@@ -592,6 +594,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 .ChangeDuration(Model.FallTimeout)
                 .Start();
             SetGrounded(true);
+            _presentationSink.NotifyLand();
             _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
         }
 

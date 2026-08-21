@@ -23,12 +23,14 @@ namespace SoulsLike.Entities.Character
         IMovementPresentationSink,
         IAnimationStateSink,
         IRootMotionSink,
-        IEquipmentLoadoutSink
+        IEquipmentLoadoutSink,
+        IDisposable
     {
         private const float NORMAL_ATTACK_SPEED = 1.0f;
 
         [SerializeField] private MovementComponent movementComponent;
         [SerializeField] private AnimatorComponent animatorComponent;
+        [SerializeField] private CharacterAudioComponent characterAudioComponent;
         [SerializeField] private EquipmentComponent equipmentComponent;
         [SerializeField] private HealthComponent healthComponent;
         [SerializeField] private InventoryComponent inventoryComponent;
@@ -77,11 +79,17 @@ namespace SoulsLike.Entities.Character
 
         public void Initialize()
         {
+            healthComponent.Model.OnDamageApplied += OnDamageApplied;
             animatorComponent.SetHandMode(equipmentComponent.Model.ActiveHandMode);
             ApplyEquipmentLoadout(equipmentComponent.BuildLoadout());
             Cursor.lockState = CursorLockMode.Locked;
             _runtime.SetInputBlocked(true);
             animatorComponent.TriggerSpawn();
+        }
+
+        public void Dispose()
+        {
+            healthComponent.Model.OnDamageApplied -= OnDamageApplied;
         }
 
         public void Tick(in CharacterInputBatch input)
@@ -101,6 +109,7 @@ namespace SoulsLike.Entities.Character
                 input.ControlFrame.CameraYaw,
                 input.ControlFrame.SprintHeld,
                 input.ControlFrame.CrouchHeld);
+            characterAudioComponent.Tick(movementComponent.IsMoving);
 
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
             bool blockRequested = input.ControlFrame.GuardHeld
@@ -307,12 +316,27 @@ namespace SoulsLike.Entities.Character
             animatorComponent.SetLocomotion(speed, blendDirection);
         public void SetTurn(float turnAmount) => animatorComponent.SetTurn(turnAmount);
         public void SetGrounded(bool grounded) => animatorComponent.SetGrounded(grounded);
+        public void NotifyLand() => characterAudioComponent.NotifyLand();
         public void SetAirborneMotion(float velocity, LandingType landingType) =>
             animatorComponent.SetAirborneMotion(velocity, landingType);
         public void PlayJump() => animatorComponent.SetJump();
         public void PlayRoll(Vector2 direction) => animatorComponent.TriggerRoll(direction);
         public void PlayBackStep() => animatorComponent.TriggerBackStep();
         public void SetCrouch(bool crouching) => animatorComponent.SetCrouch(crouching);
+
+        private void OnDamageApplied(DamageResult damage)
+        {
+            if (damage.HealthDamageAmount <= 0f)
+            {
+                return;
+            }
+
+            characterAudioComponent.NotifyHit();
+            if (!damage.Killed)
+            {
+                animatorComponent.TriggerHit();
+            }
+        }
 
         public void Heal(float amount) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateHeal(healthComponent.Stats, amount));

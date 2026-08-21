@@ -1,5 +1,6 @@
 using System;
 using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Items;
@@ -13,6 +14,7 @@ namespace SoulsLike.Entities.Combat
         private IEntityLocator _entityLocator;
         private Entity _entity;
         private AttackComponent _attackComponent;
+        private CharacterAudioComponent _audioComponent;
         private WeaponDatabase _weaponDatabase;
         private MeleeHitboxController _activeHitbox;
         private CharacterActionId _actionId;
@@ -23,16 +25,23 @@ namespace SoulsLike.Entities.Combat
             IEntityLocator entityLocator,
             Entity entity,
             AttackComponent attackComponent,
+            CharacterAudioComponent audioComponent,
             WeaponDatabase weaponDatabase)
         {
             _entityLocator = entityLocator;
             _entity = entity;
             _attackComponent = attackComponent;
+            _audioComponent = audioComponent;
             _weaponDatabase = weaponDatabase;
         }
 
         public void Begin(CharacterActionId actionId)
         {
+            if (_activeHitbox != null)
+            {
+                _activeHitbox.OnHitConfirmed -= OnHitConfirmed;
+            }
+
             ItemId weaponId = _attackComponent.ActiveWeaponId
                 ?? throw new InvalidOperationException(
                     "A melee attack requires an active weapon item ID.");
@@ -54,6 +63,7 @@ namespace SoulsLike.Entities.Combat
                 .Stats
                 .PhysicalAttack * multiplier;
             _activeHitbox.Initialize(_entityLocator, _entity.Id, weaponId);
+            _activeHitbox.OnHitConfirmed += OnHitConfirmed;
         }
 
         public void Open()
@@ -65,8 +75,12 @@ namespace SoulsLike.Entities.Combat
         {
             if (_activeHitbox != null)
             {
+                _activeHitbox.OnHitConfirmed -= OnHitConfirmed;
                 _activeHitbox.Close();
+                _activeHitbox = null;
             }
         }
+
+        private void OnHitConfirmed() => _audioComponent.NotifySwordClash();
     }
 }

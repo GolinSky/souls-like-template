@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Ui
   m_GUID: c14872aedb987b9408f342ffa1cd89fe
   m_SerializeEntries:
+  - m_GUID: 01f07637a9ab27746935caba92e4eddf
+    m_Address: EnemyHealthUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 04c9c316a7440544085b0c87e72a777b
     m_Address: InventoryUi
     m_ReadOnly: 0

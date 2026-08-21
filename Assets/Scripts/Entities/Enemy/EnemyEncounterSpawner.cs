@@ -1,23 +1,13 @@
 using UnityEngine;
-using VContainer;
-using VContainer.Unity;
 
 namespace SoulsLike.Entities.Enemy
 {
-    public sealed class EnemyEncounterSpawner : MonoBehaviour, IInitializable
+    public sealed class EnemyEncounterSpawner : MonoBehaviour
     {
         [SerializeField] private EnemySpawnPoint[] spawnPoints = { };
         [SerializeField] private bool spawnOnStart = true;
 
-        private EnemyFactory _enemyFactory;
-
-        [Inject]
-        public void Construct(EnemyFactory enemyFactory)
-        {
-            _enemyFactory = enemyFactory;
-        }
-
-        public void Initialize()
+        public void Spawn(EnemyFactory enemyFactory)
         {
             if (!spawnOnStart)
             {
@@ -26,7 +16,7 @@ namespace SoulsLike.Entities.Enemy
 
             foreach (EnemySpawnPoint spawnPoint in spawnPoints)
             {
-                _enemyFactory.CreateEnemy(spawnPoint);
+                enemyFactory.CreateEnemy(spawnPoint);
             }
         }
     }

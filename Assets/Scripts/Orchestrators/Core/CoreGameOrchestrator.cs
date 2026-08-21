@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SoulsLike.Entities.Character;
+using SoulsLike.Entities.Enemy;
 using SoulsLike.Services.Scenes.Data;
 using UnityEngine;
 using VContainer.Unity;
@@ -20,16 +21,19 @@ namespace SoulsLike.Services
     {
         private readonly IGameOrchestrator _gameOrchestrator;
         private readonly CharacterFactory _characterFactory;
+        private readonly EnemyFactory _enemyFactory;
         public GameState CurrentGameState { get; private set; }
         
         private readonly List<IGameStateObserver> _observers = new();
 
         public CoreGameOrchestrator(
             IGameOrchestrator gameOrchestrator,
-            CharacterFactory characterFactory)
+            CharacterFactory characterFactory,
+            EnemyFactory enemyFactory)
         {
             _gameOrchestrator = gameOrchestrator;
             _characterFactory = characterFactory;
+            _enemyFactory = enemyFactory;
         }
         
         public void Initialize()
@@ -45,6 +49,7 @@ namespace SoulsLike.Services
 
         public void Start()
         {
+            UnityEngine.Object.FindFirstObjectByType<EnemyEncounterSpawner>().Spawn(_enemyFactory);
             SetGameState(GameState.Idle);
         }
 

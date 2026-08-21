@@ -142,3 +142,10 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: EnemyHealthUi
+      value:
+        m_AssetGUID: 01f07637a9ab27746935caba92e4eddf
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0

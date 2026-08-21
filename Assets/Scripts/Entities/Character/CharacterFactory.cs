@@ -63,6 +63,7 @@ namespace SoulsLike.Entities.Character
                 GetRequiredComponent<PlayerMeleeCombatRelay>(instance);
 
             AnimatorComponent animatorComponent = GetRequiredComponent<AnimatorComponent>(instance);
+            CharacterAudioComponent audioComponent = GetRequiredComponentInChildren<CharacterAudioComponent>(instance);
             AttackComponent attackComponent = GetRequiredComponent<AttackComponent>(instance);
             MovementComponent movementComponent = GetRequiredComponent<MovementComponent>(instance);
             EquipmentComponent equipmentComponent = GetRequiredComponent<EquipmentComponent>(instance);
@@ -86,6 +87,8 @@ namespace SoulsLike.Entities.Character
 
                 builder.Register<AnimatorModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(animatorComponent).AsSelf().AsImplementedInterfaces();
+                builder.RegisterScriptableObject<CharacterAudioData>();
+                builder.RegisterComponent(audioComponent).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterComponent(attackComponent).AsSelf().AsImplementedInterfaces();
                 builder.RegisterComponent(meleeCombatRelay).AsSelf();
@@ -107,7 +110,8 @@ namespace SoulsLike.Entities.Character
                 builder.Register<InventoryModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(inventoryComponent).AsSelf().AsImplementedInterfaces();
 
-                builder.RegisterScriptableObject<HealthData>().As<IHealthData>();
+                builder.RegisterScriptableObject<HealthData>();
+                builder.Register<CharacterHealthData>(Lifetime.Singleton).As<IHealthData>();
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
                 builder.Register<PlayerHudUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
@@ -132,6 +136,15 @@ namespace SoulsLike.Entities.Character
             });
 
             instance.transform.SetParent(characterScope.transform, true);
+            foreach (InventoryEntry entry in inventoryComponent.Entries)
+            {
+                if (entry.ItemId == ItemId.GreatSword)
+                {
+                    equipmentComponent.Assign(EquipmentSlotId.RightHand1, entry.EntryId);
+                    break;
+                }
+            }
+
             return character;
         }
 

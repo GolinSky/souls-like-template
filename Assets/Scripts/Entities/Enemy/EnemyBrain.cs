@@ -424,6 +424,11 @@ namespace SoulsLike.Entities.Enemy
         {
             _perception.RegisterDamageStimulus(damage.SourceEntityId, Time.time);
             BeginReaction(damage.SourceEntityId, Time.time);
+            if (!damage.Killed && damage.HealthDamageAmount > 0f)
+            {
+                _animation.PlayHit();
+            }
+
             if (Goal == EnemyGoal.Dormant)
             {
                 EnterGoal(EnemyGoal.Investigate);

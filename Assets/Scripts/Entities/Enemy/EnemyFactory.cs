@@ -8,7 +8,9 @@ using SoulsLike.Extensions;
 using SoulsLike.Factory;
 using SoulsLike.Items;
 using SoulsLike.Services.IdGeneration;
+using SoulsLike.Ui.EnemyHealth;
 using UnityEngine;
+using UnityEngine.AI;
 using VContainer;
 using VContainer.Unity;
 
@@ -16,9 +18,12 @@ namespace SoulsLike.Entities.Enemy
 {
     public sealed class EnemyFactory : BaseFactory
     {
-        public EnemyFactory(IObjectResolver resolver)
+        private readonly EnemyHealthUiController _enemyHealthUiController;
+
+        public EnemyFactory(IObjectResolver resolver, EnemyHealthUiController enemyHealthUiController)
             : base(resolver)
         {
+            _enemyHealthUiController = enemyHealthUiController;
         }
 
         public EnemyActor CreateEnemy(EnemySpawnPoint spawn)
@@ -30,12 +35,29 @@ namespace SoulsLike.Entities.Enemy
                     $"Enemy spawn point '{spawn.name}' requires an enemy prefab.");
             }
 
+            NavMeshAgent prefabAgent = GetRequiredComponent<NavMeshAgent>(prefab.gameObject);
+            NavMeshQueryFilter queryFilter = new()
+            {
+                agentTypeID = prefabAgent.agentTypeID,
+                areaMask = prefabAgent.areaMask
+            };
+            if (!NavMesh.SamplePosition(
+                    spawn.transform.position,
+                    out NavMeshHit spawnHit,
+                    prefabAgent.radius,
+                    queryFilter))
+            {
+                throw new InvalidOperationException(
+                    $"Enemy spawn point '{spawn.name}' must be within "
+                    + $"{prefabAgent.radius} units of a baked NavMesh.");
+            }
+
             EnemyActor actor = UnityEngine.Object.Instantiate(
                 prefab,
-                spawn.transform.position,
+                spawnHit.position,
                 spawn.transform.rotation);
             actor.name = $"{prefab.name}_Instance";
-            actor.ConfigureSpawn(spawn.transform.position, spawn.BuildPatrolPositions());
+            actor.ConfigureSpawn(spawnHit.position, spawn.BuildPatrolPositions());
 
             ViewEntity viewEntity = GetRequiredComponent<ViewEntity>(actor.gameObject);
             TargetLockNode targetLockNode = GetRequiredComponentInChildren<TargetLockNode>(
@@ -87,6 +109,7 @@ namespace SoulsLike.Entities.Enemy
 
             actor.transform.SetParent(enemyScope.transform, true);
             actor.AttachLifetime(enemyScope);
+            _enemyHealthUiController.Track(actor, enemyScope.Container.Resolve<HealthModel>());
             return actor;
         }
 

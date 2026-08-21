@@ -14,6 +14,7 @@ namespace SoulsLike.Entities.Enemy
         private static readonly int SPEED = Animator.StringToHash("Speed");
         private static readonly int MOVE_X = Animator.StringToHash("MoveX");
         private static readonly int MOVE_Y = Animator.StringToHash("MoveY");
+        private static readonly int HIT_TRIGGER = Animator.StringToHash("Hit");
 
         [SerializeField] private Animator animator;
         [SerializeField] private EnemyNavigationMotor motor;
@@ -179,6 +180,12 @@ namespace SoulsLike.Entities.Enemy
             Phase = EnemyActionPhase.None;
             Status = EnemyActionStatus.Interrupted;
             CurrentAction = null;
+        }
+
+        public void PlayHit()
+        {
+            Interrupt();
+            animator.SetTrigger(HIT_TRIGGER);
         }
 
         public void PlayDeath()

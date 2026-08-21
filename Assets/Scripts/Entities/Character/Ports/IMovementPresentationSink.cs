@@ -8,6 +8,7 @@ namespace SoulsLike.Entities.Character.Ports
         void SetLocomotion(float speed, Vector2 blendDirection);
         void SetTurn(float turnAmount);
         void SetGrounded(bool grounded);
+        void NotifyLand();
         void SetAirborneMotion(float verticalVelocity, LandingType landingType);
         void PlayJump();
         void PlayRoll(Vector2 direction);

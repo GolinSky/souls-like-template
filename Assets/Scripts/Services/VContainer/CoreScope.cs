@@ -3,6 +3,7 @@ using SoulsLike.Services.CameraService;
 using SoulsLike.Services.Targeting;
 using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Enemy;
+using SoulsLike.Ui.EnemyHealth;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -18,11 +19,9 @@ namespace SoulsLike
             Debug.Log("CoreScope Configure");
             builder.RegisterComponent(cameraService).AsSelf().As<ICameraService>();
             builder.Register<TargetingService>(Lifetime.Singleton).As<ITargetingService>();
+            builder.Register<EnemyHealthUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<CharacterFactory>(Lifetime.Singleton);
             builder.Register<EnemyFactory>(Lifetime.Singleton);
-            builder.RegisterComponent(Object.FindFirstObjectByType<EnemyEncounterSpawner>())
-                .AsSelf()
-                .AsImplementedInterfaces();
             builder.RegisterEntryPoint<CoreGameOrchestrator>();
         }
     }
