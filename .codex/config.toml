@@ -10,7 +10,7 @@ args = [
   "serena", "start-mcp-server",
   "--context", "codex",
   "--project-from-cwd",
-  "--open-web-dashboard", "false",
+  "--enable-web-dashboard", "false",
 ]
 cwd = "F:\\Private\\SoulsLikeTemplate"
 startup_timeout_sec = 60
@@ -22,7 +22,7 @@ PYTHONUTF8 = "1"
 
 [mcp_servers.obsidian]
 url = "http://127.0.0.1:27123/mcp/"
-headers = { Authorization = "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e19342ae1cc0304271a68257e4cc43" }
+http_headers = { Authorization = "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e19342ae1cc0304271a68257e4cc43" }
 
 [mcp_servers.graphify]
 command = "C:\\Users\\golin\\AppData\\Roaming\\uv\\tools\\graphifyy\\Scripts\\python.exe"

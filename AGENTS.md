@@ -22,6 +22,7 @@
 - Treat constructor-injected dependencies as required and rely on VContainer to fail fast when a binding cannot be resolved.
 - Assign injected dependencies directly. Do not add `?? throw new ArgumentNullException(nameof(...))` constructor boilerplate.
 - Do not add defensive null guards, routine guard exceptions, or exception-heavy control flow. Let required-reference failures surface naturally at the point of use.
+- Never silently skip required behavior when a required reference or configuration value is null. If an explicitly required null check prevents a Unity API call, log a clear `Debug.LogError` with context before returning. Silent null handling is allowed only for explicitly optional events or subscribers.
 - Use null-conditional invocation for optional events instead of throwing when no subscriber exists.
 
 

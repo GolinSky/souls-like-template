@@ -200,8 +200,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "97aeffa9e14002e7",
+  "active": "7c78634e433e7e51",
   "lastOpenFiles": [
+    "ToDo/LIGHTING_BAKE_PLAN.md",
     "features/Current Jump and Roll System.md",
     "features/Locomotion Architecture Technical Specification.md",
     "ui/UI_Code_Build_Guide.md",
