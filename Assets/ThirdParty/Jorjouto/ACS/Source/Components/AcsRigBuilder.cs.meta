@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 9ead883e123971d47960bb95935a0498
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 348598
+  packageName: Animation Composer System - ACS
+  packageVersion: 1.3.8
+  assetPath: Assets/Jorjouto/ACS/Source/Components/AcsRigBuilder.cs
+  uploadId: 956086

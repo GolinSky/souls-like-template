@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 98c4f7dbc64af374d96bb37a34c69163
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 12388, guid: 0000000000000000e000000000000000, type: 0}
+  disableValidation: 0
+AssetOrigin:
+  serializedVersion: 1
+  productId: 348598
+  packageName: Animation Composer System - ACS
+  packageVersion: 1.3.8
+  assetPath: Assets/Jorjouto/ACS/Editor/Sprites/DefaultUITheme.tss
+  uploadId: 956086

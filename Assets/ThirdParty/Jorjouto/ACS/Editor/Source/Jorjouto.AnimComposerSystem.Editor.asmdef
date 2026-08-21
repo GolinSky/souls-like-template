@@ -1,0 +1,25 @@
+{
+    "name": "Jorjouto.AnimComposerSystem.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:71288cd14eca6ee4e8adfdfae1880f9f",
+        "GUID:457756d89b35d2941b3e7b37b4ece6f1"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "",
+            "define": "HAS_HDRP"
+        }
+    ],
+    "noEngineReferences": false
+}
