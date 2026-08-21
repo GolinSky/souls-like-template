@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08541461bf9d9e247824b665788e9ace, type: 3}
+  m_Name: Combo1
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.CharacterActionDefinition
+  actionId: 3
+  damageMultiplier: 1.05
+  staminaCost: 18
+  usesRootMotion: 1
+  windupTurnSpeed: 180
+  activeTurnSpeed: 15
+  recoveryTurnSpeed: 65
+  followUps:
+  - {fileID: 11400000, guid: fcf10cd16f5896941aaca0f0be379694, type: 2}

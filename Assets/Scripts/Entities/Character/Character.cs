@@ -1,4 +1,6 @@
 using System;
+using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Entities.Character.Adapters;
 using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Animations;
@@ -43,6 +45,7 @@ namespace SoulsLike.Entities.Character
         private CharacterAnimationAdapter _animationAdapter;
         private EquipmentSwapCoordinator _equipmentSwapCoordinator;
         private ItemCatalog _itemCatalog;
+        private IEntityLocator _entityLocator;
 
         public Transform CameraTarget => cameraTarget;
         public InventoryComponent InventoryComponent => inventoryComponent;
@@ -60,7 +63,8 @@ namespace SoulsLike.Entities.Character
             CharacterAnimationAdapter animationAdapter,
             EquipmentSwapCoordinator equipmentSwapCoordinator,
             EquipmentPresentation presentation,
-            ItemCatalog itemCatalog)
+            ItemCatalog itemCatalog,
+            IEntityLocator entityLocator)
         {
             _attackComponent = attackComponent;
             _runtime = runtime;
@@ -68,6 +72,7 @@ namespace SoulsLike.Entities.Character
             _equipmentSwapCoordinator = equipmentSwapCoordinator;
             equipmentPresentation = presentation;
             _itemCatalog = itemCatalog;
+            _entityLocator = entityLocator;
         }
 
         public void Initialize()
@@ -309,14 +314,6 @@ namespace SoulsLike.Entities.Character
         public void PlayBackStep() => animatorComponent.TriggerBackStep();
         public void SetCrouch(bool crouching) => animatorComponent.SetCrouch(crouching);
 
-        public DamageResult ApplyDamage(DamageRequest request)
-        {
-            DamageResult result = healthComponent.CalculateDamage(request, healthComponent.Stats);
-            healthComponent.ApplyAuthoritativeStats(result.NewStats);
-            healthComponent.NotifyDamageApplied(result);
-            return result;
-        }
-
         public void Heal(float amount) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateHeal(healthComponent.Stats, amount));
 
@@ -328,8 +325,16 @@ namespace SoulsLike.Entities.Character
         public void Revive(float health) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateRevive(healthComponent.Stats, health));
 
-        public void SetLockOnTarget(bool isLockedOn, Transform lockOnTarget)
+        public void SetLockOnTarget(bool isLockedOn, long? lockOnTargetEntityId)
         {
+            Transform lockOnTarget = null;
+            if (isLockedOn)
+            {
+                IEntity targetEntity = _entityLocator.GetEntity(lockOnTargetEntityId.Value);
+                targetEntity.TryGetComponent(out TargetingCommand targetingCommand);
+                lockOnTarget = targetingCommand.TargetTransform;
+            }
+
             movementComponent.SetLockOnTarget(isLockedOn, lockOnTarget);
             animatorComponent.SetLockOn(isLockedOn);
         }

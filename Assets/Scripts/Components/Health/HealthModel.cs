@@ -7,7 +7,8 @@ namespace SoulsLike.Entities.Character.Components.Health
     {
         public event Action<HealthStats> OnStatsChanged;
         public event Action<DamageResult> OnDamageApplied;
-        public event Action OnDied;
+        public event Action<long> OnDied;
+        private long _lastDamageSourceEntityId;
 
         public float MaxHealth { get; }
         public float StartingHealth { get; }
@@ -21,8 +22,6 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         public HealthModel(IHealthData healthData)
         {
-
-
             MaxHealth = Mathf.Max(1f, healthData.MaxHealth);
             StartingHealth = Mathf.Clamp(healthData.StartingHealth, 0f, MaxHealth);
             MaxFocus = Mathf.Max(1f, healthData.MaxFocus);
@@ -52,12 +51,18 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         public void NotifyDamageApplied(DamageResult result)
         {
+            _lastDamageSourceEntityId = result.SourceEntityId;
             OnDamageApplied?.Invoke(result);
+        }
+
+        public void SetDamageSource(long sourceEntityId)
+        {
+            _lastDamageSourceEntityId = sourceEntityId;
         }
 
         public void NotifyDeath()
         {
-            OnDied?.Invoke();
+            OnDied?.Invoke(_lastDamageSourceEntityId);
         }
     }
 }

@@ -1,6 +1,9 @@
 using DG.Tweening;
 using UnityEngine;
 using Unity.Cinemachine;
+using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
+using VContainer;
 
 namespace SoulsLike.Services.CameraService
 {
@@ -13,7 +16,7 @@ namespace SoulsLike.Services.CameraService
         void SwitchAngle();
         Ray GetRay();
         void SetZoom(bool isZoomed);
-        void SetLockOnTarget(Transform lockNodeTarget);
+        void SetLockOnTarget(long? targetEntityId);
         void ClearLockOnTarget();
         void RecenterCamera();
         Camera GetMainCamera();
@@ -67,7 +70,11 @@ namespace SoulsLike.Services.CameraService
         [SerializeField, Min(0f)] private float lockRigBlendDuration = 0.2f;
         [SerializeField] private Ease lockRigBlendEase = Ease.OutSine;
         
-        private Transform _lockOnTarget;
+        private long? _lockOnTargetEntityId;
+        private IEntityLocator _entityLocator;
+
+        [Inject]
+        public void Construct(IEntityLocator entityLocator) => _entityLocator = entityLocator;
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
         private float _freeVerticalArmLength;
@@ -126,21 +133,21 @@ namespace SoulsLike.Services.CameraService
             ).SetEase(zoomEase);
         }
 
-        public void SetLockOnTarget(Transform lockNodeTarget)
+        public void SetLockOnTarget(long? targetEntityId)
         {
-            if (_lockOnTarget == null)
+            if (!_lockOnTargetEntityId.HasValue)
             {
                 _freeVerticalArmLength = cinemachineThirdPersonFollow.VerticalArmLength;
                 _freeCameraSide = cinemachineThirdPersonFollow.CameraSide;
                 BlendLockRig(lockVerticalArmLength, lockCameraSide);
             }
 
-            _lockOnTarget = lockNodeTarget;
+            _lockOnTargetEntityId = targetEntityId;
         }
 
         public void ClearLockOnTarget()
         {
-            _lockOnTarget = null;
+            _lockOnTargetEntityId = null;
             BlendLockRig(_freeVerticalArmLength, _freeCameraSide);
         }
 
@@ -160,7 +167,7 @@ namespace SoulsLike.Services.CameraService
 
         public void UpdateRotation(Vector2 look)
         {
-            if (_lockOnTarget != null && cinemachineCamera.Follow != null)
+            if (_lockOnTargetEntityId.HasValue && cinemachineCamera.Follow != null)
             {
                 UpdateLockOnRotation();
             }
@@ -188,9 +195,14 @@ namespace SoulsLike.Services.CameraService
 
         private void UpdateLockOnRotation()
         {
-            RotateLockYawTowardTarget();
+            if (!TryGetLockTarget(out TargetingSnapshot snapshot))
+            {
+                ClearLockOnTarget();
+                return;
+            }
 
-            Vector3 targetViewportPosition = targetCamera.WorldToViewportPoint(_lockOnTarget.position);
+            RotateLockYawTowardTarget(snapshot.LockPoint);
+            Vector3 targetViewportPosition = targetCamera.WorldToViewportPoint(snapshot.LockPoint);
             if (targetViewportPosition.z <= 0f)
             {
                 return;
@@ -208,9 +220,9 @@ namespace SoulsLike.Services.CameraService
                 lockPitchSpeed * Time.deltaTime);
         }
 
-        private void RotateLockYawTowardTarget()
+        private void RotateLockYawTowardTarget(Vector3 lockPoint)
         {
-            Vector3 toTarget = _lockOnTarget.position - cinemachineCamera.Follow.position;
+            Vector3 toTarget = lockPoint - cinemachineCamera.Follow.position;
             Vector3 planarToTarget = Vector3.ProjectOnPlane(toTarget, Vector3.up);
             if (planarToTarget.sqrMagnitude <= THRESHOLD)
             {
@@ -222,6 +234,26 @@ namespace SoulsLike.Services.CameraService
                 _cinemachineTargetYaw,
                 targetYaw,
                 lockYawSpeed * Time.deltaTime);
+        }
+
+        private bool TryGetLockTarget(out TargetingSnapshot snapshot)
+        {
+            snapshot = default;
+            if (!_lockOnTargetEntityId.HasValue
+                || !_entityLocator.TryGetEntity(_lockOnTargetEntityId.Value, out IEntity entity))
+            {
+                return false;
+            }
+
+            if (!entity.TryGetComponent(out TargetingCommand command))
+            {
+                throw new System.InvalidOperationException(
+                    $"Target entity {entity.Id} ({entity.EntityType}) is missing "
+                    + $"{nameof(TargetingCommand)}.");
+            }
+
+            snapshot = command.Read();
+            return snapshot.IsAlive;
         }
 
         private void BlendLockRig(float verticalArmLength, float cameraSide)

@@ -5,7 +5,6 @@ using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Items;
 using SoulsLike.Interactions;
 using SoulsLike.Services;
-using SoulsLike.Services.Targeting;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -13,7 +12,6 @@ namespace SoulsLike.Ui.PlayerHud
 {
     public class PlayerHudUiController : UiController, IInitializable, ITickable, IPlayerHudPresenter, IDisposable
     {
-        private readonly ITargetingService _targetingService;
         private readonly HealthModel _healthModel;
         private readonly EquipmentComponent _equipmentComponent;
         private readonly InventoryComponent _inventoryComponent;
@@ -28,15 +26,13 @@ namespace SoulsLike.Ui.PlayerHud
             ItemCatalog itemCatalog,
             InteractionController interactionController,
             EquipmentComponent equipmentComponent = null,
-            InventoryComponent inventoryComponent = null,
-            ITargetingService targetingService = null) : base(uiService)
+            InventoryComponent inventoryComponent = null) : base(uiService)
         {
             _healthModel = healthModel;
             _itemCatalog = itemCatalog;
             _interactionController = interactionController;
             _equipmentComponent = equipmentComponent;
             _inventoryComponent = inventoryComponent;
-            _targetingService = targetingService;
         }
 
         public void Initialize()

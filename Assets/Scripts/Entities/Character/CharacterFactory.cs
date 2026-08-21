@@ -1,6 +1,7 @@
 using System;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
+using SoulsLike.Entities.Combat;
 using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Equipment;
@@ -44,15 +45,22 @@ namespace SoulsLike.Entities.Character
                     $"Character prefab for Addressables key '{CHARACTER_PREFAB_KEY}' was not found.");
             }
 
+            //todo: don't create go of character inside of this scope
             GameObject instance = UnityEngine.Object.Instantiate(prefab);
             instance.name = $"{nameof(Character)}_Instance";
 
             Character character = GetRequiredComponent<Character>(instance);
+            
+            //todo: add it dynamically in RootScope.CreateChild
             ViewEntity viewEntity = instance.GetComponent<ViewEntity>();
             if (viewEntity == null)
             {
                 viewEntity = instance.AddComponent<ViewEntity>();
             }
+
+            TargetLockNode targetLockNode = GetRequiredComponentInChildren<TargetLockNode>(instance);
+            PlayerMeleeCombatRelay meleeCombatRelay =
+                GetRequiredComponent<PlayerMeleeCombatRelay>(instance);
 
             AnimatorComponent animatorComponent = GetRequiredComponent<AnimatorComponent>(instance);
             AttackComponent attackComponent = GetRequiredComponent<AttackComponent>(instance);
@@ -68,8 +76,11 @@ namespace SoulsLike.Entities.Character
             {
                 builder.RegisterEntitySystemExt(EntityType.Player, entityId);
                 builder.RegisterComponent(viewEntity).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponent(targetLockNode).AsSelf();
                 builder.Register<InteractionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<GroundItemCollectionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<ApplyDamageCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<TargetingCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterComponent(character).AsSelf().AsImplementedInterfaces();
 
@@ -77,6 +88,7 @@ namespace SoulsLike.Entities.Character
                 builder.RegisterComponent(animatorComponent).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterComponent(attackComponent).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponent(meleeCombatRelay).AsSelf();
 
                 builder.Register<MovementModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterScriptableObject<MovementData>().As<IMovementData>();
@@ -127,6 +139,19 @@ namespace SoulsLike.Entities.Character
             where TComponent : Component
         {
             TComponent component = instance.GetComponent<TComponent>();
+            if (component == null)
+            {
+                throw new InvalidOperationException(
+                    $"Character prefab requires a {typeof(TComponent).Name} component.");
+            }
+
+            return component;
+        }
+
+        private static TComponent GetRequiredComponentInChildren<TComponent>(GameObject instance)
+            where TComponent : Component
+        {
+            TComponent component = instance.GetComponentInChildren<TComponent>(true);
             if (component == null)
             {
                 throw new InvalidOperationException(

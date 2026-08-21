@@ -15,8 +15,6 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         public HealthStats BuildDefaultStats()
         {
-
-
             float maxHealth = Mathf.Max(1f, Model.MaxHealth);
             float currentHealth = Mathf.Clamp(Model.StartingHealth, 0f, maxHealth);
             float maxFocus = Mathf.Max(1f, Model.MaxFocus);
@@ -86,6 +84,7 @@ namespace SoulsLike.Entities.Character.Components.Health
             {
                 return new DamageResult
                 {
+                    SourceEntityId = request.SourceEntityId,
                     IncomingAmount = incomingAmount,
                     HealthDamageAmount = 0f,
                     NewStats = stats,
@@ -107,11 +106,21 @@ namespace SoulsLike.Entities.Character.Components.Health
 
             return new DamageResult
             {
+                SourceEntityId = request.SourceEntityId,
                 IncomingAmount = incomingAmount,
                 HealthDamageAmount = healthDamage,
                 NewStats = stats,
                 Killed = wasAlive && !stats.IsAlive
             };
+        }
+
+        public DamageResult ApplyDamage(in DamageRequest request)
+        {
+            DamageResult result = CalculateDamage(request, Stats);
+            Model.SetDamageSource(request.SourceEntityId);
+            ApplyAuthoritativeStats(result.NewStats);
+            NotifyDamageApplied(result);
+            return result;
         }
 
         public HealthStats CalculateHeal(HealthStats currentStats, float amount)

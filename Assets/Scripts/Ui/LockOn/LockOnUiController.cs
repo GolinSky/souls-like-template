@@ -1,5 +1,5 @@
 using System;
-using SoulsLike.Entities.Character;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
 using SoulsLike.Services.Targeting;
@@ -49,14 +49,13 @@ namespace SoulsLike.Ui.LockOn
 
         private void UpdateLockOnUi()
         {
-            TargetLockNode currentTarget = _targetingService.CurrentTarget;
-            if (currentTarget == null || !currentTarget.isActiveAndEnabled)
+            if (!_targetingService.TryGetCurrentTarget(out TargetingSnapshot snapshot) || !snapshot.IsAlive)
             {
                 _lockOnUi.Hide();
                 return;
             }
 
-            bool isVisible = _lockOnUi.TrySetTargetPosition(currentTarget.TargetTransform, _targetCamera);
+            bool isVisible = _lockOnUi.TrySetTargetPosition(snapshot.LockPoint, _targetCamera);
             if (isVisible)
             {
                 _lockOnUi.Show();

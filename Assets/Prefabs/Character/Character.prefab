@@ -722,6 +722,8 @@ GameObject:
   - component: {fileID: 1001450772407502477}
   - component: {fileID: 876779542987437841}
   - component: {fileID: 4953552906734793246}
+  - component: {fileID: 3163265144927869977}
+  - component: {fileID: 3037876965645412385}
   m_Layer: 6
   m_Name: Character
   m_TagString: Player
@@ -747,6 +749,7 @@ Transform:
   - {fileID: 1344868499400956177}
   - {fileID: 378599516311263650}
   - {fileID: 1340947745667043752}
+  - {fileID: 7935706678162707752}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &4657128601297372923
@@ -902,6 +905,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Equipment.EquipmentPresentation
   rightHandAnchor: {fileID: 1981051630103593345}
   leftHandAnchor: {fileID: 6410825604534496138}
+--- !u!114 &3163265144927869977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4657128601297372913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb3135a9c0183054f883889281f754fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.BaseEntity.ViewEntity
+--- !u!114 &3037876965645412385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4657128601297372913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33d6a8db243f0574e8316d9cdcd0399c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeCombatRelay
 --- !u!1 &5237542798037926601
 GameObject:
   m_ObjectHideFlags: 0
@@ -934,6 +961,52 @@ Transform:
   - {fileID: 2691886460401250169}
   m_Father: {fileID: 5470362153818266699}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6501321968414779048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7935706678162707752}
+  - component: {fileID: 2995898421750679809}
+  m_Layer: 0
+  m_Name: TargetLockNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7935706678162707752
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6501321968414779048}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.35, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5470362153818266699}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2995898421750679809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6501321968414779048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99eb2a3c1aeafb84989841a1428c2af8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.TargetLockNode
+  anchorType: 1
+  customTargetPoint: {fileID: 0}
 --- !u!1 &8351316026818483686
 GameObject:
   m_ObjectHideFlags: 0

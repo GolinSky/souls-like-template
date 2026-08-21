@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0337204c84f8dc47bfd6c5f308f018c, type: 3}
+  m_Name: ErikaMeleeBehaviour
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyBehaviourProfile
+  perceptionRange: 14
+  fieldOfView: 115
+  eyeHeight: 1.45
+  lineOfSightMask:
+    serializedVersion: 2
+    m_Bits: 4294967167
+  targetMemorySeconds: 4.5
+  reactionDelayMin: 0.18
+  reactionDelayMax: 0.38
+  startsDormant: 0
+  leashDistance: 22
+  patrolWaitSeconds: 1.4
+  searchSeconds: 4.5
+  searchTurnSpeed: 80
+  arrivalDistance: 0.35
+  decisionInterval: 0.18
+  preferredRangeMin: 1.15
+  preferredRangeMax: 2.8
+  strafeDistance: 1.6
+  waitSeconds: 0.4
+  randomSeed: 1741
+  actionRules:
+  - action: {fileID: 11400000, guid: f1c9a1696381b1846ad21155211a2c6a, type: 2}
+    minimumDistance: 0.8
+    maximumDistance: 2.35
+    maximumAngle: 60
+    requiresLineOfSight: 1
+    baseWeight: 3
+    cooldown: 0.55
+    repetitionPenalty: 0.35
+    requiresComboWindow: 0
+    requiredPreviousAction: 0
+  - action: {fileID: 11400000, guid: 315c5d369973bfc4d8212f8550253724, type: 2}
+    minimumDistance: 0.8
+    maximumDistance: 2.2
+    maximumAngle: 60
+    requiresLineOfSight: 1
+    baseWeight: 2
+    cooldown: 0.75
+    repetitionPenalty: 0.4
+    requiresComboWindow: 0
+    requiredPreviousAction: 0
+  - action: {fileID: 11400000, guid: 315c5d369973bfc4d8212f8550253724, type: 2}
+    minimumDistance: 0.7
+    maximumDistance: 2.45
+    maximumAngle: 75
+    requiresLineOfSight: 1
+    baseWeight: 4
+    cooldown: 0.45
+    repetitionPenalty: 0.5
+    requiresComboWindow: 1
+    requiredPreviousAction: 1
+  - action: {fileID: 11400000, guid: 15badae0cc13f6149a4daa1de92e109c, type: 2}
+    minimumDistance: 1
+    maximumDistance: 2.65
+    maximumAngle: 55
+    requiresLineOfSight: 1
+    baseWeight: 1.7
+    cooldown: 2.2
+    repetitionPenalty: 0.3
+    requiresComboWindow: 0
+    requiredPreviousAction: 0
+  - action: {fileID: 11400000, guid: fcf10cd16f5896941aaca0f0be379694, type: 2}
+    minimumDistance: 0.65
+    maximumDistance: 2.6
+    maximumAngle: 75
+    requiresLineOfSight: 1
+    baseWeight: 5
+    cooldown: 0
+    repetitionPenalty: 0.5
+    requiresComboWindow: 1
+    requiredPreviousAction: 3
+  - action: {fileID: 11400000, guid: 35416e9fa95a36d48b5aee855053b42f, type: 2}
+    minimumDistance: 0.65
+    maximumDistance: 2.8
+    maximumAngle: 80
+    requiresLineOfSight: 1
+    baseWeight: 5
+    cooldown: 0
+    repetitionPenalty: 0.5
+    requiresComboWindow: 1
+    requiredPreviousAction: 4
+  - action: {fileID: 11400000, guid: a6f1da9b28eb9974b954bcb57f3b2f89, type: 2}
+    minimumDistance: 1.35
+    maximumDistance: 3.1
+    maximumAngle: 45
+    requiresLineOfSight: 1
+    baseWeight: 1
+    cooldown: 3
+    repetitionPenalty: 0.25
+    requiresComboWindow: 0
+    requiredPreviousAction: 0

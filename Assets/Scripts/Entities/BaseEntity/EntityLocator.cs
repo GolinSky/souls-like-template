@@ -6,25 +6,52 @@ namespace SoulsLike.Entities.BaseEntity
 {
     public class EntityLocator : IEntityLocator
     {
-        private Dictionary<long, IEntity> _entities = new Dictionary<long, IEntity>();
+        private readonly Dictionary<long, IEntity> _entities = new();
+        private readonly Dictionary<EntityType, List<IEntity>> _entitiesByType = new();
         
         public void AddEntity(IEntity entity)
         {
             _entities.Add(entity.Id, entity);
+            if (!_entitiesByType.TryGetValue(entity.EntityType, out List<IEntity> entities))
+            {
+                entities = new List<IEntity>();
+                _entitiesByType.Add(entity.EntityType, entities);
+            }
+            entities.Add(entity);
         }
 
         public void RemoveEntity(IEntity entity)
         {
             _entities.Remove(entity.Id);
+            if (_entitiesByType.TryGetValue(entity.EntityType, out List<IEntity> entities))
+            {
+                entities.Remove(entity);
+                if (entities.Count == 0)
+                {
+                    _entitiesByType.Remove(entity.EntityType);
+                }
+            }
         }
 
         public IEntity GetEntity(long entityId)
         {
-            if (_entities.TryGetValue(entityId, out var entity))
+            if (_entities.TryGetValue(entityId, out IEntity entity))
             {
                 return entity;
             }
             throw new Exception("No entity found with id: " + entityId);
+        }
+
+        public bool TryGetEntity(long entityId, out IEntity entity) =>
+            _entities.TryGetValue(entityId, out entity);
+
+        public void GetEntities(EntityType entityType, List<IEntity> results)
+        {
+            results.Clear();
+            if (_entitiesByType.TryGetValue(entityType, out List<IEntity> entities))
+            {
+                results.AddRange(entities);
+            }
         }
 
         public bool TryGetEntity(RaycastHit raycastHit, out IEntity entity)
@@ -33,8 +60,7 @@ namespace SoulsLike.Entities.BaseEntity
             IViewEntity viewEntity = raycastHit.collider.GetComponentInParent<IViewEntity>();
             if (viewEntity != null)
             {
-                entity = GetEntity(viewEntity.Id);
-                return entity != null;
+                return TryGetEntity(viewEntity.Id, out entity);
             }
             return false;
         }
@@ -45,8 +71,7 @@ namespace SoulsLike.Entities.BaseEntity
             IViewEntity viewEntity = collider.GetComponentInParent<IViewEntity>();
             if (viewEntity != null)
             {
-                entity = GetEntity(viewEntity.Id);
-                return entity != null;
+                return TryGetEntity(viewEntity.Id, out entity);
             }
             return false;
         }

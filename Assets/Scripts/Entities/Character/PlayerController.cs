@@ -4,6 +4,7 @@ using SoulsLike.Interactions;
 using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
 using SoulsLike.Services.Targeting;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -79,7 +80,7 @@ namespace SoulsLike.Entities.Character
 
         private void HandleLockOnInput()
         {
-            if (_targetingService.IsLockedOn && !_targetingService.IsCurrentTargetValid(_character.transform))
+            if (_targetingService.IsLockedOn && !_targetingService.IsCurrentTargetValid(_character.transform.position))
             {
                 ClearLockOn();
             }
@@ -95,13 +96,11 @@ namespace SoulsLike.Entities.Character
                 return;
             }
 
-            if (_targetingService.TryAcquireTarget(_character.transform))
+            if (_targetingService.TryAcquireTarget(_character.transform.position)
+                && _targetingService.TryGetCurrentTarget(out TargetingSnapshot snapshot))
             {
-                TargetLockNode target = _targetingService.CurrentTarget;
-                Transform targetTransform = target.TargetTransform;
-
-                _character.SetLockOnTarget(true, targetTransform);
-                _cameraService.SetLockOnTarget(targetTransform);
+                _character.SetLockOnTarget(true, snapshot.EntityId);
+                _cameraService.SetLockOnTarget(snapshot.EntityId);
             }
             else
             {

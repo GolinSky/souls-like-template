@@ -1,75 +1,67 @@
 using System;
-using SoulsLike.Entities.Character;
+using System.Collections.Generic;
+using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
 using UnityEngine;
 
 namespace SoulsLike.Services.Targeting
 {
     public interface ITargetingService
     {
-        TargetLockNode CurrentTarget { get; }
+        long? CurrentTargetEntityId { get; }
         bool IsLockedOn { get; }
-        event Action<TargetLockNode> TargetChanged;
+        event Action<long?> TargetChanged;
 
-        bool TryAcquireTarget(Transform origin);
-        bool IsCurrentTargetValid(Transform origin);
+        bool TryAcquireTarget(Vector3 origin);
+        bool IsCurrentTargetValid(Vector3 origin);
+        bool TryGetCurrentTarget(out TargetingSnapshot snapshot);
         void ClearTarget();
     }
 
     public class TargetingService : ITargetingService
     {
         private const float MAX_LOCK_ON_DISTANCE = 20f;
+        private readonly IEntityLocator _locator;
+        private readonly List<IEntity> _candidates = new();
 
-        public TargetLockNode CurrentTarget { get; private set; }
-        public bool IsLockedOn => CurrentTarget != null;
-        public event Action<TargetLockNode> TargetChanged;
+        public long? CurrentTargetEntityId { get; private set; }
+        public bool IsLockedOn => CurrentTargetEntityId.HasValue;
+        public event Action<long?> TargetChanged;
 
-        public bool TryAcquireTarget(Transform origin)
+        public TargetingService(IEntityLocator locator) { _locator = locator; }
+
+        public bool TryAcquireTarget(Vector3 origin)
         {
-            if (origin == null)
-            {
-                throw new ArgumentNullException(nameof(origin));
-            }
-
-            TargetLockNode closestTarget = null;
+            long? closestTarget = null;
             float closestDistanceSqr = MAX_LOCK_ON_DISTANCE * MAX_LOCK_ON_DISTANCE;
 
-            TargetLockNode[] candidates = UnityEngine.Object.FindObjectsByType<TargetLockNode>(
-                FindObjectsInactive.Exclude,
-                FindObjectsSortMode.None);
-
-            foreach (TargetLockNode candidate in candidates)
+            _locator.GetEntities(EntityType.Enemy, _candidates);
+            foreach (IEntity candidate in _candidates)
             {
-                if (candidate == null || candidate.TargetTransform == null)
+                if (!candidate.TryGetComponent<TargetingCommand>(out TargetingCommand command))
                 {
-                    continue;
+                    throw new InvalidOperationException(
+                        $"Enemy entity {candidate.Id} is missing {nameof(TargetingCommand)}.");
                 }
 
-                float distanceSqr = (candidate.TargetTransform.position - origin.position).sqrMagnitude;
+                TargetingSnapshot snapshot = command.Read();
+                if (!snapshot.IsAlive) continue;
+                float distanceSqr = (snapshot.LockPoint - origin).sqrMagnitude;
                 if (distanceSqr < closestDistanceSqr)
                 {
                     closestDistanceSqr = distanceSqr;
-                    closestTarget = candidate;
+                    closestTarget = snapshot.EntityId;
                 }
             }
 
             SetCurrentTarget(closestTarget);
-            return CurrentTarget != null;
+            return CurrentTargetEntityId.HasValue;
         }
 
-        public bool IsCurrentTargetValid(Transform origin)
+        public bool IsCurrentTargetValid(Vector3 origin)
         {
-            if (origin == null)
-            {
-                throw new ArgumentNullException(nameof(origin));
-            }
-
-            if (CurrentTarget == null || !CurrentTarget.isActiveAndEnabled || CurrentTarget.TargetTransform == null)
-            {
-                return false;
-            }
-
-            return (CurrentTarget.TargetTransform.position - origin.position).sqrMagnitude
-                <= MAX_LOCK_ON_DISTANCE * MAX_LOCK_ON_DISTANCE;
+            if (!TryGetCurrentTarget(out TargetingSnapshot snapshot) || !snapshot.IsAlive) return false;
+            return (snapshot.LockPoint - origin).sqrMagnitude <= MAX_LOCK_ON_DISTANCE * MAX_LOCK_ON_DISTANCE;
         }
 
         public void ClearTarget()
@@ -77,18 +69,35 @@ namespace SoulsLike.Services.Targeting
             SetCurrentTarget(null);
         }
 
-        private void SetCurrentTarget(TargetLockNode target)
+        public bool TryGetCurrentTarget(out TargetingSnapshot snapshot)
         {
-            if (CurrentTarget == target)
+            snapshot = default;
+            if (!CurrentTargetEntityId.HasValue
+                || !_locator.TryGetEntity(CurrentTargetEntityId.Value, out IEntity entity))
             {
-                return;
+                SetCurrentTarget(null);
+                return false;
             }
 
-            CurrentTarget = target;
-            Action<TargetLockNode> targetChanged = TargetChanged;
+            if (!entity.TryGetComponent<TargetingCommand>(out TargetingCommand command))
+            {
+                throw new InvalidOperationException(
+                    $"Target entity {entity.Id} ({entity.EntityType}) is missing "
+                    + $"{nameof(TargetingCommand)}.");
+            }
+
+            snapshot = command.Read();
+            return true;
+        }
+
+        private void SetCurrentTarget(long? target)
+        {
+            if (CurrentTargetEntityId == target) return;
+            CurrentTargetEntityId = target;
+            Action<long?> targetChanged = TargetChanged;
             if (targetChanged != null)
             {
-                targetChanged(CurrentTarget);
+                targetChanged(CurrentTargetEntityId);
             }
         }
     }

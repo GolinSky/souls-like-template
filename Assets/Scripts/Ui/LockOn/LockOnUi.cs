@@ -7,9 +7,9 @@ namespace SoulsLike.Ui.LockOn
     {
         [SerializeField] private RectTransform reticleRectTransform;
 
-        public bool TrySetTargetPosition(Transform targetTransform, Camera targetCamera)
+        public bool TrySetTargetPosition(Vector3 targetPosition, Camera targetCamera)
         {
-            Vector3 screenPosition = targetCamera.WorldToScreenPoint(targetTransform.position);
+            Vector3 screenPosition = targetCamera.WorldToScreenPoint(targetPosition);
             if (!IsVisible(targetCamera, screenPosition))
             {
                 return false;
