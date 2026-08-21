@@ -759,6 +759,7 @@ namespace SoulsLike.Editor
                 characterController.radius = 0.32f;
                 characterController.stepOffset = 0.3f;
                 characterController.skinWidth = 0.04f;
+                characterController.excludeLayers = 1 << enemyLayer;
 
                 NavMeshAgent agent = root.AddComponent<NavMeshAgent>();
                 agent.radius = 0.32f;
