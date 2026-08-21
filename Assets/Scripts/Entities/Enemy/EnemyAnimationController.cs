@@ -31,6 +31,7 @@ namespace SoulsLike.Entities.Enemy
         public EnemyActionPhase Phase { get; private set; }
         public bool ComboWindowOpen { get; private set; }
         public bool IsActionRunning => Status == EnemyActionStatus.Running;
+        public bool IsHitReactionRunning { get; private set; }
 
         public float CurrentTurnSpeed => Phase switch
         {
@@ -176,6 +177,7 @@ namespace SoulsLike.Entities.Enemy
             _queuedFollowUp = null;
             meleeHitbox.Close();
             ComboWindowOpen = false;
+            IsHitReactionRunning = false;
             motor.SetRootMotion(false);
             Phase = EnemyActionPhase.None;
             Status = EnemyActionStatus.Interrupted;
@@ -185,7 +187,19 @@ namespace SoulsLike.Entities.Enemy
         public void PlayHit()
         {
             Interrupt();
+            motor.Stop();
+            IsHitReactionRunning = true;
             animator.SetTrigger(HIT_TRIGGER);
+        }
+
+        public void ReportHitEntered()
+        {
+            IsHitReactionRunning = true;
+        }
+
+        public void ReportHitExited()
+        {
+            IsHitReactionRunning = false;
         }
 
         public void PlayDeath()
@@ -198,7 +212,7 @@ namespace SoulsLike.Entities.Enemy
         {
             if (IsActionRunning && CurrentAction.UsesRootMotion)
             {
-                motor.ApplyRootMotion(animator.deltaPosition, animator.deltaRotation);
+                motor.ApplyRootMotion(animator.deltaPosition);
             }
         }
 

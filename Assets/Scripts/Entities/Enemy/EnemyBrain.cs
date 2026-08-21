@@ -32,6 +32,7 @@ namespace SoulsLike.Entities.Enemy
         private long? _reactionTargetEntityId;
         private int _patrolIndex;
         private bool _waitingAtPatrolPoint;
+        private bool _isRetreating;
         private bool _deathAnimationStarted;
         private bool _despawned;
 
@@ -118,7 +119,14 @@ namespace SoulsLike.Entities.Enemy
 
             float deltaTime = Time.deltaTime;
             float now = Time.time;
-            _motor.Tick(deltaTime);
+            if (_animation.IsHitReactionRunning)
+            {
+                _motor.Tick(deltaTime, false);
+                _animation.SetLocomotion(Vector3.zero);
+                return;
+            }
+
+            _motor.Tick(deltaTime, Goal != EnemyGoal.Combat);
             _animation.SetLocomotion(_motor.LocalVelocity);
 
             if (_animation.IsActionRunning)
@@ -197,7 +205,8 @@ namespace SoulsLike.Entities.Enemy
 
         private void DecideCombat(in TargetingSnapshot target, float now)
         {
-            Vector3 toTarget = target.Position - _actor.transform.position;
+            Vector3 combatTarget = target.LockPoint;
+            Vector3 toTarget = combatTarget - _actor.transform.position;
             toTarget.y = 0f;
             float distance = toTarget.magnitude;
             float angle = Vector3.Angle(_actor.transform.forward, toTarget);
@@ -208,11 +217,22 @@ namespace SoulsLike.Entities.Enemy
 
             if (!hasLineOfSight || distance > _actor.BehaviourProfile.PreferredRangeMax)
             {
+                _isRetreating = false;
                 MoveTo(target.Position);
                 return;
             }
 
             if (distance < _actor.BehaviourProfile.PreferredRangeMin)
+            {
+                _isRetreating = true;
+                _waitUntil = 0f;
+            }
+
+            float retreatReleaseDistance = Mathf.Min(
+                _actor.BehaviourProfile.PreferredRangeMax,
+                _actor.BehaviourProfile.PreferredRangeMin
+                + _actor.BehaviourProfile.ArrivalDistance);
+            if (_isRetreating && distance < retreatReleaseDistance)
             {
                 Vector3 retreatDirection = toTarget.sqrMagnitude > 0f
                     ? -toTarget.normalized
@@ -223,10 +243,16 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
+            _isRetreating = false;
+            if (now < _waitUntil)
+            {
+                return;
+            }
+
             _motor.Stop();
             if (angle > FACING_ANGLE)
             {
-                Face(target.Position, 360f);
+                Face(combatTarget, 360f);
                 return;
             }
 
@@ -239,9 +265,10 @@ namespace SoulsLike.Entities.Enemy
                 now);
             if (action != null)
             {
+                _motor.FaceImmediately(combatTarget);
                 CurrentIntent = new EnemyIntent(
                     EnemyIntentKind.ExecuteAction,
-                    target.Position,
+                    combatTarget,
                     action);
                 _animation.PlayAction(action);
                 return;
@@ -269,13 +296,13 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
-            _motor.Face(target.Position, _animation.CurrentTurnSpeed, deltaTime);
+            _motor.Face(target.LockPoint, _animation.CurrentTurnSpeed, deltaTime);
             if (!_animation.ComboWindowOpen)
             {
                 return;
             }
 
-            Vector3 toTarget = target.Position - _actor.transform.position;
+            Vector3 toTarget = target.LockPoint - _actor.transform.position;
             toTarget.y = 0f;
             float distance = toTarget.magnitude;
             float angle = Vector3.Angle(_actor.transform.forward, toTarget);
@@ -300,6 +327,12 @@ namespace SoulsLike.Entities.Enemy
         {
             switch (Goal)
             {
+                case EnemyGoal.Combat:
+                    if (_perception.TryResolveRememberedTarget(out TargetingSnapshot target))
+                    {
+                        _motor.Face(target.LockPoint, 360f, deltaTime);
+                    }
+                    break;
                 case EnemyGoal.Investigate:
                     if (_perception.Memory.HasValue
                         && _motor.IsWithin(
@@ -391,6 +424,15 @@ namespace SoulsLike.Entities.Enemy
             }
 
             Goal = goal;
+            if (goal == EnemyGoal.Combat)
+            {
+                _waitUntil = 0f;
+            }
+            else
+            {
+                _isRetreating = false;
+            }
+
             if (goal == EnemyGoal.Search)
             {
                 _searchUntil = Time.time + _actor.BehaviourProfile.SearchSeconds;
@@ -422,10 +464,17 @@ namespace SoulsLike.Entities.Enemy
 
         private void OnDamageApplied(DamageResult damage)
         {
-            _perception.RegisterDamageStimulus(damage.SourceEntityId, Time.time);
-            BeginReaction(damage.SourceEntityId, Time.time);
+            float now = Time.time;
+            _perception.RegisterDamageStimulus(damage.SourceEntityId, now);
+            BeginReaction(damage.SourceEntityId, now);
             if (!damage.Killed && damage.HealthDamageAmount > 0f)
             {
+                _isRetreating = false;
+                _waitUntil = 0f;
+                _nextDecisionTime = now;
+                CurrentIntent = new EnemyIntent(
+                    EnemyIntentKind.Wait,
+                    _actor.transform.position);
                 _animation.PlayHit();
             }
 

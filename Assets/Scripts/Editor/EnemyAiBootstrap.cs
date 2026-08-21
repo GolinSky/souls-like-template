@@ -85,6 +85,8 @@ namespace SoulsLike.Editor
             "Assets/ThirdParty/DoubleL/FBX_Animations/Enemy Attack/Enemy_Attack_4_3_Combo.fbx";
         private const string HEAVY_ATTACK_PATH =
             "Assets/ThirdParty/DoubleL/FBX_Animations/Enemy Attack/Enemy_Attack_5.fbx";
+        private const string HIT_PATH =
+            "Assets/ThirdParty/DoubleL/Demo Scenes/Demo Animations/Hit_F_1.anim";
         private const string DEATH_PATH =
             "Assets/ThirdParty/DoubleL/FBX_Animations/Hit/Die/Front/Die_F_1-A.fbx";
 
@@ -121,10 +123,20 @@ namespace SoulsLike.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             ForceReserializeAuthoredAssets(actions.Values);
+            BakeNavigation();
+            Debug.Log("Enemy AI bootstrap and navigation bake completed.");
+        }
+
+        [MenuItem("Tools/SoulsLike/Bake Enemy Navigation")]
+        public static void BakeNavigation()
+        {
             OpenNavigationScenes();
-            Debug.Log(
-                "Enemy AI bootstrap completed. Bake NavMeshSurface components, then call "
-                + $"{nameof(FinalizeNavigationBake)}().");
+            Scene scene = SceneManager.GetSceneByPath(DEFAULT_SCENE_PATH);
+            NavMeshSurface surface = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<NavMeshSurface>(true))
+                .Single();
+            surface.BuildNavMesh();
+            FinalizeNavigationBake();
         }
 
         public static void FinalizeNavigationBake()
@@ -329,6 +341,11 @@ namespace SoulsLike.Editor
                 {
                     name = "MoveY",
                     type = AnimatorControllerParameterType.Float
+                },
+                new AnimatorControllerParameter
+                {
+                    name = "Hit",
+                    type = AnimatorControllerParameterType.Trigger
                 }
             };
 
@@ -352,6 +369,30 @@ namespace SoulsLike.Editor
             locomotion.motion = locomotionTree;
             locomotion.writeDefaultValues = false;
             stateMachine.defaultState = locomotion;
+
+            AnimatorState hit = stateMachine.AddState("Hit");
+            EnsureControllerSubAsset(hit, controller);
+            hit.motion = LoadClip(HIT_PATH);
+            hit.writeDefaultValues = false;
+            EnemyHitStateBehaviour hitBehaviour =
+                hit.AddStateMachineBehaviour<EnemyHitStateBehaviour>();
+            EnsureControllerSubAsset(hitBehaviour, controller);
+
+            AnimatorStateTransition hitExit = hit.AddTransition(locomotion);
+            EnsureControllerSubAsset(hitExit, controller);
+            hitExit.hasExitTime = true;
+            hitExit.exitTime = 0.9f;
+            hitExit.hasFixedDuration = true;
+            hitExit.duration = 0.08f;
+
+            AnimatorStateTransition hitInterrupt =
+                stateMachine.AddAnyStateTransition(hit);
+            EnsureControllerSubAsset(hitInterrupt, controller);
+            hitInterrupt.hasExitTime = false;
+            hitInterrupt.hasFixedDuration = true;
+            hitInterrupt.duration = 0f;
+            hitInterrupt.canTransitionToSelf = true;
+            hitInterrupt.AddCondition(AnimatorConditionMode.If, 0f, "Hit");
 
             AddActionState(
                 controller, stateMachine, locomotion, actions[CharacterActionId.LightAttack1],
@@ -757,7 +798,7 @@ namespace SoulsLike.Editor
                 characterController.center = new Vector3(0f, 0.9f, 0f);
                 characterController.height = 1.8f;
                 characterController.radius = 0.32f;
-                characterController.stepOffset = 0.3f;
+                characterController.stepOffset = 0.4f;
                 characterController.skinWidth = 0.04f;
                 characterController.excludeLayers = 1 << enemyLayer;
 

@@ -9,7 +9,7 @@ namespace SoulsLike.Entities.Enemy
     public sealed class EnemyNavigationMotor : MonoBehaviour, IInitializable
     {
         private const float VELOCITY_EPSILON = 0.0001f;
-        private const float GROUNDED_VERTICAL_SPEED = -2f;
+        private const float GROUNDING_SPEED = -2f;
 
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private CharacterController controller;
@@ -44,30 +44,39 @@ namespace SoulsLike.Entities.Enemy
         public void Stop()
         {
             _hasDestination = false;
-            agent.isStopped = true;
-            agent.ResetPath();
+            if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            {
+                agent.isStopped = true;
+                agent.ResetPath();
+            }
+
             WorldVelocity = Vector3.zero;
         }
 
         public void SetRootMotion(bool active)
         {
             _rootMotionActive = active;
+            if (!agent.isActiveAndEnabled || !agent.isOnNavMesh)
+            {
+                return;
+            }
+
             agent.isStopped = active || !_hasDestination;
             agent.nextPosition = transform.position;
         }
 
-        public void ApplyRootMotion(Vector3 deltaPosition, Quaternion deltaRotation)
+        public void ApplyRootMotion(Vector3 deltaPosition)
         {
+            deltaPosition.y = GROUNDING_SPEED * Time.deltaTime;
             Vector3 before = transform.position;
             controller.Move(deltaPosition);
-            transform.rotation = deltaRotation * transform.rotation;
             agent.nextPosition = transform.position;
             WorldVelocity = Time.deltaTime > 0f
                 ? (transform.position - before) / Time.deltaTime
                 : Vector3.zero;
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(float deltaTime, bool faceMovement)
         {
             if (_rootMotionActive)
             {
@@ -78,7 +87,7 @@ namespace SoulsLike.Entities.Enemy
             Vector3 desiredVelocity = agent.isStopped
                 ? Vector3.zero
                 : agent.desiredVelocity;
-            if (desiredVelocity.sqrMagnitude > VELOCITY_EPSILON)
+            if (faceMovement && desiredVelocity.sqrMagnitude > VELOCITY_EPSILON)
             {
                 Face(
                     transform.position + desiredVelocity,
@@ -87,10 +96,7 @@ namespace SoulsLike.Entities.Enemy
             }
 
             Vector3 motion = desiredVelocity * deltaTime;
-            if (controller.isGrounded)
-            {
-                motion.y = GROUNDED_VERTICAL_SPEED * deltaTime;
-            }
+            motion.y = GROUNDING_SPEED * deltaTime;
 
             Vector3 before = transform.position;
             controller.Move(motion);
@@ -114,6 +120,20 @@ namespace SoulsLike.Entities.Enemy
                 transform.rotation,
                 targetRotation,
                 degreesPerSecond * deltaTime);
+        }
+
+        public void FaceImmediately(Vector3 position)
+        {
+            Vector3 direction = position - transform.position;
+            direction.y = 0f;
+            if (direction.sqrMagnitude <= VELOCITY_EPSILON)
+            {
+                return;
+            }
+
+            transform.rotation = Quaternion.LookRotation(
+                direction.normalized,
+                Vector3.up);
         }
 
         public void Rotate(float degrees, float deltaTime)

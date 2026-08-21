@@ -212,6 +212,18 @@ MonoBehaviour:
   comboStart: 0.43
   comboEnd: 0.7
   recoveryStart: 0.64
+--- !u!114 &-3210829682611898904
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df68e5a2281c2bb4abfeae0360ff0f67, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyHitStateBehaviour
 --- !u!114 &-2529673990812212602
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -244,10 +256,11 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 7240888177206341840}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -3210829682611898904}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
-  m_WriteDefaultValues: 1
+  m_WriteDefaultValues: 0
   m_Mirror: 0
   m_SpeedParameterActive: 0
   m_MirrorParameterActive: 0
@@ -585,7 +598,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.08
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
   m_ExitTime: 0
   m_HasExitTime: 0
