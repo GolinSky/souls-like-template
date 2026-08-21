@@ -136,14 +136,6 @@ namespace SoulsLike.Entities.Character
             });
 
             instance.transform.SetParent(characterScope.transform, true);
-            foreach (InventoryEntry entry in inventoryComponent.Entries)
-            {
-                if (entry.ItemId == ItemId.GreatSword)
-                {
-                    equipmentComponent.Assign(EquipmentSlotId.RightHand1, entry.EntryId);
-                    break;
-                }
-            }
 
             return character;
         }
