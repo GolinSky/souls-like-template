@@ -36,6 +36,7 @@ namespace SoulsLike.Ui.EnemyHealth
         public void ReleaseBar(EnemyHealthBarUi bar)
         {
             bar.SetVisible(false);
+            bar.ResetValue();
             _availableBars.Push(bar);
         }
 

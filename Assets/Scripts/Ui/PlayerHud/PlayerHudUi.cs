@@ -1,11 +1,8 @@
-using System;
+using System.Collections.Generic;
 using MPUIKIT;
-using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Ui.Base;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace SoulsLike.Ui.PlayerHud
 {
@@ -30,15 +27,25 @@ namespace SoulsLike.Ui.PlayerHud
             // Runtime state
             [HideInInspector] public float currentFill = 1f;
             [HideInInspector] public float trailingFill = 1f;
-            [HideInInspector] public float targetFill = 1f;
-            [HideInInspector] public float holdTimer = 0f;
-            [HideInInspector] public float animateTimer = 0f;
-            [HideInInspector] public float bufferStartFill = 1f;
-            [HideInInspector] public bool isHolding = false;
-            [HideInInspector] public bool isAnimating = false;
 
-            private const float HOLD_DURATION = 0.4f;
-            private const float SLIDE_DURATION = 0.6f;
+            private const float TRAILING_DELAY = 1f;
+            private const float FILL_LERP_SPEED = 10f;
+
+            private readonly Queue<PendingFill> _pendingFills = new();
+            private float _elapsedTime;
+            private float _targetFill = 1f;
+
+            private readonly struct PendingFill
+            {
+                public PendingFill(float value, float applyAt)
+                {
+                    Value = value;
+                    ApplyAt = applyAt;
+                }
+
+                public float Value { get; }
+                public float ApplyAt { get; }
+            }
 
             public void Initialize(Color defaultPrimary, Color defaultBuffer)
             {
@@ -63,62 +70,34 @@ namespace SoulsLike.Ui.PlayerHud
 
             public void UpdateValue(float current, float max)
             {
-                float newTargetFill = Mathf.Clamp01(max > 0f ? current / max : 0f);
-
-                if (newTargetFill < targetFill)
-                {
-                    // Value decreased: Start hold timer for trailing buffer
-                    bufferStartFill = trailingFill;
-                    targetFill = newTargetFill;
-                    holdTimer = HOLD_DURATION;
-                    animateTimer = 0f;
-                    isHolding = true;
-                    isAnimating = false;
-                }
-                else if (newTargetFill > targetFill)
-                {
-                    // Value increased (healing/regen): Instantly bump buffer up to new target
-                    targetFill = newTargetFill;
-                    trailingFill = Mathf.Max(trailingFill, targetFill);
-                    bufferStartFill = trailingFill;
-                    isHolding = false;
-                    isAnimating = false;
-                }
-
-                // Immediate primary bar update
-                currentFill = newTargetFill;
-                if (primaryBar != null)
-                {
-                    primaryBar.fillAmount = currentFill;
-                }
+                _targetFill = Mathf.Clamp01(max > 0f ? current / max : 0f);
             }
 
             public void TickAnimation(float deltaTime)
             {
-                if (isHolding)
+                _elapsedTime += deltaTime;
+
+                float previousFill = currentFill;
+                currentFill = Mathf.Lerp(currentFill, _targetFill, deltaTime * FILL_LERP_SPEED);
+                if (Mathf.Approximately(currentFill, _targetFill))
                 {
-                    holdTimer -= deltaTime;
-                    if (holdTimer <= 0f)
-                    {
-                        isHolding = false;
-                        isAnimating = true;
-                        animateTimer = 0f;
-                    }
+                    currentFill = _targetFill;
                 }
 
-                if (isAnimating)
+                if (currentFill != previousFill)
                 {
-                    animateTimer += deltaTime;
-                    float progress = Mathf.Clamp01(animateTimer / SLIDE_DURATION);
-                    // Smooth step interpolation for trailing buffer
-                    float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
-                    trailingFill = Mathf.Lerp(bufferStartFill, targetFill, smoothProgress);
+                    // Replay the primary bar's smoothed fill one second later.
+                    _pendingFills.Enqueue(new PendingFill(currentFill, _elapsedTime + TRAILING_DELAY));
+                }
 
-                    if (progress >= 1f)
-                    {
-                        trailingFill = targetFill;
-                        isAnimating = false;
-                    }
+                while (_pendingFills.Count > 0 && _pendingFills.Peek().ApplyAt <= _elapsedTime)
+                {
+                    trailingFill = _pendingFills.Dequeue().Value;
+                }
+
+                if (primaryBar != null)
+                {
+                    primaryBar.fillAmount = currentFill;
                 }
 
                 if (trailingBufferBar != null)
@@ -263,7 +242,7 @@ namespace SoulsLike.Ui.PlayerHud
         {
             float dt = Time.deltaTime;
 
-            // Tick buffer animations
+            // Tick stat bar animations
             hpBar.TickAnimation(dt);
             fpBar.TickAnimation(dt);
             staminaBar.TickAnimation(dt);
