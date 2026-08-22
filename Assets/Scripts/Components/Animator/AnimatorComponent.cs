@@ -243,6 +243,7 @@ namespace SoulsLike.Entities.Character.Components
 
         public void TriggerHit()
         {
+            BeginRootMotionAction();
             animator.SetTrigger(HitTrigger);
         }
         

@@ -109,7 +109,9 @@ namespace SoulsLike.Entities.Character
                 input.ControlFrame.CameraYaw,
                 input.ControlFrame.SprintHeld,
                 input.ControlFrame.CrouchHeld);
-            characterAudioComponent.Tick(movementComponent.IsMoving);
+            characterAudioComponent.Tick(
+                movementComponent.IsMoving,
+                input.ControlFrame.SprintHeld && !input.ControlFrame.CrouchHeld);
 
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
             bool blockRequested = input.ControlFrame.GuardHeld
