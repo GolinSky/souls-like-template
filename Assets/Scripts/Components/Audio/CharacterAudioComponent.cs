@@ -14,6 +14,7 @@ namespace SoulsLike.Entities.Character.Components
         [SerializeField] private AudioSource hitSource;
         [SerializeField] private AudioSource swordClashSource;
         [SerializeField, Min(0.01f)] private float footstepFrequency = 2f;
+        [SerializeField, Min(0.01f)] private float sprintFootstepFrequency = 3f;
 
         private IAudioService _audioService;
         private CharacterAudioData _data;
@@ -57,7 +58,7 @@ namespace SoulsLike.Entities.Character.Components
             swordClashSource.volume = volume;
         }
 
-        public void Tick(bool isMoving)
+        public void Tick(bool isMoving, bool isSprinting)
         {
             if (!isMoving)
             {
@@ -71,8 +72,9 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             footstepSource.Play();
+            float frequency = isSprinting ? sprintFootstepFrequency : footstepFrequency;
             _footstepTimer
-                .ChangeDuration(1f / footstepFrequency)
+                .ChangeDuration(1f / frequency)
                 .Start();
         }
 
