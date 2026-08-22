@@ -728,7 +728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeAttackStateBehaviour
   actionId: 1
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.58
 --- !u!1101 &-6873013688234672814
 AnimatorStateTransition:
@@ -818,7 +818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeAttackStateBehaviour
   actionId: 6
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.58
 --- !u!114 &-6408418423112933080
 MonoBehaviour:
@@ -1580,7 +1580,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeAttackStateBehaviour
   actionId: 1
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.58
 --- !u!1102 &-3249251323344490634
 AnimatorState:
@@ -3186,7 +3186,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeAttackStateBehaviour
   actionId: 6
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.58
 --- !u!114 &534331281997698911
 MonoBehaviour:
@@ -3475,7 +3475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeAttackStateBehaviour
   actionId: 1
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.58
 --- !u!1101 &1105586927618134063
 AnimatorStateTransition:
@@ -3565,7 +3565,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -723498844841441241}
-    m_Position: {x: 520, y: -130, z: 0}
+    m_Position: {x: 550, y: -140, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8478347079969625450}
     m_Position: {x: 800, y: -140, z: 0}
@@ -3647,7 +3647,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeAttackStateBehaviour
   actionId: 6
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.58
 --- !u!1101 &1462698581660039428
 AnimatorStateTransition:
@@ -3706,7 +3706,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeAttackStateBehaviour
   actionId: 1
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.58
 --- !u!1101 &1861452157661936117
 AnimatorStateTransition:
@@ -3821,7 +3821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeAttackStateBehaviour
   actionId: 2
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.58
 --- !u!114 &2398151182769148717
 MonoBehaviour:

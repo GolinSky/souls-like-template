@@ -396,29 +396,29 @@ namespace SoulsLike.Editor
 
             AddActionState(
                 controller, stateMachine, locomotion, actions[CharacterActionId.LightAttack1],
-                LoadClip(LIGHT_ATTACK_1_PATH), true, 0.28f, 0.5f, true, 0.43f, 0.7f, 0.64f);
+                LoadClip(LIGHT_ATTACK_1_PATH), true, 0.15f, 0.5f, true, 0.43f, 0.7f, 0.64f);
             AddActionState(
                 controller, stateMachine, locomotion, actions[CharacterActionId.LightAttack2],
-                LoadClip(LIGHT_ATTACK_2_PATH), true, 0.3f, 0.54f, false, 0f, 0f, 0.66f);
+                LoadClip(LIGHT_ATTACK_2_PATH), true, 0.15f, 0.54f, false, 0f, 0f, 0.66f);
             AddActionState(
                 controller, stateMachine, locomotion, actions[CharacterActionId.Combo1],
-                LoadClip(COMBO_1_PATH), true, 0.27f, 0.48f, true, 0.42f, 0.68f, 0.64f);
+                LoadClip(COMBO_1_PATH), true, 0.15f, 0.48f, true, 0.42f, 0.68f, 0.64f);
             AddActionState(
                 controller, stateMachine, locomotion, actions[CharacterActionId.Combo2],
-                LoadClip(COMBO_2_PATH), true, 0.2f, 0.47f, true, 0.36f, 0.69f, 0.62f);
+                LoadClip(COMBO_2_PATH), true, 0.15f, 0.47f, true, 0.36f, 0.69f, 0.62f);
             AddActionState(
                 controller, stateMachine, locomotion, actions[CharacterActionId.Combo3],
-                LoadClip(COMBO_3_PATH), true, 0.23f, 0.54f, false, 0f, 0f, 0.66f);
+                LoadClip(COMBO_3_PATH), true, 0.15f, 0.54f, false, 0f, 0f, 0.66f);
             AddActionState(
                 controller, stateMachine, locomotion, actions[CharacterActionId.HeavyAttack],
-                LoadClip(HEAVY_ATTACK_PATH), true, 0.34f, 0.62f, false, 0f, 0f, 0.72f);
+                LoadClip(HEAVY_ATTACK_PATH), true, 0.15f, 0.62f, false, 0f, 0f, 0.72f);
 
             AnimatorState deathComplete = stateMachine.AddState("DeathComplete");
             EnsureControllerSubAsset(deathComplete, controller);
             deathComplete.writeDefaultValues = false;
             AddActionState(
                 controller, stateMachine, deathComplete, actions[CharacterActionId.Death],
-                LoadClip(DEATH_PATH), false, 0f, 0f, false, 0f, 0f, 0.92f);
+                LoadClip(DEATH_PATH), false, 0.15f, 0f, false, 0f, 0f, 0.92f);
 
             controller.layers = new[] { layer };
             EditorUtility.SetDirty(controller);
@@ -770,7 +770,7 @@ namespace SoulsLike.Editor
 
                 var serialized = new SerializedObject(behaviour);
                 SetInt(serialized, "actionId", (int)actionId, false);
-                SetFloat(serialized, "activeStart", 0.28f, false);
+                SetFloat(serialized, "activeStart", 0.15f, false);
                 SetFloat(serialized, "activeEnd", 0.58f);
             }
 

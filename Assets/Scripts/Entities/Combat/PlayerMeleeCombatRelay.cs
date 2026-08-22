@@ -19,6 +19,7 @@ namespace SoulsLike.Entities.Combat
         private MeleeHitboxController _activeHitbox;
         private CharacterActionId _actionId;
         private float _damage;
+        private int _attackSequence;
 
         [Inject]
         public void Construct(
@@ -35,22 +36,31 @@ namespace SoulsLike.Entities.Combat
             _weaponDatabase = weaponDatabase;
         }
 
-        public void Begin(CharacterActionId actionId)
+        public int Begin(CharacterActionId actionId)
         {
             if (_activeHitbox != null)
             {
                 _activeHitbox.OnHitConfirmed -= OnHitConfirmed;
             }
 
+            _attackSequence++;
+
             ItemId weaponId = _attackComponent.ActiveWeaponId
                 ?? throw new InvalidOperationException(
                     "A melee attack requires an active weapon item ID.");
             WeaponRuntime weaponRuntime = _attackComponent.ActiveWeaponRuntime;
-            if (weaponRuntime == null
-                || !weaponRuntime.TryGetComponent(out _activeHitbox))
+            if (weaponRuntime == null)
             {
                 throw new InvalidOperationException(
-                    $"Weapon '{weaponId}' requires {nameof(MeleeHitboxController)}.");
+                    $"Weapon '{weaponId}' requires {nameof(WeaponRuntime)}.");
+            }
+
+            _activeHitbox = weaponRuntime.MeleeHitbox;
+            if (_activeHitbox == null)
+            {
+                throw new InvalidOperationException(
+                    $"Weapon '{weaponId}' runtime requires a serialized " +
+                    $"{nameof(MeleeHitboxController)} reference.");
             }
 
             CombatProfile combatProfile = _attackComponent.ActiveCombatProfile;
@@ -64,15 +74,27 @@ namespace SoulsLike.Entities.Combat
                 .PhysicalAttack * multiplier;
             _activeHitbox.Initialize(_entityLocator, _entity.Id, weaponId);
             _activeHitbox.OnHitConfirmed += OnHitConfirmed;
+            return _attackSequence;
         }
 
-        public void Open()
+        public void Open(int attackSequence)
         {
+            if (attackSequence != _attackSequence)
+            {
+                Debug.LogError($"attackSequence: {attackSequence} same value error");
+                return;
+            }
+
             _activeHitbox.Open(_actionId, _damage);
         }
 
-        public void Close()
+        public void Close(int attackSequence)
         {
+            if (attackSequence != _attackSequence)
+            {
+                return;
+            }
+
             if (_activeHitbox != null)
             {
                 _activeHitbox.OnHitConfirmed -= OnHitConfirmed;

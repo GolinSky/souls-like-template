@@ -12,10 +12,11 @@ namespace SoulsLike.Entities.Combat
     {
         [SerializeField] private Collider hitbox;
         [SerializeField] private int hitZone;
-
+        [SerializeField] private Light debugLight;
         public event Action OnHitConfirmed;
 
         private readonly HashSet<long> _hitEntityIds = new();
+        //todo: lot of duplicated data around 
         private IEntityLocator _entityLocator;
         private long _ownerEntityId;
         private ItemId _weaponId;
@@ -27,6 +28,7 @@ namespace SoulsLike.Entities.Combat
             long ownerEntityId,
             ItemId weaponId)
         {
+            hitbox.isTrigger = true;
             _entityLocator = entityLocator;
             _ownerEntityId = ownerEntityId;
             _weaponId = weaponId;
@@ -39,12 +41,14 @@ namespace SoulsLike.Entities.Combat
             _damage = damage;
             _hitEntityIds.Clear();
             hitbox.enabled = true;
+            debugLight.enabled = true;
         }
 
         public void Close()
         {
             hitbox.enabled = false;
             _hitEntityIds.Clear();
+            debugLight.enabled = false;
         }
 
         private void OnTriggerEnter(Collider other)

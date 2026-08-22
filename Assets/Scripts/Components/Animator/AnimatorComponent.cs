@@ -67,8 +67,6 @@ namespace SoulsLike.Entities.Character.Components
         [SerializeField, Min(0.0f)] private float chargedAttackSpeedSmoothTime = 0.15f;
         [SerializeField] private AnimatorRootMotionRelay rootMotionRelay;
         
-        [field:SerializeField] public Transform RightHandAnchor { get; private set; }
-
         
         private IAnimationStateSink _stateSink;
         private IRootMotionSink _rootMotionSink;

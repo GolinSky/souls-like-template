@@ -5,7 +5,7 @@ using VContainer;
 
 namespace SoulsLike.Entities.Character.Components.Equipment
 {
-    public sealed class EquipmentPresentation : MonoBehaviour
+    public class EquipmentPresentation : MonoBehaviour
     {
         [SerializeField] private Transform rightHandAnchor;
         [SerializeField] private Transform leftHandAnchor;
@@ -130,9 +130,11 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             GameObject instance,
             EquippedItemContext context)
         {
-            if (!instance.TryGetComponent(out WeaponRuntime weaponRuntime))
+            WeaponRuntime weaponRuntime = instance.GetComponent<WeaponRuntime>();
+            if (weaponRuntime == null)
             {
-                weaponRuntime = instance.AddComponent<WeaponRuntime>();
+                throw new InvalidOperationException(
+                    $"Weapon '{context.ItemId}' equipped prefab requires {nameof(WeaponRuntime)}.");
             }
 
             weaponRuntime.Initialize(context.Entry.EntryId, context.ItemId);

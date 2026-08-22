@@ -1,3 +1,4 @@
+using SoulsLike.Entities.Combat;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Items;
 using UnityEngine;
@@ -6,11 +7,14 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 {
     public sealed class WeaponRuntime : MonoBehaviour
     {
+        [SerializeField] private MeleeHitboxController meleeHitbox;
+
         private float _temporaryLightningDamage;
         private float _infusionRemainingSeconds;
 
         public InventoryEntryId EntryId { get; private set; }
         public ItemId ItemId { get; private set; }
+        public MeleeHitboxController MeleeHitbox => meleeHitbox;
         public float TemporaryLightningDamage => _temporaryLightningDamage;
         public bool HasTemporaryInfusion => _infusionRemainingSeconds > 0f;
 

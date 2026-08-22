@@ -122,7 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionStateBehaviour
   actionId: 3
   hasHitboxWindow: 1
-  activeStart: 0.27
+  activeStart: 0.15
   activeEnd: 0.48
   hasComboWindow: 1
   comboStart: 0.42
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionStateBehaviour
   actionId: 4
   hasHitboxWindow: 1
-  activeStart: 0.2
+  activeStart: 0.15
   activeEnd: 0.47
   hasComboWindow: 1
   comboStart: 0.36
@@ -206,7 +206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionStateBehaviour
   actionId: 1
   hasHitboxWindow: 1
-  activeStart: 0.28
+  activeStart: 0.15
   activeEnd: 0.5
   hasComboWindow: 1
   comboStart: 0.43
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionStateBehaviour
   actionId: 2
   hasHitboxWindow: 1
-  activeStart: 0.3
+  activeStart: 0.15
   activeEnd: 0.54
   hasComboWindow: 0
   comboStart: 0
@@ -286,7 +286,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionStateBehaviour
   actionId: 6
   hasHitboxWindow: 1
-  activeStart: 0.34
+  activeStart: 0.15
   activeEnd: 0.62
   hasComboWindow: 0
   comboStart: 0
@@ -736,7 +736,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionStateBehaviour
   actionId: 5
   hasHitboxWindow: 1
-  activeStart: 0.23
+  activeStart: 0.15
   activeEnd: 0.54
   hasComboWindow: 0
   comboStart: 0
@@ -806,7 +806,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionStateBehaviour
   actionId: 7
   hasHitboxWindow: 0
-  activeStart: 0
+  activeStart: 0.15
   activeEnd: 0
   hasComboWindow: 0
   comboStart: 0
