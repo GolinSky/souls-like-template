@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 193d2c9d756af1e489c870e548301131, type: 3}
   m_Name: CharacterAudioData
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.CharacterAudioData
-  footstep: {fileID: 6418180475301049370, guid: 463037fd1054643d5bcc2af48080f87d, type: 2}
+  footstep: {fileID: 6418180475301049370, guid: ef05be445e3284c9c93fe860c0837942, type: 2}
   landing: {fileID: 6418180475301049370, guid: 8b35f83fdcc30434e8d37b43903e1c5f, type: 2}
   hit: {fileID: 0}
   swordClash: {fileID: 0}

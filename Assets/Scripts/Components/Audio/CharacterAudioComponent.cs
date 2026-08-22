@@ -1,3 +1,4 @@
+using Prospector.Utility.Timer;
 using SoulsLike.Services;
 using SoulsLike.Services.Audio;
 using SoulsLike.Services.Audio.Data;
@@ -16,7 +17,7 @@ namespace SoulsLike.Entities.Character.Components
 
         private IAudioService _audioService;
         private CharacterAudioData _data;
-        private float _footstepTimer;
+        private ITimer _footstepTimer;
         private bool _isObserving;
 
         [Inject]
@@ -24,6 +25,7 @@ namespace SoulsLike.Entities.Character.Components
         {
             _audioService = audioService;
             _data = data;
+            _footstepTimer = TimerFactory.ConstructTimer();
             footstepSource.resource = _data.Footstep;
             landingSource.resource = _data.Landing;
             hitSource.resource = _data.Hit;
@@ -59,18 +61,19 @@ namespace SoulsLike.Entities.Character.Components
         {
             if (!isMoving)
             {
-                _footstepTimer = 0f;
+                _footstepTimer.Reset();
                 return;
             }
 
-            _footstepTimer -= Time.deltaTime;
-            if (_footstepTimer > 0f)
+            if (_footstepTimer.IsRunning && !_footstepTimer.IsComplete)
             {
                 return;
             }
 
             footstepSource.Play();
-            _footstepTimer = 1f / footstepFrequency;
+            _footstepTimer
+                .ChangeDuration(1f / footstepFrequency)
+                .Start();
         }
 
         public void NotifyLand() => landingSource.Play();
