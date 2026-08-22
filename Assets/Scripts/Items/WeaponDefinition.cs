@@ -1,4 +1,5 @@
 using System;
+using SoulsLike.Entities.Character.Components.Equipment;
 using UnityEngine;
 
 namespace SoulsLike.Items
@@ -11,7 +12,7 @@ namespace SoulsLike.Items
         [Header("Runtime")]
         [SerializeField] private AnimationProfile animationProfile;
         [SerializeField] private CombatProfile combatProfile;
-        [SerializeField] private GameObject equippedPrefab;
+        [SerializeField] private WeaponRuntime equippedPrefab;
         [SerializeField] private bool canTwoHand = true;
 
         [Header("Attack Power")]
@@ -42,7 +43,7 @@ namespace SoulsLike.Items
         public ItemId ItemId => itemId;
         public AnimationProfile AnimationProfile => animationProfile;
         public CombatProfile CombatProfile => combatProfile;
-        public GameObject EquippedPrefab => equippedPrefab;
+        public WeaponRuntime EquippedPrefab => equippedPrefab;
         public bool CanTwoHand => canTwoHand;
         public Sprite SkillIcon => skillIcon;
 

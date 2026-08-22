@@ -188,6 +188,7 @@ namespace SoulsLike.Entities.Enemy
         {
             Interrupt();
             motor.Stop();
+            motor.SetRootMotion(true);
             IsHitReactionRunning = true;
             animator.SetTrigger(HIT_TRIGGER);
         }
@@ -195,11 +196,13 @@ namespace SoulsLike.Entities.Enemy
         public void ReportHitEntered()
         {
             IsHitReactionRunning = true;
+            motor.SetRootMotion(true);
         }
 
         public void ReportHitExited()
         {
             IsHitReactionRunning = false;
+            motor.SetRootMotion(false);
         }
 
         public void PlayDeath()
@@ -210,7 +213,8 @@ namespace SoulsLike.Entities.Enemy
 
         private void OnAnimatorMove()
         {
-            if (IsActionRunning && CurrentAction.UsesRootMotion)
+            if (IsHitReactionRunning ||
+                IsActionRunning && CurrentAction.UsesRootMotion)
             {
                 motor.ApplyRootMotion(animator.deltaPosition);
             }

@@ -47,26 +47,42 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
             if (loadout.EffectiveRight != null)
             {
-                _rightInstance = CreatePresentation(loadout.EffectiveRight, rightHandAnchor, false);
-                _rightInstance.SetActive(_isRightHandVisible);
                 if (_itemCatalog.GetItem(loadout.EffectiveRight.ItemId).ItemType == ItemType.Weapon)
                 {
-                    ActiveRightWeaponRuntime = RequireWeaponRuntime(
-                        _rightInstance,
-                        loadout.EffectiveRight);
+                    ActiveRightWeaponRuntime = CreatePresentation(
+                        loadout.EffectiveRight,
+                        rightHandAnchor,
+                        false);
+                    _rightInstance = ActiveRightWeaponRuntime.gameObject;
                 }
+                else
+                {
+                    _rightInstance = CreateShieldPresentation(
+                        loadout.EffectiveRight,
+                        rightHandAnchor);
+                }
+
+                _rightInstance.SetActive(_isRightHandVisible);
             }
 
             if (loadout.EffectiveLeft != null)
             {
-                _leftInstance = CreatePresentation(loadout.EffectiveLeft, leftHandAnchor, true);
-                _leftInstance.SetActive(_isLeftHandVisible);
                 if (_itemCatalog.GetItem(loadout.EffectiveLeft.ItemId).ItemType == ItemType.Weapon)
                 {
-                    ActiveLeftWeaponRuntime = RequireWeaponRuntime(
-                        _leftInstance,
-                        loadout.EffectiveLeft);
+                    ActiveLeftWeaponRuntime = CreatePresentation(
+                        loadout.EffectiveLeft,
+                        leftHandAnchor,
+                        true);
+                    _leftInstance = ActiveLeftWeaponRuntime.gameObject;
                 }
+                else
+                {
+                    _leftInstance = CreateShieldPresentation(
+                        loadout.EffectiveLeft,
+                        leftHandAnchor);
+                }
+
+                _leftInstance.SetActive(_isLeftHandVisible);
             }
         }
 
@@ -93,52 +109,37 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             }
         }
 
-        private GameObject CreatePresentation(
+        private WeaponRuntime CreatePresentation(
             EquippedItemContext context,
             Transform anchor,
             bool isLeftHand)
         {
-            ItemType itemType = _itemCatalog.GetItem(context.ItemId).ItemType;
-            GameObject prefab = itemType switch
-            {
-                ItemType.Weapon => _itemCatalog.GetWeapon(context.ItemId).EquippedPrefab,
-                ItemType.Shield => _itemCatalog.GetShield(context.ItemId).EquippedPrefab,
-                _ => null
-            };
+            WeaponRuntime prefab = _itemCatalog.GetWeapon(context.ItemId).EquippedPrefab;
+            WeaponRuntime instance = Instantiate<WeaponRuntime>(prefab, anchor, false);
 
-            GameObject instance;
-            if (prefab == null)
-            {
-                instance = new GameObject($"Runtime_{context.ItemId}");
-                instance.transform.SetParent(anchor, false);
-            }
-            else
-            {
-                instance = Instantiate(prefab, anchor, false);
-            }
-
-            if (isLeftHand && itemType == ItemType.Weapon)
+            if (isLeftHand)
             {
                 instance.transform.localPosition = _leftHandSwordLocalPosition;
                 instance.transform.localRotation = _leftHandSwordLocalRotation;
             }
 
+            instance.Initialize(context.Entry.EntryId, context.ItemId);
             return instance;
         }
 
-        private static WeaponRuntime RequireWeaponRuntime(
-            GameObject instance,
-            EquippedItemContext context)
+        private GameObject CreateShieldPresentation(
+            EquippedItemContext context,
+            Transform anchor)
         {
-            WeaponRuntime weaponRuntime = instance.GetComponent<WeaponRuntime>();
-            if (weaponRuntime == null)
+            GameObject prefab = _itemCatalog.GetShield(context.ItemId).EquippedPrefab;
+            if (prefab != null)
             {
-                throw new InvalidOperationException(
-                    $"Weapon '{context.ItemId}' equipped prefab requires {nameof(WeaponRuntime)}.");
+                return Instantiate(prefab, anchor, false);
             }
 
-            weaponRuntime.Initialize(context.Entry.EntryId, context.ItemId);
-            return weaponRuntime;
+            GameObject instance = new($"Runtime_{context.ItemId}");
+            instance.transform.SetParent(anchor, false);
+            return instance;
         }
 
         private static void ClearInstance(ref GameObject instance)
