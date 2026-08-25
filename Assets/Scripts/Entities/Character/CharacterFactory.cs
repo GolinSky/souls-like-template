@@ -29,9 +29,11 @@ using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character
 {
-    public class CharacterFactory : BaseFactory
+    public class CharacterFactory : BaseFactory, IDisposable
     {
         private const string CHARACTER_PREFAB_KEY = nameof(Character);
+
+        private LifetimeScope _characterScope;
 
         public CharacterFactory(IObjectResolver resolver) : base(resolver)
         {
@@ -74,7 +76,7 @@ namespace SoulsLike.Entities.Character
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
             long entityId = RootScope.Container.Resolve<IUniqueIdGenerator>().GenerateUniqueId();
 
-            LifetimeScope characterScope = RootScope.CreateChild(builder =>
+            _characterScope = RootScope.CreateChild(builder =>
             {
                 builder.RegisterEntitySystemExt(EntityType.Player, entityId);
                 builder.RegisterComponent(viewEntity).AsSelf().AsImplementedInterfaces();
@@ -137,9 +139,14 @@ namespace SoulsLike.Entities.Character
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             });
 
-            instance.transform.SetParent(characterScope.transform, true);
+            instance.transform.SetParent(_characterScope.transform, true);
 
             return character;
+        }
+
+        public void Dispose()
+        {
+            _characterScope.Dispose();
         }
 
         private static TComponent GetRequiredComponent<TComponent>(GameObject instance)

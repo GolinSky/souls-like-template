@@ -90,12 +90,12 @@ namespace SoulsLike.Ui.EnemyHealth
 
         public void Dispose()
         {
-            for (int index = _trackedEnemies.Count - 1; index >= 0; index--)
+            foreach (TrackedEnemy trackedEnemy in _trackedEnemies)
             {
-                ReleaseTrackedEnemy(index, _trackedEnemies[index]);
+                trackedEnemy.HealthModel.OnStatsChanged -= trackedEnemy.StatsChangedHandler;
             }
 
-            _enemyHealthUi.Hide();
+            _trackedEnemies.Clear();
         }
 
         private void ReleaseTrackedEnemy(int index, TrackedEnemy trackedEnemy)

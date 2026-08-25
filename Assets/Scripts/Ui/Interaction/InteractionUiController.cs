@@ -31,7 +31,6 @@ namespace SoulsLike.Ui.Interaction
         public void Dispose()
         {
             _interactionController.PromptChanged -= OnPromptChanged;
-            _interactionUi.Hide();
         }
 
         private void OnPromptChanged(InteractionPrompt _)
