@@ -1403,7 +1403,7 @@ MonoBehaviour:
   m_MaterialMode: 0
   m_StrokeWidth: 0
   m_OutlineWidth: 0.5
-  m_OutlineColor: {r: 1, g: 1, b: 1, a: 0.050980393}
+  m_OutlineColor: {r: 0, g: 0.17734289, b: 1, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -2760,7 +2760,7 @@ MonoBehaviour:
   m_MaterialMode: 0
   m_StrokeWidth: 0
   m_OutlineWidth: 0.5
-  m_OutlineColor: {r: 1, g: 1, b: 1, a: 0.050980393}
+  m_OutlineColor: {r: 0, g: 0.17734289, b: 1, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
@@ -3956,12 +3956,6 @@ MonoBehaviour:
     bufferColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
     currentFill: 1
     trailingFill: 1
-    targetFill: 1
-    holdTimer: 0
-    animateTimer: 0
-    bufferStartFill: 1
-    isHolding: 0
-    isAnimating: 0
   fpBar:
     container: {fileID: 7776071180105206703}
     primaryBar: {fileID: 1714436812466813716}
@@ -3972,12 +3966,6 @@ MonoBehaviour:
     bufferColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
     currentFill: 1
     trailingFill: 1
-    targetFill: 1
-    holdTimer: 0
-    animateTimer: 0
-    bufferStartFill: 1
-    isHolding: 0
-    isAnimating: 0
   staminaBar:
     container: {fileID: 4020884895577512551}
     primaryBar: {fileID: 6205652829297566065}
@@ -3988,12 +3976,6 @@ MonoBehaviour:
     bufferColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
     currentFill: 1
     trailingFill: 1
-    targetFill: 1
-    holdTimer: 0
-    animateTimer: 0
-    bufferStartFill: 1
-    isHolding: 0
-    isAnimating: 0
   equipmentHudContainer: {fileID: 8961582888523372862}
   topSlot:
     container: {fileID: 7877588387112183084}
@@ -4621,7 +4603,7 @@ MonoBehaviour:
   m_MaterialMode: 0
   m_StrokeWidth: 0
   m_OutlineWidth: 0.5
-  m_OutlineColor: {r: 1, g: 1, b: 1, a: 0.050980393}
+  m_OutlineColor: {r: 0, g: 0.17734289, b: 1, a: 1}
   m_FalloffDistance: 0.5
   m_ConstrainRotation: 1
   m_ShapeRotation: 0
