@@ -3004,6 +3004,24 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 0}
       m_Motion: {fileID: 785052904632696677, guid: a1d47000d8e84d84e9f5d825ea986275, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 2904725494005549087}
+      m_Motion: {fileID: -5090743463624091825, guid: e56b4010382e94f4e8f43c0a243874ce, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 7920209709773031611}
+      m_Motion: {fileID: -8513691504462997363, guid: 1edad1ebc099cb0408183cfb7b6e333c, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: 393590083845474214}
+      m_Motion: {fileID: -1850509775060468297, guid: 47c5e58765d42af4097ac67d8b9d3067, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: -3014315015504851690}
+      m_Motion: {fileID: 7400000, guid: 0a6d23061e9d951439b9ebb5220d4692, type: 2}
+    - serializedVersion: 2
+      m_State: {fileID: -7825423560920007955}
+      m_Motion: {fileID: 2746797882735882954, guid: 410d7be4a2655184ba55b823acaf3d8d, type: 3}
+    - serializedVersion: 2
+      m_State: {fileID: -5245103040252891188}
+      m_Motion: {fileID: 7139934645174251864, guid: 44142c606745b5d41b5c9897d7bd5f3e, type: 3}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 1
