@@ -5,6 +5,7 @@ using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Items;
 using UnityEngine;
+using UnityEngine.Audio;
 using VContainer;
 
 namespace SoulsLike.Entities.Combat
@@ -18,6 +19,7 @@ namespace SoulsLike.Entities.Combat
         private WeaponDatabase _weaponDatabase;
         private MeleeHitboxController _activeHitbox;
         private CharacterActionId _actionId;
+        private AudioResource _attackSfx;
         private float _damage;
         private int _attackSequence;
 
@@ -68,10 +70,9 @@ namespace SoulsLike.Entities.Combat
                 ? combatProfile.HeavyAttackMultiplier
                 : combatProfile.LightAttackMultiplier;
             _actionId = actionId;
-            _damage = _weaponDatabase
-                .GetRequired(weaponId)
-                .Stats
-                .PhysicalAttack * multiplier;
+            WeaponDefinition weaponDefinition = _weaponDatabase.GetRequired(weaponId);
+            _attackSfx = weaponDefinition.AttackSfx;
+            _damage = weaponDefinition.Stats.PhysicalAttack * multiplier;
             _activeHitbox.Initialize(_entityLocator, _entity.Id, weaponId);
             _activeHitbox.OnHitConfirmed += OnHitConfirmed;
             return _attackSequence;
@@ -86,6 +87,16 @@ namespace SoulsLike.Entities.Combat
             }
 
             _activeHitbox.Open(_actionId, _damage);
+        }
+
+        public void PlayAttackSfx(int attackSequence)
+        {
+            if (attackSequence != _attackSequence)
+            {
+                return;
+            }
+
+            _audioComponent.NotifyAttack(_attackSfx);
         }
 
         public void Close(int attackSequence)

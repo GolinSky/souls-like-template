@@ -3,6 +3,7 @@ using SoulsLike.Services;
 using SoulsLike.Services.Audio;
 using SoulsLike.Services.Audio.Data;
 using UnityEngine;
+using UnityEngine.Audio;
 using VContainer;
 
 namespace SoulsLike.Entities.Character.Components
@@ -13,6 +14,7 @@ namespace SoulsLike.Entities.Character.Components
         [SerializeField] private AudioSource landingSource;
         [SerializeField] private AudioSource hitSource;
         [SerializeField] private AudioSource swordClashSource;
+        [SerializeField] private AudioSource attackSource;
         [SerializeField, Min(0.01f)] private float footstepFrequency = 2f;
         [SerializeField, Min(0.01f)] private float sprintFootstepFrequency = 3f;
 
@@ -56,6 +58,7 @@ namespace SoulsLike.Entities.Character.Components
             landingSource.volume = volume;
             hitSource.volume = volume;
             swordClashSource.volume = volume;
+            attackSource.volume = volume;
         }
 
         public void Tick(bool isMoving, bool isSprinting)
@@ -100,6 +103,18 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             swordClashSource.Play();
+        }
+
+        public void NotifyAttack(AudioResource attackSfx)
+        {
+            if (attackSfx == null)
+            {
+                Debug.LogError($"[{nameof(CharacterAudioComponent)}] Attack audio resource is missing.");
+                return;
+            }
+
+            attackSource.resource = attackSfx;
+            attackSource.Play();
         }
     }
 }

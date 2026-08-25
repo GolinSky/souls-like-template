@@ -1,6 +1,7 @@
 using System;
 using SoulsLike.Entities.Character.Components.Equipment;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace SoulsLike.Items
 {
@@ -13,6 +14,7 @@ namespace SoulsLike.Items
         [SerializeField] private AnimationProfile animationProfile;
         [SerializeField] private CombatProfile combatProfile;
         [SerializeField] private WeaponRuntime equippedPrefab;
+        [SerializeField] private AudioResource attackSfx;
         [SerializeField] private bool canTwoHand = true;
 
         [Header("Attack Power")]
@@ -44,6 +46,7 @@ namespace SoulsLike.Items
         public AnimationProfile AnimationProfile => animationProfile;
         public CombatProfile CombatProfile => combatProfile;
         public WeaponRuntime EquippedPrefab => equippedPrefab;
+        public AudioResource AttackSfx => attackSfx;
         public bool CanTwoHand => canTwoHand;
         public Sprite SkillIcon => skillIcon;
 
@@ -70,6 +73,11 @@ namespace SoulsLike.Items
             if (itemId == ItemId.None)
             {
                 throw new InvalidOperationException("Weapon definition requires a non-None ItemId.");
+            }
+
+            if (attackSfx == null)
+            {
+                throw new InvalidOperationException($"Weapon '{itemId}' requires attack SFX.");
             }
         }
     }
