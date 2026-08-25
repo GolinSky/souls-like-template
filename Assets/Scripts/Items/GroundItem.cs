@@ -41,9 +41,7 @@ namespace SoulsLike.Items
         public Transform InteractionAnchor => interactionAnchor;
         public int Priority => priority;
 
-        public bool CanInteract(IEntity actor) =>
-            State == GroundItemState.Available
-            && actor.EntityType == EntityType.Player;
+        public bool CanInteract(IEntity actor) => State == GroundItemState.Available;
 
         public InteractionPrompt GetPrompt(IEntity actor) => State switch
         {
@@ -81,9 +79,7 @@ namespace SoulsLike.Items
             collectionCommand.Collect(this);
             State = GroundItemState.Collected;
 
-            await pickupVfx.PlayPickupAsync(
-                collectionCommand.CollectionTarget,
-                CancellationToken.None);
+            await pickupVfx.PlayPickupAsync(CancellationToken.None);
             Destroy(gameObject);
         }
     }

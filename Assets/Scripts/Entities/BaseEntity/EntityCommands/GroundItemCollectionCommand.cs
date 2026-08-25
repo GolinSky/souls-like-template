@@ -1,7 +1,6 @@
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Items;
 using SoulsLike.Ui.PlayerHud;
-using UnityEngine;
 using PlayerCharacter = SoulsLike.Entities.Character.Character;
 
 namespace SoulsLike.Entities.BaseEntity.EntityCommands
@@ -12,8 +11,6 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         private readonly InventoryComponent _inventory;
         private readonly ItemCatalog _itemCatalog;
         private readonly PlayerHudUiController _playerHud;
-
-        public Transform CollectionTarget => _character.transform;
 
         public GroundItemCollectionCommand(
             Entity actor,

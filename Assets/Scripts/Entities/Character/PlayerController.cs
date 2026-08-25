@@ -1,5 +1,6 @@
 using System;
 using SoulsLike.Entities.Character.Input;
+using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Interactions;
 using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
@@ -17,6 +18,7 @@ namespace SoulsLike.Entities.Character
         private readonly ICameraService _cameraService;
         private readonly ITargetingService _targetingService;
         private readonly IGameStateNotifier _gameStateNotifier;
+        private readonly HealthComponent _healthComponent;
         private readonly PlayerCharacterInputAdapter _inputAdapter;
         private readonly InteractionController _interactionController;
 
@@ -28,6 +30,7 @@ namespace SoulsLike.Entities.Character
             ICameraService cameraService,
             ITargetingService targetingService,
             IGameStateNotifier gameStateNotifier,
+            HealthComponent healthComponent,
             PlayerCharacterInputAdapter inputAdapter,
             InteractionController interactionController)
         {
@@ -36,6 +39,7 @@ namespace SoulsLike.Entities.Character
             _cameraService = cameraService;
             _targetingService = targetingService;
             _gameStateNotifier = gameStateNotifier;
+            _healthComponent = healthComponent;
             _inputAdapter = inputAdapter;
             _interactionController = interactionController;
         }
@@ -55,6 +59,15 @@ namespace SoulsLike.Entities.Character
         public void OnGameStateChanged(GameState newState)
         {
             _currentGameState = newState;
+
+            if (newState == GameState.OnGraceSit)
+            {
+                HealthStats stats = _healthComponent.Stats;
+                stats.CurrentHealth = stats.MaxHealth;
+                stats.CurrentFocus = stats.MaxFocus;
+                stats.CurrentStamina = stats.MaxStamina;
+                _healthComponent.ApplyAuthoritativeStats(stats);
+            }
         }
 
         public void Tick()
@@ -72,6 +85,8 @@ namespace SoulsLike.Entities.Character
 
         public void LateTick()
         {
+            _cameraService.UpdateFollowTarget(_character.IsGrounded, _character.VerticalVelocity);
+
             if (_currentGameState == GameState.Idle && !_character.IsInputBlocked)
             {
                 _cameraService.UpdateRotation(_inputService.CharacterActions.Look.ReadValue<Vector2>());

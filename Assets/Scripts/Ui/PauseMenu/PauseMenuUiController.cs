@@ -47,7 +47,6 @@ namespace SoulsLike
 
         public void OpenOptions()
         {
-            _coreGameOrchestrator.OpenOptions();
         }
 
         public void QuitGame()

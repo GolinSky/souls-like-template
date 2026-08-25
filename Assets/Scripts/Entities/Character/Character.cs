@@ -50,6 +50,8 @@ namespace SoulsLike.Entities.Character
         private IEntityLocator _entityLocator;
 
         public Transform CameraTarget => cameraTarget;
+        public bool IsGrounded => movementComponent.Model.Grounded;
+        public float VerticalVelocity => movementComponent.VerticalVelocity;
         public InventoryComponent InventoryComponent => inventoryComponent;
         public HealthStats HealthStats => healthComponent.Stats;
         public int HeldCurrency { get; private set; }

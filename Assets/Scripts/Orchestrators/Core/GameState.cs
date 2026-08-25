@@ -7,6 +7,7 @@
         Idle = 2,
         Paused = 3,
         Blocked = 4,
-        Ended = 5
+        Ended = 5,
+        OnGraceSit = 6
     }
 }

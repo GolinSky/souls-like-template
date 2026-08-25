@@ -15,7 +15,8 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         }
 
         public bool CanInteract(IInteractable interactable) =>
-            interactable.CanInteract(_actor);
+            _actor.EntityType == EntityType.Player
+            && interactable.CanInteract(_actor);
 
         public InteractionPrompt GetPrompt(IInteractable interactable) =>
             interactable.GetPrompt(_actor);

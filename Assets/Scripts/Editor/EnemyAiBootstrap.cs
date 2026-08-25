@@ -900,7 +900,7 @@ namespace SoulsLike.Editor
 
             var encounter = new GameObject("EnemyEncounter");
             SceneManager.MoveGameObjectToScene(encounter, otherScene);
-            EnemyEncounterSpawner spawner = encounter.AddComponent<EnemyEncounterSpawner>();
+            EnemyEncounterSystem encounterSystem = encounter.AddComponent<EnemyEncounterSystem>();
 
             var spawnObject = new GameObject("ErikaMeleeSpawn");
             spawnObject.transform.SetParent(encounter.transform, false);
@@ -927,12 +927,12 @@ namespace SoulsLike.Editor
             patrolPoints.GetArrayElementAtIndex(1).objectReferenceValue = pointB;
             Apply(spawnSerialized);
 
-            var spawnerSerialized = new SerializedObject(spawner);
+            var encounterSystemSerialized = new SerializedObject(encounterSystem);
             SerializedProperty spawnPoints =
-                RequireProperty(spawnerSerialized, "spawnPoints");
+                RequireProperty(encounterSystemSerialized, "spawnPoints");
             spawnPoints.arraySize = 1;
             spawnPoints.GetArrayElementAtIndex(0).objectReferenceValue = spawn;
-            SetBool(spawnerSerialized, "spawnOnStart", true);
+            SetBool(encounterSystemSerialized, "spawnOnStart", true);
 
             GameObject navigation = FindRoot(defaultScene, "EnemyNavigation");
             if (navigation == null)

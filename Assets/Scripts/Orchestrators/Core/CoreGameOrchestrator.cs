@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.Character;
-using SoulsLike.Entities.Enemy;
 using SoulsLike.Services.Scenes.Data;
 using UnityEngine;
 using VContainer.Unity;
@@ -13,7 +13,7 @@ namespace SoulsLike.Services
         GameState CurrentGameState { get; }
         void ResumeGame();
         void PauseGame();
-        void OpenOptions();
+        UniTask OnGraceSit();
         void QuitGame();
     }
 
@@ -21,19 +21,16 @@ namespace SoulsLike.Services
     {
         private readonly IGameOrchestrator _gameOrchestrator;
         private readonly CharacterFactory _characterFactory;
-        private readonly EnemyFactory _enemyFactory;
         public GameState CurrentGameState { get; private set; }
         
         private readonly List<IGameStateObserver> _observers = new();
 
         public CoreGameOrchestrator(
             IGameOrchestrator gameOrchestrator,
-            CharacterFactory characterFactory,
-            EnemyFactory enemyFactory)
+            CharacterFactory characterFactory)
         {
             _gameOrchestrator = gameOrchestrator;
             _characterFactory = characterFactory;
-            _enemyFactory = enemyFactory;
         }
         
         public void Initialize()
@@ -49,7 +46,6 @@ namespace SoulsLike.Services
 
         public void Start()
         {
-            UnityEngine.Object.FindFirstObjectByType<EnemyEncounterSpawner>().Spawn(_enemyFactory);
             SetGameState(GameState.Idle);
         }
 
@@ -75,9 +71,10 @@ namespace SoulsLike.Services
             SetGameState(GameState.Paused);
         }
 
-        public void OpenOptions()
+        public UniTask OnGraceSit()
         {
-            // TODO: Implement options
+            SetGameState(GameState.OnGraceSit);
+            return UniTask.CompletedTask;
         }
 
         public void QuitGame()
@@ -103,7 +100,7 @@ namespace SoulsLike.Services
 
         public void NotifyObservers()
         {
-            foreach (var observer in _observers)
+            foreach (IGameStateObserver observer in _observers.ToArray())
             {
                 observer.OnGameStateChanged(CurrentGameState);
             }

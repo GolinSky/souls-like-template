@@ -477,7 +477,7 @@ public partial class @ProjectInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""68f48469-1794-4c41-92bb-acf684677833"",
-                    ""path"": ""<Keyboard>/f"",
+                    ""path"": ""<Keyboard>/c"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KeyboardMouse"",
