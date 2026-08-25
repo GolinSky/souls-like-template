@@ -1,8 +1,7 @@
 namespace SoulsLike.Ui.Grace
 {
-    public interface IGraceUiPresenter
+    public interface IGraceRouteNavigation
     {
         void OpenTravel();
-        void Leave();
     }
 }

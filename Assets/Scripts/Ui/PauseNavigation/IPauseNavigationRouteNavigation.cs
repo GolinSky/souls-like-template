@@ -4,5 +4,6 @@ namespace SoulsLike.Ui.PauseNavigation
     {
         void OpenEquipment();
         void OpenInventory();
+        void OpenSystem();
     }
 }

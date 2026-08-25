@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SoulsLike;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Items;
 using SoulsLike.Services;
@@ -20,6 +21,7 @@ namespace SoulsLike.Ui.PauseNavigation
         private readonly IInputService _inputService;
         private readonly IEquipmentRoute _equipmentRoute;
         private readonly IInventoryRoute _inventoryRoute;
+        private readonly ISystemRoute _systemRoute;
         private readonly Stack<IPauseNavigationRoute> _routeStack = new();
 
         private static readonly ItemType[] _leftHandItemTypes  =
@@ -41,13 +43,15 @@ namespace SoulsLike.Ui.PauseNavigation
             ICoreGameOrchestrator gameOrchestrator,
             IInputService inputService,
             IEquipmentRoute equipmentRoute,
-            IInventoryRoute inventoryRoute)
+            IInventoryRoute inventoryRoute,
+            ISystemRoute systemRoute)
             : base(uiService)
         {
             _gameOrchestrator = gameOrchestrator;
             _inputService = inputService;
             _equipmentRoute = equipmentRoute;
             _inventoryRoute = inventoryRoute;
+            _systemRoute = systemRoute;
         }
 
         public void Initialize()
@@ -59,6 +63,8 @@ namespace SoulsLike.Ui.PauseNavigation
             _equipmentRoute.CloseRequested += HandleEquipmentCloseRequested;
             _equipmentRoute.InventoryRequested += HandleEquipmentInventoryRequested;
             _inventoryRoute.CloseRequested += HandleInventoryCloseRequested;
+            _systemRoute.CloseRequested += HandleSystemCloseRequested;
+            _systemRoute.ResumeRequested += HandleSystemResumeRequested;
         }
 
         public void Dispose()
@@ -66,6 +72,8 @@ namespace SoulsLike.Ui.PauseNavigation
             _equipmentRoute.CloseRequested -= HandleEquipmentCloseRequested;
             _equipmentRoute.InventoryRequested -= HandleEquipmentInventoryRequested;
             _inventoryRoute.CloseRequested -= HandleInventoryCloseRequested;
+            _systemRoute.CloseRequested -= HandleSystemCloseRequested;
+            _systemRoute.ResumeRequested -= HandleSystemResumeRequested;
         }
 
         public void Tick()
@@ -96,6 +104,11 @@ namespace SoulsLike.Ui.PauseNavigation
             OpenRoute(_inventoryRoute);
         }
 
+        public void OpenSystem()
+        {
+            OpenRoute(_systemRoute);
+        }
+
         private void OpenRoute(IPauseNavigationRoute route)
         {
             if (_routeStack.Count > 0)
@@ -119,6 +132,22 @@ namespace SoulsLike.Ui.PauseNavigation
         private void HandleInventoryCloseRequested()
         {
             CloseRoute();
+        }
+
+        private void HandleSystemCloseRequested()
+        {
+            CloseRoute();
+        }
+
+        private void HandleSystemResumeRequested()
+        {
+            while (_routeStack.Count > 0)
+            {
+                _routeStack.Pop().Hide();
+            }
+
+            _view.Hide();
+            _gameOrchestrator.ResumeGame();
         }
 
         private void HandleEquipmentInventoryRequested(EquipmentSlotId slotId)

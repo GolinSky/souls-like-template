@@ -1,4 +1,5 @@
 using System;
+using SoulsLike;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Entities.Combat;
@@ -118,6 +119,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<InventoryUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<EquipmentUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<SystemUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<PauseNavigationUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
                 builder.Register<UnityCharacterClock>(Lifetime.Singleton).As<ICharacterClock>();

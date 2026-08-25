@@ -100,7 +100,7 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
-    - key: PauseMenuUi
+    - key: SystemUi
       value:
         m_AssetGUID: 0f164e7c417f3cb4da63de4dd337277e
         m_SubObjectName: 
@@ -152,6 +152,20 @@ MonoBehaviour:
     - key: GraceUi
       value:
         m_AssetGUID: bc72b4d8aa1504343b372a88d812d0b9
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: TravelUi
+      value:
+        m_AssetGUID: 28935062c1170fe48b13e9906f1dcf96
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: FadeUi
+      value:
+        m_AssetGUID: 5d02048fe55cbb54d9dc797dacd73266
         m_SubObjectName: 
         m_SubObjectType: 
         m_SubObjectGUID: 

@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: 7530375048848884398}
   - component: {fileID: 7046560612076473798}
   m_Layer: 0
-  m_Name: PauseMenuUi
+  m_Name: SystemUi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -365,7 +365,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07858af2ab7a4834bb10f042bcbcf0b9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.PauseMenuUi
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.SystemUi
   canvasGroup: {fileID: 7530375048848884398}
   autoHide: 1
   resumeButton: {fileID: 8210436834892054010}

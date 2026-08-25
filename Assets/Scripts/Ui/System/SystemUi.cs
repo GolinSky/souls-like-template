@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace SoulsLike
 {
-    public class PauseMenuUi : BaseUi
+    public class SystemUi : BaseUi
     {
         [SerializeField] private CustomButton resumeButton;
         [SerializeField] private CustomButton optionsButton;
         [SerializeField] private CustomButton exitButton;
 
-        private IPauseMenuPresenter _presenter;
+        private ISystemPresenter _presenter;
 
-        public void Initialize(IPauseMenuPresenter presenter)
+        public void Initialize(ISystemPresenter presenter)
         {
             _presenter = presenter;
             resumeButton.onClick.AddListener(_presenter.ResumeGame);

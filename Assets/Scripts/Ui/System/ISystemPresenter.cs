@@ -1,6 +1,6 @@
 ﻿namespace SoulsLike
 {
-    public interface IPauseMenuPresenter
+    public interface ISystemPresenter
     {
         void ResumeGame();
         void OpenOptions();
