@@ -53,9 +53,21 @@ MonoBehaviour:
   targetCamera: {fileID: 0}
   cinemachineCamera: {fileID: 0}
   cinemachineThirdPersonFollow: {fileID: 0}
+  fallFollowThreshold: 1.25
+  groundedFollowDamping: 0.3
+  fallFollowDamping: 0.45
+  longFallFollowDistance: 4
   topClamp: 70
   bottomClamp: -30
   cameraAngleOverride: 0
   lockCameraPosition: 0
   mouseSensitivityY: 5
   mouseSensitivityX: 5
+  lockVerticalDeadZone: 0.08
+  lockTargetViewportY: 0.58
+  lockYawSpeed: 150
+  lockPitchSpeed: 90
+  lockVerticalArmLength: 0.65
+  lockCameraSide: 0.5
+  lockRigBlendDuration: 0.2
+  lockRigBlendEase: 3

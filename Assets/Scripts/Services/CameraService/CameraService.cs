@@ -10,6 +10,7 @@ namespace SoulsLike.Services.CameraService
     public interface ICameraService
     {
         void SetTarget(Transform target);
+        void UpdateFollowTarget(bool grounded, float verticalVelocity);
         void UpdateRotation(Vector2 look);
         float GetYaw();
         float GetPitch();
@@ -25,6 +26,7 @@ namespace SoulsLike.Services.CameraService
     public class CameraService: MonoBehaviour, ICameraService
     {
         private const float THRESHOLD = 0.01f;
+        private const float MIN_FALL_FOLLOW_WEIGHT = 0.35f;
         
         [Header("Switch Angle")]
         [SerializeField] private float switchAngleDuration = 0.4f;
@@ -42,6 +44,12 @@ namespace SoulsLike.Services.CameraService
         [SerializeField] private Camera targetCamera;
         [SerializeField] private CinemachineCamera cinemachineCamera;
         [SerializeField] private CinemachineThirdPersonFollow cinemachineThirdPersonFollow;
+
+        [Header("Vertical Follow")]
+        [SerializeField, Min(0f)] private float fallFollowThreshold = 1.25f;
+        [SerializeField, Min(0.01f)] private float groundedFollowDamping = 0.3f;
+        [SerializeField, Min(0.01f)] private float fallFollowDamping = 0.45f;
+        [SerializeField, Min(0.01f)] private float longFallFollowDistance = 4f;
   
         [Header("Cinemachine")]
         
@@ -80,10 +88,67 @@ namespace SoulsLike.Services.CameraService
         private float _freeVerticalArmLength;
         private float _freeCameraSide;
         private Tween _lockRigTween;
+        private Transform _sourceTarget;
+        private Transform _followTarget;
+        private float _airborneStartY;
+        private float _followYVelocity;
+        private bool _wasGrounded = true;
 
         public void SetTarget(Transform target)
         {
-            cinemachineCamera.Follow = target;
+            _sourceTarget = target;
+
+            if (_followTarget == null)
+            {
+                _followTarget = new GameObject("Camera Follow Target").transform;
+                _followTarget.SetParent(transform);
+            }
+
+            _followTarget.SetPositionAndRotation(target.position, target.rotation);
+            _airborneStartY = target.position.y;
+            _followYVelocity = 0f;
+            _wasGrounded = true;
+            cinemachineCamera.Follow = _followTarget;
+        }
+
+        public void UpdateFollowTarget(bool grounded, float verticalVelocity)
+        {
+            Vector3 sourcePosition = _sourceTarget.position;
+            Vector3 followPosition = _followTarget.position;
+            followPosition.x = sourcePosition.x;
+            followPosition.z = sourcePosition.z;
+
+            if (grounded)
+            {
+                followPosition.y = Mathf.SmoothDamp(followPosition.y, sourcePosition.y,
+                    ref _followYVelocity, groundedFollowDamping);
+            }
+            else
+            {
+                if (_wasGrounded)
+                {
+                    _airborneStartY = sourcePosition.y;
+                    _followYVelocity = 0f;
+                }
+
+                float downwardDisplacement = _airborneStartY - sourcePosition.y;
+                if (verticalVelocity < 0f && downwardDisplacement > fallFollowThreshold)
+                {
+                    float longFallBlend = Mathf.InverseLerp(fallFollowThreshold,
+                        fallFollowThreshold + longFallFollowDistance, downwardDisplacement);
+                    float followWeight = Mathf.Lerp(MIN_FALL_FOLLOW_WEIGHT, 1f, longFallBlend);
+                    float desiredY = Mathf.Lerp(followPosition.y, sourcePosition.y, followWeight);
+                    followPosition.y = Mathf.SmoothDamp(followPosition.y, desiredY,
+                        ref _followYVelocity, fallFollowDamping);
+                }
+                else
+                {
+                    _followYVelocity = 0f;
+                }
+            }
+
+            _followTarget.position = followPosition;
+            _wasGrounded = grounded;
         }
         
         public float GetYaw()
