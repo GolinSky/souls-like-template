@@ -7,6 +7,7 @@ namespace SoulsLike.Services.Fade
     {
         void FadeIn(float duration, Action onComplete = null);
         void FadeOut(float duration, Action onComplete = null);
+        void FadeInOut(float duration, float pauseDuration, Action onComplete = null);
     }
 
     public class FadeService : IFadeService
@@ -27,6 +28,11 @@ namespace SoulsLike.Services.Fade
         public void FadeOut(float duration, Action onComplete = null)
         {
             GetFadeUi().FadeOut(duration, onComplete);
+        }
+
+        public void FadeInOut(float duration, float pauseDuration, Action onComplete = null)
+        {
+            GetFadeUi().FadeInOut(duration, pauseDuration, onComplete);
         }
 
         private FadeUi GetFadeUi()

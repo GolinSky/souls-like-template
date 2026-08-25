@@ -16,6 +16,19 @@ namespace SoulsLike.Ui.Fade
         {
             _fadeTween?.Kill();
             Show();
+            SetFadeAlpha(0f);
+
+            _fadeTween = fadeImage.DOFade(1f, duration).OnComplete(() =>
+            {
+                _fadeTween = null;
+                onComplete?.Invoke();
+            });
+        }
+
+        public void FadeOut(float duration, Action onComplete = null)
+        {
+            _fadeTween?.Kill();
+            Show();
             SetFadeAlpha(1f);
 
             _fadeTween = fadeImage.DOFade(0f, duration).OnComplete(() =>
@@ -26,17 +39,22 @@ namespace SoulsLike.Ui.Fade
             });
         }
 
-        public void FadeOut(float duration, Action onComplete = null)
+        public void FadeInOut(float duration, float pauseDuration, Action onComplete = null)
         {
             _fadeTween?.Kill();
             Show();
             SetFadeAlpha(0f);
 
-            _fadeTween = fadeImage.DOFade(1f, duration).OnComplete(() =>
-            {
-                _fadeTween = null;
-                onComplete?.Invoke();
-            });
+            _fadeTween = DOTween.Sequence()
+                .Append(fadeImage.DOFade(1f, duration))
+                .AppendInterval(pauseDuration)
+                .Append(fadeImage.DOFade(0f, duration))
+                .OnComplete(() =>
+                {
+                    _fadeTween = null;
+                    Hide();
+                    onComplete?.Invoke();
+                });
         }
 
         private void OnDestroy()

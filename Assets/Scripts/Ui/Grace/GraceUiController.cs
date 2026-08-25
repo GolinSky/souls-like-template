@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using SoulsLike.Interactions;
 using SoulsLike.Services;
+using SoulsLike.Services.Fade;
 using SoulsLike.Ui.Travel;
 using VContainer.Unity;
 
@@ -14,22 +15,29 @@ namespace SoulsLike.Ui.Grace
         IGraceUiPresenter,
         IGraceRouteNavigation
     {
+        private const float FADE_DURATION = 0.5f;
+        private const float FADE_PAUSE_DURATION = 0.5f;
+
         private readonly GraceSystem _graceSystem;
         private readonly IGameStateNotifier _gameStateNotifier;
+        private readonly IFadeService _fadeService;
         private readonly ITravelRoute _travelRoute;
         private readonly Stack<IGraceRoute> _routeStack = new();
 
         private GraceUi _view;
+        private bool _isOnGraceSit;
 
         public GraceUiController(
             IUiService uiService,
             GraceSystem graceSystem,
             IGameStateNotifier gameStateNotifier,
+            IFadeService fadeService,
             ITravelRoute travelRoute)
             : base(uiService)
         {
             _graceSystem = graceSystem;
             _gameStateNotifier = gameStateNotifier;
+            _fadeService = fadeService;
             _travelRoute = travelRoute;
         }
 
@@ -63,12 +71,21 @@ namespace SoulsLike.Ui.Grace
         {
             if (newState == GameState.OnGraceSit)
             {
+                _isOnGraceSit = true;
+                _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION);
+
                 if (_routeStack.Count == 0)
                 {
                     _view.Show();
                 }
 
                 return;
+            }
+
+            if (_isOnGraceSit)
+            {
+                _isOnGraceSit = false;
+                _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION);
             }
 
             CloseAllRoutes();
