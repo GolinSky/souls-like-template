@@ -1,5 +1,6 @@
 ﻿using SoulsLike.Services.Repository;
 using SoulsLike.Services;
+using SoulsLike.Services.Fade;
 using SoulsLike.Services.GenericPopupService;
 using UnityEngine;
 using VContainer;
@@ -30,6 +31,7 @@ namespace SoulsLike
             }
 
             builder.Register<GenericPopupService>(Lifetime.Singleton).As<IGenericPopupService>();
+            builder.Register<FadeService>(Lifetime.Singleton).As<IFadeService>();
 
             // if (previewRenderService == null)
             // {
