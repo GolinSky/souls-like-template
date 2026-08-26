@@ -170,3 +170,10 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: LoadingUi
+      value:
+        m_AssetGUID: 03d69f1a40ad6224790b0eca1fabf37b
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0

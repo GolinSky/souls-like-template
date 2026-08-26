@@ -24,6 +24,19 @@ namespace SoulsLike.Entities.Character.Input
             _heavyAttackResolver = heavyAttackResolver;
         }
 
+        public CharacterInputBatch ReadMovementOnly()
+        {
+            ProjectInputActions.CharacterActions actions = _inputService.CharacterActions;
+            CharacterControlFrame frame = new CharacterControlFrame(
+                actions.Move.ReadValue<Vector2>(),
+                _cameraService.GetYaw(),
+                false,
+                false,
+                false,
+                false);
+            return new CharacterInputBatch(frame);
+        }
+
         public CharacterInputBatch Read(CharacterActionStateId currentState)
         {
             ProjectInputActions.CharacterActions actions = _inputService.CharacterActions;

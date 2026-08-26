@@ -72,9 +72,17 @@ namespace SoulsLike.Entities.Character
 
         public void Tick()
         {
-            if (_currentGameState != GameState.Idle || _character.IsInputBlocked)
+            if (_character.IsInputBlocked
+                || (_currentGameState != GameState.Idle && _currentGameState != GameState.Paused))
             {
                 _interactionController.ClearTarget();
+                return;
+            }
+
+            if (_currentGameState == GameState.Paused)
+            {
+                _interactionController.ClearTarget();
+                _character.Tick(_inputAdapter.ReadMovementOnly());
                 return;
             }
 

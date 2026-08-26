@@ -10,13 +10,14 @@ using VContainer.Unity;
 
 namespace SoulsLike.Ui.PlayerHud
 {
-    public class PlayerHudUiController : UiController, IInitializable, ITickable, IPlayerHudPresenter, IDisposable
+    public class PlayerHudUiController : UiController, IInitializable, ITickable, IPlayerHudPresenter, IGameStateObserver, IDisposable
     {
         private readonly HealthModel _healthModel;
         private readonly EquipmentComponent _equipmentComponent;
         private readonly InventoryComponent _inventoryComponent;
         private readonly ItemCatalog _itemCatalog;
         private readonly InteractionController _interactionController;
+        private readonly IGameStateNotifier _gameStateNotifier;
         private PlayerHudUi _playerHudUi;
         private HealthStats _healthStats;
 
@@ -25,12 +26,14 @@ namespace SoulsLike.Ui.PlayerHud
             HealthModel healthModel,
             ItemCatalog itemCatalog,
             InteractionController interactionController,
+            IGameStateNotifier gameStateNotifier,
             EquipmentComponent equipmentComponent = null,
             InventoryComponent inventoryComponent = null) : base(uiService)
         {
             _healthModel = healthModel;
             _itemCatalog = itemCatalog;
             _interactionController = interactionController;
+            _gameStateNotifier = gameStateNotifier;
             _equipmentComponent = equipmentComponent;
             _inventoryComponent = inventoryComponent;
         }
@@ -54,9 +57,22 @@ namespace SoulsLike.Ui.PlayerHud
                 _inventoryComponent.Model.Changed += OnInventoryChanged;
             }
 
-            _playerHudUi.Show();
+            _gameStateNotifier.RegisterObserver(this);
+            OnGameStateChanged(_gameStateNotifier.CurrentGameState);
             UpdateStats();
             UpdateEquipment();
+        }
+
+        public void OnGameStateChanged(GameState newState)
+        {
+            if (newState == GameState.Idle || newState == GameState.Ended)
+            {
+                _playerHudUi.Show();
+            }
+            else
+            {
+                _playerHudUi.Hide();
+            }
         }
 
         public void Tick()
@@ -129,6 +145,7 @@ namespace SoulsLike.Ui.PlayerHud
 
         public void Dispose()
         {
+            _gameStateNotifier.UnregisterObserver(this);
             _healthModel.OnStatsChanged -= OnStatsChanged;
             _interactionController.InteractionFailed -= OnInteractionFailed;
 
