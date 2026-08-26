@@ -35,7 +35,8 @@ namespace SoulsLike.Entities.Enemy
                     $"Enemy spawn point '{spawn.name}' requires an enemy prefab.");
             }
 
-            NavMeshAgent prefabAgent = GetRequiredComponent<NavMeshAgent>(prefab.gameObject);
+            //todo: add NavMeshAgent getter to EnemyActor
+            NavMeshAgent prefabAgent = prefab.NavMeshAgent;
             NavMeshQueryFilter queryFilter = new()
             {
                 agentTypeID = prefabAgent.agentTypeID,

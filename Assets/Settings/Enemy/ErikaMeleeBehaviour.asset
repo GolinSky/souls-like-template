@@ -17,7 +17,7 @@ MonoBehaviour:
   eyeHeight: 1.45
   lineOfSightMask:
     serializedVersion: 2
-    m_Bits: 4294967167
+    m_Bits: 119
   targetMemorySeconds: 4.5
   reactionDelayMin: 0.18
   reactionDelayMax: 0.38

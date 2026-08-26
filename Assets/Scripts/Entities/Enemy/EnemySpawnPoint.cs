@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SoulsLike.Entities.Enemy
 {
+    //todo: fully rework
     public sealed class EnemySpawnPoint : MonoBehaviour
     {
         [SerializeField] private EnemyActor enemyPrefab;

@@ -3,6 +3,7 @@ using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Combat;
 using UnityEngine;
+using UnityEngine.AI;
 using VContainer;
 using VContainer.Unity;
 
@@ -12,9 +13,11 @@ namespace SoulsLike.Entities.Enemy
     {
         [SerializeField] private Animator animator;
         [SerializeField] private MeleeHitboxController meleeHitbox;
-
         private Vector3[] _patrolPoints = { };
         private LifetimeScope _lifetimeScope;
+        
+        
+        [field:SerializeField] public NavMeshAgent NavMeshAgent { get; private set; }
 
         public Animator Animator => animator;
         public EnemyBehaviourProfile BehaviourProfile { get; private set; }
