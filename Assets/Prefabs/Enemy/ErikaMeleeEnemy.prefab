@@ -184,6 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActor
   animator: {fileID: 2834942489604600573}
   meleeHitbox: {fileID: 8605734287247393485}
+  <NavMeshAgent>k__BackingField: {fileID: 409155159547918936}
 --- !u!1001 &2849579958771515057
 PrefabInstance:
   m_ObjectHideFlags: 0
