@@ -23,12 +23,12 @@ namespace SoulsLike.Ui.PlayerHud
 
         public PlayerHudUiController(
             IUiService uiService,
+            IGameStateNotifier gameStateNotifier,
             HealthModel healthModel,
             ItemCatalog itemCatalog,
             InteractionController interactionController,
-            IGameStateNotifier gameStateNotifier,
-            EquipmentComponent equipmentComponent = null,
-            InventoryComponent inventoryComponent = null) : base(uiService)
+            EquipmentComponent equipmentComponent,
+            InventoryComponent inventoryComponent) : base(uiService)
         {
             _healthModel = healthModel;
             _itemCatalog = itemCatalog;
@@ -61,6 +61,29 @@ namespace SoulsLike.Ui.PlayerHud
             OnGameStateChanged(_gameStateNotifier.CurrentGameState);
             UpdateStats();
             UpdateEquipment();
+        }
+        
+        public void Dispose()
+        {
+            _gameStateNotifier.UnregisterObserver(this);
+            _healthModel.OnStatsChanged -= OnStatsChanged;
+            _interactionController.InteractionFailed -= OnInteractionFailed;
+
+            if (_equipmentComponent != null)
+            {
+                _equipmentComponent.LoadoutChanged -= OnLoadoutChanged;
+                _equipmentComponent.SlotChanged -= OnEquipmentSlotChanged;
+            }
+
+            if (_inventoryComponent?.Model != null)
+            {
+                _inventoryComponent.Model.Changed -= OnInventoryChanged;
+            }
+
+            if (_playerHudUi != null)
+            {
+                _playerHudUi.Hide();
+            }
         }
 
         public void OnGameStateChanged(GameState newState)
@@ -141,29 +164,6 @@ namespace SoulsLike.Ui.PlayerHud
         private void OnInteractionFailed(InteractionPrompt prompt)
         {
             _playerHudUi.ShowInteractionFailure(prompt.Text);
-        }
-
-        public void Dispose()
-        {
-            _gameStateNotifier.UnregisterObserver(this);
-            _healthModel.OnStatsChanged -= OnStatsChanged;
-            _interactionController.InteractionFailed -= OnInteractionFailed;
-
-            if (_equipmentComponent != null)
-            {
-                _equipmentComponent.LoadoutChanged -= OnLoadoutChanged;
-                _equipmentComponent.SlotChanged -= OnEquipmentSlotChanged;
-            }
-
-            if (_inventoryComponent?.Model != null)
-            {
-                _inventoryComponent.Model.Changed -= OnInventoryChanged;
-            }
-
-            if (_playerHudUi != null)
-            {
-                _playerHudUi.Hide();
-            }
         }
     }
 }

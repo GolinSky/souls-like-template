@@ -15,9 +15,7 @@ namespace SoulsLike.Ui.MainMenu
 
         void IStartable.Start()
         {
-            playButton.onClick.AddListener(Presenter.PlayGame);
-            optionsButton.onClick.AddListener(Presenter.OpenOptions);
-            exitButton.onClick.AddListener(Presenter.ExitGame);
+            
         }
 
         public void OnDestroy()
@@ -30,6 +28,9 @@ namespace SoulsLike.Ui.MainMenu
         public void AssignPresenter(IMainMenuPresenter presenter)
         {
             Presenter = presenter;
+            playButton.onClick.AddListener(Presenter.PlayGame);
+            optionsButton.onClick.AddListener(Presenter.OpenOptions);
+            exitButton.onClick.AddListener(Presenter.ExitGame);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.Character;
 using SoulsLike.Services.Scenes.Data;
@@ -17,7 +16,7 @@ namespace SoulsLike.Services
         void QuitGame();
     }
 
-    public class CoreGameOrchestrator: IInitializable, IStartable, IDisposable, IGameStateNotifier, ICoreGameOrchestrator
+    public class CoreGameOrchestrator: IInitializable, IStartable, IGameStateNotifier, ICoreGameOrchestrator
     {
         private readonly IGameOrchestrator _gameOrchestrator;
         private readonly CharacterFactory _characterFactory;
@@ -39,11 +38,6 @@ namespace SoulsLike.Services
             _characterFactory.CreateCharacter();
         }
         
-        public void Dispose()
-        {
-            SetGameState(GameState.Ended);
-        }
-
         public void Start()
         {
             SetGameState(GameState.Idle);

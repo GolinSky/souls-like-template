@@ -7,7 +7,7 @@ namespace SoulsLike.Entities.Character.Components.Health
     {
         public event Action<HealthStats> OnStatsChanged;
         public event Action<DamageResult> OnDamageApplied;
-        public event Action<long> OnDied;
+        public event Action<long> OnDied;//todo: why we have fucking long type here . id must not be there or converted to readable enum 
         private long _lastDamageSourceEntityId;
 
         public float MaxHealth { get; }

@@ -82,7 +82,7 @@ namespace SoulsLike.Entities.Enemy
         public void OnGameStateChanged(GameState newState)
         {
             _gameState = newState;
-            if (newState != GameState.Idle)
+            if (newState == GameState.OnGraceSit)
             {
                 _motor.Stop();
             }
@@ -100,7 +100,7 @@ namespace SoulsLike.Entities.Enemy
 
         public void Tick()
         {
-            if (_gameState != GameState.Idle)
+            if (_gameState == GameState.OnGraceSit)
             {
                 return;
             }

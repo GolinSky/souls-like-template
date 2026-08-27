@@ -11,12 +11,7 @@ namespace SoulsLike.Entities.Enemy
     {
         private HealthModel _healthModel;
         private IEnemyHealthUiService _enemyHealthUiService;
-        private bool _isDisposed;
 
-        public event Action<float, float> HealthChanged;
-
-        public bool IsAvailable => !_isDisposed && this != null;
-        public bool ShouldShow => isActiveAndEnabled && _healthModel.Stats.IsAlive;
         public float CurrentHealth => _healthModel.Stats.CurrentHealth;
         public float MaxHealth => _healthModel.Stats.MaxHealth;
         public Vector3 WorldPosition => transform.position;
@@ -33,18 +28,41 @@ namespace SoulsLike.Entities.Enemy
         public void Initialize()
         {
             _healthModel.OnStatsChanged += HandleStatsChanged;
+            _healthModel.OnDied += HandleDead;
             _enemyHealthUiService.Track(this);
+            _enemyHealthUiService.NotifyVisibilityChanged(this, true);
         }
 
         public void Dispose()
         {
-            _isDisposed = true;
             _healthModel.OnStatsChanged -= HandleStatsChanged;
+            _healthModel.OnDied -= HandleDead;
+            _enemyHealthUiService.Release(this);
+        }
+
+        private void HandleDead(long _)
+        {
+            _healthModel.OnStatsChanged -= HandleStatsChanged;
+            _healthModel.OnDied -= HandleDead;
+            _enemyHealthUiService.Release(this);
         }
 
         private void HandleStatsChanged(HealthStats stats)
         {
-            HealthChanged?.Invoke(stats.CurrentHealth, stats.MaxHealth);
+            _enemyHealthUiService.NotifyHealthChanged(
+                this,
+                stats.CurrentHealth,
+                stats.MaxHealth);
         }
+
+        // private void OnBecameVisible()
+        // {
+        //     _enemyHealthUiService.NotifyVisibilityChanged(this, true);
+        // }
+        //
+        // private void OnBecameInvisible()
+        // {
+        //     _enemyHealthUiService.NotifyVisibilityChanged(this, false);
+        // }
     }
 }

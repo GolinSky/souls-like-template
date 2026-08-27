@@ -34,15 +34,49 @@ namespace SoulsLike.Ui.EnemyHealth
         public void Track(IEnemyHealthUiSource source)
         {
             EnemyHealthBarUi bar = _enemyHealthUi.AcquireBar();
-            Action<float, float> healthChangedHandler = bar.SetValue;
-            var trackedEnemy = new TrackedEnemyData(
-                source,
-                bar,
-                healthChangedHandler);
+            var trackedEnemy = new TrackedEnemyData(source, bar);
 
-            source.HealthChanged += healthChangedHandler;
-            healthChangedHandler(source.CurrentHealth, source.MaxHealth);
+            bar.SetValue(source.CurrentHealth, source.MaxHealth);
+            bar.SetVisible(false);
             _trackedEnemies.Add(trackedEnemy);
+        }
+
+        public void Release(IEnemyHealthUiSource source)
+        {
+            int index = _trackedEnemies.FindIndex(trackedEnemy => trackedEnemy.Source == source);
+            if (index < 0)
+            {
+                return;
+            }
+
+            _enemyHealthUi.ReleaseBar(_trackedEnemies[index].Bar);
+            _trackedEnemies.RemoveAt(index);
+        }
+
+        public void NotifyHealthChanged(
+            IEnemyHealthUiSource source,
+            float currentHealth,
+            float maxHealth)
+        {
+            TrackedEnemyData trackedEnemy = _trackedEnemies.Find(data => data.Source == source);
+            trackedEnemy.Bar.SetValue(currentHealth, maxHealth);
+        }
+
+        public void NotifyVisibilityChanged(IEnemyHealthUiSource source, bool isVisible)
+        {
+            int index = _trackedEnemies.FindIndex(trackedEnemy => trackedEnemy.Source == source);
+            if (index < 0)
+            {
+                return;
+            }
+
+            TrackedEnemyData trackedEnemy = _trackedEnemies[index];
+            trackedEnemy.IsVisible = isVisible;
+
+            if (!isVisible)
+            {
+                trackedEnemy.Bar.SetVisible(false);
+            }
         }
 
         public void PostLateTick()
@@ -50,36 +84,22 @@ namespace SoulsLike.Ui.EnemyHealth
             for (int index = _trackedEnemies.Count - 1; index >= 0; index--)
             {
                 TrackedEnemyData trackedEnemyData = _trackedEnemies[index];
-                if (!trackedEnemyData.Source.IsAvailable)
+                if (!trackedEnemyData.IsVisible)
                 {
-                    ReleaseTrackedEnemy(index, trackedEnemyData);
                     continue;
                 }
 
-                bool isVisible = trackedEnemyData.Source.ShouldShow
-                    && _enemyHealthUi.TrySetBarPosition(
-                        trackedEnemyData.Bar,
-                        trackedEnemyData.Source.WorldPosition,
-                        _targetCamera);
+                bool isVisible = _enemyHealthUi.TrySetBarPosition(
+                    trackedEnemyData.Bar,
+                    trackedEnemyData.Source.WorldPosition,
+                    _targetCamera);
                 trackedEnemyData.Bar.SetVisible(isVisible);
             }
         }
 
         public void Dispose()
         {
-            foreach (TrackedEnemyData trackedEnemy in _trackedEnemies)
-            {
-                trackedEnemy.Source.HealthChanged -= trackedEnemy.HealthChangedHandler;
-            }
-
             _trackedEnemies.Clear();
-        }
-
-        private void ReleaseTrackedEnemy(int index, TrackedEnemyData trackedEnemyData)
-        {
-            trackedEnemyData.Source.HealthChanged -= trackedEnemyData.HealthChangedHandler;
-            _enemyHealthUi.ReleaseBar(trackedEnemyData.Bar);
-            _trackedEnemies.RemoveAt(index);
         }
     }
 }

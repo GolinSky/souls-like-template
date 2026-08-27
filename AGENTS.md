@@ -38,6 +38,10 @@
 - Use `_camelCase` for non-serialized private fields.
 - Unity `[SerializeField]` fields use unprefixed `camelCase` so serialized property names remain stable.
 
+## C# File Organization
+
+- Define one top-level type per C# script and name the file exactly after that type. Do not group multiple classes or interfaces in a differently named `*Contracts.cs` file.
+
 
 ## Test Execution
 

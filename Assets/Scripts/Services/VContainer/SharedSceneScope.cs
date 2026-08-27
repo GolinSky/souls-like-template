@@ -18,18 +18,18 @@ namespace SoulsLike
         {
             builder.Register<UiFactory>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
-            if (uiService == null)
-            {
-                Debug.LogWarning($"uiService field is null. Trying to load prefab from addressables");
-                IAssetService assetService = Parent.Container.Resolve<IAssetService>();
-                UiService uiServicePrefab = assetService.LoadComponent<UiService>(nameof(UiService));
-                builder.RegisterComponentInNewPrefab(uiServicePrefab, Lifetime.Singleton).UnderTransform(transform).AsSelf().AsImplementedInterfaces();
-            }
-            else
-            {
-                builder.RegisterComponent(uiService).As<IUiService>();
-            }
-
+            // if (uiService == null)
+            // {
+            //     Debug.LogWarning($"uiService field is null. Trying to load prefab from addressables");
+            //     IAssetService assetService = Parent.Container.Resolve<IAssetService>();
+            //     UiService uiServicePrefab = assetService.LoadComponent<UiService>(nameof(UiService));
+            //     builder.RegisterComponentInNewPrefab(uiServicePrefab, Lifetime.Singleton).UnderTransform(transform).AsSelf().AsImplementedInterfaces();
+            // }
+            // else
+            // {
+            // }
+            //
+            builder.RegisterComponent(uiService).As<IUiService>();
             builder.Register<GenericPopupService>(Lifetime.Singleton).As<IGenericPopupService>();
             builder.Register<FadeService>(Lifetime.Singleton).As<IFadeService>();
 

@@ -1,5 +1,4 @@
-﻿using System;
-using SoulsLike.Entities.Enemy;
+﻿using SoulsLike.Entities.Enemy;
 
 namespace SoulsLike.Ui.EnemyHealth
 {
@@ -7,16 +6,14 @@ namespace SoulsLike.Ui.EnemyHealth
     {
         public IEnemyHealthUiSource Source { get; }
         public EnemyHealthBarUi Bar { get; }
-        public Action<float, float> HealthChangedHandler { get; }
+        public bool IsVisible { get; set; }
 
         public TrackedEnemyData(
             IEnemyHealthUiSource source,
-            EnemyHealthBarUi bar,
-            Action<float, float> healthChangedHandler)
+            EnemyHealthBarUi bar)
         {
             Source = source;
             Bar = bar;
-            HealthChangedHandler = healthChangedHandler;
         }
     }
 }

@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.LoadingScope
   parentReference:
-    TypeName: SoulsLike.SharedSceneScope
+    TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
+  uiService: {fileID: 0}
