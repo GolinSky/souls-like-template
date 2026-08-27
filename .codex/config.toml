@@ -37,6 +37,10 @@ tool_timeout_sec = 60
 [mcp_servers.graphify.env]
 GRAPHIFY_QUERY_LOG_DISABLE = "1"
 
+# The project uses the official `unity mcp` bridge above.
+[mcp_servers.unityMCP]
+enabled = false
+
 [features]
 multi_agent = true
 

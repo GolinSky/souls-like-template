@@ -29,12 +29,3 @@ Do not spawn subagents.
 
 [agents]
 enabled = false
-
-[mcp_servers.unityMCP]
-enabled = true
-
-[mcp_servers.context-mode]
-enabled = false
-
-[mcp_servers.graphify]
-enabled = false

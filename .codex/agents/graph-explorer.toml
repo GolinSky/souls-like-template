@@ -66,9 +66,3 @@ tool_timeout_sec = 60
 
 [mcp_servers.graphify.env]
 GRAPHIFY_QUERY_LOG_DISABLE = "1"
-
-[mcp_servers.context-mode]
-enabled = false
-
-[mcp_servers.unityMCP]
-enabled = false
