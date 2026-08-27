@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: PAUSED
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
+  m_sharedMaterial: {fileID: 5084349578629646094, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -457,6 +457,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: OptionsButton
       objectReference: {fileID: 0}
+    - target: {fileID: 2259418284501970770, guid: 31fb984b441f6cb40be348a7aa43983c, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
+    - target: {fileID: 2259418284501970770, guid: 31fb984b441f6cb40be348a7aa43983c, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5084349578629646094, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
     - target: {fileID: 2660526650048902511, guid: 31fb984b441f6cb40be348a7aa43983c, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -578,6 +586,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4720873856002211185}
     m_Modifications:
+    - target: {fileID: 2019932069155591664, guid: cfc315d565c6a23498f79b9221d14533, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
+    - target: {fileID: 2019932069155591664, guid: cfc315d565c6a23498f79b9221d14533, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5084349578629646094, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
     - target: {fileID: 5246457783660540012, guid: cfc315d565c6a23498f79b9221d14533, type: 3}
       propertyPath: m_text
       value: QUIT GAME
@@ -707,6 +723,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: ResumeButton
       objectReference: {fileID: 0}
+    - target: {fileID: 3439176770290121669, guid: b67e13de87069184f8c750a07d3f7132, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
+    - target: {fileID: 3439176770290121669, guid: b67e13de87069184f8c750a07d3f7132, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5084349578629646094, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
     - target: {fileID: 6726155764198606359, guid: b67e13de87069184f8c750a07d3f7132, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -791,6 +815,14 @@ PrefabInstance:
       propertyPath: m_text
       value: RESUME
       objectReference: {fileID: 0}
+    - target: {fileID: 7658615012331235364, guid: b67e13de87069184f8c750a07d3f7132, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
+    - target: {fileID: 7658615012331235364, guid: b67e13de87069184f8c750a07d3f7132, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5084349578629646094, guid: b84b549b9c38e9746bc6a03d543f5fe1, type: 2}
     - target: {fileID: 7658615012331235364, guid: b67e13de87069184f8c750a07d3f7132, type: 3}
       propertyPath: m_fontColor32.rgba
       value: 4290957785
