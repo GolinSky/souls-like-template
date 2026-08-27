@@ -61,6 +61,7 @@ GameObject:
   - component: {fileID: 1311749206120085651}
   - component: {fileID: 1159516110400620642}
   - component: {fileID: 9216140226880738682}
+  - component: {fileID: 2228271053214878040}
   m_Layer: 7
   m_Name: ErikaMeleeEnemy
   m_TagString: Untagged
@@ -185,6 +186,18 @@ MonoBehaviour:
   animator: {fileID: 2834942489604600573}
   meleeHitbox: {fileID: 8605734287247393485}
   <NavMeshAgent>k__BackingField: {fileID: 409155159547918936}
+--- !u!114 &2228271053214878040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687018139822308439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe51880baf918b54688ebe1595c9b656, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyHealthUiComponent
 --- !u!1001 &2849579958771515057
 PrefabInstance:
   m_ObjectHideFlags: 0
