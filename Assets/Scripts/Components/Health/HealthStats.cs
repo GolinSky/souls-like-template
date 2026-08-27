@@ -2,6 +2,7 @@ using System;
 
 namespace SoulsLike.Entities.Character.Components.Health
 {
+    //todo: make getters 
     [Serializable]
     public struct HealthStats
     {

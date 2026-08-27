@@ -8,7 +8,6 @@ using SoulsLike.Extensions;
 using SoulsLike.Factory;
 using SoulsLike.Items;
 using SoulsLike.Services.IdGeneration;
-using SoulsLike.Ui.EnemyHealth;
 using UnityEngine;
 using UnityEngine.AI;
 using VContainer;
@@ -18,12 +17,9 @@ namespace SoulsLike.Entities.Enemy
 {
     public sealed class EnemyFactory : BaseFactory
     {
-        private readonly EnemyHealthUiController _enemyHealthUiController;
-
-        public EnemyFactory(IObjectResolver resolver, EnemyHealthUiController enemyHealthUiController)
+        public EnemyFactory(IObjectResolver resolver)
             : base(resolver)
         {
-            _enemyHealthUiController = enemyHealthUiController;
         }
 
         public EnemyActor CreateEnemy(EnemySpawnPoint spawn)
@@ -35,7 +31,6 @@ namespace SoulsLike.Entities.Enemy
                     $"Enemy spawn point '{spawn.name}' requires an enemy prefab.");
             }
 
-            //todo: add NavMeshAgent getter to EnemyActor
             NavMeshAgent prefabAgent = prefab.NavMeshAgent;
             NavMeshQueryFilter queryFilter = new()
             {
@@ -65,6 +60,8 @@ namespace SoulsLike.Entities.Enemy
                 actor.gameObject);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(
                 actor.gameObject);
+            EnemyHealthUiComponent healthUiComponent =
+                GetRequiredComponent<EnemyHealthUiComponent>(actor.gameObject);
             EnemyNavigationMotor motor = GetRequiredComponent<EnemyNavigationMotor>(
                 actor.gameObject);
             EnemyAnimationController animationController =
@@ -88,6 +85,7 @@ namespace SoulsLike.Entities.Enemy
 
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponent(healthUiComponent).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterScriptableObject<WeaponDatabase>();
 
@@ -110,7 +108,6 @@ namespace SoulsLike.Entities.Enemy
 
             actor.transform.SetParent(enemyScope.transform, true);
             actor.AttachLifetime(enemyScope);
-            _enemyHealthUiController.Track(actor, enemyScope.Container.Resolve<HealthModel>());
             return actor;
         }
 

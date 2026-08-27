@@ -17,7 +17,7 @@ namespace SoulsLike.Ui.EnemyHealth
         {
             base.Awake();
             barPrefab.SetVisible(false);
-
+            //todo: add pool service
             for (int index = 0; index < initialPoolSize; index++)
             {
                 ReleaseBar(CreateBar());

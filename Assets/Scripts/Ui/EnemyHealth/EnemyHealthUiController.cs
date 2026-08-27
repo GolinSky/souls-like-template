@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Enemy;
 using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
@@ -9,30 +8,11 @@ using VContainer.Unity;
 
 namespace SoulsLike.Ui.EnemyHealth
 {
-    public sealed class EnemyHealthUiController : UiController, IInitializable, IPostLateTickable, IDisposable
+    public sealed class EnemyHealthUiController : UiController, IEnemyHealthUiService,
+        IInitializable, IPostLateTickable, IDisposable
     {
-        private sealed class TrackedEnemy
-        {
-            public EnemyActor Actor { get; }
-            public HealthModel HealthModel { get; }
-            public EnemyHealthBarUi Bar { get; }
-            public Action<HealthStats> StatsChangedHandler { get; }
-
-            public TrackedEnemy(
-                EnemyActor actor,
-                HealthModel healthModel,
-                EnemyHealthBarUi bar,
-                Action<HealthStats> statsChangedHandler)
-            {
-                Actor = actor;
-                HealthModel = healthModel;
-                Bar = bar;
-                StatsChangedHandler = statsChangedHandler;
-            }
-        }
-
         private readonly ICameraService _cameraService;
-        private readonly List<TrackedEnemy> _trackedEnemies = new();
+        private readonly List<TrackedEnemyData> _trackedEnemies = new();
 
         private EnemyHealthUi _enemyHealthUi;
         private Camera _targetCamera;
@@ -51,20 +31,17 @@ namespace SoulsLike.Ui.EnemyHealth
             _enemyHealthUi.Show();
         }
 
-        public void Track(EnemyActor actor, HealthModel healthModel)
+        public void Track(IEnemyHealthUiSource source)
         {
             EnemyHealthBarUi bar = _enemyHealthUi.AcquireBar();
-            Action<HealthStats> statsChangedHandler = stats => bar.SetValue(
-                stats.CurrentHealth,
-                stats.MaxHealth);
-            var trackedEnemy = new TrackedEnemy(
-                actor,
-                healthModel,
+            Action<float, float> healthChangedHandler = bar.SetValue;
+            var trackedEnemy = new TrackedEnemyData(
+                source,
                 bar,
-                statsChangedHandler);
+                healthChangedHandler);
 
-            healthModel.OnStatsChanged += statsChangedHandler;
-            statsChangedHandler(healthModel.Stats);
+            source.HealthChanged += healthChangedHandler;
+            healthChangedHandler(source.CurrentHealth, source.MaxHealth);
             _trackedEnemies.Add(trackedEnemy);
         }
 
@@ -72,36 +49,36 @@ namespace SoulsLike.Ui.EnemyHealth
         {
             for (int index = _trackedEnemies.Count - 1; index >= 0; index--)
             {
-                TrackedEnemy trackedEnemy = _trackedEnemies[index];
-                if (trackedEnemy.Actor == null)
+                TrackedEnemyData trackedEnemyData = _trackedEnemies[index];
+                if (!trackedEnemyData.Source.IsAvailable)
                 {
-                    ReleaseTrackedEnemy(index, trackedEnemy);
+                    ReleaseTrackedEnemy(index, trackedEnemyData);
                     continue;
                 }
 
-                bool isVisible = trackedEnemy.HealthModel.Stats.IsAlive
+                bool isVisible = trackedEnemyData.Source.ShouldShow
                     && _enemyHealthUi.TrySetBarPosition(
-                        trackedEnemy.Bar,
-                        trackedEnemy.Actor.transform.position,
+                        trackedEnemyData.Bar,
+                        trackedEnemyData.Source.WorldPosition,
                         _targetCamera);
-                trackedEnemy.Bar.SetVisible(isVisible);
+                trackedEnemyData.Bar.SetVisible(isVisible);
             }
         }
 
         public void Dispose()
         {
-            foreach (TrackedEnemy trackedEnemy in _trackedEnemies)
+            foreach (TrackedEnemyData trackedEnemy in _trackedEnemies)
             {
-                trackedEnemy.HealthModel.OnStatsChanged -= trackedEnemy.StatsChangedHandler;
+                trackedEnemy.Source.HealthChanged -= trackedEnemy.HealthChangedHandler;
             }
 
             _trackedEnemies.Clear();
         }
 
-        private void ReleaseTrackedEnemy(int index, TrackedEnemy trackedEnemy)
+        private void ReleaseTrackedEnemy(int index, TrackedEnemyData trackedEnemyData)
         {
-            trackedEnemy.HealthModel.OnStatsChanged -= trackedEnemy.StatsChangedHandler;
-            _enemyHealthUi.ReleaseBar(trackedEnemy.Bar);
+            trackedEnemyData.Source.HealthChanged -= trackedEnemyData.HealthChangedHandler;
+            _enemyHealthUi.ReleaseBar(trackedEnemyData.Bar);
             _trackedEnemies.RemoveAt(index);
         }
     }

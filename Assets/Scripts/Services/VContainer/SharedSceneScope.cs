@@ -23,7 +23,7 @@ namespace SoulsLike
                 Debug.LogWarning($"uiService field is null. Trying to load prefab from addressables");
                 IAssetService assetService = Parent.Container.Resolve<IAssetService>();
                 UiService uiServicePrefab = assetService.LoadComponent<UiService>(nameof(UiService));
-                builder.RegisterComponentInNewPrefab(uiServicePrefab, Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponentInNewPrefab(uiServicePrefab, Lifetime.Singleton).UnderTransform(transform).AsSelf().AsImplementedInterfaces();
             }
             else
             {

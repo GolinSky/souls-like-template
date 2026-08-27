@@ -813,6 +813,7 @@ namespace SoulsLike.Editor
                 agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
 
                 HealthComponent healthComponent = root.AddComponent<HealthComponent>();
+                root.AddComponent<EnemyHealthUiComponent>();
                 EnemyNavigationMotor motor = root.AddComponent<EnemyNavigationMotor>();
                 EnemyActor actor = root.AddComponent<EnemyActor>();
 
