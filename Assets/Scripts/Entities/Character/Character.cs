@@ -36,7 +36,6 @@ namespace SoulsLike.Entities.Character
         [SerializeField] private InventoryComponent inventoryComponent;
         [SerializeField] private EquipmentPresentation equipmentPresentation;
         [SerializeField] private Transform cameraTarget;
-        [SerializeField] private CharacterAttributeStats attributes;
 
         [Header("Aim Settings")]
         [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;
@@ -48,14 +47,16 @@ namespace SoulsLike.Entities.Character
         private EquipmentSwapCoordinator _equipmentSwapCoordinator;
         private ItemCatalog _itemCatalog;
         private IEntityLocator _entityLocator;
+        private CharacterData _characterData;
+        private int _heldCurrency;
 
         public Transform CameraTarget => cameraTarget;
         public bool IsGrounded => movementComponent.Model.Grounded;
         public float VerticalVelocity => movementComponent.VerticalVelocity;
         public InventoryComponent InventoryComponent => inventoryComponent;
         public HealthStats HealthStats => healthComponent.Stats;
-        public int HeldCurrency { get; private set; }
-        public CharacterAttributeStats Attributes => attributes;
+        public int HeldCurrency => _heldCurrency;
+        public CharacterAttributeStats Attributes => _characterData.Attributes;
         public bool IsInputBlocked => _runtime.IsInputBlocked;
         public CharacterActionStateId CurrentActionState => _runtime.ActionState;
         public bool IsEquipmentActionInProgress => _equipmentSwapCoordinator.IsActive;
@@ -68,7 +69,8 @@ namespace SoulsLike.Entities.Character
             EquipmentSwapCoordinator equipmentSwapCoordinator,
             EquipmentPresentation presentation,
             ItemCatalog itemCatalog,
-            IEntityLocator entityLocator)
+            IEntityLocator entityLocator,
+            CharacterData characterData)
         {
             _attackComponent = attackComponent;
             _runtime = runtime;
@@ -77,6 +79,8 @@ namespace SoulsLike.Entities.Character
             equipmentPresentation = presentation;
             _itemCatalog = itemCatalog;
             _entityLocator = entityLocator;
+            _characterData = characterData;
+            _heldCurrency = characterData.StartingCurrency;
         }
 
         public void Initialize()
@@ -347,7 +351,7 @@ namespace SoulsLike.Entities.Character
 
         public void GrantCurrency(int amount)
         {
-            HeldCurrency = checked(HeldCurrency + amount);
+            _heldCurrency = checked(_heldCurrency + amount);
         }
 
         public void Revive(float health) => healthComponent.ApplyAuthoritativeStats(

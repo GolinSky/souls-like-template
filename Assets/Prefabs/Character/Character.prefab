@@ -797,15 +797,6 @@ MonoBehaviour:
   inventoryComponent: {fileID: 1001450772407502477}
   equipmentPresentation: {fileID: 4953552906734793246}
   cameraTarget: {fileID: 1033412270112227245}
-  attributes:
-    <Vigor>k__BackingField: 10
-    <Mind>k__BackingField: 10
-    <Endurance>k__BackingField: 10
-    <Strength>k__BackingField: 10
-    <Dexterity>k__BackingField: 10
-    <Intelligence>k__BackingField: 10
-    <Faith>k__BackingField: 10
-    <Arcane>k__BackingField: 10
   aimTargetDistance: 100
   aimLayerMask:
     serializedVersion: 2

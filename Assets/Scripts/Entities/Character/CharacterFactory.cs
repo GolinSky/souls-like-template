@@ -87,6 +87,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<TargetingCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterComponent(character).AsSelf().AsImplementedInterfaces();
+                builder.RegisterScriptableObject<CharacterData>();
 
                 builder.Register<AnimatorModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(animatorComponent).AsSelf().AsImplementedInterfaces();
