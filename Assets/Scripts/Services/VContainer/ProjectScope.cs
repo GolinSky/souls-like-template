@@ -40,7 +40,8 @@ namespace SoulsLike
             builder.RegisterScriptableObject<AudioData>();
             builder.RegisterScriptableObject<AmbienceData>();
             builder.Register<AudioService>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<AmbienceService>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<AmbienceSystem>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<CombatStateNotifier>(Lifetime.Singleton).As<ICombatStateNotifier>();
 
             builder.Register<AddressableAssetService>(Lifetime.Singleton).As<IAssetService>();
             builder.Register<StorageRegistry>(Lifetime.Singleton).As<IStorageRegistry>();

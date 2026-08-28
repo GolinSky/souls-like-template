@@ -27,6 +27,12 @@ MonoBehaviour:
     - {fileID: 8300000, guid: 8b9cb98176c68a2409b2dc72d30e95a3, type: 3}
     - {fileID: 8300000, guid: 5be79b7e84c957149b703e849e1e5752, type: 3}
     - {fileID: 8300000, guid: 882f38efd0b3ac648b6aad20ea575499, type: 3}
+  combatAmbienceClips:
+  - {fileID: 8300000, guid: 5a1944aa7c9b294499f993b3c5b484f5, type: 3}
+  - {fileID: 8300000, guid: 3f9d2a49059160546818cd858b1adc43, type: 3}
+  - {fileID: 8300000, guid: 75809951836972743baf521ade23dca0, type: 3}
+  - {fileID: 8300000, guid: c7539e82f49a8554cae4b061c0ff1227, type: 3}
+  - {fileID: 8300000, guid: 826bb8ea4939f9340ba3d55e1120eb1f, type: 3}
   musicClips: []
   musicClipVolume: 1
   sfxClips: []

@@ -1,5 +1,6 @@
 using System;
 using DG.Tweening;
+using SoulsLike.Services;
 using SoulsLike.Services.Audio.Data;
 using SoulsLike.Services.Scenes;
 using SoulsLike.Services.Scenes.Data;
@@ -8,11 +9,12 @@ using VContainer.Unity;
 
 namespace SoulsLike.Services.Audio
 {
-    public class AmbienceService : IAmbienceSystem, IInitializable, ITickable, IDisposable, IObserver<IAudioSettingsData>
+    public class AmbienceSystem : IAmbienceSystem, IInitializable, ITickable, IDisposable, IObserver<IAudioSettingsData>, ICombatStateObserver
     {
         private readonly AmbienceData _data;
         private readonly IAudioService _audioService;
         private readonly ISceneService _sceneService;
+        private readonly ICombatStateNotifier _combatStateNotifier;
 
         private GameObject _hostGo;
         private AudioSource _musicSource;
@@ -23,6 +25,7 @@ namespace SoulsLike.Services.Audio
         private MusicType _currentAmbience = MusicType.None;
         private AudioClip[] _sceneAmbienceClips;
         private int _sceneAmbienceIndex;
+        private bool _combatAmbienceActive;
         private float _musicSettingsVolume = 1f;
         private float _sfxSettingsVolume = 1f;
 
@@ -31,16 +34,21 @@ namespace SoulsLike.Services.Audio
 
         public event Action<float> VolumeScaleChanged;
 
-        public AmbienceService(AmbienceData data, IAudioService audioService, ISceneService sceneService)
+        public AmbienceSystem(
+            AmbienceData data,
+            IAudioService audioService,
+            ISceneService sceneService,
+            ICombatStateNotifier combatStateNotifier)
         {
             _data = data;
             _audioService = audioService;
             _sceneService = sceneService;
+            _combatStateNotifier = combatStateNotifier;
         }
 
         public void Initialize()
         {
-            _hostGo = new GameObject(nameof(AmbienceService));
+            _hostGo = new GameObject(nameof(AmbienceSystem));
             UnityEngine.Object.DontDestroyOnLoad(_hostGo);
 
             _musicSource = _hostGo.AddComponent<AudioSource>();
@@ -65,6 +73,8 @@ namespace SoulsLike.Services.Audio
             }
 
             _audioService?.AddObserver(this);
+            _combatStateNotifier.RegisterObserver(this);
+            OnCombatStateChanged(_combatStateNotifier.CurrentCombatState);
         }
 
         public void Tick()
@@ -86,6 +96,7 @@ namespace SoulsLike.Services.Audio
                 _sceneService.OnSceneChanged -= OnSceneChanged;
             }
             _audioService?.RemoveObserver(this);
+            _combatStateNotifier.UnregisterObserver(this);
 
             if (_hostGo != null)
             {
@@ -118,12 +129,35 @@ namespace SoulsLike.Services.Audio
             ApplyAmbienceVolume();
         }
 
+        public void OnCombatStateChanged(CombatState newState)
+        {
+            if (newState == CombatState.Combat)
+            {
+                PlayCombatAmbience();
+                return;
+            }
+
+            if (!_combatAmbienceActive)
+            {
+                return;
+            }
+
+            _combatAmbienceActive = false;
+            if (_sceneService != null)
+            {
+                PlaySceneAmbience(_sceneService.CurrentScene);
+                return;
+            }
+
+            StopAmbience();
+        }
+
         public void PlayMusic(MusicType type)
         {
             var clip = _data.GetMusicClip(type);
             if (clip == null)
             {
-                Debug.LogError($"{nameof(AmbienceService)}.PlayMusic({type}): no clip mapped in {nameof(AmbienceData)}.musicClips.");
+                Debug.LogError($"{nameof(AmbienceSystem)}.PlayMusic({type}): no clip mapped in {nameof(AmbienceData)}.musicClips.");
                 return;
             }
 
@@ -158,11 +192,12 @@ namespace SoulsLike.Services.Audio
             var clip = _data.GetMusicClip(type);
             if (clip == null)
             {
-                Debug.LogError($"{nameof(AmbienceService)}.PlayAmbience({type}): no clip mapped in {nameof(AmbienceData)}.musicClips.");
+                Debug.LogError($"{nameof(AmbienceSystem)}.PlayAmbience({type}): no clip mapped in {nameof(AmbienceData)}.musicClips.");
                 StopAmbience();
                 return;
             }
 
+            _combatAmbienceActive = false;
             ClearSceneAmbiencePlaylist();
             _ambienceSource.loop = true;
 
@@ -181,6 +216,7 @@ namespace SoulsLike.Services.Audio
         public void StopAmbience()
         {
             _currentAmbience = MusicType.None;
+            _combatAmbienceActive = false;
             ClearSceneAmbiencePlaylist();
             if (_ambienceSource == null) return;
             _ambienceSource.Stop();
@@ -192,7 +228,7 @@ namespace SoulsLike.Services.Audio
             var clip = _data.GetSfxClip(type);
             if (clip == null)
             {
-                Debug.LogError($"{nameof(AmbienceService)}.PlaySfx({type}): no clip mapped in {nameof(AmbienceData)}.sfxClips.");
+                Debug.LogError($"{nameof(AmbienceSystem)}.PlaySfx({type}): no clip mapped in {nameof(AmbienceData)}.sfxClips.");
                 return;
             }
             _sfxSource.PlayOneShot(clip, _data.SfxClipVolume * _sfxSettingsVolume * _audioScale);
@@ -225,6 +261,16 @@ namespace SoulsLike.Services.Audio
 
         private void OnSceneChanged(SceneType sceneType)
         {
+            if (_combatAmbienceActive)
+            {
+                return;
+            }
+
+            PlaySceneAmbience(sceneType);
+        }
+
+        private void PlaySceneAmbience(SceneType sceneType)
+        {
             var clips = _data.GetAmbienceClipsForScene(sceneType);
             if (clips == null || clips.Length == 0)
             {
@@ -232,6 +278,27 @@ namespace SoulsLike.Services.Audio
                 return;
             }
 
+            PlayAmbiencePlaylist(clips);
+        }
+
+        private void PlayCombatAmbience()
+        {
+            _combatAmbienceActive = true;
+            var clips = _data.GetCombatAmbienceClips();
+            if (clips == null || clips.Length == 0)
+            {
+                Debug.LogError($"{nameof(AmbienceSystem)}.PlayCombatAmbience(): no clips mapped in {nameof(AmbienceData)}.combatAmbienceClips.");
+                ClearSceneAmbiencePlaylist();
+                _ambienceSource.Stop();
+                _ambienceSource.clip = null;
+                return;
+            }
+
+            PlayAmbiencePlaylist(clips);
+        }
+
+        private void PlayAmbiencePlaylist(AudioClip[] clips)
+        {
             _currentAmbience = MusicType.None;
             _sceneAmbienceClips = (AudioClip[])clips.Clone();
             _sceneAmbienceIndex = 0;

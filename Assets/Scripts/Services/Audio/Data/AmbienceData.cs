@@ -31,6 +31,9 @@ namespace SoulsLike.Services.Audio.Data
         [Header("Scene ambience")]
         [SerializeField] private SceneMusicEntry[] sceneMusic;
 
+        [Header("Combat ambience")]
+        [SerializeField] private AudioClip[] combatAmbienceClips;
+
         [Header("Music clips")]
         [SerializeField] private MusicEntry[] musicClips;
         [SerializeField, Range(0f, 1f)] private float musicClipVolume = 1f;
@@ -51,6 +54,11 @@ namespace SoulsLike.Services.Audio.Data
                     return sceneMusic[i].clips;
             }
             return null;
+        }
+
+        public AudioClip[] GetCombatAmbienceClips()
+        {
+            return combatAmbienceClips;
         }
 
         public AudioClip GetMusicClip(MusicType musicType)
