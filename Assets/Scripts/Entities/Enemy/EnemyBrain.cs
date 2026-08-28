@@ -23,6 +23,7 @@ namespace SoulsLike.Entities.Enemy
         private readonly EnemyActionSelector _actionSelector;
         private readonly HealthModel _healthModel;
         private readonly IGameStateNotifier _gameStateNotifier;
+        private readonly ICombatStateNotifier _combatStateNotifier;
 
         private GameState _gameState;
         private float _nextDecisionTime;
@@ -43,7 +44,8 @@ namespace SoulsLike.Entities.Enemy
             EnemyPerception perception,
             EnemyActionSelector actionSelector,
             HealthModel healthModel,
-            IGameStateNotifier gameStateNotifier)
+            IGameStateNotifier gameStateNotifier,
+            ICombatStateNotifier combatStateNotifier)
         {
             _actor = actor;
             _motor = motor;
@@ -52,6 +54,7 @@ namespace SoulsLike.Entities.Enemy
             _actionSelector = actionSelector;
             _healthModel = healthModel;
             _gameStateNotifier = gameStateNotifier;
+            _combatStateNotifier = combatStateNotifier;
         }
 
         public EnemyGoal Goal { get; private set; }
@@ -74,6 +77,11 @@ namespace SoulsLike.Entities.Enemy
 
         public void Dispose()
         {
+            if (IsAggroGoal(Goal))
+            {
+                _combatStateNotifier.ReportEnemyAggroEnded(_actor.Entity.Id);
+            }
+
             _gameStateNotifier.UnregisterObserver(this);
             _healthModel.OnDamageApplied -= OnDamageApplied;
             _healthModel.OnDied -= OnDied;
@@ -423,7 +431,9 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
+            EnemyGoal previousGoal = Goal;
             Goal = goal;
+            ReportCombatState(previousGoal, goal);
             if (goal == EnemyGoal.Combat)
             {
                 _waitUntil = 0f;
@@ -438,6 +448,28 @@ namespace SoulsLike.Entities.Enemy
                 _searchUntil = Time.time + _actor.BehaviourProfile.SearchSeconds;
             }
         }
+
+        private void ReportCombatState(EnemyGoal previousGoal, EnemyGoal goal)
+        {
+            bool wasAggro = IsAggroGoal(previousGoal);
+            bool isAggro = IsAggroGoal(goal);
+            if (wasAggro == isAggro)
+            {
+                return;
+            }
+
+            if (isAggro)
+            {
+                _combatStateNotifier.ReportEnemyAggroStarted(_actor.Entity.Id);
+                return;
+            }
+
+            _combatStateNotifier.ReportEnemyAggroEnded(_actor.Entity.Id);
+        }
+
+        private static bool IsAggroGoal(EnemyGoal goal) =>
+            goal is EnemyGoal.Investigate
+                or EnemyGoal.Combat;
 
         private bool IsOutsideLeash(Vector3 position) =>
             (position - _actor.HomePosition).sqrMagnitude

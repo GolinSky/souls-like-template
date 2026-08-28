@@ -29,6 +29,7 @@ namespace SoulsLike
             builder.Register<TravelService>(Lifetime.Singleton);
             builder.Register<TravelUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<GraceUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.Register<CombatStateNotifier>(Lifetime.Singleton).As<ICombatStateNotifier>();
             builder.Register<CharacterFactory>(Lifetime.Singleton);
             builder.Register<EnemyFactory>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CoreGameOrchestrator>();
