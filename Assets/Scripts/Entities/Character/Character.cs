@@ -12,6 +12,7 @@ using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Entities.Character.Ports;
 using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Items;
+using SoulsLike.Services;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -47,6 +48,7 @@ namespace SoulsLike.Entities.Character
         private EquipmentSwapCoordinator _equipmentSwapCoordinator;
         private ItemCatalog _itemCatalog;
         private IEntityLocator _entityLocator;
+        private ICombatStateNotifier _combatStateNotifier;
         private CharacterData _characterData;
         private int _heldCurrency;
 
@@ -70,6 +72,7 @@ namespace SoulsLike.Entities.Character
             EquipmentPresentation presentation,
             ItemCatalog itemCatalog,
             IEntityLocator entityLocator,
+            ICombatStateNotifier combatStateNotifier,
             CharacterData characterData)
         {
             _attackComponent = attackComponent;
@@ -79,6 +82,7 @@ namespace SoulsLike.Entities.Character
             equipmentPresentation = presentation;
             _itemCatalog = itemCatalog;
             _entityLocator = entityLocator;
+            _combatStateNotifier = combatStateNotifier;
             _characterData = characterData;
             _heldCurrency = characterData.StartingCurrency;
         }
@@ -109,16 +113,6 @@ namespace SoulsLike.Entities.Character
             _runtime.Tick(input, this);
             ApplyRuntimeAnimationRequests();
             MovementPolicy policy = _runtime.ResolveMovementPolicy(false);
-            movementComponent.SetMovementBlocked(policy.MovementBlocked);
-            movementComponent.Move(
-                input.ControlFrame.MoveInput,
-                input.ControlFrame.CameraYaw,
-                input.ControlFrame.SprintHeld,
-                input.ControlFrame.CrouchHeld);
-            characterAudioComponent.Tick(
-                movementComponent.IsMoving,
-                input.ControlFrame.SprintHeld && !input.ControlFrame.CrouchHeld);
-
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
             bool blockRequested = input.ControlFrame.GuardHeld
                 && policy.GuardAllowed
@@ -131,8 +125,41 @@ namespace SoulsLike.Entities.Character
                 && loadout.EffectiveLeft == null
                 && loadout.EffectiveRight != null
                 && _itemCatalog.GetItem(loadout.EffectiveRight.ItemId).ItemType == ItemType.Weapon;
+            MovementModel movementModel = movementComponent.Model;
+            bool combatSprintDrainsStamina =
+                _combatStateNotifier.CurrentCombatState == CombatState.Combat
+                && input.ControlFrame.SprintHeld
+                && !input.ControlFrame.CrouchHeld;
+            float sprintStaminaCost =
+                movementModel.CombatSprintStaminaDrainPerSecond * Time.deltaTime;
+            bool sprintAllowed = !combatSprintDrainsStamina
+                || healthComponent.CanConsumeStamina(
+                    sprintStaminaCost,
+                    movementModel.CombatSprintStaminaStartThreshold);
+            movementComponent.SetMovementBlocked(policy.MovementBlocked);
+            movementComponent.Move(
+                input.ControlFrame.MoveInput,
+                input.ControlFrame.CameraYaw,
+                input.ControlFrame.SprintHeld && sprintAllowed,
+                input.ControlFrame.CrouchHeld);
+            characterAudioComponent.Tick(
+                movementComponent.IsMoving,
+                input.ControlFrame.SprintHeld
+                && sprintAllowed
+                && !input.ControlFrame.CrouchHeld);
+
+            if (combatSprintDrainsStamina
+                && sprintAllowed
+                && movementComponent.IsMoving)
+            {
+                healthComponent.TryConsumeStamina(
+                    sprintStaminaCost,
+                    movementModel.CombatSprintStaminaStartThreshold);
+            }
+
             animatorComponent.SetShieldBlock(shieldBlock);
             animatorComponent.SetWeaponBlock(weaponBlock);
+            healthComponent.TickStaminaRecovery(Time.deltaTime, shieldBlock || weaponBlock);
         }
 
         public CharacterCommandDisposition Submit(CharacterCommand command) =>
@@ -175,6 +202,22 @@ namespace SoulsLike.Entities.Character
                 return CharacterCommandExecutionStatus.Invalid;
             }
 
+            ItemId? weaponId = request.IsLeftHand
+                ? GetWeaponId(loadout.EffectiveLeft)
+                : GetWeaponId(loadout.EffectiveRight);
+            if (weaponId.HasValue)
+            {
+                CombatProfile combatProfile = _itemCatalog.GetWeapon(weaponId.Value).CombatProfile;
+                float staminaCost = ResolveAttackStaminaCost(request, combatProfile);
+                float staminaStartThreshold = ResolveAttackStaminaStartThreshold(request, combatProfile);
+                if (!healthComponent.CanConsumeStamina(staminaCost, staminaStartThreshold))
+                {
+                    return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                }
+
+                healthComponent.ConsumeStamina(staminaCost);
+            }
+
             AttackExecutionContext context = _attackComponent.CurrentExecutionContext;
             AttackResolution resolution = _attackComponent.ResolveAttack(request, context);
             animatorComponent.SetChargedAttackSpeed(resolution.ChargedSpeed);
@@ -187,19 +230,47 @@ namespace SoulsLike.Entities.Character
         public CharacterCommandExecutionStatus TryStartRoll(in RollRequest request)
         {
             bool canInterrupt = _runtime.ActionState != CharacterActionStateId.Neutral;
-            return movementComponent.TryStartRoll(
-                request.MoveInput,
-                request.CameraYaw,
-                true,
-                canInterrupt)
-                ? CharacterCommandExecutionStatus.Executed
-                : CharacterCommandExecutionStatus.TemporarilyBlocked;
+            MovementModel movementModel = movementComponent.Model;
+            float staminaCost = movementModel.RollStaminaCost;
+            if (!healthComponent.CanConsumeStamina(
+                    staminaCost,
+                    movementModel.RollStaminaStartThreshold))
+            {
+                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+            }
+
+            if (!movementComponent.TryStartRoll(
+                    request.MoveInput,
+                    request.CameraYaw,
+                    true,
+                    canInterrupt))
+            {
+                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+            }
+
+            healthComponent.ConsumeStamina(staminaCost);
+            return CharacterCommandExecutionStatus.Executed;
         }
 
-        public CharacterCommandExecutionStatus TryStartJump(in JumpRequest request) =>
-            movementComponent.TryStartJump(true, request.IsSprinting)
-                ? CharacterCommandExecutionStatus.Executed
-                : CharacterCommandExecutionStatus.TemporarilyBlocked;
+        public CharacterCommandExecutionStatus TryStartJump(in JumpRequest request)
+        {
+            MovementModel movementModel = movementComponent.Model;
+            float staminaCost = movementModel.JumpStaminaCost;
+            if (!healthComponent.CanConsumeStamina(
+                    staminaCost,
+                    movementModel.JumpStaminaStartThreshold))
+            {
+                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+            }
+
+            if (!movementComponent.TryStartJump(true, request.IsSprinting))
+            {
+                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+            }
+
+            healthComponent.ConsumeStamina(staminaCost);
+            return CharacterCommandExecutionStatus.Executed;
+        }
 
         public CharacterCommandExecutionStatus TryStartEquipmentAction(
             in EquipmentActionRequest request)
@@ -443,6 +514,27 @@ namespace SoulsLike.Entities.Character
             return _itemCatalog.GetItem(context.ItemId).ItemType == ItemType.Weapon
                 ? context.ItemId
                 : null;
+        }
+
+        private static float ResolveAttackStaminaCost(
+            in AttackRequest request,
+            CombatProfile combatProfile)
+        {
+            float baseCost = request.Intent == AttackIntent.Heavy
+                || request.Intent == AttackIntent.Special
+                    ? combatProfile.HeavyAttackStaminaCost
+                    : combatProfile.LightAttackStaminaCost;
+            return baseCost * combatProfile.StaminaCostMultiplier;
+        }
+
+        private static float ResolveAttackStaminaStartThreshold(
+            in AttackRequest request,
+            CombatProfile combatProfile)
+        {
+            return request.Intent == AttackIntent.Heavy
+                || request.Intent == AttackIntent.Special
+                    ? combatProfile.HeavyAttackStaminaStartThreshold
+                    : combatProfile.LightAttackStaminaStartThreshold;
         }
     }
 }

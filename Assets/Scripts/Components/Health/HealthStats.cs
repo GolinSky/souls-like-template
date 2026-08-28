@@ -13,5 +13,12 @@ namespace SoulsLike.Entities.Character.Components.Health
         public float CurrentStamina;
         public float MaxStamina;
         public bool IsAlive;
+
+        public float DisplayCurrentStamina =>
+            CurrentStamina <= 0f
+                ? 0f
+                : CurrentStamina > MaxStamina
+                    ? MaxStamina
+                    : CurrentStamina;
     }
 }

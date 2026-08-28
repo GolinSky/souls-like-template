@@ -142,6 +142,10 @@ namespace SoulsLike.Editor
             var serialized = new SerializedObject(profile);
             SetFloat(serialized, "<LightAttackMultiplier>k__BackingField", 1f, false);
             SetFloat(serialized, "<HeavyAttackMultiplier>k__BackingField", 1.5f, false);
+            SetFloat(serialized, "<LightAttackStaminaCost>k__BackingField", 14f, false);
+            SetFloat(serialized, "<LightAttackStaminaStartThreshold>k__BackingField", 0f, false);
+            SetFloat(serialized, "<HeavyAttackStaminaCost>k__BackingField", 30f, false);
+            SetFloat(serialized, "<HeavyAttackStaminaStartThreshold>k__BackingField", 0f, false);
             SetFloat(serialized, "<StaminaCostMultiplier>k__BackingField", 1f);
             return profile;
         }

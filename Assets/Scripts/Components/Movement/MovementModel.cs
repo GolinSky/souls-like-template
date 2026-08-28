@@ -29,6 +29,12 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public LayerMask GroundLayers { get; }
         public float TerminalVelocity { get; set; }
         public float RollCooldown { get; }
+        public float RollStaminaCost { get; }
+        public float RollStaminaStartThreshold { get; }
+        public float JumpStaminaCost { get; }
+        public float JumpStaminaStartThreshold { get; }
+        public float CombatSprintStaminaDrainPerSecond { get; }
+        public float CombatSprintStaminaStartThreshold { get; }
         public float SlideSpeed { get; }
         public float SlideDuration { get; }
         public float CrouchSpeed { get; }
@@ -64,6 +70,12 @@ namespace SoulsLike.Entities.Character.Components.Movement
             GroundLayers = movementData.GroundLayers;
             TerminalVelocity = movementData.TerminalVelocity;
             RollCooldown = movementData.RollCooldown;
+            RollStaminaCost = Mathf.Max(0f, movementData.RollStaminaCost);
+            RollStaminaStartThreshold = movementData.RollStaminaStartThreshold;
+            JumpStaminaCost = Mathf.Max(0f, movementData.JumpStaminaCost);
+            JumpStaminaStartThreshold = movementData.JumpStaminaStartThreshold;
+            CombatSprintStaminaDrainPerSecond = Mathf.Max(0f, movementData.CombatSprintStaminaDrainPerSecond);
+            CombatSprintStaminaStartThreshold = movementData.CombatSprintStaminaStartThreshold;
             SlideSpeed = movementData.SlideSpeed;
             SlideDuration = movementData.SlideDuration;
             CrouchSpeed = movementData.CrouchSpeed;

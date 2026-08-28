@@ -151,7 +151,7 @@ namespace SoulsLike.Ui.Equipment
         {
             vitalsHpText.text = $"HP {character.HealthStats.CurrentHealth:F0} / {character.HealthStats.MaxHealth:F0}";
             vitalsFpText.text = $"FP {character.HealthStats.CurrentFocus:F0} / {character.HealthStats.MaxFocus:F0}";
-            vitalsStaminaText.text = $"Stamina {character.HealthStats.CurrentStamina:F0} / {character.HealthStats.MaxStamina:F0}";
+            vitalsStaminaText.text = $"Stamina {character.HealthStats.DisplayCurrentStamina:F0} / {character.HealthStats.MaxStamina:F0}";
             equipLoadText.text = $"{equipWeight:F1} / {maxEquipWeight:F1}";
             float loadRatio = maxEquipWeight <= 0f ? 0f : equipWeight / maxEquipWeight;
             equipLoadFillBar.fillAmount = Mathf.Clamp01(loadRatio);

@@ -638,6 +638,9 @@ namespace SoulsLike.Editor
             SetFloat(serialized, "<StartingFocus>k__BackingField", 100f, false);
             SetFloat(serialized, "<MaxStamina>k__BackingField", 100f, false);
             SetFloat(serialized, "<StartingStamina>k__BackingField", 100f, false);
+            SetFloat(serialized, "<StaminaRecoveryPerSecond>k__BackingField", 45f, false);
+            SetFloat(serialized, "<StaminaRecoveryDelaySeconds>k__BackingField", 0.75f, false);
+            SetFloat(serialized, "<GuardStaminaRecoveryMultiplier>k__BackingField", 0.2f, false);
             SetBool(serialized, "<CanDie>k__BackingField", true, false);
             SetFloat(serialized, "<InvulnerableOnSpawnSeconds>k__BackingField", 0f);
             return health;

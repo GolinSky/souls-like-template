@@ -29,6 +29,12 @@ namespace SoulsLike.Entities.Character.Components.Movement
         float TerminalVelocity { get; set; }
         LayerMask GroundLayers { get; }
         float RollCooldown { get; }
+        float RollStaminaCost { get; }
+        float RollStaminaStartThreshold { get; }
+        float JumpStaminaCost { get; }
+        float JumpStaminaStartThreshold { get; }
+        float CombatSprintStaminaDrainPerSecond { get; }
+        float CombatSprintStaminaStartThreshold { get; }
         float SlideSpeed { get; }
         float SlideDuration { get; }
         float CrouchSpeed { get; }
@@ -138,6 +144,30 @@ namespace SoulsLike.Entities.Character.Components.Movement
         [Tooltip("Time required to pass before being able to roll again")]
         [field: SerializeField]
         public float RollCooldown { get; private set; } = 1.0f;
+
+        [Tooltip("Stamina spent when a roll or backstep commits")]
+        [field: SerializeField]
+        public float RollStaminaCost { get; private set; } = 12.0f;
+
+        [Tooltip("Current signed stamina must be above this threshold before roll or backstep can start")]
+        [field: SerializeField]
+        public float RollStaminaStartThreshold { get; private set; } = 0.0f;
+
+        [Tooltip("Stamina spent when an on-foot jump commits")]
+        [field: SerializeField]
+        public float JumpStaminaCost { get; private set; } = 10.0f;
+
+        [Tooltip("Current signed stamina must be above this threshold before jump can start")]
+        [field: SerializeField]
+        public float JumpStaminaStartThreshold { get; private set; } = 0.0f;
+
+        [Tooltip("Stamina drained per second while sprinting in combat")]
+        [field: SerializeField]
+        public float CombatSprintStaminaDrainPerSecond { get; private set; } = 10.0f;
+
+        [Tooltip("Current signed stamina must be above this threshold before combat sprint drain can continue")]
+        [field: SerializeField]
+        public float CombatSprintStaminaStartThreshold { get; private set; } = 0.0f;
 
         [Header("Sliding")]
         [Tooltip("Speed of the character while sliding in m/s")]

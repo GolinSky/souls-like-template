@@ -182,7 +182,7 @@ namespace SoulsLike.Ui.PlayerHud
             // Update fill values
             hpBar.UpdateValue(stats.CurrentHealth, stats.MaxHealth);
             fpBar.UpdateValue(stats.CurrentFocus, stats.MaxFocus);
-            staminaBar.UpdateValue(stats.CurrentStamina, stats.MaxStamina);
+            staminaBar.UpdateValue(stats.DisplayCurrentStamina, stats.MaxStamina);
 
             _targetAlpha = 1f;
         }

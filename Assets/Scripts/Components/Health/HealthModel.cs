@@ -16,6 +16,9 @@ namespace SoulsLike.Entities.Character.Components.Health
         public float StartingFocus { get; }
         public float MaxStamina { get; }
         public float StartingStamina { get; }
+        public float StaminaRecoveryPerSecond { get; }
+        public float StaminaRecoveryDelaySeconds { get; }
+        public float GuardStaminaRecoveryMultiplier { get; }
         public bool CanDie { get; }
         public float InvulnerableOnSpawnSeconds { get; }
         public HealthStats Stats { get; private set; }
@@ -28,6 +31,9 @@ namespace SoulsLike.Entities.Character.Components.Health
             StartingFocus = Mathf.Clamp(healthData.StartingFocus, 0f, MaxFocus);
             MaxStamina = Mathf.Max(1f, healthData.MaxStamina);
             StartingStamina = Mathf.Clamp(healthData.StartingStamina, 0f, MaxStamina);
+            StaminaRecoveryPerSecond = Mathf.Max(0f, healthData.StaminaRecoveryPerSecond);
+            StaminaRecoveryDelaySeconds = Mathf.Max(0f, healthData.StaminaRecoveryDelaySeconds);
+            GuardStaminaRecoveryMultiplier = Mathf.Clamp01(healthData.GuardStaminaRecoveryMultiplier);
             CanDie = healthData.CanDie;
             InvulnerableOnSpawnSeconds = Mathf.Max(0f, healthData.InvulnerableOnSpawnSeconds);
 

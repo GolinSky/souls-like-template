@@ -6,6 +6,11 @@ namespace SoulsLike.Entities.Character.Components.Health
 {
     public class HealthComponent : BaseComponent<HealthModel>, IHealthComponent, IInitializable
     {
+        private const float MAX_STAMINA_DEBT_MULTIPLIER = 1.0f;
+
+        private float _staminaRecoveryDelayRemaining;
+        private bool _staminaSpentSinceRecoveryTick;
+
         public HealthStats Stats => Model.Stats;
 
         public void Initialize()
@@ -63,12 +68,12 @@ namespace SoulsLike.Entities.Character.Components.Health
             if (update.SetMaxStamina)
             {
                 stats.MaxStamina = Mathf.Max(1f, update.MaxStamina);
-                stats.CurrentStamina = Mathf.Clamp(stats.CurrentStamina, 0f, stats.MaxStamina);
+                stats.CurrentStamina = ClampSignedStamina(stats.CurrentStamina, stats.MaxStamina);
             }
 
             if (update.SetCurrentStamina)
             {
-                stats.CurrentStamina = Mathf.Clamp(update.CurrentStamina, 0f, stats.MaxStamina);
+                stats.CurrentStamina = ClampSignedStamina(update.CurrentStamina, stats.MaxStamina);
             }
 
             stats.IsAlive = stats.CurrentHealth > 0f;
@@ -157,11 +162,35 @@ namespace SoulsLike.Entities.Character.Components.Health
             ApplyAuthoritativeStats(stats);
         }
 
+        public bool CanConsumeStamina(float amount, float startThreshold = 0f)
+        {
+            if (amount <= 0f) return true;
+
+            HealthStats stats = Stats;
+            float threshold = Mathf.Clamp(startThreshold, -stats.MaxStamina, stats.MaxStamina);
+            return stats.CurrentStamina > threshold;
+        }
+
+        public bool TryConsumeStamina(float amount, float startThreshold = 0f)
+        {
+            if (!CanConsumeStamina(amount, startThreshold))
+            {
+                return false;
+            }
+
+            ConsumeStamina(amount);
+            return true;
+        }
+
         public void ConsumeStamina(float amount)
         {
             if (amount <= 0f) return;
             HealthStats stats = Stats;
-            stats.CurrentStamina = Mathf.Clamp(stats.CurrentStamina - amount, 0f, stats.MaxStamina);
+            stats.CurrentStamina = ClampSignedStamina(stats.CurrentStamina - amount, stats.MaxStamina);
+            _staminaRecoveryDelayRemaining = Mathf.Max(
+                _staminaRecoveryDelayRemaining,
+                Model.StaminaRecoveryDelaySeconds);
+            _staminaSpentSinceRecoveryTick = true;
             ApplyAuthoritativeStats(stats);
         }
 
@@ -169,8 +198,42 @@ namespace SoulsLike.Entities.Character.Components.Health
         {
             if (amount <= 0f) return;
             HealthStats stats = Stats;
-            stats.CurrentStamina = Mathf.Clamp(stats.CurrentStamina + amount, 0f, stats.MaxStamina);
+            if (stats.CurrentStamina >= stats.MaxStamina) return;
+
+            stats.CurrentStamina = Mathf.Min(stats.CurrentStamina + amount, stats.MaxStamina);
             ApplyAuthoritativeStats(stats);
+        }
+
+        public void TickStaminaRecovery(float deltaTime, bool isGuarding)
+        {
+            if (deltaTime <= 0f || !Stats.IsAlive || Model.StaminaRecoveryPerSecond <= 0f)
+            {
+                return;
+            }
+
+            if (_staminaSpentSinceRecoveryTick)
+            {
+                _staminaSpentSinceRecoveryTick = false;
+                return;
+            }
+
+            float recoveryDeltaTime = deltaTime;
+            if (_staminaRecoveryDelayRemaining > 0f)
+            {
+                if (recoveryDeltaTime <= _staminaRecoveryDelayRemaining)
+                {
+                    _staminaRecoveryDelayRemaining -= recoveryDeltaTime;
+                    return;
+                }
+
+                recoveryDeltaTime -= _staminaRecoveryDelayRemaining;
+                _staminaRecoveryDelayRemaining = 0f;
+            }
+
+            float recoveryMultiplier = isGuarding
+                ? Model.GuardStaminaRecoveryMultiplier
+                : 1f;
+            RestoreStamina(Model.StaminaRecoveryPerSecond * recoveryMultiplier * recoveryDeltaTime);
         }
 
         public void ApplyAuthoritativeStats(HealthStats stats)
@@ -197,9 +260,15 @@ namespace SoulsLike.Entities.Character.Components.Health
             stats.MaxFocus = Mathf.Max(1f, stats.MaxFocus);
             stats.CurrentFocus = Mathf.Clamp(stats.CurrentFocus, 0f, stats.MaxFocus);
             stats.MaxStamina = Mathf.Max(1f, stats.MaxStamina);
-            stats.CurrentStamina = Mathf.Clamp(stats.CurrentStamina, 0f, stats.MaxStamina);
+            stats.CurrentStamina = ClampSignedStamina(stats.CurrentStamina, stats.MaxStamina);
             stats.IsAlive = stats.CurrentHealth > 0f;
             return stats;
+        }
+
+        private static float ClampSignedStamina(float currentStamina, float maxStamina)
+        {
+            float maxDebt = maxStamina * MAX_STAMINA_DEBT_MULTIPLIER;
+            return Mathf.Clamp(currentStamina, -maxDebt, maxStamina);
         }
     }
 }

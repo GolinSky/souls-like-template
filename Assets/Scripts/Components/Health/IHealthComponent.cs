@@ -12,8 +12,11 @@ namespace SoulsLike.Entities.Character.Components.Health
         HealthStats CalculateRevive(HealthStats currentStats, float health);
         void ConsumeFocus(float amount);
         void RestoreFocus(float amount);
+        bool CanConsumeStamina(float amount, float startThreshold = 0f);
+        bool TryConsumeStamina(float amount, float startThreshold = 0f);
         void ConsumeStamina(float amount);
         void RestoreStamina(float amount);
+        void TickStaminaRecovery(float deltaTime, bool isGuarding);
         void ApplyAuthoritativeStats(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
     }

@@ -20,6 +20,9 @@ namespace SoulsLike.Entities.Character
         public float StartingFocus => _healthData.StartingFocus;
         public float MaxStamina => _healthData.MaxStamina;
         public float StartingStamina => _healthData.StartingStamina;
+        public float StaminaRecoveryPerSecond => _healthData.StaminaRecoveryPerSecond;
+        public float StaminaRecoveryDelaySeconds => _healthData.StaminaRecoveryDelaySeconds;
+        public float GuardStaminaRecoveryMultiplier => _healthData.GuardStaminaRecoveryMultiplier;
         public bool CanDie => _healthData.CanDie;
         public float InvulnerableOnSpawnSeconds => _healthData.InvulnerableOnSpawnSeconds;
 
