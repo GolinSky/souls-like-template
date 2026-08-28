@@ -247,6 +247,17 @@
                 },
                 {
                     "name": "",
+                    "id": "2a3e6b2d-0d1d-4d43-bc75-2bd1692a4f1b",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "ad50c66d-861f-465d-8d68-6a8ce159e6d8",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
@@ -1018,6 +1029,17 @@
                 },
                 {
                     "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Gamepad",
+            "bindingGroup": "Gamepad",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
                     "isOptional": false,
                     "isOR": false
                 }

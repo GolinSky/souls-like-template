@@ -95,9 +95,12 @@ namespace SoulsLike.Entities.Character
         {
             _cameraService.UpdateFollowTarget(_character.IsGrounded, _character.VerticalVelocity);
 
-            if (_currentGameState == GameState.Idle && !_character.IsInputBlocked)
+            if (_currentGameState == GameState.Idle)
             {
-                _cameraService.UpdateRotation(_inputService.CharacterActions.Look.ReadValue<Vector2>());
+                Vector2 look = _character.IsInputBlocked
+                    ? Vector2.zero
+                    : _inputService.CharacterActions.Look.ReadValue<Vector2>();
+                _cameraService.UpdateRotation(look);
             }
         }
 
