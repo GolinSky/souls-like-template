@@ -22624,11 +22624,22 @@ MonoBehaviour:
   lockCameraPosition: 0
   mouseSensitivityY: 5
   mouseSensitivityX: 5
+  lockHorizontalDeadZone: 0.1
   lockVerticalDeadZone: 0.08
   lockTargetViewportY: 0.58
   lockYawSpeed: 150
   lockPitchSpeed: 90
   lockVerticalArmLength: 0.65
+  lockCameraDistanceOffset: 1.25
+  lockYawSmoothTime: 0.12
+  lockPitchSmoothTime: 0.2
+  lockCloseTrackingDistance: 1.25
+  lockCloseTrackingBlendRange: 1.75
+  lockMaxYawCorrection: 35
+  lockMaxPitchCorrection: 25
+  lockVerticalTrackingWeight: 0.4
+  lockMinPitch: -5
+  lockMaxPitch: 25
   lockCameraSide: 0.5
   lockRigBlendDuration: 0.2
   lockRigBlendEase: 3

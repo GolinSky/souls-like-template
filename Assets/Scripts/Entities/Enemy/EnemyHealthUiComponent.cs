@@ -1,4 +1,5 @@
 using System;
+using SoulsLike.Components.Visibility;
 using SoulsLike.Entities.Character.Components.Health;
 using UnityEngine;
 using VContainer;
@@ -7,10 +8,11 @@ using VContainer.Unity;
 namespace SoulsLike.Entities.Enemy
 {
     public sealed class EnemyHealthUiComponent : MonoBehaviour, IEnemyHealthUiSource,
-        IInitializable, IDisposable
+        IVisibilityObserver, IInitializable, IDisposable
     {
         private HealthModel _healthModel;
         private IEnemyHealthUiService _enemyHealthUiService;
+        private VisibilityComponent _visibilityComponent;
 
         public float CurrentHealth => _healthModel.Stats.CurrentHealth;
         public float MaxHealth => _healthModel.Stats.MaxHealth;
@@ -19,10 +21,12 @@ namespace SoulsLike.Entities.Enemy
         [Inject]
         public void Construct(
             HealthModel healthModel,
-            IEnemyHealthUiService enemyHealthUiService)
+            IEnemyHealthUiService enemyHealthUiService,
+            VisibilityComponent visibilityComponent)
         {
             _healthModel = healthModel;
             _enemyHealthUiService = enemyHealthUiService;
+            _visibilityComponent = visibilityComponent;
         }
 
         public void Initialize()
@@ -30,13 +34,14 @@ namespace SoulsLike.Entities.Enemy
             _healthModel.OnStatsChanged += HandleStatsChanged;
             _healthModel.OnDied += HandleDead;
             _enemyHealthUiService.Track(this);
-            _enemyHealthUiService.NotifyVisibilityChanged(this, true);
+            _visibilityComponent.RegisterObserver(this);
         }
 
         public void Dispose()
         {
             _healthModel.OnStatsChanged -= HandleStatsChanged;
             _healthModel.OnDied -= HandleDead;
+            _visibilityComponent.UnregisterObserver(this);
             _enemyHealthUiService.Release(this);
         }
 
@@ -44,7 +49,13 @@ namespace SoulsLike.Entities.Enemy
         {
             _healthModel.OnStatsChanged -= HandleStatsChanged;
             _healthModel.OnDied -= HandleDead;
+            _visibilityComponent.UnregisterObserver(this);
             _enemyHealthUiService.Release(this);
+        }
+
+        public void OnVisibilityChanged(bool isVisible)
+        {
+            _enemyHealthUiService.NotifyVisibilityChanged(this, isVisible);
         }
 
         private void HandleStatsChanged(HealthStats stats)
@@ -54,15 +65,5 @@ namespace SoulsLike.Entities.Enemy
                 stats.CurrentHealth,
                 stats.MaxHealth);
         }
-
-        // private void OnBecameVisible()
-        // {
-        //     _enemyHealthUiService.NotifyVisibilityChanged(this, true);
-        // }
-        //
-        // private void OnBecameInvisible()
-        // {
-        //     _enemyHealthUiService.NotifyVisibilityChanged(this, false);
-        // }
     }
 }

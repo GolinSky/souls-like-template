@@ -75,12 +75,16 @@ namespace SoulsLike.Services.CameraService
         [SerializeField, Min(0f)] private float lockYawSpeed = 150f;
         [SerializeField, Min(0f)] private float lockPitchSpeed = 90f;
         [SerializeField] private float lockVerticalArmLength = 0.65f;
+        [SerializeField, Min(0f)] private float lockCameraDistanceOffset = 1.25f;
         [SerializeField, Min(0.01f)] private float lockYawSmoothTime = 0.12f;
         [SerializeField, Min(0.01f)] private float lockPitchSmoothTime = 0.2f;
         [SerializeField, Min(0f)] private float lockCloseTrackingDistance = 1.25f;
         [SerializeField, Min(0.01f)] private float lockCloseTrackingBlendRange = 1.75f;
         [SerializeField, Range(1f, 90f)] private float lockMaxYawCorrection = 35f;
-        [SerializeField, Range(1f, 80f)] private float lockMaxPitchCorrection = 25f;
+        [SerializeField, Range(1f, 80f)] private float lockMaxPitchCorrection = 12f;
+        [SerializeField, Range(0f, 1f)] private float lockVerticalTrackingWeight = 0.4f;
+        [SerializeField] private float lockMinPitch = -5f;
+        [SerializeField] private float lockMaxPitch = 25f;
         [SerializeField, Range(0f, 1f)] private float lockCameraSide = 0.5f;
         [SerializeField, Min(0f)] private float lockRigBlendDuration = 0.2f;
         [SerializeField] private Ease lockRigBlendEase = Ease.OutSine;
@@ -228,7 +232,7 @@ namespace SoulsLike.Services.CameraService
                 _yawVelocity = 0f;
                 _pitchVelocity = 0f;
                 cinemachineCamera.LookAt = null;
-                BlendLockRig(lockVerticalArmLength, lockCameraSide);
+                BlendLockRig(lockVerticalArmLength, lockCameraSide, _freeCameraDistance + lockCameraDistanceOffset);
             }
         }
 
@@ -277,6 +281,13 @@ namespace SoulsLike.Services.CameraService
             // clamp our rotations so our values are limited 360 degrees
             _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
             _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, bottomClamp, topClamp);
+            if (_lockOnTargetEntityId.HasValue)
+            {
+                _cinemachineTargetPitch = ClampAngle(
+                    _cinemachineTargetPitch,
+                    Mathf.Max(bottomClamp, Mathf.Min(lockMinPitch, lockMaxPitch)),
+                    Mathf.Min(topClamp, Mathf.Max(lockMinPitch, lockMaxPitch)));
+            }
 
             // Cinemachine will follow this target
             if (cinemachineCamera.Follow != null)
@@ -327,7 +338,8 @@ namespace SoulsLike.Services.CameraService
                 if (Mathf.Abs(verticalError) > THRESHOLD)
                 {
                     pitchCorrection -= ViewportOffsetToAngle(verticalError, targetCamera.fieldOfView)
-                        * targetTrackingWeight;
+                        * targetTrackingWeight
+                        * lockVerticalTrackingWeight;
                 }
             }
 
@@ -429,7 +441,7 @@ namespace SoulsLike.Services.CameraService
             return snapshot.IsAlive;
         }
 
-        private void BlendLockRig(float verticalArmLength, float cameraSide)
+        private void BlendLockRig(float verticalArmLength, float cameraSide, float cameraDistance)
         {
             _switchTween?.Kill();
             _lockRigTween?.Kill();
@@ -443,6 +455,11 @@ namespace SoulsLike.Services.CameraService
                     () => cinemachineThirdPersonFollow.CameraSide,
                     value => cinemachineThirdPersonFollow.CameraSide = value,
                     cameraSide,
+                    lockRigBlendDuration))
+                .Join(DOTween.To(
+                    () => cinemachineThirdPersonFollow.CameraDistance,
+                    value => cinemachineThirdPersonFollow.CameraDistance = value,
+                    cameraDistance,
                     lockRigBlendDuration))
                 .SetEase(lockRigBlendEase);
         }

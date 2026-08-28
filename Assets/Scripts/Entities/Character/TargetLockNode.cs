@@ -10,6 +10,7 @@ namespace SoulsLike.Entities.Character
         Custom = 3
     }
 
+    //todo: move and refactor 
     public class TargetLockNode : MonoBehaviour
     {
         [SerializeField] private TargetLockAnchorType anchorType = TargetLockAnchorType.Torso;

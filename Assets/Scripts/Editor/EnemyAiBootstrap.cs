@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SoulsLike.Components.Visibility;
 using SoulsLike.EditorTools;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.Character;
@@ -813,6 +814,7 @@ namespace SoulsLike.Editor
                 agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
 
                 HealthComponent healthComponent = root.AddComponent<HealthComponent>();
+                root.AddComponent<VisibilityComponent>();
                 root.AddComponent<EnemyHealthUiComponent>();
                 EnemyNavigationMotor motor = root.AddComponent<EnemyNavigationMotor>();
                 EnemyActor actor = root.AddComponent<EnemyActor>();

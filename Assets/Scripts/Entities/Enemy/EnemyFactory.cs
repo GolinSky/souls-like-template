@@ -1,4 +1,5 @@
 using System;
+using SoulsLike.Components.Visibility;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Entities.Character;
@@ -60,6 +61,8 @@ namespace SoulsLike.Entities.Enemy
                 actor.gameObject);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(
                 actor.gameObject);
+            VisibilityComponent visibilityComponent =
+                GetRequiredComponent<VisibilityComponent>(actor.gameObject);
             EnemyHealthUiComponent healthUiComponent =
                 GetRequiredComponent<EnemyHealthUiComponent>(actor.gameObject);
             EnemyNavigationMotor motor = GetRequiredComponent<EnemyNavigationMotor>(
@@ -85,6 +88,7 @@ namespace SoulsLike.Entities.Enemy
 
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponent(visibilityComponent).AsSelf().AsImplementedInterfaces();
                 builder.RegisterComponent(healthUiComponent).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterScriptableObject<WeaponDatabase>();
