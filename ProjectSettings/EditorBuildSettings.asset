@@ -9,77 +9,38 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu/MainMenu.unity
     guid: 8e78d87b7d4f00549997b35045848a8c
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/DefaultLocaiton.unity
+    path: Assets/Scenes/DefaultLocation/DefaultLocation.unity
     guid: e1e3c7572dbb88649b71d17c69aa6429
   - enabled: 1
     path: Assets/Scenes/Loading/Loading.unity
     guid: 32fc1e9958cfb81459eb7b6f3e270bca
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Stairs.unity
-    guid: 4a31f7a9ff610d843b63cefee27ef26d
+    path: Assets/Scenes/DefaultLocation/Zone_01.unity
+    guid: ce81741ae1d91f04ca0a0f2a3728e1cb
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/InteriorFloorBoxes.unity
-    guid: f320e52661ab77f4897a99f29e12076d
+    path: Assets/Scenes/DefaultLocation/Zone_02.unity
+    guid: bf4a7347472562b44b0d55a3429d4296
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/WoodDeco.unity
-    guid: 5257bb1d2366666498e50f6782df2a98
+    path: Assets/Scenes/DefaultLocation/Zone_03.unity
+    guid: d25bee38c56545543ba41ae9df135cea
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/PillarSet2.unity
-    guid: dc754c3e0e085fc43a03ac832630f188
+    path: Assets/Scenes/DefaultLocation/Zone_04.unity
+    guid: 9fbc572b0f2a10247b6fe76b3e0a8135
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Chandeliers.unity
-    guid: 1eef7fe1de73ef54781f15e4effa9769
+    path: Assets/Scenes/DefaultLocation/Zone_05.unity
+    guid: 6627b208115216d4893115870a97c059
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/MergedCylinders.unity
-    guid: 9cb1bc5f5cbdbd044942175271b03c81
+    path: Assets/Scenes/DefaultLocation/Zone_06.unity
+    guid: 6c5d3f42013c9184da9469cf9d5cf197
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/SupportPillars.unity
-    guid: 6208ecc761f7a1248815ec6ae6952320
+    path: Assets/Scenes/DefaultLocation/Zone_07.unity
+    guid: 8a39a4a1d099de841ba9caeca5ab6888
   - enabled: 1
-    path: Assets/Scenes/DefaultLocation/SupportTowers.unity
-    guid: ca1993bff47a50c4381c62a15e3e5d04
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/CastleSideBridges.unity
-    guid: 23d54d41c73419941b1b9de1255ea30e
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/WallGargoyles.unity
-    guid: 070d81d71c171d74a880807a861dc8b7
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Railings.unity
-    guid: 32c37a4ff34c24b48b9cda81f9d7f02f
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Walls.unity
-    guid: bcf4274dce0cb7440b6ee2c3f43796bc
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/StaticMeshActors.unity
-    guid: 1c3ccefb1789a714b86e95f2879f17ae
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Torches.unity
-    guid: 047f4d4a036ac07418eaa405b2c543a3
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/GroundTorches.unity
-    guid: 63d521a9df2c89941a90bfe77fcb094b
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Grasses.unity
-    guid: 7eb259908adc7814db8cd0b4d1b65504
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Stones.unity
-    guid: a0bf95a0ed7f0a448bcb170e1be34540
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/CandleHolder.unity
-    guid: 9d6c139ea89b79e42964cb4f6caf154c
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Candles.unity
-    guid: c636e3ee4c5b3b4468eba50eb1bd584d
+    path: Assets/Scenes/DefaultLocation/Zone_08.unity
+    guid: 46e0770836d66334dbd808b22f9dcc96
   - enabled: 1
     path: Assets/Scenes/DefaultLocation/Rocks.unity
     guid: 2f74995d3115c7b4db0ef500f27cd461
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Blueprints.unity
-    guid: 7bbc06393e47f1d4fb97d8d203484a14
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Other.unity
-    guid: 01b1414b241a0674e8e18174fd6d3626
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e5739fce5cf33bd4495ef0a2c394bec8, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}

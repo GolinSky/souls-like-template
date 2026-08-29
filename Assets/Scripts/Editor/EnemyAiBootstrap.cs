@@ -48,9 +48,7 @@ namespace SoulsLike.Editor
         private const string T_POSE_PATH =
             "Assets/ThirdParty/DoubleL/Model/T-Pose.fbx";
         private const string DEFAULT_SCENE_PATH =
-            "Assets/Scenes/DefaultLocation/DefaultLocaiton.unity";
-        private const string OTHER_SCENE_PATH =
-            "Assets/Scenes/DefaultLocation/Other.unity";
+            "Assets/Scenes/DefaultLocation/DefaultLocation.unity";
         private const string NAVIGATION_FOLDER =
             "Assets/Scenes/DefaultLocation/Navigation";
         private const string NAVIGATION_DATA_PATH =
@@ -896,16 +894,15 @@ namespace SoulsLike.Editor
             HealthData health)
         {
             Scene defaultScene = GetOrOpenScene(DEFAULT_SCENE_PATH);
-            Scene otherScene = GetOrOpenScene(OTHER_SCENE_PATH);
 
-            GameObject existingEncounter = FindRoot(otherScene, "EnemyEncounter");
+            GameObject existingEncounter = FindRoot(defaultScene, "EnemyEncounter");
             if (existingEncounter != null)
             {
                 Object.DestroyImmediate(existingEncounter);
             }
 
             var encounter = new GameObject("EnemyEncounter");
-            SceneManager.MoveGameObjectToScene(encounter, otherScene);
+            SceneManager.MoveGameObjectToScene(encounter, defaultScene);
             EnemyEncounterSystem encounterSystem = encounter.AddComponent<EnemyEncounterSystem>();
 
             var spawnObject = new GameObject("ErikaMeleeSpawn");
@@ -958,9 +955,7 @@ namespace SoulsLike.Editor
             surface.layerMask = ~((1 << LayerMask.NameToLayer("Player"))
                 | (1 << LayerMask.NameToLayer("Enemy")));
 
-            EditorSceneManager.MarkSceneDirty(otherScene);
             EditorSceneManager.MarkSceneDirty(defaultScene);
-            EditorSceneManager.SaveScene(otherScene);
             EditorSceneManager.SaveScene(defaultScene);
         }
 
@@ -992,8 +987,7 @@ namespace SoulsLike.Editor
                 CHARACTER_PREFAB_PATH,
                 SWORD_PREFAB_PATH,
                 PLAYER_CONTROLLER_PATH,
-                DEFAULT_SCENE_PATH,
-                OTHER_SCENE_PATH
+                DEFAULT_SCENE_PATH
             };
             paths.AddRange(actions.Select(AssetDatabase.GetAssetPath));
             AssetDatabase.ForceReserializeAssets(

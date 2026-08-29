@@ -1,0 +1,120 @@
+DefaultLocation spatial split report (EXECUTE)
+Created: 2026-08-29 16:18:44
+Main scene: Assets/Scenes/DefaultLocation/DefaultLocation.unity
+Rocks scene: Assets/Scenes/DefaultLocation/Rocks.unity (excluded from merge/split/delete)
+Source scenes merged: 21
+Merged roots: 21
+Main roots before zoning: 43
+Removed bake containers: 21
+Removed stale generated source roots: 31
+Deleted old scene assets: 21
+Deleted old scene data folders: 22
+
+Split algorithm: recursive longest-axis spatial split, balanced by renderer/collider/bounds weight.
+
+Zone_01: Assets/Scenes/DefaultLocation/Zone_01.unity
+  units=1114, renderers=3551, colliders=1241, weight=8026,1
+  center=(-56,46, 210,94, -253,10), size=(105,91, 293,75, 187,74)
+  source roots: Blueprints, Candles, Grasses, Other, Stairs, StaticMeshActors, Stones, WoodDeco
+
+Zone_02: Assets/Scenes/DefaultLocation/Zone_02.unity
+  units=979, renderers=3401, colliders=1141, weight=8018,0
+  center=(-58,62, 328,72, -144,57), size=(231,99, 122,60, 63,09)
+  source roots: Blueprints, Candles, CastleSideBridges, Grasses, InteriorFloorBoxes, Other, PillarSet2, Railings, Stairs, StaticMeshActors, Stones, SupportPillars, SupportTowers, WallGargoyles, Walls
+
+Zone_03: Assets/Scenes/DefaultLocation/Zone_03.unity
+  units=647, renderers=2472, colliders=759, weight=8017,5
+  center=(17,09, 191,84, -110,08), size=(98,99, 383,68, 220,16)
+  source roots: Blueprints, CandleHolder, Candles, CastleSideBridges, Chandeliers, Grasses, GroundTorches, InteriorFloorBoxes, MergedCylinders, Other, Railings, Stairs, StaticMeshActors, Stones, SupportPillars, Torches, Walls, WoodDeco
+
+Zone_04: Assets/Scenes/DefaultLocation/Zone_04.unity
+  units=974, renderers=3342, colliders=1088, weight=8018,0
+  center=(-110,24, 372,82, -96,31), size=(211,49, 206,18, 57,64)
+  source roots: Blueprints, Candles, CastleSideBridges, Grasses, InteriorFloorBoxes, MergedCylinders, Other, Railings, Stairs, StaticMeshActors, Stones, SupportPillars, SupportTowers, Walls, WoodDeco
+
+Zone_05: Assets/Scenes/DefaultLocation/Zone_05.unity
+  units=607, renderers=2327, colliders=686, weight=8006,6
+  center=(1,75, 161,54, -72,53), size=(56,96, 323,08, 145,05)
+  source roots: Blueprints, CandleHolder, Candles, Chandeliers, Grasses, InteriorFloorBoxes, Other, Stairs, StaticMeshActors, Stones, SupportPillars, Walls, WoodDeco
+
+Zone_06: Assets/Scenes/DefaultLocation/Zone_06.unity
+  units=900, renderers=3306, colliders=937, weight=8009,6
+  center=(-112,58, 438,61, -8,42), size=(173,84, 319,08, 135,82)
+  source roots: Blueprints, CastleSideBridges, Grasses, InteriorFloorBoxes, Other, StaticMeshActors, Stones, SupportPillars, SupportTowers, Walls, WoodDeco
+
+Zone_07: Assets/Scenes/DefaultLocation/Zone_07.unity
+  units=857, renderers=3169, colliders=956, weight=8004,7
+  center=(13,85, 190,16, -2,32), size=(87,05, 380,32, 178,30)
+  source roots: Blueprints, CandleHolder, Candles, CastleSideBridges, Chandeliers, Grasses, InteriorFloorBoxes, Other, Stairs, StaticMeshActors, Stones, SupportPillars, SupportTowers, Torches, Walls, WoodDeco
+
+Zone_08: Assets/Scenes/DefaultLocation/Zone_08.unity
+  units=1058, renderers=3532, colliders=1127, weight=8009,5
+  center=(-18,28, 215,59, 7,56), size=(36,56, 431,18, 160,66)
+  source roots: Blueprints, Candles, Grasses, InteriorFloorBoxes, Other, Stairs, StaticMeshActors, Stones, Torches, Walls, WoodDeco
+
+
+Main-scene spatial roots moved after split:
+  BP_FogSheet9_1 -> Zone_01
+  BP_FogSheet9_0 -> Zone_01
+  BP_FogSheet34_3 -> Zone_06
+  BP_FogSheet34_2 -> Zone_06
+  BP_FogSheet34_1 -> Zone_06
+  BP_FogSheet14_0 -> Zone_03
+  BP_FogSheet8_1 -> Zone_06
+  BP_FogSheet37 -> Zone_02
+  BP_FogSheet36 -> Zone_03
+  BP_FogSheet35 -> Zone_02
+  BP_FogSheet34 -> Zone_03
+  BP_FogSheet33 -> Zone_06
+  BP_FogSheet32 -> Zone_07
+  BP_FogSheet31 -> Zone_03
+  BP_FogSheet27 -> Zone_03
+  BP_FogSheet30 -> Zone_01
+  BP_FogSheet29 -> Zone_01
+  BP_FogSheet28 -> Zone_01
+  BP_FogSheet26 -> Zone_02
+  BP_FogSheet25 -> Zone_04
+  BP_FogSheet23 -> Zone_02
+  BP_FogSheet22 -> Zone_03
+  BP_FogSheet21 -> Zone_03
+  BP_FogSheet20 -> Zone_03
+  BP_FogSheet19 -> Zone_03
+  BP_FogSheet18 -> Zone_03
+  BP_FogSheet17 -> Zone_03
+  BP_FogSheet16 -> Zone_03
+  BP_FogSheet15 -> Zone_02
+  BP_FogSheet14 -> Zone_02
+  BP_FogSheet13 -> Zone_02
+  BP_FogSheet12 -> Zone_02
+  BP_FogSheet11 -> Zone_02
+  BP_FogSheet10 -> Zone_02
+  BP_FogSheet9 -> Zone_01
+  BP_FogSheet8 -> Zone_06
+  BP_FogSheet7 -> Zone_04
+  BP_FogSheet6 -> Zone_04
+  BP_FogSheet5 -> Zone_04
+  BP_FogSheet4 -> Zone_02
+  BP_FogSheet3_20 -> Zone_02
+  BP_FogSheet_14 -> Zone_01
+  Local Volumetric Fog -> Zone_03
+  Local Volumetric Fog (1) -> Zone_03
+  Local Volumetric Fog (2) -> Zone_03
+  Local Volumetric Fog (3) -> Zone_01
+  Local Volumetric Fog (4) -> Zone_01
+  Local Volumetric Fog (5) -> Zone_03
+  Local Volumetric Fog (6) -> Zone_04
+  FloorDirt4 -> Zone_02
+  FloorDirt5 -> Zone_02
+  FloorDirt6 -> Zone_02
+  FloorDirt2 -> Zone_02
+  FloorDirt3 -> Zone_02
+  FloorDirt7 -> Zone_02
+  FloorDirt -> Zone_02
+  total=56
+
+Main-scene cleanup after split:
+  moved GroundItem -> Zone_03
+  moved GroundItem (1) -> Zone_03
+  deleted empty transform root Meshes
+  deleted empty transform root Blueprints
+  deleted empty transform root Walls

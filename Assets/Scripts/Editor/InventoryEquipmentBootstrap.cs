@@ -37,7 +37,7 @@ namespace SoulsLike.Editor
         private const string FLASK_ICON_PATH = "Assets/Art/Textures/ItemIcons/CrimsonFlaskIcon.png";
         private const string GREASE_ICON_PATH = "Assets/Art/Textures/ItemIcons/LightningGreaseIcon.png";
         private const string RUNE_ICON_PATH = "Assets/Art/Textures/ItemIcons/GoldenRuneSmallIcon.png";
-        private const string NO_WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/NoWeaponAnimator.controller";
+        private const string NO_WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterNoWeaponAnimator.overrideController";
         private const string WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterGreatSwordAnimator.controller";
         private const string LEFT_WEAPON_CONTROLLER_PATH =
             "Assets/Art/Animation/CharacterGreatSwordLeftHandAnimator.controller";
