@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -10,53 +11,36 @@ namespace SoulsLike.EditorTools
 {
     public static class LocationBakeTool
     {
+        private const string DEFAULT_LOCATION_FOLDER = "Assets/Scenes/DefaultLocation";
+        private const string MAIN_SCENE_PATH = DEFAULT_LOCATION_FOLDER + "/DefaultLocation.unity";
+        private const string ROCKS_SCENE_PATH = DEFAULT_LOCATION_FOLDER + "/Rocks.unity";
         public static readonly string LogFilePath = "Assets/Scenes/DefaultLocation/bake_progress.txt";
 
-        public static readonly string[] AllScenes = new string[]
-        {
-            "Assets/Scenes/DefaultLocation/Blueprints.unity",
-            "Assets/Scenes/DefaultLocation/CandleHolder.unity",
-            "Assets/Scenes/DefaultLocation/Candles.unity",
-            "Assets/Scenes/DefaultLocation/CastleSideBridges.unity",
-            "Assets/Scenes/DefaultLocation/Chandeliers.unity",
-            "Assets/Scenes/DefaultLocation/Grasses.unity",
-            "Assets/Scenes/DefaultLocation/GroundTorches.unity",
-            "Assets/Scenes/DefaultLocation/InteriorFloorBoxes.unity",
-            "Assets/Scenes/DefaultLocation/MergedCylinders.unity",
-            "Assets/Scenes/DefaultLocation/Other.unity",
-            "Assets/Scenes/DefaultLocation/PillarSet2.unity",
-            "Assets/Scenes/DefaultLocation/Railings.unity",
-            "Assets/Scenes/DefaultLocation/Rocks.unity",
-            "Assets/Scenes/DefaultLocation/Stairs.unity",
-            "Assets/Scenes/DefaultLocation/StaticMeshActors.unity",
-            "Assets/Scenes/DefaultLocation/Stones.unity",
-            "Assets/Scenes/DefaultLocation/SupportPillars.unity",
-            "Assets/Scenes/DefaultLocation/SupportTowers.unity",
-            "Assets/Scenes/DefaultLocation/Torches.unity",
-            "Assets/Scenes/DefaultLocation/WallGargoyles.unity",
-            "Assets/Scenes/DefaultLocation/Walls.unity",
-            "Assets/Scenes/DefaultLocation/WoodDeco.unity",
-            "Assets/Scenes/DefaultLocation/DefaultLocaiton.unity"
-        };
+        public static string[] AllScenes => GetDefaultLocationBakeScenes();
+        public static string[] StructuralScenes => AllScenes;
 
-        public static readonly string[] StructuralScenes = new string[]
+        private static string[] GetDefaultLocationBakeScenes()
         {
-            "Assets/Scenes/DefaultLocation/Blueprints.unity",
-            "Assets/Scenes/DefaultLocation/CastleSideBridges.unity",
-            "Assets/Scenes/DefaultLocation/DefaultLocaiton.unity",
-            "Assets/Scenes/DefaultLocation/InteriorFloorBoxes.unity",
-            "Assets/Scenes/DefaultLocation/MergedCylinders.unity",
-            "Assets/Scenes/DefaultLocation/Other.unity",
-            "Assets/Scenes/DefaultLocation/PillarSet2.unity",
-            "Assets/Scenes/DefaultLocation/Rocks.unity",
-            "Assets/Scenes/DefaultLocation/Stairs.unity",
-            "Assets/Scenes/DefaultLocation/StaticMeshActors.unity",
-            "Assets/Scenes/DefaultLocation/Stones.unity",
-            "Assets/Scenes/DefaultLocation/SupportPillars.unity",
-            "Assets/Scenes/DefaultLocation/SupportTowers.unity",
-            "Assets/Scenes/DefaultLocation/Walls.unity",
-            "Assets/Scenes/DefaultLocation/WoodDeco.unity"
-        };
+            return AssetDatabase.FindAssets("t:Scene", new[] { DEFAULT_LOCATION_FOLDER })
+                .Select(AssetDatabase.GUIDToAssetPath)
+                .Where(path => path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
+                .Where(path => !path.Equals(ROCKS_SCENE_PATH, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(GetSceneSortKey)
+                .ThenBy(path => path, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+
+        private static int GetSceneSortKey(string scenePath)
+        {
+            if (scenePath.Equals(MAIN_SCENE_PATH, StringComparison.OrdinalIgnoreCase))
+            {
+                return 0;
+            }
+
+            return Path.GetFileNameWithoutExtension(scenePath).StartsWith("Zone_", StringComparison.OrdinalIgnoreCase)
+                ? 1
+                : 2;
+        }
 
         public static LightingSettings CreatePCLightingSettings()
         {
@@ -157,7 +141,7 @@ namespace SoulsLike.EditorTools
                 }
             }
             AssetDatabase.SaveAssets();
-            WriteLog("Configured static flags across all 23 scenes.");
+            WriteLog($"Configured static flags across {AllScenes.Length} scenes.");
         }
 
         [MenuItem("Tools/Bake/Verify Occlusion Culling Data")]
@@ -208,7 +192,7 @@ namespace SoulsLike.EditorTools
         [MenuItem("Tools/Bake/Bake Occlusion Data for All Scenes")]
         public static void BakeAllOcclusionData()
         {
-            WriteLog($"=== STARTING OCCLUSION BAKE FOR ALL 23 SCENES ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===");
+            WriteLog($"=== STARTING OCCLUSION BAKE FOR ALL {AllScenes.Length} SCENES ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===");
             ConfigureAllSceneFlags();
 
             for (int i = 0; i < AllScenes.Length; i++)
@@ -218,7 +202,7 @@ namespace SoulsLike.EditorTools
                 DateTime startTime = DateTime.Now;
 
                 Scene scene;
-                if (scenePath.Equals("Assets/Scenes/DefaultLocation/DefaultLocaiton.unity", StringComparison.OrdinalIgnoreCase))
+                if (scenePath.Equals(MAIN_SCENE_PATH, StringComparison.OrdinalIgnoreCase))
                 {
                     scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
                     foreach (string subPath in AllScenes)
@@ -248,7 +232,7 @@ namespace SoulsLike.EditorTools
                 WriteLog($"[{i + 1}/{AllScenes.Length}] Completed {Path.GetFileName(scenePath)} -> Occlusion: {occlResult} (Umbra Data Size: {umbraSize} B, Duration: {durationSec:F1}s)");
             }
 
-            WriteLog($"=== OCCLUSION BAKE COMPLETED FOR ALL 23 SCENES ===");
+            WriteLog($"=== OCCLUSION BAKE COMPLETED FOR ALL {AllScenes.Length} SCENES ===");
         }
 
         [MenuItem("Tools/Bake/Bake Missing Occlusion Data Only")]
@@ -273,7 +257,7 @@ namespace SoulsLike.EditorTools
                 WriteLog($"[{i + 1}/{AllScenes.Length}] {Path.GetFileName(scenePath)} is MISSING occlusion data. Baking now...");
                 DateTime startTime = DateTime.Now;
 
-                if (scenePath.Equals("Assets/Scenes/DefaultLocation/DefaultLocaiton.unity", StringComparison.OrdinalIgnoreCase))
+                if (scenePath.Equals(MAIN_SCENE_PATH, StringComparison.OrdinalIgnoreCase))
                 {
                     foreach (string subPath in AllScenes)
                     {
@@ -305,7 +289,7 @@ namespace SoulsLike.EditorTools
         [MenuItem("Tools/Bake/Bake All Scenes Sync (Occlusion + Lighting)")]
         public static void BakeAllScenesSync()
         {
-            File.WriteAllText(LogFilePath, $"=== STARTING ALL 23 SCENES BAKE ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + Environment.NewLine);
+            File.WriteAllText(LogFilePath, $"=== STARTING ALL {AllScenes.Length} SCENES BAKE ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + Environment.NewLine);
             
             ConfigureAllSceneFlags();
 
@@ -317,7 +301,7 @@ namespace SoulsLike.EditorTools
                 DateTime startTime = DateTime.Now;
                 
                 Scene scene;
-                if (scenePath.Equals("Assets/Scenes/DefaultLocation/DefaultLocaiton.unity", StringComparison.OrdinalIgnoreCase))
+                if (scenePath.Equals(MAIN_SCENE_PATH, StringComparison.OrdinalIgnoreCase))
                 {
                     // Open main location scene and load all subscenes additively for multi-scene seamless bake
                     scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
@@ -348,7 +332,7 @@ namespace SoulsLike.EditorTools
                 WriteLog($"[{i + 1}/{AllScenes.Length}] Completed {Path.GetFileName(scenePath)} -> Occlusion: {occlResult} (Umbra: {umbraSize} B), Lightmaps: {lightResult} (Duration: {durationSec:F1}s)");
             }
 
-            WriteLog($"=== ALL 23 SCENES SUCCESSFULLY BAKED AND SAVED ===");
+            WriteLog($"=== ALL {AllScenes.Length} SCENES SUCCESSFULLY BAKED AND SAVED ===");
         }
 
         private const string BAKE_TEMP_LIGHTS_NAME = "_BakeCopiedLightsContainer";
@@ -372,7 +356,7 @@ namespace SoulsLike.EditorTools
         [MenuItem("Tools/Bake/Inspect DefaultLocation Lights")]
         public static void InspectDefaultLocationLights()
         {
-            string mainScenePath = "Assets/Scenes/DefaultLocation/DefaultLocaiton.unity";
+            string mainScenePath = MAIN_SCENE_PATH;
             var scene = EditorSceneManager.OpenScene(mainScenePath, OpenSceneMode.Single);
 
             GameObject dirLightGO = FindGameObjectByNameOrComponent("Directional Light", LightType.Directional);
@@ -389,7 +373,7 @@ namespace SoulsLike.EditorTools
         {
             if (_bakeQueued)
             {
-                WriteLog("Bake request ignored because the 23-scene bake is already queued.");
+                WriteLog($"Bake request ignored because the {AllScenes.Length}-scene bake is already queued.");
                 return;
             }
 
@@ -411,10 +395,10 @@ namespace SoulsLike.EditorTools
 
         private static void RunSubsceneBake()
         {
-            const string mainScenePath = "Assets/Scenes/DefaultLocation/DefaultLocaiton.unity";
+            const string mainScenePath = MAIN_SCENE_PATH;
             const string pointLightsRootName = "PointLights";
             const string spotLightsRootName = "SpotLights";
-            File.WriteAllText(LogFilePath, $"=== STARTING ALL 23 SCENES BAKE ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + Environment.NewLine);
+            File.WriteAllText(LogFilePath, $"=== STARTING ALL {AllScenes.Length} SCENES BAKE ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + Environment.NewLine);
 
             Scene mainScene = EditorSceneManager.OpenScene(mainScenePath, OpenSceneMode.Single);
             GameObject pointLightsRoot = FindSceneGameObjectByName(mainScene, pointLightsRootName);
@@ -422,7 +406,7 @@ namespace SoulsLike.EditorTools
 
             if (pointLightsRoot == null || spotLightsRoot == null)
             {
-                throw new InvalidOperationException("DefaultLocaiton.unity must contain both PointLights and SpotLights source roots.");
+                throw new InvalidOperationException("DefaultLocation.unity must contain both PointLights and SpotLights source roots.");
             }
 
             int sourceLightCount = pointLightsRoot.GetComponentsInChildren<Light>(true).Length +
@@ -483,7 +467,7 @@ namespace SoulsLike.EditorTools
                 }
 
                 ReopenAllScenesAdditively(mainScenePath);
-                WriteLog("=== ALL 23 SCENES SUCCESSFULLY BAKED AND SAVED ===");
+                WriteLog($"=== ALL {AllScenes.Length} SCENES SUCCESSFULLY BAKED AND SAVED ===");
             }
             finally
             {
@@ -822,7 +806,7 @@ namespace SoulsLike.EditorTools
             }
 
             SceneManager.SetActiveScene(mainScene);
-            WriteLog("Reopened all 23 scenes additively with DefaultLocaiton.unity active.");
+            WriteLog($"Reopened all {AllScenes.Length} scenes additively with DefaultLocation.unity active.");
         }
 
         private static GameObject FindGameObjectByNameOrComponent(string name, LightType type)

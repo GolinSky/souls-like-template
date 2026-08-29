@@ -3,14 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SoulsLike.Components.Visibility;
-using SoulsLike.EditorTools;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Entities.Enemy;
 using SoulsLike.Items;
-using Unity.AI.Navigation;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEditor.SceneManagement;
@@ -49,10 +47,6 @@ namespace SoulsLike.Editor
             "Assets/ThirdParty/DoubleL/Model/T-Pose.fbx";
         private const string DEFAULT_SCENE_PATH =
             "Assets/Scenes/DefaultLocation/DefaultLocation.unity";
-        private const string NAVIGATION_FOLDER =
-            "Assets/Scenes/DefaultLocation/Navigation";
-        private const string NAVIGATION_DATA_PATH =
-            NAVIGATION_FOLDER + "/EnemyNavigation.asset";
 
         private const string IDLE_PATH =
             "Assets/ThirdParty/DoubleL/FBX_Animations/Base Move/Stand_Idle/Idle/Stand_Idle_A_1.fbx";
@@ -129,48 +123,12 @@ namespace SoulsLike.Editor
         [MenuItem("Tools/SoulsLike/Bake Enemy Navigation")]
         public static void BakeNavigation()
         {
-            OpenNavigationScenes();
-            Scene scene = SceneManager.GetSceneByPath(DEFAULT_SCENE_PATH);
-            NavMeshSurface surface = scene.GetRootGameObjects()
-                .SelectMany(root => root.GetComponentsInChildren<NavMeshSurface>(true))
-                .Single();
-            surface.BuildNavMesh();
-            FinalizeNavigationBake();
+            DefaultLocationNavMeshBakeTool.BakeNavigation();
         }
 
         public static void FinalizeNavigationBake()
         {
-            Scene scene = SceneManager.GetSceneByPath(DEFAULT_SCENE_PATH);
-            if (!scene.IsValid() || !scene.isLoaded)
-            {
-                throw new InvalidOperationException(
-                    $"Navigation scene '{DEFAULT_SCENE_PATH}' must be loaded.");
-            }
-
-            NavMeshSurface surface = scene.GetRootGameObjects()
-                .SelectMany(root => root.GetComponentsInChildren<NavMeshSurface>(true))
-                .Single();
-            NavMeshData navigationData = surface.navMeshData
-                ?? throw new InvalidOperationException(
-                    "The navigation surface has not been baked.");
-            if (!EditorUtility.IsPersistent(navigationData))
-            {
-                EnsureFolder(NAVIGATION_FOLDER);
-                if (AssetDatabase.LoadAssetAtPath<NavMeshData>(NAVIGATION_DATA_PATH) != null)
-                {
-                    AssetDatabase.DeleteAsset(NAVIGATION_DATA_PATH);
-                }
-
-                AssetDatabase.CreateAsset(navigationData, NAVIGATION_DATA_PATH);
-                EditorUtility.SetDirty(surface);
-            }
-
-            EditorSceneManager.SaveScene(scene);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.ForceReserializeAssets(
-                new[] { DEFAULT_SCENE_PATH },
-                ForceReserializeAssetsOptions.ReserializeAssets);
-            Debug.Log("Enemy navigation bake persisted successfully.");
+            DefaultLocationNavMeshBakeTool.FinalizeNavigationBake();
         }
 
         private static void ConfigureSelectedAnimations(Avatar sourceAvatar)
@@ -937,41 +895,8 @@ namespace SoulsLike.Editor
             spawnPoints.GetArrayElementAtIndex(0).objectReferenceValue = spawn;
             SetBool(encounterSystemSerialized, "spawnOnStart", true);
 
-            GameObject navigation = FindRoot(defaultScene, "EnemyNavigation");
-            if (navigation == null)
-            {
-                navigation = new GameObject("EnemyNavigation");
-                SceneManager.MoveGameObjectToScene(navigation, defaultScene);
-            }
-
-            NavMeshSurface surface = navigation.GetComponent<NavMeshSurface>();
-            if (surface == null)
-            {
-                surface = navigation.AddComponent<NavMeshSurface>();
-            }
-
-            surface.collectObjects = CollectObjects.All;
-            surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-            surface.layerMask = ~((1 << LayerMask.NameToLayer("Player"))
-                | (1 << LayerMask.NameToLayer("Enemy")));
-
             EditorSceneManager.MarkSceneDirty(defaultScene);
             EditorSceneManager.SaveScene(defaultScene);
-        }
-
-        private static void OpenNavigationScenes()
-        {
-            foreach (string scenePath in LocationBakeTool.AllScenes)
-            {
-                Scene scene = SceneManager.GetSceneByPath(scenePath);
-                if (!scene.IsValid() || !scene.isLoaded)
-                {
-                    EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
-                }
-            }
-
-            Scene defaultScene = SceneManager.GetSceneByPath(DEFAULT_SCENE_PATH);
-            EditorSceneManager.SetActiveScene(defaultScene);
         }
 
         private static void ForceReserializeAuthoredAssets(

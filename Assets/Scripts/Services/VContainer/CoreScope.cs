@@ -1,5 +1,6 @@
 using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
+using SoulsLike.Services.Navigation;
 using SoulsLike.Services.Targeting;
 using SoulsLike.Services.Travel;
 using SoulsLike.Entities.Character;
@@ -30,6 +31,7 @@ namespace SoulsLike
             builder.Register<TravelUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<GraceUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<CharacterFactory>(Lifetime.Singleton);
+            builder.Register<NavMeshService>(Lifetime.Singleton).As<INavMeshService>();
             builder.Register<EnemyFactory>(Lifetime.Singleton);
             builder.RegisterEntryPoint<CoreGameOrchestrator>();
         }

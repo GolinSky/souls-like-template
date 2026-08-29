@@ -9,6 +9,7 @@ using SoulsLike.Extensions;
 using SoulsLike.Factory;
 using SoulsLike.Items;
 using SoulsLike.Services.IdGeneration;
+using SoulsLike.Services.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 using VContainer;
@@ -18,9 +19,12 @@ namespace SoulsLike.Entities.Enemy
 {
     public sealed class EnemyFactory : BaseFactory
     {
-        public EnemyFactory(IObjectResolver resolver)
+        private readonly INavMeshService _navMeshService;
+
+        public EnemyFactory(IObjectResolver resolver, INavMeshService navMeshService)
             : base(resolver)
         {
+            _navMeshService = navMeshService;
         }
 
         public EnemyActor CreateEnemy(EnemySpawnPoint spawn)
@@ -38,11 +42,11 @@ namespace SoulsLike.Entities.Enemy
                 agentTypeID = prefabAgent.agentTypeID,
                 areaMask = prefabAgent.areaMask
             };
-            if (!NavMesh.SamplePosition(
+            if (!_navMeshService.TrySamplePosition(
                     spawn.transform.position,
-                    out NavMeshHit spawnHit,
                     prefabAgent.radius,
-                    queryFilter))
+                    queryFilter,
+                    out NavMeshHit spawnHit))
             {
                 throw new InvalidOperationException(
                     $"Enemy spawn point '{spawn.name}' must be within "
