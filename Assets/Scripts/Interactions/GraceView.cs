@@ -1,6 +1,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Services.Travel.Data;
 using UnityEngine;
 
 namespace SoulsLike.Interactions
@@ -9,11 +10,11 @@ namespace SoulsLike.Interactions
     {
         private const int PRIORITY = 100;
 
-        [SerializeField] private string graceId;
+        [SerializeField] private GraceId graceId;
 
         private IGracePresenter _presenter;
 
-        public string GraceId => graceId;
+        public GraceId GraceId => graceId;
         public Transform InteractionAnchor => transform;
         public int Priority => PRIORITY;
 

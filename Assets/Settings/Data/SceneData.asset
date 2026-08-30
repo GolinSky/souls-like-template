@@ -29,6 +29,11 @@ MonoBehaviour:
         sceneAsset: {fileID: 102900000, guid: e1e3c7572dbb88649b71d17c69aa6429, type: 3}
         isDirty: 0
         scenePath: Assets/Scenes/DefaultLocation/DefaultLocation.unity
+    - key: 3
+      value:
+        sceneAsset: {fileID: 102900000, guid: 238720e6e7b816043a74ed1ac1259bdb, type: 3}
+        isDirty: 0
+        scenePath: Assets/Scenes/WorkShop/WorkShop.unity
   dependencies:
     keyValue:
     - key: 2

@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9399a3475e560944d962dbe1d03e82e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Interactions.GraceView
-  graceId: default_location_grace_01
+  graceId: 0
 --- !u!135 &3131387317111218066
 SphereCollider:
   m_ObjectHideFlags: 0

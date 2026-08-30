@@ -8,6 +8,7 @@ using SoulsLike.Services.Repository;
 using SoulsLike.Services.Scenes;
 using SoulsLike.Services.Scenes.Data;
 using SoulsLike.Services.Storage;
+using SoulsLike.Services.Travel.Data;
 using SoulsLike.Services.Layer;
 using SoulsLike.Services.Layer.Data;
 using SoulsLike.Ui.FpsCounter;
@@ -29,6 +30,7 @@ namespace SoulsLike
             
             // scene system
             builder.RegisterScriptableObject<SceneData>();
+            builder.RegisterScriptableObject<LocationData>();
             builder.Register<SceneModel>(Lifetime.Singleton).AsSelf();
             builder.Register<SceneService>(Lifetime.Singleton).As<ISceneService>();
             
