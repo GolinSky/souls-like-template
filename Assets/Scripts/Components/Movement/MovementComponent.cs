@@ -201,6 +201,20 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _presentationSink.SetAirborneMotion(_verticalVelocity, CurrentLandingType);
         }
 
+        public void FaceInputDirection(Vector2 moveInput, float cameraYaw)
+        {
+            if (moveInput.sqrMagnitude <= INPUT_DEAD_ZONE)
+            {
+                return;
+            }
+
+            Vector3 facingDirection = _movementMode == MovementMode.LockedOn
+                ? GetLockOnForward()
+                : ResolveWorldDirection(moveInput, cameraYaw);
+            transform.rotation = Quaternion.LookRotation(facingDirection, Vector3.up);
+            _rotationVelocity = 0.0f;
+        }
+
         public bool TryStartRoll(
             Vector2 moveInput,
             float cameraYaw,

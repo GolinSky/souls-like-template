@@ -51,6 +51,10 @@ namespace SoulsLike.Entities.Character
             //todo: don't create go of character inside of this scope
             GameObject instance = UnityEngine.Object.Instantiate(prefab);
             instance.name = $"{nameof(Character)}_Instance";
+            if (spawnPosition.HasValue)
+            {
+                instance.transform.position = spawnPosition.Value;
+            }
 
             Character character = GetRequiredComponent<Character>(instance);
             
@@ -141,11 +145,6 @@ namespace SoulsLike.Entities.Character
             });
 
             instance.transform.SetParent(_characterScope.transform, true);
-
-            if (spawnPosition.HasValue)
-            {
-                movementComponent.SetPosition(spawnPosition.Value);
-            }
 
             return character;
         }

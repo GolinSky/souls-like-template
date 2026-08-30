@@ -223,6 +223,7 @@ namespace SoulsLike.Entities.Character
             AttackExecutionContext context = _attackComponent.CurrentExecutionContext;
             AttackResolution resolution = _attackComponent.ResolveAttack(request, context);
             animatorComponent.SetChargedAttackSpeed(resolution.ChargedSpeed);
+            movementComponent.FaceInputDirection(request.MoveInput, request.CameraYaw);
             animatorComponent.PlayAttack(
                 resolution.AttackType,
                 resolution.IsLeftHandAttack);
@@ -429,6 +430,8 @@ namespace SoulsLike.Entities.Character
 
         public void Revive(float health) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateRevive(healthComponent.Stats, health));
+
+        public void SetPosition(Vector3 position) => movementComponent.SetPosition(position);
 
         public void SetLockOnTarget(bool isLockedOn, long? lockOnTargetEntityId)
         {

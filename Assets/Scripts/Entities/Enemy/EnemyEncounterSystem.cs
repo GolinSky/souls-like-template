@@ -31,7 +31,7 @@ namespace SoulsLike.Entities.Enemy
 
         public void OnGameStateChanged(GameState newState)
         {
-            if (newState != GameState.OnGraceSit)
+            if (newState != GameState.OnGraceSit && newState != GameState.Ended)
             {
                 return;
             }

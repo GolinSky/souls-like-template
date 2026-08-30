@@ -183,6 +183,7 @@ namespace SoulsLike.Services.CameraService
             ResetLockState();
             cinemachineCamera.Follow = _followTarget;
             cinemachineCamera.LookAt = null;
+            cinemachineCamera.PreviousStateIsValid = false;
         }
 
         public void UpdateFollowTarget(bool grounded, float verticalVelocity)

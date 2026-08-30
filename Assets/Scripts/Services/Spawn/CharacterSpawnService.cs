@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SoulsLike.Services.Save;
 using SoulsLike.Services.Scenes;
 using SoulsLike.Services.Scenes.Data;
@@ -20,6 +21,7 @@ namespace SoulsLike.Services.Spawn
         private readonly SaveStore<CharacterSpawnData> _store;
         private readonly LocationData _locationData;
         private readonly ISceneService _sceneService;
+        private readonly Dictionary<GraceId, Vector3> _gracePositions = new();
 
         private PendingSpawnKind _pendingSpawnKind;
         private GraceId _pendingGraceId;
@@ -125,6 +127,30 @@ namespace SoulsLike.Services.Spawn
             CharacterSpawnData data = _store.LoadOrCreate();
             data.LastGraceId = graceId;
             _store.Save(data);
+        }
+
+        public void RegisterGracePosition(GraceId graceId, Vector3 position)
+        {
+            _gracePositions[graceId] = position;
+        }
+
+        public Vector3 GetLastGracePosition()
+        {
+            CharacterSpawnData data = _store.LoadOrCreate();
+            SceneType graceScene = _locationData.GetLocation(data.LastGraceId).Id;
+            if (graceScene != _sceneService.CurrentScene)
+            {
+                throw new InvalidOperationException(
+                    $"Last grace {data.LastGraceId} belongs to scene {graceScene}, but the current scene is {_sceneService.CurrentScene}.");
+            }
+
+            if (!_gracePositions.TryGetValue(data.LastGraceId, out Vector3 position))
+            {
+                throw new InvalidOperationException(
+                    $"Last grace {data.LastGraceId} has no registered position in the current scene.");
+            }
+
+            return position;
         }
 
         private void ClearPendingSpawn()

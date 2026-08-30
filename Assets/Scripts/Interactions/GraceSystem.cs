@@ -42,6 +42,13 @@ namespace SoulsLike.Interactions
                 OPEN_GRACES_KEY,
                 new HashSet<string>());
 
+            foreach (GraceView graceView in graceViews)
+            {
+                _characterSpawnService.RegisterGracePosition(
+                    graceView.GraceId,
+                    graceView.InteractionAnchor.position);
+            }
+
             if (_characterSpawnService.TryGetPendingGrace(out GraceId graceId))
             {
                 GraceView graceView = graceViews.Single(view => view.GraceId == graceId);

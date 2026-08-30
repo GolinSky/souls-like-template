@@ -66,12 +66,18 @@ namespace SoulsLike.Entities.Character
         {
             _currentGameState = newState;
 
-            if (newState == GameState.OnGraceSit)
+            if (newState == GameState.Ended)
+            {
+                ClearLockOn();
+            }
+
+            if (newState == GameState.OnGraceSit || newState == GameState.Ended)
             {
                 HealthStats stats = _healthComponent.Stats;
                 stats.CurrentHealth = stats.MaxHealth;
                 stats.CurrentFocus = stats.MaxFocus;
                 stats.CurrentStamina = stats.MaxStamina;
+                stats.IsAlive = true;
                 _healthComponent.ApplyAuthoritativeStats(stats);
             }
         }

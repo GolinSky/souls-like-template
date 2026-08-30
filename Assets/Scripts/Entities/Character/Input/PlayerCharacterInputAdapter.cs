@@ -97,14 +97,18 @@ namespace SoulsLike.Entities.Character.Input
                     first = CharacterCommand.Attack(
                         AttackIntent.Heavy,
                         false,
-                        sprinting);
+                        sprinting,
+                        moveInput,
+                        cameraYaw);
                 }
                 else if (!rollActive && actions.SpecialAbility.WasPressedThisFrame())
                 {
                     first = CharacterCommand.Attack(
                         AttackIntent.Special,
                         false,
-                        false);
+                        false,
+                        moveInput,
+                        cameraYaw);
                 }
                 else if (!_heavyAttackResolver.ShouldSuppressLightAttack(
                     actions.Attack.WasPressedThisFrame()))
@@ -112,14 +116,18 @@ namespace SoulsLike.Entities.Character.Input
                     first = CharacterCommand.Attack(
                         AttackIntent.Light,
                         false,
-                        sprinting);
+                        sprinting,
+                        moveInput,
+                        cameraYaw);
                 }
                 else if (actions.Guard.WasPressedThisFrame())
                 {
                     first = CharacterCommand.Attack(
                         AttackIntent.Light,
                         true,
-                        false);
+                        false,
+                        moveInput,
+                        cameraYaw);
                 }
                 else if (_sprintRollResolver.ShouldRoll(
                     actions.Roll.WasReleasedThisFrame()))

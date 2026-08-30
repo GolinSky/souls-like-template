@@ -123,12 +123,26 @@ namespace SoulsLike.Entities.Character.Runtime
         public bool IsHeavy => Intent == AttackIntent.Heavy;
         public bool IsLeftHand { get; }
         public bool IsSprinting { get; }
+        public Vector2 MoveInput { get; }
+        public float CameraYaw { get; }
 
         public AttackRequest(AttackIntent intent, bool isLeftHand, bool isSprinting)
+            : this(intent, isLeftHand, isSprinting, Vector2.zero, 0.0f)
+        {
+        }
+
+        public AttackRequest(
+            AttackIntent intent,
+            bool isLeftHand,
+            bool isSprinting,
+            Vector2 moveInput,
+            float cameraYaw)
         {
             Intent = intent;
             IsLeftHand = isLeftHand;
             IsSprinting = isSprinting;
+            MoveInput = moveInput;
+            CameraYaw = cameraYaw;
         }
     }
 
@@ -215,10 +229,27 @@ namespace SoulsLike.Entities.Character.Runtime
             bool isLeftHand,
             bool isSprinting)
         {
+            return Attack(
+                intent,
+                isLeftHand,
+                isSprinting,
+                Vector2.zero,
+                0.0f);
+        }
+
+        public static CharacterCommand Attack(
+            AttackIntent intent,
+            bool isLeftHand,
+            bool isSprinting,
+            Vector2 moveInput,
+            float cameraYaw)
+        {
             AttackRequest request = new AttackRequest(
                 intent,
                 isLeftHand,
-                isSprinting);
+                isSprinting,
+                moveInput,
+                cameraYaw);
             return new CharacterCommand(
                 CharacterCommandKind.Attack,
                 attackRequest: request);

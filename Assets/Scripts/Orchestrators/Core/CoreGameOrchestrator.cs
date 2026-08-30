@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.Character;
+using SoulsLike.Services.Fade;
 using SoulsLike.Services.Spawn;
 using SoulsLike.Services.Travel.Data;
 using UnityEngine;
@@ -20,11 +21,15 @@ namespace SoulsLike.Services
 
     public class CoreGameOrchestrator: IInitializable, IStartable, IGameStateNotifier, ICoreGameOrchestrator
     {
+        private const float RESPAWN_FADE_DURATION = 0.5f;
+
         private readonly IGameOrchestrator _gameOrchestrator;
         private readonly CharacterFactory _characterFactory;
         private readonly CharacterSpawnService _characterSpawnService;
+        private readonly IFadeService _fadeService;
         private Character _character;
         private bool _startsOnGrace;
+        private bool _isRespawning;
         public GameState CurrentGameState { get; private set; }
         
         private readonly List<IGameStateObserver> _observers = new();
@@ -32,11 +37,13 @@ namespace SoulsLike.Services
         public CoreGameOrchestrator(
             IGameOrchestrator gameOrchestrator,
             CharacterFactory characterFactory,
-            CharacterSpawnService characterSpawnService)
+            CharacterSpawnService characterSpawnService,
+            IFadeService fadeService)
         {
             _gameOrchestrator = gameOrchestrator;
             _characterFactory = characterFactory;
             _characterSpawnService = characterSpawnService;
+            _fadeService = fadeService;
         }
         
         public void Initialize()
@@ -85,10 +92,37 @@ namespace SoulsLike.Services
             return UniTask.CompletedTask;
         }
 
-        public UniTask RespawnAtLastGrace()
+        public async UniTask RespawnAtLastGrace()
         {
-            SetGameState(GameState.Ended);
-            return _gameOrchestrator.LoadLevel(_characterSpawnService.PrepareRespawn());
+            if (_isRespawning)
+            {
+                return;
+            }
+
+            _isRespawning = true;
+            try
+            {
+                var fadeInCompleted = new UniTaskCompletionSource<bool>();
+                _fadeService.FadeIn(RESPAWN_FADE_DURATION, () => fadeInCompleted.TrySetResult(true));
+                await fadeInCompleted.Task;
+
+                SetGameState(GameState.Ended);
+                Vector3 lastGracePosition = _characterSpawnService.GetLastGracePosition();
+                _character.SetPosition(lastGracePosition);
+                _characterSpawnService.SaveCurrentPosition(lastGracePosition);
+
+                await UniTask.NextFrame(PlayerLoopTiming.LastUpdate);
+
+                var fadeOutCompleted = new UniTaskCompletionSource<bool>();
+                _fadeService.FadeOut(RESPAWN_FADE_DURATION, () => fadeOutCompleted.TrySetResult(true));
+                await fadeOutCompleted.Task;
+
+                SetGameState(GameState.Idle);
+            }
+            finally
+            {
+                _isRespawning = false;
+            }
         }
 
         public void QuitGame()
