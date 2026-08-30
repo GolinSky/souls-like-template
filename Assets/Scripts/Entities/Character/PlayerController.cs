@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.Character.Input;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Interactions;
@@ -21,6 +22,7 @@ namespace SoulsLike.Entities.Character
         private readonly HealthComponent _healthComponent;
         private readonly PlayerCharacterInputAdapter _inputAdapter;
         private readonly InteractionController _interactionController;
+        private readonly ICoreGameOrchestrator _coreGameOrchestrator;
 
         private GameState _currentGameState;
 
@@ -32,7 +34,8 @@ namespace SoulsLike.Entities.Character
             IGameStateNotifier gameStateNotifier,
             HealthComponent healthComponent,
             PlayerCharacterInputAdapter inputAdapter,
-            InteractionController interactionController)
+            InteractionController interactionController,
+            ICoreGameOrchestrator coreGameOrchestrator)
         {
             _inputService = inputService;
             _character = character;
@@ -42,18 +45,21 @@ namespace SoulsLike.Entities.Character
             _healthComponent = healthComponent;
             _inputAdapter = inputAdapter;
             _interactionController = interactionController;
+            _coreGameOrchestrator = coreGameOrchestrator;
         }
 
         public void Initialize()
         {
             _cameraService.SetTarget(_character.CameraTarget);
             _gameStateNotifier.RegisterObserver(this);
+            _healthComponent.Model.OnDied += HandleDied;
             _currentGameState = _gameStateNotifier.CurrentGameState;
         }
 
         public void Dispose()
         {
             _gameStateNotifier.UnregisterObserver(this);
+            _healthComponent.Model.OnDied -= HandleDied;
         }
 
         public void OnGameStateChanged(GameState newState)
@@ -144,6 +150,11 @@ namespace SoulsLike.Entities.Character
             _targetingService.ClearTarget();
             _character.SetLockOnTarget(false, null);
             _cameraService.ClearLockOnTarget();
+        }
+
+        private void HandleDied(long sourceEntityId)
+        {
+            _coreGameOrchestrator.RespawnAtLastGrace().Forget();
         }
     }
 }

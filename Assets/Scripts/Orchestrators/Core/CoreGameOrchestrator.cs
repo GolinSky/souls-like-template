@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.Character;
-using SoulsLike.Services.Scenes.Data;
+using SoulsLike.Services.Spawn;
+using SoulsLike.Services.Travel.Data;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -12,7 +13,8 @@ namespace SoulsLike.Services
         GameState CurrentGameState { get; }
         void ResumeGame();
         void PauseGame();
-        UniTask OnGraceSit();
+        UniTask OnGraceSit(GraceId graceId);
+        UniTask RespawnAtLastGrace();
         void QuitGame();
     }
 
@@ -20,27 +22,38 @@ namespace SoulsLike.Services
     {
         private readonly IGameOrchestrator _gameOrchestrator;
         private readonly CharacterFactory _characterFactory;
+        private readonly CharacterSpawnService _characterSpawnService;
+        private Character _character;
+        private bool _startsOnGrace;
         public GameState CurrentGameState { get; private set; }
         
         private readonly List<IGameStateObserver> _observers = new();
 
         public CoreGameOrchestrator(
             IGameOrchestrator gameOrchestrator,
-            CharacterFactory characterFactory)
+            CharacterFactory characterFactory,
+            CharacterSpawnService characterSpawnService)
         {
             _gameOrchestrator = gameOrchestrator;
             _characterFactory = characterFactory;
+            _characterSpawnService = characterSpawnService;
         }
         
         public void Initialize()
         {
             SetGameState(GameState.Initialized);
-            _characterFactory.CreateCharacter();
+            if (_characterSpawnService.TryConsumeSpawn(out Vector3 spawnPosition, out _startsOnGrace))
+            {
+                _character = _characterFactory.CreateCharacter(spawnPosition);
+                return;
+            }
+
+            _character = _characterFactory.CreateCharacter();
         }
         
         public void Start()
         {
-            SetGameState(GameState.Idle);
+            SetGameState(_startsOnGrace ? GameState.OnGraceSit : GameState.Idle);
         }
 
      
@@ -65,15 +78,23 @@ namespace SoulsLike.Services
             SetGameState(GameState.Paused);
         }
 
-        public UniTask OnGraceSit()
+        public UniTask OnGraceSit(GraceId graceId)
         {
+            _characterSpawnService.SaveLastGrace(graceId);
             SetGameState(GameState.OnGraceSit);
             return UniTask.CompletedTask;
         }
 
+        public UniTask RespawnAtLastGrace()
+        {
+            SetGameState(GameState.Ended);
+            return _gameOrchestrator.LoadLevel(_characterSpawnService.PrepareRespawn());
+        }
+
         public void QuitGame()
         {
-            _gameOrchestrator.LoadLevel(SceneType.MainMenu);
+            _characterSpawnService.SaveCurrentPosition(_character.transform.position);
+            _gameOrchestrator.LoadMenu().Forget();
         }
 
         public void RegisterObserver(IGameStateObserver observer)

@@ -94,7 +94,6 @@ namespace SoulsLike.Ui.Travel
             }
 
             GraceData grace = _selectedLocation.GetGrace(graceId);
-            SceneType sceneType = _selectedLocation.Id;
             _isConfirmationPending = true;
             _genericPopupService.ShowAcceptPopup(
                 "Travel",
@@ -104,7 +103,7 @@ namespace SoulsLike.Ui.Travel
                     _isConfirmationPending = false;
                     if (accepted)
                     {
-                        _travelService.Travel(sceneType).Forget();
+                        _travelService.Travel(graceId).Forget();
                     }
                 });
         }

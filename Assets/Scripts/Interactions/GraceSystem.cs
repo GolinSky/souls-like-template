@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Services;
 using SoulsLike.Services.Storage;
+using SoulsLike.Services.Spawn;
 using SoulsLike.Services.Travel.Data;
 using UnityEngine;
 using VContainer;
@@ -22,20 +24,29 @@ namespace SoulsLike.Interactions
         private ICoreGameOrchestrator _coreGameOrchestrator;
         private IStorageRegistry _storageRegistry;
         private LocationData _locationData;
+        private CharacterSpawnService _characterSpawnService;
         private HashSet<string> _openGraceIds;
 
         [Inject]
         public void Construct(
             ICoreGameOrchestrator coreGameOrchestrator,
             IStorageRegistry storageRegistry,
-            LocationData locationData)
+            LocationData locationData,
+            CharacterSpawnService characterSpawnService)
         {
             _coreGameOrchestrator = coreGameOrchestrator;
             _storageRegistry = storageRegistry;
             _locationData = locationData;
+            _characterSpawnService = characterSpawnService;
             _openGraceIds = storageRegistry.GetData(
                 OPEN_GRACES_KEY,
                 new HashSet<string>());
+
+            if (_characterSpawnService.TryGetPendingGrace(out GraceId graceId))
+            {
+                GraceView graceView = graceViews.Single(view => view.GraceId == graceId);
+                _characterSpawnService.ResolvePendingGrace(graceView.InteractionAnchor.position);
+            }
         }
         
         public void Initialize()
@@ -63,7 +74,7 @@ namespace SoulsLike.Interactions
                 return UniTask.CompletedTask;
             }
 
-            return SitOnGrace();
+            return SitOnGrace(graceView);
         }
 
         public void ExitGraceState() => _coreGameOrchestrator.ResumeGame();
@@ -77,6 +88,6 @@ namespace SoulsLike.Interactions
         private bool IsGraceOpen(GraceId graceId) =>
             _openGraceIds.Contains(_locationData.GetGrace(graceId).Name);
 
-        private UniTask SitOnGrace() => _coreGameOrchestrator.OnGraceSit();
+        private UniTask SitOnGrace(GraceView graceView) => _coreGameOrchestrator.OnGraceSit(graceView.GraceId);
     }
 }

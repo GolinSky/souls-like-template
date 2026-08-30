@@ -8,6 +8,8 @@ using SoulsLike.Services.Repository;
 using SoulsLike.Services.Scenes;
 using SoulsLike.Services.Scenes.Data;
 using SoulsLike.Services.Storage;
+using SoulsLike.Services.Save;
+using SoulsLike.Services.Spawn;
 using SoulsLike.Services.Travel.Data;
 using SoulsLike.Services.Layer;
 using SoulsLike.Services.Layer.Data;
@@ -33,6 +35,8 @@ namespace SoulsLike
             builder.RegisterScriptableObject<LocationData>();
             builder.Register<SceneModel>(Lifetime.Singleton).AsSelf();
             builder.Register<SceneService>(Lifetime.Singleton).As<ISceneService>();
+            builder.Register<SaveService>(Lifetime.Singleton).As<ISaveService>();
+            builder.Register<CharacterSpawnService>(Lifetime.Singleton);
             
             // layer system
             builder.RegisterScriptableObject<LayerData>();

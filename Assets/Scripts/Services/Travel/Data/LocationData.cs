@@ -15,6 +15,9 @@ namespace SoulsLike.Services.Travel.Data
         public LocationEntry GetLocation(SceneType locationId) =>
             locations.Single(location => location.Id == locationId);
 
+        public LocationEntry GetLocation(GraceId graceId) =>
+            locations.Single(location => location.Graces.Any(grace => grace.Id == graceId));
+
         public GraceData GetGrace(GraceId graceId) =>
             locations.SelectMany(location => location.Graces).Single(grace => grace.Id == graceId);
     }

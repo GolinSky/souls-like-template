@@ -1,5 +1,5 @@
 ﻿using SoulsLike.Services;
-using SoulsLike.Services.Scenes.Data;
+using SoulsLike.Services.Spawn;
 using VContainer.Unity;
 
 namespace SoulsLike.Orchestrators.MainMenu
@@ -7,10 +7,14 @@ namespace SoulsLike.Orchestrators.MainMenu
     public class MainMenuOrchestrator: IMainMenuOrchestrator, IInitializable
     {
         private readonly IGameOrchestrator _gameOrchestrator;
+        private readonly CharacterSpawnService _characterSpawnService;
 
-        public MainMenuOrchestrator(IGameOrchestrator gameOrchestrator)
+        public MainMenuOrchestrator(
+            IGameOrchestrator gameOrchestrator,
+            CharacterSpawnService characterSpawnService)
         {
             _gameOrchestrator = gameOrchestrator;
+            _characterSpawnService = characterSpawnService;
         }
         
         public void Initialize()
@@ -19,7 +23,7 @@ namespace SoulsLike.Orchestrators.MainMenu
         
         public void PlayGame()
         {
-            _gameOrchestrator.LoadLevel(SceneType.DefaultLocation);
+            _gameOrchestrator.LoadLevel(_characterSpawnService.PrepareResume());
         }
 
         public void OpenOptions()

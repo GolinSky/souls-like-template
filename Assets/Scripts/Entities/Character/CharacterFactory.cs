@@ -39,7 +39,7 @@ namespace SoulsLike.Entities.Character
         {
         }
 
-        public Character CreateCharacter()
+        public Character CreateCharacter(Vector3? spawnPosition = null)
         {
             GameObject prefab = AssetService.LoadPrefab(CHARACTER_PREFAB_KEY);
             if (prefab == null)
@@ -141,6 +141,11 @@ namespace SoulsLike.Entities.Character
             });
 
             instance.transform.SetParent(_characterScope.transform, true);
+
+            if (spawnPosition.HasValue)
+            {
+                movementComponent.SetPosition(spawnPosition.Value);
+            }
 
             return character;
         }
