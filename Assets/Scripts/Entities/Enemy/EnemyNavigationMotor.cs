@@ -26,19 +26,24 @@ namespace SoulsLike.Entities.Enemy
         {
             agent.updatePosition = false;
             agent.updateRotation = false;
-            agent.nextPosition = transform.position;
-            if (!agent.isOnNavMesh)
+            if (!agent.Warp(transform.position))
             {
                 throw new InvalidOperationException(
                     $"Enemy '{name}' must spawn on a baked NavMesh.");
             }
+
+            Stop();
         }
 
         public void SetDestination(Vector3 position)
         {
             _hasDestination = true;
+            agent.nextPosition = transform.position;
             agent.isStopped = false;
-            agent.SetDestination(position);
+            if (!agent.SetDestination(position))
+            {
+                Stop();
+            }
         }
 
         public void Stop()
@@ -48,6 +53,7 @@ namespace SoulsLike.Entities.Enemy
             {
                 agent.isStopped = true;
                 agent.ResetPath();
+                agent.nextPosition = transform.position;
             }
 
             WorldVelocity = Vector3.zero;
@@ -84,6 +90,7 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
+            agent.nextPosition = transform.position;
             Vector3 desiredVelocity = agent.isStopped
                 ? Vector3.zero
                 : agent.desiredVelocity;
