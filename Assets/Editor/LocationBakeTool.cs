@@ -2,9 +2,11 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 namespace SoulsLike.EditorTools
@@ -13,7 +15,7 @@ namespace SoulsLike.EditorTools
     {
         private const string DEFAULT_LOCATION_FOLDER = "Assets/Scenes/DefaultLocation";
         private const string MAIN_SCENE_PATH = DEFAULT_LOCATION_FOLDER + "/DefaultLocation.unity";
-        private const string ROCKS_SCENE_PATH = DEFAULT_LOCATION_FOLDER + "/Rocks.unity";
+        private const string DEFAULT_LOCATION_BAKING_SET_PATH = DEFAULT_LOCATION_FOLDER + "/DefaultLocation Baking Set.asset";
         public static readonly string LogFilePath = "Assets/Scenes/DefaultLocation/bake_progress.txt";
 
         public static string[] AllScenes => GetDefaultLocationBakeScenes();
@@ -24,7 +26,6 @@ namespace SoulsLike.EditorTools
             return AssetDatabase.FindAssets("t:Scene", new[] { DEFAULT_LOCATION_FOLDER })
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .Where(path => path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
-                .Where(path => !path.Equals(ROCKS_SCENE_PATH, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(GetSceneSortKey)
                 .ThenBy(path => path, StringComparer.OrdinalIgnoreCase)
                 .ToArray();
@@ -46,7 +47,7 @@ namespace SoulsLike.EditorTools
         {
             var settings = new LightingSettings();
             settings.name = "PCLightingSettings";
-            settings.lightmapper = LightingSettings.Lightmapper.ProgressiveGPU;
+            settings.lightmapper = LightingSettings.Lightmapper.ProgressiveCPU;
             settings.lightmapResolution = 10; // 10 texels/unit for High Quality PC Location
             settings.directSampleCount = 32;
             settings.indirectSampleCount = 128;
@@ -337,7 +338,7 @@ namespace SoulsLike.EditorTools
 
         private const string BAKE_TEMP_LIGHTS_NAME = "_BakeCopiedLightsContainer";
         private const int EXPECTED_COPIED_LIGHT_COUNT = 60;
-        private static readonly float[] _lodScaleInLightmapByLevel = { 1.0f, 0.5f, 0.25f, 0.125f, 0.0625f };
+        private static readonly float[] _lodScaleInLightmapByLevel = { 1.0f, 1.0f, 1.0f, 0.5f, 0.25f };
         private static bool _bakeQueued;
 
         private sealed class GameObjectState
@@ -351,6 +352,14 @@ namespace SoulsLike.EditorTools
             public Light Light;
             public bool Enabled;
             public LightmapBakeType BakeType;
+        }
+
+        private sealed class ProbeVolumeState
+        {
+            public ProbeVolume ProbeVolume;
+            public GameObject GameObject;
+            public bool Enabled;
+            public bool ActiveSelf;
         }
 
         [MenuItem("Tools/Bake/Inspect DefaultLocation Lights")]
@@ -393,6 +402,99 @@ namespace SoulsLike.EditorTools
             };
         }
 
+        [MenuItem("Tools/Bake/Prepare DefaultLocation Multi-Scene Lighting Bake")]
+        public static void PrepareDefaultLocationMultiSceneLightingBake()
+        {
+            File.WriteAllText(LogFilePath, $"=== PREPARING DEFAULTLOCATION {AllScenes.Length} SCENES MULTI-SCENE LIGHTING BAKE ({DateTime.Now:yyyy-MM-dd HH:mm:ss}) ===" + Environment.NewLine);
+
+            ConfigureAllSceneFlags();
+            Scene mainScene = OpenAllDefaultLocationScenes();
+            EnsureDefaultLocationBakingSet();
+            ApplyMainSceneSkyboxToOpenScenes(mainScene);
+            ApplyPCBakeSettings();
+
+            int[] lodCounts = ApplyLodScaleInLightmapToOpenScenes();
+
+            EditorSceneManager.SaveOpenScenes();
+            AssetDatabase.SaveAssets();
+
+            WriteLog($"Prepared {AllScenes.Length} loaded scenes for one multi-scene lighting bake with LOD assignments: {FormatLodCounts(lodCounts)}.");
+            WriteLog($"Active scene: {mainScene.path}.");
+        }
+
+        [MenuItem("Tools/Bake/Bake DefaultLocation Multi-Scene Lighting")]
+        public static void BakeDefaultLocationMultiSceneLighting()
+        {
+            const string pointLightsRootName = "PointLights";
+            const string spotLightsRootName = "SpotLights";
+
+            DateTime startTime = DateTime.Now;
+            PrepareDefaultLocationMultiSceneLightingBake();
+
+            Scene mainScene = SceneManager.GetSceneByPath(MAIN_SCENE_PATH);
+            GameObject pointLightsRoot = FindSceneGameObjectByName(mainScene, pointLightsRootName);
+            GameObject spotLightsRoot = FindSceneGameObjectByName(mainScene, spotLightsRootName);
+
+            if (pointLightsRoot == null || spotLightsRoot == null)
+            {
+                throw new InvalidOperationException("DefaultLocation.unity must contain both PointLights and SpotLights source roots.");
+            }
+
+            GameObject[] sourceRoots = GetNonOverlappingRoots(pointLightsRoot, spotLightsRoot);
+            int sourceLightCount = CountLights(sourceRoots);
+            if (sourceLightCount <= 0)
+            {
+                throw new InvalidOperationException("DefaultLocation.unity must contain at least one PointLights/SpotLights source light.");
+            }
+
+            SetSourceLightsMixed(sourceRoots);
+            EnableProbeVolumesForAuthoring(CaptureProbeVolumeStates());
+
+            List<GameObjectState> gameObjectStates = CaptureGameObjectStates(sourceRoots);
+            List<LightState> lightStates = CaptureLightStates(sourceRoots);
+            List<ProbeVolumeState> probeVolumeStates = CaptureProbeVolumeStates();
+            bool probeVolumesEnabledBySrp = GetProbeReferenceVolumeEnabledBySrp();
+            Action adaptiveProbeVolumesBakeStartedHandler = null;
+
+            try
+            {
+                adaptiveProbeVolumesBakeStartedHandler = DisableAdaptiveProbeVolumesBakeHook();
+                ProbeReferenceVolume.instance.SetEnableStateFromSRP(false);
+                if (probeVolumesEnabledBySrp)
+                {
+                    WriteLog("Temporarily disabled SRP APV baking while generating DefaultLocation lightmaps.");
+                }
+
+                DisableProbeVolumesForLightmapBake(probeVolumeStates);
+                SetHierarchyActiveAndBaked(sourceRoots);
+                ApplyPCBakeSettings();
+
+                WriteLog($"Clearing stale baked lighting data for {AllScenes.Length} loaded DefaultLocation scenes.");
+                Lightmapping.Clear();
+                Lightmapping.ClearLightingDataAsset();
+                EditorSceneManager.SaveOpenScenes();
+                AssetDatabase.SaveAssets();
+
+                WriteLog($"Starting one multi-scene Lightmap Bake for {AllScenes.Length} loaded DefaultLocation scenes with {lightStates.Count} enabled PointLights/SpotLights from {sourceLightCount} source lights.");
+                bool bakeSuccess = Lightmapping.Bake();
+                if (!bakeSuccess)
+                {
+                    throw new InvalidOperationException("Lightmapping.Bake() returned false.");
+                }
+            }
+            finally
+            {
+                RestoreAdaptiveProbeVolumesBakeHook(adaptiveProbeVolumesBakeStartedHandler);
+                ProbeReferenceVolume.instance.SetEnableStateFromSRP(probeVolumesEnabledBySrp);
+                RestoreOriginalLightStates(gameObjectStates, lightStates);
+                RestoreProbeVolumeStates(probeVolumeStates);
+                EditorSceneManager.SaveOpenScenes();
+                AssetDatabase.SaveAssets();
+            }
+
+            WriteLog($"=== DEFAULTLOCATION MULTI-SCENE LIGHTING BAKE COMPLETE ({(DateTime.Now - startTime).TotalSeconds:F1}s) ===");
+        }
+
         private static void RunSubsceneBake()
         {
             const string mainScenePath = MAIN_SCENE_PATH;
@@ -409,8 +511,8 @@ namespace SoulsLike.EditorTools
                 throw new InvalidOperationException("DefaultLocation.unity must contain both PointLights and SpotLights source roots.");
             }
 
-            int sourceLightCount = pointLightsRoot.GetComponentsInChildren<Light>(true).Length +
-                spotLightsRoot.GetComponentsInChildren<Light>(true).Length;
+            GameObject[] sourceRoots = GetNonOverlappingRoots(pointLightsRoot, spotLightsRoot);
+            int sourceLightCount = CountLights(sourceRoots);
             if (sourceLightCount != EXPECTED_COPIED_LIGHT_COUNT)
             {
                 throw new InvalidOperationException($"Expected {EXPECTED_COPIED_LIGHT_COUNT} PointLights/SpotLights, found {sourceLightCount}.");
@@ -421,11 +523,7 @@ namespace SoulsLike.EditorTools
                 SaveSceneAndAssets(mainScene);
             }
 
-            List<GameObject> tempPrototypes = new List<GameObject>
-            {
-                CreateTemporaryPrototype(pointLightsRoot),
-                CreateTemporaryPrototype(spotLightsRoot)
-            };
+            List<GameObject> tempPrototypes = sourceRoots.Select(CreateTemporaryPrototype).ToList();
 
             try
             {
@@ -490,12 +588,13 @@ namespace SoulsLike.EditorTools
                 throw new InvalidOperationException("The source light roots were not found when the source scene was reopened.");
             }
 
-            List<GameObjectState> gameObjectStates = CaptureGameObjectStates(pointLightsRoot, spotLightsRoot);
-            List<LightState> lightStates = CaptureLightStates(pointLightsRoot, spotLightsRoot);
+            GameObject[] sourceRoots = GetNonOverlappingRoots(pointLightsRoot, spotLightsRoot);
+            List<GameObjectState> gameObjectStates = CaptureGameObjectStates(sourceRoots);
+            List<LightState> lightStates = CaptureLightStates(sourceRoots);
 
             try
             {
-                SetHierarchyActiveAndBaked(pointLightsRoot, spotLightsRoot);
+                SetHierarchyActiveAndBaked(sourceRoots);
                 ApplyPCBakeSettings();
 
                 WriteLog($"[{sceneIndex + 1}/{AllScenes.Length}] Configured {lightStates.Count} original PointLights/SpotLights (Enabled & Baked mode); LODs {FormatLodCounts(lodCounts)}. Starting Lightmap Bake for {Path.GetFileName(scene.path)}...");
@@ -609,11 +708,82 @@ namespace SoulsLike.EditorTools
             return $"LOD0={counts[0]}, LOD1={counts[1]}, LOD2={counts[2]}, LOD3={counts[3]}, LOD4={counts[4]}";
         }
 
-        private static List<GameObjectState> CaptureGameObjectStates(GameObject firstRoot, GameObject secondRoot)
+        private static int[] ApplyLodScaleInLightmapToOpenScenes()
+        {
+            int[] totals = new int[_lodScaleInLightmapByLevel.Length];
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                if (!scene.isLoaded)
+                {
+                    continue;
+                }
+
+                int[] counts = ApplyLodScaleInLightmap(scene);
+                for (int level = 0; level < totals.Length; level++)
+                {
+                    totals[level] += counts[level];
+                }
+
+                EditorSceneManager.MarkSceneDirty(scene);
+            }
+
+            return totals;
+        }
+
+        private static GameObject[] GetNonOverlappingRoots(params GameObject[] roots)
+        {
+            List<GameObject> nonOverlappingRoots = new List<GameObject>();
+            foreach (GameObject root in roots)
+            {
+                bool isCoveredByExistingRoot = false;
+                foreach (GameObject existingRoot in nonOverlappingRoots)
+                {
+                    if (root.transform.IsChildOf(existingRoot.transform))
+                    {
+                        isCoveredByExistingRoot = true;
+                        break;
+                    }
+                }
+
+                if (isCoveredByExistingRoot)
+                {
+                    continue;
+                }
+
+                for (int i = nonOverlappingRoots.Count - 1; i >= 0; i--)
+                {
+                    if (nonOverlappingRoots[i].transform.IsChildOf(root.transform))
+                    {
+                        nonOverlappingRoots.RemoveAt(i);
+                    }
+                }
+
+                nonOverlappingRoots.Add(root);
+            }
+
+            return nonOverlappingRoots.ToArray();
+        }
+
+        private static int CountLights(params GameObject[] roots)
+        {
+            int count = 0;
+            foreach (GameObject root in roots)
+            {
+                count += root.GetComponentsInChildren<Light>(true).Length;
+            }
+
+            return count;
+        }
+
+        private static List<GameObjectState> CaptureGameObjectStates(params GameObject[] roots)
         {
             List<GameObjectState> states = new List<GameObjectState>();
-            CaptureGameObjectStates(firstRoot, states);
-            CaptureGameObjectStates(secondRoot, states);
+            foreach (GameObject root in roots)
+            {
+                CaptureGameObjectStates(root, states);
+            }
+
             return states;
         }
 
@@ -626,11 +796,14 @@ namespace SoulsLike.EditorTools
             }
         }
 
-        private static List<LightState> CaptureLightStates(GameObject firstRoot, GameObject secondRoot)
+        private static List<LightState> CaptureLightStates(params GameObject[] roots)
         {
             List<LightState> states = new List<LightState>();
-            CaptureLightStates(firstRoot, states);
-            CaptureLightStates(secondRoot, states);
+            foreach (GameObject root in roots)
+            {
+                CaptureLightStates(root, states);
+            }
+
             return states;
         }
 
@@ -671,6 +844,169 @@ namespace SoulsLike.EditorTools
             for (int i = gameObjectStates.Count - 1; i >= 0; i--)
             {
                 gameObjectStates[i].GameObject.SetActive(gameObjectStates[i].ActiveSelf);
+            }
+        }
+
+        private static void SetSourceLightsMixed(params GameObject[] roots)
+        {
+            int changedCount = 0;
+            foreach (GameObject root in roots)
+            {
+                foreach (Light light in root.GetComponentsInChildren<Light>(true))
+                {
+                    if (light.lightmapBakeType == LightmapBakeType.Mixed)
+                    {
+                        continue;
+                    }
+
+                    light.lightmapBakeType = LightmapBakeType.Mixed;
+                    EditorUtility.SetDirty(light);
+                    changedCount++;
+                }
+            }
+
+            if (changedCount > 0)
+            {
+                WriteLog($"Reset {changedCount} source light(s) to Mixed before capturing the authoring state.");
+            }
+        }
+
+        private static List<ProbeVolumeState> CaptureProbeVolumeStates()
+        {
+            List<ProbeVolumeState> states = new List<ProbeVolumeState>();
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                if (!scene.isLoaded)
+                {
+                    continue;
+                }
+
+                foreach (GameObject root in scene.GetRootGameObjects())
+                {
+                    foreach (ProbeVolume probeVolume in root.GetComponentsInChildren<ProbeVolume>(true))
+                    {
+                        states.Add(new ProbeVolumeState
+                        {
+                            ProbeVolume = probeVolume,
+                            GameObject = probeVolume.gameObject,
+                            Enabled = probeVolume.enabled,
+                            ActiveSelf = probeVolume.gameObject.activeSelf
+                        });
+                    }
+                }
+            }
+
+            return states;
+        }
+
+        private static void EnableProbeVolumesForAuthoring(List<ProbeVolumeState> states)
+        {
+            int changedCount = 0;
+            foreach (ProbeVolumeState state in states)
+            {
+                if (!state.GameObject.activeSelf)
+                {
+                    state.GameObject.SetActive(true);
+                    EditorUtility.SetDirty(state.GameObject);
+                    EditorSceneManager.MarkSceneDirty(state.GameObject.scene);
+                    changedCount++;
+                }
+
+                if (!state.ProbeVolume.enabled)
+                {
+                    state.ProbeVolume.enabled = true;
+                    EditorUtility.SetDirty(state.ProbeVolume);
+                    EditorSceneManager.MarkSceneDirty(state.GameObject.scene);
+                    changedCount++;
+                }
+            }
+
+            if (changedCount > 0)
+            {
+                WriteLog($"Restored {states.Count} Adaptive Probe Volume object(s) before capturing the authoring state.");
+            }
+        }
+
+        private static Action DisableAdaptiveProbeVolumesBakeHook()
+        {
+            Type adaptiveProbeVolumesType = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType("UnityEngine.Rendering.AdaptiveProbeVolumes"))
+                .FirstOrDefault(type => type != null);
+
+            if (adaptiveProbeVolumesType == null)
+            {
+                WriteLog("AdaptiveProbeVolumes type was not found; continuing without detaching its bake hook.");
+                return null;
+            }
+
+            MethodInfo onBakeStartedMethod = adaptiveProbeVolumesType.GetMethod("OnBakeStarted", BindingFlags.Static | BindingFlags.NonPublic);
+            if (onBakeStartedMethod == null)
+            {
+                WriteLog("AdaptiveProbeVolumes.OnBakeStarted was not found; continuing without detaching its bake hook.");
+                return null;
+            }
+
+            Action handler = (Action)Delegate.CreateDelegate(typeof(Action), onBakeStartedMethod);
+            Lightmapping.bakeStarted -= handler;
+            WriteLog("Temporarily detached Adaptive Probe Volumes from Lightmapping.bakeStarted for the lightmap bake.");
+            return handler;
+        }
+
+        private static void RestoreAdaptiveProbeVolumesBakeHook(Action handler)
+        {
+            if (handler == null)
+            {
+                return;
+            }
+
+            Lightmapping.bakeStarted += handler;
+        }
+
+        private static bool GetProbeReferenceVolumeEnabledBySrp()
+        {
+            PropertyInfo enabledBySrpProperty = typeof(ProbeReferenceVolume).GetProperty("enabledBySRP", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (enabledBySrpProperty == null)
+            {
+                throw new MissingMemberException(nameof(ProbeReferenceVolume), "enabledBySRP");
+            }
+
+            return (bool)enabledBySrpProperty.GetValue(ProbeReferenceVolume.instance);
+        }
+
+        private static void DisableProbeVolumesForLightmapBake(List<ProbeVolumeState> states)
+        {
+            foreach (ProbeVolumeState state in states)
+            {
+                state.ProbeVolume.enabled = false;
+                state.GameObject.SetActive(false);
+                EditorUtility.SetDirty(state.ProbeVolume);
+                EditorUtility.SetDirty(state.GameObject);
+                EditorSceneManager.MarkSceneDirty(state.GameObject.scene);
+            }
+
+            if (states.Count > 0)
+            {
+                WriteLog($"Temporarily disabled {states.Count} Adaptive Probe Volume object(s) to bake lightmaps without the Unity light-probe bake crash.");
+            }
+        }
+
+        private static void RestoreProbeVolumeStates(List<ProbeVolumeState> states)
+        {
+            foreach (ProbeVolumeState state in states)
+            {
+                if (state.GameObject != null)
+                {
+                    state.GameObject.SetActive(state.ActiveSelf);
+                    EditorUtility.SetDirty(state.GameObject);
+                    EditorSceneManager.MarkSceneDirty(state.GameObject.scene);
+                }
+
+                if (state.ProbeVolume != null)
+                {
+                    state.ProbeVolume.enabled = state.Enabled;
+                    EditorUtility.SetDirty(state.ProbeVolume);
+                }
             }
         }
 
@@ -807,6 +1143,193 @@ namespace SoulsLike.EditorTools
 
             SceneManager.SetActiveScene(mainScene);
             WriteLog($"Reopened all {AllScenes.Length} scenes additively with DefaultLocation.unity active.");
+        }
+
+        private static Scene OpenAllDefaultLocationScenes()
+        {
+            Scene mainScene = default;
+            string[] scenes = AllScenes;
+            for (int i = 0; i < scenes.Length; i++)
+            {
+                string scenePath = scenes[i];
+                Scene scene = EditorSceneManager.OpenScene(scenePath, i == 0 ? OpenSceneMode.Single : OpenSceneMode.Additive);
+                if (scenePath.Equals(MAIN_SCENE_PATH, StringComparison.OrdinalIgnoreCase))
+                {
+                    mainScene = scene;
+                }
+            }
+
+            if (!mainScene.IsValid() || !mainScene.isLoaded)
+            {
+                throw new InvalidOperationException($"Main scene '{MAIN_SCENE_PATH}' must be loaded for the multi-scene lighting bake.");
+            }
+
+            SceneManager.SetActiveScene(mainScene);
+            return mainScene;
+        }
+
+        private static ProbeVolumeBakingSet EnsureDefaultLocationBakingSet()
+        {
+            string[] sceneGuids = AllScenes
+                .Select(AssetDatabase.AssetPathToGUID)
+                .ToArray();
+
+            if (sceneGuids.Any(string.IsNullOrEmpty))
+            {
+                throw new InvalidOperationException("Every DefaultLocation scene must have a valid asset GUID before assigning the APV Baking Set.");
+            }
+
+            ProbeVolumeBakingSet bakingSet = AssetDatabase.LoadAssetAtPath<ProbeVolumeBakingSet>(DEFAULT_LOCATION_BAKING_SET_PATH);
+            if (bakingSet == null)
+            {
+                bakingSet = ScriptableObject.CreateInstance<ProbeVolumeBakingSet>();
+                bakingSet.name = Path.GetFileNameWithoutExtension(DEFAULT_LOCATION_BAKING_SET_PATH);
+                InvokeBakingSetSetDefaults(bakingSet);
+                SetBakingSetSingleSceneMode(bakingSet, false);
+                AssetDatabase.CreateAsset(bakingSet, DEFAULT_LOCATION_BAKING_SET_PATH);
+            }
+
+            SetBakingSetSingleSceneMode(bakingSet, false);
+            DisableBakingSetVirtualOffset(bakingSet);
+            RemoveSceneGuidsFromOtherBakingSets(bakingSet, sceneGuids);
+
+            HashSet<string> targetSceneGuids = new HashSet<string>(sceneGuids, StringComparer.Ordinal);
+            foreach (string existingGuid in bakingSet.sceneGUIDs.ToArray())
+            {
+                if (!targetSceneGuids.Contains(existingGuid))
+                {
+                    bakingSet.RemoveScene(existingGuid);
+                }
+            }
+
+            foreach (string sceneGuid in sceneGuids)
+            {
+                if (!bakingSet.sceneGUIDs.Contains(sceneGuid) && !bakingSet.TryAddScene(sceneGuid))
+                {
+                    throw new InvalidOperationException($"Failed to add scene GUID '{sceneGuid}' to {DEFAULT_LOCATION_BAKING_SET_PATH}.");
+                }
+
+                bakingSet.SetSceneBaking(sceneGuid, true);
+            }
+
+            ProbeReferenceVolume.instance.SetActiveBakingSet(bakingSet);
+            EditorUtility.SetDirty(bakingSet);
+            AssetDatabase.SaveAssets();
+
+            WriteLog($"Using APV Baking Set '{DEFAULT_LOCATION_BAKING_SET_PATH}' with {bakingSet.sceneGUIDs.Count} DefaultLocation scene(s).");
+            return bakingSet;
+        }
+
+        private static void RemoveSceneGuidsFromOtherBakingSets(ProbeVolumeBakingSet targetBakingSet, IReadOnlyCollection<string> sceneGuids)
+        {
+            HashSet<string> targetSceneGuids = new HashSet<string>(sceneGuids, StringComparer.Ordinal);
+            string targetPath = AssetDatabase.GetAssetPath(targetBakingSet);
+
+            foreach (string bakingSetGuid in AssetDatabase.FindAssets("t:" + nameof(ProbeVolumeBakingSet)))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(bakingSetGuid);
+                if (path.Equals(targetPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                ProbeVolumeBakingSet bakingSet = AssetDatabase.LoadAssetAtPath<ProbeVolumeBakingSet>(path);
+                if (bakingSet == null)
+                {
+                    continue;
+                }
+
+                int removedCount = 0;
+                foreach (string sceneGuid in bakingSet.sceneGUIDs.ToArray())
+                {
+                    if (targetSceneGuids.Contains(sceneGuid))
+                    {
+                        bakingSet.RemoveScene(sceneGuid);
+                        removedCount++;
+                    }
+                }
+
+                if (removedCount > 0)
+                {
+                    EditorUtility.SetDirty(bakingSet);
+                    WriteLog($"Moved {removedCount} DefaultLocation scene(s) out of APV Baking Set '{path}'.");
+                }
+            }
+        }
+
+        private static void InvokeBakingSetSetDefaults(ProbeVolumeBakingSet bakingSet)
+        {
+            MethodInfo setDefaultsMethod = typeof(ProbeVolumeBakingSet).GetMethod("SetDefaults", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (setDefaultsMethod == null)
+            {
+                throw new MissingMethodException(nameof(ProbeVolumeBakingSet), "SetDefaults");
+            }
+
+            setDefaultsMethod.Invoke(bakingSet, null);
+        }
+
+        private static void SetBakingSetSingleSceneMode(ProbeVolumeBakingSet bakingSet, bool singleSceneMode)
+        {
+            SerializedObject serializedObject = new SerializedObject(bakingSet);
+            SerializedProperty singleSceneModeProperty = serializedObject.FindProperty("singleSceneMode");
+            if (singleSceneModeProperty == null)
+            {
+                throw new InvalidOperationException("ProbeVolumeBakingSet.singleSceneMode serialized property was not found.");
+            }
+
+            singleSceneModeProperty.boolValue = singleSceneMode;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void DisableBakingSetVirtualOffset(ProbeVolumeBakingSet bakingSet)
+        {
+            SerializedObject serializedObject = new SerializedObject(bakingSet);
+            SerializedProperty virtualOffsetProperty = serializedObject.FindProperty("settings.virtualOffsetSettings.useVirtualOffset");
+            if (virtualOffsetProperty == null)
+            {
+                throw new InvalidOperationException("ProbeVolumeBakingSet virtual offset serialized property was not found.");
+            }
+
+            if (!virtualOffsetProperty.boolValue)
+            {
+                return;
+            }
+
+            virtualOffsetProperty.boolValue = false;
+            serializedObject.ApplyModifiedPropertiesWithoutUndo();
+            WriteLog($"Disabled APV Virtual Offset on '{DEFAULT_LOCATION_BAKING_SET_PATH}' for stable editor light baking.");
+        }
+
+        private static void ApplyMainSceneSkyboxToOpenScenes(Scene mainScene)
+        {
+            SceneManager.SetActiveScene(mainScene);
+            Material mainSkybox = RenderSettings.skybox;
+            int updatedCount = 0;
+
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                if (!scene.isLoaded)
+                {
+                    continue;
+                }
+
+                SceneManager.SetActiveScene(scene);
+                if (RenderSettings.skybox == mainSkybox)
+                {
+                    continue;
+                }
+
+                RenderSettings.skybox = mainSkybox;
+                EditorSceneManager.MarkSceneDirty(scene);
+                updatedCount++;
+            }
+
+            SceneManager.SetActiveScene(mainScene);
+            if (updatedCount > 0)
+            {
+                WriteLog($"Applied {Path.GetFileName(mainScene.path)} skybox to {updatedCount} loaded scene(s) for consistent multi-scene lighting.");
+            }
         }
 
         private static GameObject FindGameObjectByNameOrComponent(string name, LightType type)

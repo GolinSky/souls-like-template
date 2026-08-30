@@ -1429,9 +1429,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -13.917892, y: 256.34683, z: -117.258194}
+    m_Target: {x: -19.581594, y: 276.6282, z: -143.684}
     speed: 2
-    m_Value: {x: -43.795815, y: 271.00876, z: -136.09099}
+    m_Value: {x: -19.581594, y: 276.6282, z: -143.684}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1477,13 +1477,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.25872943, y: 0.08736693, z: -0.023504512, w: -0.9617034}
+    m_Target: {x: -0.06448092, y: 0.92677164, z: -0.31931362, w: -0.18708748}
     speed: 2
-    m_Value: {x: -0.17248784, y: 0.44960028, z: -0.08894514, w: -0.8718924}
+    m_Value: {x: -0.06448008, y: 0.9267595, z: -0.31930944, w: -0.18708502}
   m_Size:
-    m_Target: 132.99709
+    m_Target: 2.1665642
     speed: 2
-    m_Value: 41.506943
+    m_Value: 2.1665642
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1590,54 +1590,54 @@ MonoBehaviour:
       m_Data: 1890222
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 71926
-    - m_Data: 71928
-    - m_Data: 71930
-    - m_Data: 71932
-    - m_Data: 71934
-    - m_Data: 71936
-    - m_Data: 71938
-    - m_Data: 71940
-    - m_Data: 71942
-    - m_Data: 71944
-    - m_Data: 71946
-    - m_Data: 71948
-    - m_Data: 71950
-    - m_Data: 71952
-    - m_Data: 71954
-    - m_Data: 71956
-    - m_Data: 71958
-    - m_Data: 71960
-    - m_Data: 71962
-    - m_Data: 71964
-    - m_Data: 71966
-    - m_Data: 71968
-    - m_Data: 71970
-    - m_Data: 71972
-    - m_Data: 71974
-    - m_Data: 71976
-    - m_Data: 71978
-    - m_Data: 71980
-    - m_Data: 71982
-    - m_Data: 71984
-    - m_Data: 71986
-    - m_Data: 71988
-    - m_Data: 71990
-    - m_Data: 71992
-    - m_Data: 71994
-    - m_Data: 71996
-    - m_Data: 71998
-    - m_Data: 72000
-    - m_Data: 72002
-    - m_Data: 72004
-    - m_Data: 72006
-    - m_Data: 72008
-    - m_Data: 72010
-    - m_Data: 72012
-    - m_Data: 72014
-    - m_Data: 72016
-    - m_Data: 72018
-    - m_Data: 72020
+    - m_Data: 71576
+    - m_Data: 71578
+    - m_Data: 71580
+    - m_Data: 71582
+    - m_Data: 71584
+    - m_Data: 71586
+    - m_Data: 71588
+    - m_Data: 71590
+    - m_Data: 71592
+    - m_Data: 71594
+    - m_Data: 71596
+    - m_Data: 71598
+    - m_Data: 71600
+    - m_Data: 71602
+    - m_Data: 71604
+    - m_Data: 71606
+    - m_Data: 71608
+    - m_Data: 71610
+    - m_Data: 71612
+    - m_Data: 71614
+    - m_Data: 71616
+    - m_Data: 71618
+    - m_Data: 71620
+    - m_Data: 71622
+    - m_Data: 71624
+    - m_Data: 71626
+    - m_Data: 71628
+    - m_Data: 71630
+    - m_Data: 71632
+    - m_Data: 71634
+    - m_Data: 71636
+    - m_Data: 71638
+    - m_Data: 71640
+    - m_Data: 71642
+    - m_Data: 71644
+    - m_Data: 71646
+    - m_Data: 71648
+    - m_Data: 71650
+    - m_Data: 71652
+    - m_Data: 71654
+    - m_Data: 71656
+    - m_Data: 71658
+    - m_Data: 71660
+    - m_Data: 71662
+    - m_Data: 71664
+    - m_Data: 71666
+    - m_Data: 71668
+    - m_Data: 71670
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1670,54 +1670,54 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 71926
-    - m_Data: 71928
-    - m_Data: 71930
-    - m_Data: 71932
-    - m_Data: 71934
-    - m_Data: 71936
-    - m_Data: 71938
-    - m_Data: 71940
-    - m_Data: 71942
-    - m_Data: 71944
-    - m_Data: 71946
-    - m_Data: 71948
-    - m_Data: 71950
-    - m_Data: 71952
-    - m_Data: 71954
-    - m_Data: 71956
-    - m_Data: 71958
-    - m_Data: 71960
-    - m_Data: 71962
-    - m_Data: 71964
-    - m_Data: 71966
-    - m_Data: 71968
-    - m_Data: 71970
-    - m_Data: 71972
-    - m_Data: 71974
-    - m_Data: 71976
-    - m_Data: 71978
-    - m_Data: 71980
-    - m_Data: 71982
-    - m_Data: 71984
-    - m_Data: 71986
-    - m_Data: 71988
-    - m_Data: 71990
-    - m_Data: 71992
-    - m_Data: 71994
-    - m_Data: 71996
-    - m_Data: 71998
-    - m_Data: 72000
-    - m_Data: 72002
-    - m_Data: 72004
-    - m_Data: 72006
-    - m_Data: 72008
-    - m_Data: 72010
-    - m_Data: 72012
-    - m_Data: 72014
-    - m_Data: 72016
-    - m_Data: 72018
-    - m_Data: 72020
+    - m_Data: 71576
+    - m_Data: 71578
+    - m_Data: 71580
+    - m_Data: 71582
+    - m_Data: 71584
+    - m_Data: 71586
+    - m_Data: 71588
+    - m_Data: 71590
+    - m_Data: 71592
+    - m_Data: 71594
+    - m_Data: 71596
+    - m_Data: 71598
+    - m_Data: 71600
+    - m_Data: 71602
+    - m_Data: 71604
+    - m_Data: 71606
+    - m_Data: 71608
+    - m_Data: 71610
+    - m_Data: 71612
+    - m_Data: 71614
+    - m_Data: 71616
+    - m_Data: 71618
+    - m_Data: 71620
+    - m_Data: 71622
+    - m_Data: 71624
+    - m_Data: 71626
+    - m_Data: 71628
+    - m_Data: 71630
+    - m_Data: 71632
+    - m_Data: 71634
+    - m_Data: 71636
+    - m_Data: 71638
+    - m_Data: 71640
+    - m_Data: 71642
+    - m_Data: 71644
+    - m_Data: 71646
+    - m_Data: 71648
+    - m_Data: 71650
+    - m_Data: 71652
+    - m_Data: 71654
+    - m_Data: 71656
+    - m_Data: 71658
+    - m_Data: 71660
+    - m_Data: 71662
+    - m_Data: 71664
+    - m_Data: 71666
+    - m_Data: 71668
+    - m_Data: 71670
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

@@ -17,6 +17,20 @@
 - The local MCP launch auto-activates `SoulsLikeTemplate`. If Serena reports that no project is active, activate `F:\Private\SoulsLikeTemplate` before using symbol tools.
 - Do not run Serena onboarding or write Serena memories automatically. `AGENTS.md` is the source of durable agent instructions; use Serena memories only when the user explicitly requests them.
 
+## Subagent orchestration
+
+Keep the parent on GPT-5.6 Sol High. Use the named project agents proactively for non-trivial tasks.
+
+1. Trivial or isolated change: parent works directly.
+2. Investigation: run `graph_explorer` and, when useful, `context_curator` in parallel.
+3. Architecture: parent creates the plan; use `unity_architect` only for high-risk or ambiguous design.
+4. Implementation: assign exactly one writer—`csharp_worker` or `unity_operator`—for overlapping scope.
+5. Validation: after implementation, run `unity_reviewer` and `unity_test_runner` in parallel.
+6. Performance tasks: use `unity_profiler` before proposing optimization.
+7. The parent must synthesize all results, resolve conflicts, and make the final decision.
+
+Use 2–4 children only when work is genuinely independent. Give every child a narrow objective, exact files or symbols, constraints, and required output. Never run overlapping writers or spawn every agent by default.
+
 ## Dependency Injection
 
 - Treat constructor-injected dependencies as required and rely on VContainer to fail fast when a binding cannot be resolved.
