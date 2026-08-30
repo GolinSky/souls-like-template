@@ -48,6 +48,7 @@ sysinfo.txt
 /.idea/.idea.star-soccer-slim-game/.idea/*
 UserSettings/Layouts/default-2022.dwlt
 UserSettings/Layouts/CurrentMaximizeLayout.dwlt
+/UserSettings/ObsidianLauncherSettings.asset
 # Graphify output is local operational state
 /graphify-out/
 Assets/Art/Reference
