@@ -184,3 +184,10 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: AcceptPopup
+      value:
+        m_AssetGUID: 020f92bf0315bb244a1ea5b9606835cf
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0

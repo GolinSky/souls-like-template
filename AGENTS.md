@@ -17,6 +17,10 @@
 - The local MCP launch auto-activates `SoulsLikeTemplate`. If Serena reports that no project is active, activate `F:\Private\SoulsLikeTemplate` before using symbol tools.
 - Do not run Serena onboarding or write Serena memories automatically. `AGENTS.md` is the source of durable agent instructions; use Serena memories only when the user explicitly requests them.
 
+## UI Workflow
+
+- Before working on UI, UI controllers, presenters, or views, read `SoulsLikeGameVault/ui/UI_Code_Build_Guide.md` through Obsidian MCP. If Obsidian MCP is unavailable, use `Tools/SoulsLike/Obsidian/Start Obsidian`, retry MCP, then read the checked-in Markdown note if MCP remains unavailable. Starting Obsidian does not guarantee MCP readiness.
+
 ## Subagent orchestration
 
 Keep the parent on GPT-5.6 Sol High. Use the named project agents proactively for non-trivial tasks.
