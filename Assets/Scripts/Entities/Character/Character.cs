@@ -194,17 +194,19 @@ namespace SoulsLike.Entities.Character
                 return CharacterCommandExecutionStatus.Executed;
             }
 
-            bool hasRightWeapon = GetWeaponId(loadout.EffectiveRight).HasValue;
-            bool hasLeftWeapon = GetWeaponId(loadout.EffectiveLeft).HasValue;
+            ItemId? rightWeaponId = ResolveAttackWeaponId(loadout, false);
+            ItemId? leftWeaponId = ResolveAttackWeaponId(loadout, true);
+            bool hasRightWeapon = rightWeaponId.HasValue;
+            bool hasLeftWeapon = leftWeaponId.HasValue;
             if ((request.IsLeftHand && !hasLeftWeapon)
-                || (!request.IsLeftHand && !hasRightWeapon && hasLeftWeapon))
+                || (!request.IsLeftHand && !hasRightWeapon))
             {
                 return CharacterCommandExecutionStatus.Invalid;
             }
 
             ItemId? weaponId = request.IsLeftHand
-                ? GetWeaponId(loadout.EffectiveLeft)
-                : GetWeaponId(loadout.EffectiveRight);
+                ? leftWeaponId
+                : rightWeaponId;
             if (weaponId.HasValue)
             {
                 CombatProfile combatProfile = _itemCatalog.GetWeapon(weaponId.Value).CombatProfile;
@@ -445,18 +447,22 @@ namespace SoulsLike.Entities.Character
         public void ApplyEquipmentLoadout(EquipmentLoadout loadout)
         {
             equipmentPresentation.ApplyLoadout(loadout);
-            ItemId? rightWeaponId = GetWeaponId(loadout.EffectiveRight);
-            ItemId? leftWeaponId = GetWeaponId(loadout.EffectiveLeft);
-            AnimationProfile profile = rightWeaponId.HasValue
+            ItemId? rightWeaponId = ResolveAttackWeaponId(loadout, false);
+            ItemId? leftWeaponId = ResolveAttackWeaponId(loadout, true);
+            bool hasRightEquippedWeapon = rightWeaponId.HasValue
+                && rightWeaponId != ItemId.Fist;
+            bool hasLeftEquippedWeapon = leftWeaponId.HasValue
+                && leftWeaponId != ItemId.Fist;
+            AnimationProfile profile = hasRightEquippedWeapon
                 ? _itemCatalog.GetWeapon(rightWeaponId.Value).AnimationProfile
-                : leftWeaponId.HasValue
+                : hasLeftEquippedWeapon
                     ? _itemCatalog.GetWeapon(leftWeaponId.Value).AnimationProfile
                     : null;
             if (profile == null) animatorComponent.ResetAnimationProfile();
             else animatorComponent.ApplyAnimationProfile(
                 profile,
-                rightWeaponId.HasValue,
-                leftWeaponId.HasValue);
+                hasRightEquippedWeapon,
+                hasLeftEquippedWeapon);
 
             animatorComponent.TransitionHandMode(loadout.HandMode);
             _attackComponent.SetActiveWeapons(
@@ -514,6 +520,24 @@ namespace SoulsLike.Entities.Character
             return _itemCatalog.GetItem(context.ItemId).ItemType == ItemType.Weapon
                 ? context.ItemId
                 : null;
+        }
+
+        private ItemId? ResolveAttackWeaponId(
+            EquipmentLoadout loadout,
+            bool isLeftHand)
+        {
+            ItemId? leftWeaponId = GetWeaponId(loadout.EffectiveLeft);
+            if (isLeftHand)
+            {
+                return leftWeaponId;
+            }
+
+            ItemId? rightWeaponId = GetWeaponId(loadout.EffectiveRight);
+            return rightWeaponId.HasValue
+                ? rightWeaponId
+                : loadout.EffectiveRight == null && !leftWeaponId.HasValue
+                    ? ItemId.Fist
+                    : null;
         }
 
         private static float ResolveAttackStaminaCost(

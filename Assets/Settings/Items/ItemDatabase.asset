@@ -58,3 +58,12 @@ MonoBehaviour:
     weight: 0
     maxStack: 99
     equipmentGroups: 09000000
+  - itemId: 6
+    itemType: 0
+    displayName: Fists
+    description: Bare hands used as a basic melee weapon.
+    loreDescription: The weapon carried by every warrior.
+    icon: {fileID: 0}
+    weight: 0
+    maxStack: 1
+    equipmentGroups: 

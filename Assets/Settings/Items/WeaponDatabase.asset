@@ -46,3 +46,36 @@ MonoBehaviour:
     skillName: Square Off
     skillIcon: {fileID: 0}
     skillFocusCost: 8
+  - itemId: 6
+    animationProfile: {fileID: 0}
+    combatProfile: {fileID: 11400000, guid: 31120f5e98cbb4743babc15af15600b3, type: 2}
+    equippedPrefab: {fileID: 0}
+    attackSfx: {fileID: 8300000, guid: 8310d30411a268d48a31702254e326c7, type: 3}
+    canTwoHand: 0
+    physicalAttack: 20
+    magicAttack: 0
+    fireAttack: 0
+    lightningAttack: 0
+    holyAttack: 0
+    critical: 100
+    physicalGuard: 0
+    magicGuard: 0
+    fireGuard: 0
+    lightningGuard: 0
+    holyGuard: 0
+    guardBoost: 0
+    requirements:
+      Strength: 0
+      Dexterity: 0
+      Intelligence: 0
+      Faith: 0
+      Arcane: 0
+    scaling:
+      Strength: 0
+      Dexterity: 0
+      Intelligence: 0
+      Faith: 0
+      Arcane: 0
+    skillName: 
+    skillIcon: {fileID: 0}
+    skillFocusCost: 0

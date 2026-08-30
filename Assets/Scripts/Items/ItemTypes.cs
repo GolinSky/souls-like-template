@@ -9,7 +9,8 @@ namespace SoulsLike.Items
         WoodenShield = 2,
         CrimsonFlask = 3,
         LightningGrease = 4,
-        GoldenRuneSmall = 5
+        GoldenRuneSmall = 5,
+        Fist = 6
     }
 
     public enum ItemType

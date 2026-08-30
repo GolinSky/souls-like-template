@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c11464558e414054a937399862ea4d2d, type: 3}
+  m_Name: FistCombatProfile
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.CombatProfile
+  <LightAttackMultiplier>k__BackingField: 1
+  <HeavyAttackMultiplier>k__BackingField: 1.5
+  <LightAttackStaminaCost>k__BackingField: 14
+  <LightAttackStaminaStartThreshold>k__BackingField: 0
+  <HeavyAttackStaminaCost>k__BackingField: 30
+  <HeavyAttackStaminaStartThreshold>k__BackingField: 0
+  <StaminaCostMultiplier>k__BackingField: 1
