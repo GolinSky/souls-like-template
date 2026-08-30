@@ -558,14 +558,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MPUIKit::MPUIKIT.MPImage
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 15bbd93682708b447a93d7d7a8a3b3ee, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -576,7 +576,7 @@ MonoBehaviour:
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
   m_DrawShape: 3
-  m_ImageType: 0
+  m_ImageType: 1
   m_MaterialMode: 0
   m_StrokeWidth: 0
   m_OutlineWidth: 1
@@ -618,12 +618,12 @@ MonoBehaviour:
     m_CornerRadius: 0
     m_Offset: {x: 0, y: 0}
   m_GradientEffect:
-    m_Enabled: 0
-    m_GradientType: 0
+    m_Enabled: 1
+    m_GradientType: 1
     m_Gradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.34509805, g: 0.47808248, b: 0.49019608, a: 1}
+      key1: {r: 0.2901961, g: 0.40905476, b: 0.4117647, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -647,14 +647,14 @@ MonoBehaviour:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     m_CornerGradientColors:
-    - {r: 0, g: 0, b: 0, a: 0}
-    - {r: 0, g: 0, b: 0, a: 0}
-    - {r: 0, g: 0, b: 0, a: 0}
-    - {r: 0, g: 0, b: 0, a: 0}
+    - {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 0}
+    - {r: 0.42352942, g: 0.42352942, b: 0.42352942, a: 0}
+    - {r: 0.34509805, g: 0.47843137, b: 0.49019608, a: 0.5019608}
+    - {r: 0.34509805, g: 0.47843137, b: 0.49019608, a: 0.5019608}
     m_Rotation: 0
 --- !u!1 &7768497973724425087
 GameObject:
@@ -673,7 +673,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1156617533012621684
 RectTransform:
   m_ObjectHideFlags: 0
@@ -774,12 +774,12 @@ MonoBehaviour:
     m_CornerRadius: 0
     m_Offset: {x: 0, y: 0}
   m_GradientEffect:
-    m_Enabled: 0
-    m_GradientType: 0
+    m_Enabled: 1
+    m_GradientType: 1
     m_Gradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0.34509805, g: 0.47808248, b: 0.49019608, a: 1}
+      key1: {r: 0.2901961, g: 0.40905476, b: 0.4117647, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -803,14 +803,14 @@ MonoBehaviour:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     m_CornerGradientColors:
-    - {r: 0, g: 0, b: 0, a: 0}
-    - {r: 0, g: 0, b: 0, a: 0}
-    - {r: 0, g: 0, b: 0, a: 0}
-    - {r: 0, g: 0, b: 0, a: 0}
+    - {r: 0.34509805, g: 0.47843137, b: 0.49019608, a: 1}
+    - {r: 0.34509805, g: 0.47843137, b: 0.49019608, a: 1}
+    - {r: 0.34509805, g: 0.47843137, b: 0.49019608, a: 1}
+    - {r: 0.34509805, g: 0.47843137, b: 0.49019608, a: 1}
     m_Rotation: 0
 --- !u!1 &8509896079198647153
 GameObject:
