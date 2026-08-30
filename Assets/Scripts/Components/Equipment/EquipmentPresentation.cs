@@ -9,6 +9,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
     {
         [SerializeField] private Transform rightHandAnchor;
         [SerializeField] private Transform leftHandAnchor;
+        [SerializeField] private WeaponRuntime rightFistRuntime;
 
         private static readonly Vector3 _leftHandSwordLocalPosition = new(0f, 0.11f, 0.039f);
         private static readonly Quaternion _leftHandSwordLocalRotation =
@@ -31,11 +32,15 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         private void Awake()
         {
-            if (rightHandAnchor == null || leftHandAnchor == null)
+            if (rightHandAnchor == null
+                || leftHandAnchor == null
+                || rightFistRuntime == null)
             {
                 throw new InvalidOperationException(
-                    $"{nameof(EquipmentPresentation)} '{name}' requires right and left hand anchors.");
+                    $"{nameof(EquipmentPresentation)} '{name}' requires hand anchors and a fist runtime.");
             }
+
+            rightFistRuntime.Initialize(default, ItemId.Fist);
         }
 
         public void ApplyLoadout(EquipmentLoadout loadout)
@@ -83,6 +88,12 @@ namespace SoulsLike.Entities.Character.Components.Equipment
                 }
 
                 _leftInstance.SetActive(_isLeftHandVisible);
+            }
+
+            if (loadout.EffectiveRight == null
+                && ActiveLeftWeaponRuntime == null)
+            {
+                ActiveRightWeaponRuntime = rightFistRuntime;
             }
         }
 
