@@ -1,8 +1,8 @@
 using System;
-using System.Collections.Generic;
 using SoulsLike.Interactions;
 using SoulsLike.Services;
 using SoulsLike.Services.Fade;
+using SoulsLike.Ui.Navigation;
 using SoulsLike.Ui.Travel;
 using VContainer.Unity;
 
@@ -10,6 +10,7 @@ namespace SoulsLike.Ui.Grace
 {
     public sealed class GraceUiController : UiController,
         IInitializable,
+        ITickable,
         IDisposable,
         IGameStateObserver,
         IGraceUiPresenter,
@@ -22,9 +23,10 @@ namespace SoulsLike.Ui.Grace
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly IFadeService _fadeService;
         private readonly ITravelRoute _travelRoute;
-        private readonly Stack<IGraceRoute> _routeStack = new();
+        private readonly IInputService _inputService;
 
         private GraceUi _view;
+        private UiRouteStack _routeStack;
         private bool _isOnGraceSit;
 
         public GraceUiController(
@@ -32,19 +34,22 @@ namespace SoulsLike.Ui.Grace
             GraceSystem graceSystem,
             IGameStateNotifier gameStateNotifier,
             IFadeService fadeService,
-            ITravelRoute travelRoute)
+            ITravelRoute travelRoute,
+            IInputService inputService)
             : base(uiService)
         {
             _graceSystem = graceSystem;
             _gameStateNotifier = gameStateNotifier;
             _fadeService = fadeService;
             _travelRoute = travelRoute;
+            _inputService = inputService;
         }
 
         public void Initialize()
         {
             _view = CreateUi<GraceUi>();
             _view.AssignPresenter(this);
+            _routeStack = new UiRouteStack(_view.Show, _view.Hide);
             _travelRoute.CloseRequested += HandleTravelCloseRequested;
             _gameStateNotifier.RegisterObserver(this);
             OnGameStateChanged(_gameStateNotifier.CurrentGameState);
@@ -61,6 +66,23 @@ namespace SoulsLike.Ui.Grace
             OpenRoute(_travelRoute);
         }
 
+        public void Tick()
+        {
+            if (!_isOnGraceSit || !_inputService.UiBackAction.WasPressedThisFrame())
+            {
+                return;
+            }
+
+            _inputService.ConsumeUiBack();
+            if (_routeStack.HasOpenRoutes)
+            {
+                _routeStack.CloseTop();
+                return;
+            }
+
+            Leave();
+        }
+
         public void Leave()
         {
             _view.Hide();
@@ -74,7 +96,7 @@ namespace SoulsLike.Ui.Grace
                 _isOnGraceSit = true;
                 _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION);
 
-                if (_routeStack.Count == 0)
+                if (!_routeStack.HasOpenRoutes)
                 {
                     _view.Show();
                 }
@@ -88,23 +110,13 @@ namespace SoulsLike.Ui.Grace
                 _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION);
             }
 
-            CloseAllRoutes();
+            _routeStack.CloseAll();
             _view.Hide();
         }
 
         private void OpenRoute(IGraceRoute route)
         {
-            if (_routeStack.Count > 0)
-            {
-                _routeStack.Peek().Hide();
-            }
-            else
-            {
-                _view.Hide();
-            }
-
-            _routeStack.Push(route);
-            route.Show();
+            _routeStack.Open(route);
         }
 
         private void HandleTravelCloseRequested()
@@ -114,23 +126,7 @@ namespace SoulsLike.Ui.Grace
 
         private void CloseRoute()
         {
-            _routeStack.Pop().Hide();
-            if (_routeStack.Count > 0)
-            {
-                _routeStack.Peek().Show();
-            }
-            else
-            {
-                _view.Show();
-            }
-        }
-
-        private void CloseAllRoutes()
-        {
-            while (_routeStack.Count > 0)
-            {
-                _routeStack.Pop().Hide();
-            }
+            _routeStack.CloseTop();
         }
     }
 }

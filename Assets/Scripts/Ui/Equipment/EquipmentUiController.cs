@@ -71,11 +71,7 @@ namespace SoulsLike.Ui.Equipment
                 return;
             }
 
-            if (_inputService.UIActions.Cancel.WasPressedThisFrame())
-            {
-                CloseEquipment();
-            }
-            else if (_inputService.UnequipAction.WasPressedThisFrame())
+            if (_inputService.UnequipAction.WasPressedThisFrame())
             {
                 UnequipSelectedSlot();
             }

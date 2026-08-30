@@ -106,6 +106,11 @@ namespace SoulsLike.Entities.Character
 
         private void HandleLockOnInput()
         {
+            if (_inputService.WasUiBackConsumedThisFrame)
+            {
+                return;
+            }
+
             if (_targetingService.IsLockedOn && !_targetingService.IsCurrentTargetValid(_character.transform.position))
             {
                 ClearLockOn();

@@ -72,11 +72,7 @@ namespace SoulsLike.Ui.Inventory
                 return;
             }
 
-            if (_inputService.UIActions.Cancel.WasPressedThisFrame())
-            {
-                CloseInventory();
-            }
-            else if (_inputService.ToggleLoreAction.WasPressedThisFrame())
+            if (_inputService.ToggleLoreAction.WasPressedThisFrame())
             {
                 ToggleLoreView();
             }

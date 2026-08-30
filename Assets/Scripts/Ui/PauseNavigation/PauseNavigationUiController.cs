@@ -6,6 +6,7 @@ using SoulsLike.Items;
 using SoulsLike.Services;
 using SoulsLike.Ui.Equipment;
 using SoulsLike.Ui.Inventory;
+using SoulsLike.Ui.Navigation;
 using VContainer.Unity;
 
 namespace SoulsLike.Ui.PauseNavigation
@@ -22,7 +23,6 @@ namespace SoulsLike.Ui.PauseNavigation
         private readonly IEquipmentRoute _equipmentRoute;
         private readonly IInventoryRoute _inventoryRoute;
         private readonly ISystemRoute _systemRoute;
-        private readonly Stack<IPauseNavigationRoute> _routeStack = new();
 
         private static readonly ItemType[] _leftHandItemTypes  =
         {
@@ -37,6 +37,7 @@ namespace SoulsLike.Ui.PauseNavigation
         private static readonly ItemType[] _consumableItemTypes = { ItemType.Consumable };
 
         private PauseNavigationUi _view;
+        private UiRouteStack _routeStack;
 
         public PauseNavigationUiController(
             IUiService uiService,
@@ -59,6 +60,7 @@ namespace SoulsLike.Ui.PauseNavigation
             _view = CreateUi<PauseNavigationUi>();
             _view.AssignPresenter(this);
             _view.Hide();
+            _routeStack = new UiRouteStack(_view.Show, _view.Hide);
 
             _equipmentRoute.CloseRequested += HandleEquipmentCloseRequested;
             _equipmentRoute.InventoryRequested += HandleEquipmentInventoryRequested;
@@ -78,7 +80,16 @@ namespace SoulsLike.Ui.PauseNavigation
 
         public void Tick()
         {
-            if (_inputService.CharacterActions.Pause.WasPressedThisFrame())
+            if (_gameOrchestrator.CurrentGameState == GameState.Paused
+                && _inputService.UiBackAction.WasPressedThisFrame())
+            {
+                _inputService.ConsumeUiBack();
+                HandleUiBack();
+                return;
+            }
+
+            if (_gameOrchestrator.CurrentGameState == GameState.Idle
+                && _inputService.CharacterActions.Pause.WasPressedThisFrame())
             {
                 TogglePauseNavigation();
                 return;
@@ -111,17 +122,7 @@ namespace SoulsLike.Ui.PauseNavigation
 
         private void OpenRoute(IPauseNavigationRoute route)
         {
-            if (_routeStack.Count > 0)
-            {
-                _routeStack.Peek().Hide();
-            }
-            else
-            {
-                _view.Hide();
-            }
-
-            _routeStack.Push(route);
-            route.Show();
+            _routeStack.Open(route);
         }
 
         private void HandleEquipmentCloseRequested()
@@ -141,37 +142,33 @@ namespace SoulsLike.Ui.PauseNavigation
 
         private void HandleSystemResumeRequested()
         {
-            while (_routeStack.Count > 0)
-            {
-                _routeStack.Pop().Hide();
-            }
-
+            _routeStack.CloseAll();
             _view.Hide();
             _gameOrchestrator.ResumeGame();
         }
 
         private void HandleEquipmentInventoryRequested(EquipmentSlotId slotId)
         {
-            if (_routeStack.Count > 0)
-            {
-                _routeStack.Peek().Hide();
-            }
-
-            _routeStack.Push(_inventoryRoute);
-            _inventoryRoute.Open(GetItemTypes(slotId), _equipmentRoute.SelectItem);
+            _routeStack.Open(
+                _inventoryRoute,
+                () => _inventoryRoute.Open(GetItemTypes(slotId), _equipmentRoute.SelectItem));
         }
 
         private void CloseRoute()
         {
-            _routeStack.Pop().Hide();
-            if (_routeStack.Count > 0)
+            _routeStack.CloseTop();
+        }
+
+        private void HandleUiBack()
+        {
+            if (_routeStack.HasOpenRoutes)
             {
-                _routeStack.Peek().Show();
+                _routeStack.CloseTop();
+                return;
             }
-            else
-            {
-                _view.Show();
-            }
+
+            _view.Hide();
+            _gameOrchestrator.ResumeGame();
         }
 
         private void TogglePauseNavigation()
@@ -180,12 +177,6 @@ namespace SoulsLike.Ui.PauseNavigation
             {
                 _view.Show();
                 _gameOrchestrator.PauseGame();
-            }
-            else if (_gameOrchestrator.CurrentGameState == GameState.Paused
-                && !_view.IsHidden)
-            {
-                _view.Hide();
-                _gameOrchestrator.ResumeGame();
             }
         }
 

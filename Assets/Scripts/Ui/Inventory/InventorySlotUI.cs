@@ -142,6 +142,7 @@ namespace SoulsLike.Ui.Inventory
 
         private void SetFocusState(bool focused)
         {
+            //todo: use tween do opacity 
             focusFrame.gameObject.SetActive(focused);
         }
     }

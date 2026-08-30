@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using VContainer.Unity;
 
@@ -13,11 +14,16 @@ namespace SoulsLike.Services
         InputAction ToggleLoreAction { get; }
         InputAction ToggleSimpleViewAction { get; }
         InputAction UnequipAction { get; }
+        InputAction UiBackAction { get; }
+        bool WasUiBackConsumedThisFrame { get; }
+
+        void ConsumeUiBack();
     }
 
     public sealed class InputService : IInputService, IInitializable, IDisposable
     {
         private readonly ProjectInputActions _projectInputActions;
+        private int _uiBackConsumedFrame = -1;
 
         public ProjectInputActions.CharacterActions CharacterActions => _projectInputActions.Character;
         public ProjectInputActions.UIActions UIActions => _projectInputActions.UI;
@@ -26,6 +32,8 @@ namespace SoulsLike.Services
         public InputAction ToggleLoreAction { get; }
         public InputAction ToggleSimpleViewAction { get; }
         public InputAction UnequipAction { get; }
+        public InputAction UiBackAction { get; }
+        public bool WasUiBackConsumedThisFrame => _uiBackConsumedFrame == Time.frameCount;
 
         public InputService()
         {
@@ -51,6 +59,10 @@ namespace SoulsLike.Services
                 "Unequip",
                 "<Keyboard>/delete",
                 "<Gamepad>/buttonWest");
+            UiBackAction = CreateMenuAction(
+                "UiBack",
+                "<Keyboard>/q",
+                "<Gamepad>/buttonEast");
         }
 
         public void Initialize()
@@ -61,6 +73,7 @@ namespace SoulsLike.Services
             ToggleLoreAction.Enable();
             ToggleSimpleViewAction.Enable();
             UnequipAction.Enable();
+            UiBackAction.Enable();
         }
 
         public void Dispose()
@@ -70,7 +83,13 @@ namespace SoulsLike.Services
             ToggleLoreAction.Dispose();
             ToggleSimpleViewAction.Dispose();
             UnequipAction.Dispose();
+            UiBackAction.Dispose();
             _projectInputActions.Dispose();
+        }
+
+        public void ConsumeUiBack()
+        {
+            _uiBackConsumedFrame = Time.frameCount;
         }
 
         private static InputAction CreateMenuAction(
