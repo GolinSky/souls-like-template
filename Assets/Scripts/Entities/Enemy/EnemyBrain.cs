@@ -64,7 +64,6 @@ namespace SoulsLike.Entities.Enemy
         public void Initialize()
         {
             _gameStateNotifier.RegisterObserver(this);
-            _gameState = _gameStateNotifier.CurrentGameState;
             _healthModel.OnDamageApplied += OnDamageApplied;
             _healthModel.OnDied += OnDied;
             Goal = _actor.BehaviourProfile.StartsDormant
@@ -73,6 +72,7 @@ namespace SoulsLike.Entities.Enemy
                     ? EnemyGoal.Patrol
                     : EnemyGoal.Idle;
             CurrentIntent = new EnemyIntent(EnemyIntentKind.Wait, _actor.transform.position);
+            OnGameStateChanged(_gameStateNotifier.CurrentGameState);
         }
 
         public void Dispose()
