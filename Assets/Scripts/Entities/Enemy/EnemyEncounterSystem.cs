@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using SoulsLike.Services;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace SoulsLike.Entities.Enemy
         private readonly List<EnemyActor> _spawnedEnemies = new();
         private IGameStateNotifier _gameStateNotifier;
         private EnemyFactory _enemyFactory;
+        private Coroutine _respawnCoroutine;
 
         [Inject]
         public void Construct(IGameStateNotifier gameStateNotifier, EnemyFactory enemyFactory)
@@ -53,6 +55,19 @@ namespace SoulsLike.Entities.Enemy
             }
 
             _spawnedEnemies.Clear();
+
+            if (_respawnCoroutine != null)
+            {
+                StopCoroutine(_respawnCoroutine);
+            }
+
+            _respawnCoroutine = StartCoroutine(SpawnEnemiesNextFrame());
+        }
+
+        private IEnumerator SpawnEnemiesNextFrame()
+        {
+            yield return null;
+            _respawnCoroutine = null;
             SpawnEnemies();
         }
 
