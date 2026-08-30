@@ -13,14 +13,8 @@ MonoBehaviour:
   m_Name: Rocks Baking Set
   m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.ProbeVolumeBakingSet
   m_SceneBakeData:
-    m_Keys:
-    - 2f74995d3115c7b4db0ef500f27cd461
-    m_Values:
-    - hasProbeVolume: 0
-      bakeScene: 1
-      bounds:
-        m_Center: {x: 0, y: 0, z: 0}
-        m_Extent: {x: 0, y: 0, z: 0}
+    m_Keys: []
+    m_Values: []
   singleSceneMode: 1
   dialogNoProbeVolumeInSetShown: 1
   settings:
@@ -40,8 +34,7 @@ MonoBehaviour:
       collisionMask:
         serializedVersion: 2
         m_Bits: 4294967291
-  m_SceneGUIDs:
-  - 2f74995d3115c7b4db0ef500f27cd461
+  m_SceneGUIDs: []
   obsoleteScenesToNotBake: []
   m_LightingScenarios:
   - Default

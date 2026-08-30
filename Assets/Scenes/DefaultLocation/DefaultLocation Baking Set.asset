@@ -1,0 +1,212 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4881f9a2c4d568047b316028d20a8dca, type: 3}
+  m_Name: DefaultLocation Baking Set
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.ProbeVolumeBakingSet
+  m_SceneBakeData:
+    m_Keys:
+    - e1e3c7572dbb88649b71d17c69aa6429
+    - ce81741ae1d91f04ca0a0f2a3728e1cb
+    - bf4a7347472562b44b0d55a3429d4296
+    - d25bee38c56545543ba41ae9df135cea
+    - 9fbc572b0f2a10247b6fe76b3e0a8135
+    - 6627b208115216d4893115870a97c059
+    - 6c5d3f42013c9184da9469cf9d5cf197
+    - 8a39a4a1d099de841ba9caeca5ab6888
+    - 46e0770836d66334dbd808b22f9dcc96
+    - 2f74995d3115c7b4db0ef500f27cd461
+    m_Values:
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: -40.5, y: 283.5, z: -121.5}
+        m_Extent: {x: 40.5, y: 40.5, z: 40.5}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+    - hasProbeVolume: 0
+      bakeScene: 1
+      bounds:
+        m_Center: {x: 0, y: 0, z: 0}
+        m_Extent: {x: 0, y: 0, z: 0}
+  singleSceneMode: 0
+  dialogNoProbeVolumeInSetShown: 0
+  settings:
+    m_Version: 1
+    dilationSettings:
+      enableDilation: 0
+      dilationDistance: 1
+      dilationValidityThreshold: 0.25
+      dilationIterations: 1
+      squaredDistWeighting: 1
+    virtualOffsetSettings:
+      useVirtualOffset: 0
+      validityThreshold: 0.25
+      outOfGeoOffset: 0.01
+      searchMultiplier: 0.2
+      rayOriginBias: -0.001
+      collisionMask:
+        serializedVersion: 2
+        m_Bits: 4294967291
+  m_SceneGUIDs:
+  - e1e3c7572dbb88649b71d17c69aa6429
+  - ce81741ae1d91f04ca0a0f2a3728e1cb
+  - bf4a7347472562b44b0d55a3429d4296
+  - d25bee38c56545543ba41ae9df135cea
+  - 9fbc572b0f2a10247b6fe76b3e0a8135
+  - 6627b208115216d4893115870a97c059
+  - 6c5d3f42013c9184da9469cf9d5cf197
+  - 8a39a4a1d099de841ba9caeca5ab6888
+  - 46e0770836d66334dbd808b22f9dcc96
+  - 2f74995d3115c7b4db0ef500f27cd461
+  obsoleteScenesToNotBake: []
+  m_LightingScenarios:
+  - Default
+  cellDescs:
+    m_Keys: 
+    m_Values: []
+  m_SerializedPerSceneCellList:
+  - sceneGUID: e1e3c7572dbb88649b71d17c69aa6429
+    cellList: 
+  - sceneGUID: ce81741ae1d91f04ca0a0f2a3728e1cb
+    cellList: 
+  - sceneGUID: bf4a7347472562b44b0d55a3429d4296
+    cellList: 
+  - sceneGUID: d25bee38c56545543ba41ae9df135cea
+    cellList: 
+  - sceneGUID: 9fbc572b0f2a10247b6fe76b3e0a8135
+    cellList: 
+  - sceneGUID: 6627b208115216d4893115870a97c059
+    cellList: 
+  - sceneGUID: 6c5d3f42013c9184da9469cf9d5cf197
+    cellList: 
+  - sceneGUID: 8a39a4a1d099de841ba9caeca5ab6888
+    cellList: 
+  - sceneGUID: 46e0770836d66334dbd808b22f9dcc96
+    cellList: 
+  - sceneGUID: 2f74995d3115c7b4db0ef500f27cd461
+    cellList: 
+  cellSharedDataAsset:
+    m_AssetGUID: 
+    m_StreamableAssetPath: 
+    m_ElementSize: 0
+    m_StreamableCellDescs:
+      m_Keys: 
+      m_Values: []
+    m_Asset: {fileID: 0}
+  scenarios:
+    m_Keys: []
+    m_Values: []
+  cellBricksDataAsset:
+    m_AssetGUID: 
+    m_StreamableAssetPath: 
+    m_ElementSize: 0
+    m_StreamableCellDescs:
+      m_Keys: 
+      m_Values: []
+    m_Asset: {fileID: 0}
+  cellSupportDataAsset:
+    m_AssetGUID: 
+    m_StreamableAssetPath: 
+    m_ElementSize: 0
+    m_StreamableCellDescs:
+      m_Keys: 
+      m_Values: []
+    m_Asset: {fileID: 0}
+  chunkSizeInBricks: 128
+  maxCellPosition: {x: 0, y: 0, z: 0}
+  minCellPosition: {x: 0, y: 0, z: 0}
+  globalBounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
+  bakedSimplificationLevels: 3
+  bakedMinDistanceBetweenProbes: 1
+  bakedProbeOcclusion: 0
+  bakedSkyOcclusionValue: 0
+  bakedSkyShadingDirectionValue: 0
+  bakedProbeOffset: {x: 0, y: 0, z: 0}
+  bakedMaskCount: 1
+  bakedLayerMasks:
+    x: 0
+    y: 0
+    z: 0
+    w: 0
+  maxSHChunkCount: -1
+  L0ChunkSize: 0
+  L1ChunkSize: 0
+  L2TextureChunkSize: 0
+  ProbeOcclusionChunkSize: 0
+  sharedValidityMaskChunkSize: 8192
+  sharedSkyOcclusionL0L1ChunkSize: 0
+  sharedSkyShadingDirectionIndicesChunkSize: 0
+  sharedDataChunkSize: 0
+  supportPositionChunkSize: 0
+  supportValidityChunkSize: 0
+  supportTouchupChunkSize: 0
+  supportLayerMaskChunkSize: 0
+  supportOffsetsChunkSize: 0
+  supportDataChunkSize: 0
+  lightingScenario: Default
+  version: 2
+  freezePlacement: 0
+  probeOffset: {x: 0, y: 0, z: 0}
+  simplificationLevels: 3
+  minDistanceBetweenProbes: 1
+  renderersLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  minRendererVolumeSize: 0.1
+  skyOcclusion: 0
+  skyOcclusionBakingSamples: 2048
+  skyOcclusionBakingBounces: 2
+  skyOcclusionAverageAlbedo: 0.6
+  skyOcclusionBackFaceCulling: 0
+  skyOcclusionShadingDirection: 0
+  useRenderingLayers: 0
+  renderingLayerMasks: []
