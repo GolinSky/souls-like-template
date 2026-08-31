@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 003a3a9e615c7cd49915bef497fba6a7, type: 3}
+  m_Name: CameraData
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.CameraService.CameraData
+  <SwitchAngleDuration>k__BackingField: 0.4
+  <SwitchAngleEase>k__BackingField: 7
+  <ZoomFov>k__BackingField: 30
+  <ZoomDuration>k__BackingField: 0.3
+  <ZoomEase>k__BackingField: 3
+  <AirborneRiseLag>k__BackingField: 0.65
+  <AirborneFallLag>k__BackingField: 0.4
+  <GroundedFollowSmoothTime>k__BackingField: 0.1
+  <JumpFollowSmoothTime>k__BackingField: 0.22
+  <FallFollowSmoothTime>k__BackingField: 0.15
+  <LongFallSmoothTime>k__BackingField: 0.08
+  <GroundedMaxFollowSpeed>k__BackingField: 5
+  <JumpMaxFollowSpeed>k__BackingField: 5
+  <FallMaxFollowSpeed>k__BackingField: 8
+  <LongFallMaxSpeed>k__BackingField: 18
+  <LongFallCatchupDistance>k__BackingField: 4
+  <MouseYawDegreesPerPixel>k__BackingField: 0.09
+  <MousePitchDegreesPerPixel>k__BackingField: 0.08
+  <StickYawDegreesPerSecond>k__BackingField: 220
+  <StickPitchDegreesPerSecond>k__BackingField: 150
+  <TopClamp>k__BackingField: 70
+  <BottomClamp>k__BackingField: -30
+  <CameraAngleOverride>k__BackingField: 0
+  <LockCameraPosition>k__BackingField: 0
+  <LockHeadingHoldDistance>k__BackingField: 0.55
+  <LockHeadingReleaseDistance>k__BackingField: 0.9
+  <LockYawSmoothTime>k__BackingField: 0.12
+  <LockYawMaxSpeed>k__BackingField: 150
+  <LockBasePitch>k__BackingField: 6
+  <LockMinPitchDistance>k__BackingField: 1.5
+  <LockVerticalCloseDistance>k__BackingField: 1.25
+  <LockVerticalFarDistance>k__BackingField: 4
+  <LockCloseVerticalInfluence>k__BackingField: 0.25
+  <LockFarVerticalInfluence>k__BackingField: 0.65
+  <LockPitchSmoothTime>k__BackingField: 0.2
+  <LockPitchMaxSpeed>k__BackingField: 100
+  <LockMinFocusDistance>k__BackingField: 1.5
+  <LockMinFocusHeight>k__BackingField: -0.75
+  <LockMaxFocusHeight>k__BackingField: 1.25
+  <LockTargetSmoothTime>k__BackingField: 0.1
+  <LockYawHalfTurnTolerance>k__BackingField: 2
+  <HumanoidLockProfile>k__BackingField:
+    ShoulderOffset: {x: 1, y: 0.48, z: 0}
+    VerticalArmLength: 0
+    CameraDistance: 3.3
+    CameraSide: 0.5
+    FieldOfView: 48
+    MinPitch: -10
+    MaxPitch: 16
+  <LockRigBlendDuration>k__BackingField: 0.2
+  <LockRigBlendEase>k__BackingField: 3

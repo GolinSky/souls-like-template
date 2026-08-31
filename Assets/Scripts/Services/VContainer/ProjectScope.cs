@@ -3,6 +3,7 @@ using SoulsLike.Extensions;
 using SoulsLike.Services;
 using SoulsLike.Services.Audio;
 using SoulsLike.Services.Audio.Data;
+using SoulsLike.Services.CameraService;
 using SoulsLike.Services.IdGeneration;
 using SoulsLike.Services.Repository;
 using SoulsLike.Services.Scenes;
@@ -48,6 +49,8 @@ namespace SoulsLike
             builder.Register<AudioService>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<AmbienceSystem>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<CombatStateNotifier>(Lifetime.Singleton).As<ICombatStateNotifier>();
+
+            builder.RegisterScriptableObject<CameraData>();
 
             builder.Register<AddressableAssetService>(Lifetime.Singleton).As<IAssetService>();
             builder.Register<StorageRegistry>(Lifetime.Singleton).As<IStorageRegistry>();

@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4a2c48128ebcd604ea1839e82a84b23c
+    m_Address: CameraData
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 68d7c89f3a5f7d544b27a5d44f2df42d
     m_Address: WeaponDatabase
     m_ReadOnly: 0
