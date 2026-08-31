@@ -191,3 +191,10 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: CheatsUi
+      value:
+        m_AssetGUID: 34856f4f7a7e43847b48ab5d21151f22
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0

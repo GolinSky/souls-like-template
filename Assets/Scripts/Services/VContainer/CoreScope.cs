@@ -7,6 +7,7 @@ using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Enemy;
 using SoulsLike.Interactions;
 using SoulsLike.Ui.EnemyHealth;
+using SoulsLike.Ui.Cheats;
 using SoulsLike.Ui.Grace;
 using SoulsLike.Ui.Travel;
 using UnityEngine;
@@ -27,6 +28,7 @@ namespace SoulsLike
             builder.RegisterComponent(enemyEncounterSystem).AsSelf().AsImplementedInterfaces();
             builder.Register<TargetingService>(Lifetime.Singleton).As<ITargetingService>();
             builder.Register<EnemyHealthUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.Register<CheatsUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<TravelService>(Lifetime.Singleton);
             builder.Register<TravelUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<GraceUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

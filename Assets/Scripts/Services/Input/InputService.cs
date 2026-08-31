@@ -13,6 +13,7 @@ namespace SoulsLike.Services
         InputAction OpenEquipmentAction { get; }
         InputAction ToggleLoreAction { get; }
         InputAction ToggleSimpleViewAction { get; }
+        InputAction ToggleCheatsAction { get; }
         InputAction UnequipAction { get; }
         InputAction UiBackAction { get; }
         bool WasUiBackConsumedThisFrame { get; }
@@ -31,6 +32,7 @@ namespace SoulsLike.Services
         public InputAction OpenEquipmentAction { get; }
         public InputAction ToggleLoreAction { get; }
         public InputAction ToggleSimpleViewAction { get; }
+        public InputAction ToggleCheatsAction { get; }
         public InputAction UnequipAction { get; }
         public InputAction UiBackAction { get; }
         public bool WasUiBackConsumedThisFrame => _uiBackConsumedFrame == Time.frameCount;
@@ -55,6 +57,10 @@ namespace SoulsLike.Services
                 "ToggleSimpleView",
                 "<Keyboard>/f",
                 "<Gamepad>/rightStickPress");
+            ToggleCheatsAction = new InputAction(
+                "ToggleCheats",
+                InputActionType.Button,
+                "<Keyboard>/f12");
             UnequipAction = CreateMenuAction(
                 "Unequip",
                 "<Keyboard>/delete",
@@ -72,6 +78,7 @@ namespace SoulsLike.Services
             OpenEquipmentAction.Enable();
             ToggleLoreAction.Enable();
             ToggleSimpleViewAction.Enable();
+            ToggleCheatsAction.Enable();
             UnequipAction.Enable();
             UiBackAction.Enable();
         }
@@ -82,6 +89,7 @@ namespace SoulsLike.Services
             OpenEquipmentAction.Dispose();
             ToggleLoreAction.Dispose();
             ToggleSimpleViewAction.Dispose();
+            ToggleCheatsAction.Dispose();
             UnequipAction.Dispose();
             UiBackAction.Dispose();
             _projectInputActions.Dispose();

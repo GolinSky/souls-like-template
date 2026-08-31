@@ -55,6 +55,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 34856f4f7a7e43847b48ab5d21151f22
+    m_Address: CheatsUi
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5a87cfbe26c6da4428432314b12700a5
     m_Address: MainMenuUi
     m_ReadOnly: 0
