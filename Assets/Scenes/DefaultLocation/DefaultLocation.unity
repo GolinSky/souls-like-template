@@ -1178,7 +1178,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: cb6633897a2e1b243b0e35e145588208, type: 2}
+  m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
 --- !u!1 &198951719
 GameObject:
@@ -14154,10 +14154,6 @@ PrefabInstance:
     - target: {fileID: 2927633110591006639, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_Name
       value: EnemyEncounter
-      objectReference: {fileID: 0}
-    - target: {fileID: 2927633110591006639, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalPosition.x
