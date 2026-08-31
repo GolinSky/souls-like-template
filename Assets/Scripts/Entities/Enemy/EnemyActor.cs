@@ -27,6 +27,7 @@ namespace SoulsLike.Entities.Enemy
         public Entity Entity { get; private set; }
         public Vector3 HomePosition { get; private set; }
         public IReadOnlyList<Vector3> PatrolPoints => _patrolPoints;
+        public bool HasPatrolPositions => _patrolPoints.Length > 0;
 
         [Inject]
         public void Construct(

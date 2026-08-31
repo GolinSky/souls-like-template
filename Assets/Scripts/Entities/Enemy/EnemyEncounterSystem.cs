@@ -36,7 +36,7 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
-            Restart();
+            RespawnEnemies();
         }
 
         private void OnDestroy()
@@ -44,7 +44,7 @@ namespace SoulsLike.Entities.Enemy
             _gameStateNotifier.UnregisterObserver(this);
         }
 
-        private void Restart()
+        public void RespawnEnemies()
         {
             foreach (EnemyActor enemy in _spawnedEnemies)
             {

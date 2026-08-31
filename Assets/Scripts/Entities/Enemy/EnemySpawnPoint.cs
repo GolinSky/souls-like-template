@@ -16,9 +16,15 @@ namespace SoulsLike.Entities.Enemy
         public EnemyBehaviourProfile BehaviourProfile => behaviourProfile;
         public WeaponMovesetDefinition Moveset => moveset;
         public HealthData HealthData => healthData;
+        public bool HasPatrolPositions => patrolPoints is { Length: > 0 };
 
         public Vector3[] BuildPatrolPositions()
         {
+            if (!HasPatrolPositions)
+            {
+                return System.Array.Empty<Vector3>();
+            }
+
             Vector3[] positions = new Vector3[patrolPoints.Length];
             for (int index = 0; index < patrolPoints.Length; index++)
             {

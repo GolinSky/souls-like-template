@@ -68,7 +68,7 @@ namespace SoulsLike.Entities.Enemy
             _healthModel.OnDied += OnDied;
             Goal = _actor.BehaviourProfile.StartsDormant
                 ? EnemyGoal.Dormant
-                : _actor.PatrolPoints.Count > 0
+                : _actor.HasPatrolPositions
                     ? EnemyGoal.Patrol
                     : EnemyGoal.Idle;
             CurrentIntent = new EnemyIntent(EnemyIntentKind.Wait, _actor.transform.position);
@@ -100,7 +100,7 @@ namespace SoulsLike.Entities.Enemy
         {
             if (Goal == EnemyGoal.Dormant)
             {
-                EnterGoal(_actor.PatrolPoints.Count > 0
+                EnterGoal(_actor.HasPatrolPositions
                     ? EnemyGoal.Patrol
                     : EnemyGoal.Idle);
             }
@@ -369,7 +369,7 @@ namespace SoulsLike.Entities.Enemy
                         _motor.Stop();
                         _perception.Clear();
                         _reactionTargetEntityId = null;
-                        EnterGoal(_actor.PatrolPoints.Count > 0
+                        EnterGoal(_actor.HasPatrolPositions
                             ? EnemyGoal.Patrol
                             : EnemyGoal.Idle);
                     }
@@ -379,7 +379,7 @@ namespace SoulsLike.Entities.Enemy
 
         private void DecidePatrol(float now)
         {
-            if (_actor.PatrolPoints.Count == 0)
+            if (!_actor.HasPatrolPositions)
             {
                 EnterGoal(EnemyGoal.Idle);
                 WaitAt(_actor.transform.position);
