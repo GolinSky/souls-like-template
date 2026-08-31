@@ -62,6 +62,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8594187456601802290}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2613125677331963689
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1058233817697329458}
+  - component: {fileID: 5774327086117888350}
+  m_Layer: 0
+  m_Name: ErikaMeleeSpawn (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1058233817697329458
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2613125677331963689}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -19.51, y: 271.605, z: -163.514}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6965793515978147859}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5774327086117888350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2613125677331963689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42452bfa730fdb24db97e9cc077d89b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemySpawnPoint
+  enemyPrefab: {fileID: 9216140226880738682, guid: fd5a5879c75839a419395d1349b2422f, type: 3}
+  behaviourProfile: {fileID: 11400000, guid: dd7088631eba6674cbe3b2bd8cf6bfac, type: 2}
+  moveset: {fileID: 11400000, guid: 1ddec27955b1a6143b5450f26262d037, type: 2}
+  healthData: {fileID: 11400000, guid: bf8276a3814be5441b37093b029f1881, type: 2}
+  patrolPoints: []
 --- !u!1 &2927633110591006639
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,6 +142,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8594187456601802290}
+  - {fileID: 1120418293460118895}
+  - {fileID: 1786173957220351987}
+  - {fileID: 1058233817697329458}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4814139022787123590
@@ -109,7 +161,108 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyEncounterSystem
   spawnPoints:
   - {fileID: 6819845755831567227}
+  - {fileID: 7651691237837284798}
+  - {fileID: 5491401896638966171}
+  - {fileID: 5774327086117888350}
   spawnOnStart: 1
+--- !u!1 &4846245521169120973
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1786173957220351987}
+  - component: {fileID: 7651691237837284798}
+  m_Layer: 0
+  m_Name: ErikaMeleeSpawn (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1786173957220351987
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4846245521169120973}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -17.46, y: 271.709, z: -162.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6965793515978147859}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7651691237837284798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4846245521169120973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42452bfa730fdb24db97e9cc077d89b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemySpawnPoint
+  enemyPrefab: {fileID: 9216140226880738682, guid: fd5a5879c75839a419395d1349b2422f, type: 3}
+  behaviourProfile: {fileID: 11400000, guid: dd7088631eba6674cbe3b2bd8cf6bfac, type: 2}
+  moveset: {fileID: 11400000, guid: 1ddec27955b1a6143b5450f26262d037, type: 2}
+  healthData: {fileID: 11400000, guid: bf8276a3814be5441b37093b029f1881, type: 2}
+  patrolPoints: []
+--- !u!1 &5218878594018366240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1120418293460118895}
+  - component: {fileID: 5491401896638966171}
+  m_Layer: 0
+  m_Name: ErikaMeleeSpawn (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1120418293460118895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5218878594018366240}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -16.59, y: 271.314, z: -162.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6965793515978147859}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5491401896638966171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5218878594018366240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42452bfa730fdb24db97e9cc077d89b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemySpawnPoint
+  enemyPrefab: {fileID: 9216140226880738682, guid: fd5a5879c75839a419395d1349b2422f, type: 3}
+  behaviourProfile: {fileID: 11400000, guid: dd7088631eba6674cbe3b2bd8cf6bfac, type: 2}
+  moveset: {fileID: 11400000, guid: 1ddec27955b1a6143b5450f26262d037, type: 2}
+  healthData: {fileID: 11400000, guid: bf8276a3814be5441b37093b029f1881, type: 2}
+  patrolPoints: []
 --- !u!1 &7728417752804511700
 GameObject:
   m_ObjectHideFlags: 0
