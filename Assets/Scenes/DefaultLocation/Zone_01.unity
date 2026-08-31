@@ -50084,7 +50084,6 @@ GameObject:
   - component: {fileID: 13641}
   - component: {fileID: 13646}
   - component: {fileID: 13647}
-  - component: {fileID: 183409990120561843}
   - component: {fileID: 183409990120561844}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -56266,7 +56265,7 @@ GameObject:
   - component: {fileID: 17423}
   - component: {fileID: 17424}
   - component: {fileID: 123726762}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56646,7 +56645,7 @@ GameObject:
   - component: {fileID: 17608}
   - component: {fileID: 17623}
   - component: {fileID: 17624}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56878,7 +56877,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -56938,7 +56937,7 @@ GameObject:
   - component: {fileID: 17634}
   - component: {fileID: 17661}
   - component: {fileID: 17664}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57278,7 +57277,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -86747,7 +86746,7 @@ GameObject:
   - component: {fileID: 23430}
   - component: {fileID: 23449}
   - component: {fileID: 984167750}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159107,7 +159106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 109743635}
   - component: {fileID: 109743636}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -160525,7 +160524,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -171434,7 +171433,7 @@ GameObject:
   - component: {fileID: 23443}
   - component: {fileID: 23436}
   - component: {fileID: 212210291}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171458,7 +171457,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -171536,7 +171535,7 @@ GameObject:
   m_Component:
   - component: {fileID: 213942960}
   - component: {fileID: 213942961}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195093,7 +195092,7 @@ GameObject:
   m_Component:
   - component: {fileID: 422806139}
   - component: {fileID: 422806140}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208155,7 +208154,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 768
   m_UseGeometry: 1
   m_DefaultArea: 0
   m_GenerateLinks: 0
@@ -208167,7 +208166,7 @@ MonoBehaviour:
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: e64d6162f39744349873def5c041789f, type: 2}
-  m_BuildHeightMesh: 0
+  m_BuildHeightMesh: 1
 --- !u!1 &522435227
 GameObject:
   m_ObjectHideFlags: 0
@@ -214637,7 +214636,7 @@ GameObject:
   m_Component:
   - component: {fileID: 572485891}
   - component: {fileID: 572485892}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220208,7 +220207,7 @@ GameObject:
   - component: {fileID: 627813281}
   - component: {fileID: 627813280}
   - component: {fileID: 627813282}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220305,7 +220304,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -223611,7 +223610,7 @@ GameObject:
   - component: {fileID: 650275604}
   - component: {fileID: 650275603}
   - component: {fileID: 650275605}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223708,7 +223707,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -241355,7 +241354,7 @@ GameObject:
   - component: {fileID: 783299483}
   - component: {fileID: 783299482}
   - component: {fileID: 783299484}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241452,7 +241451,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -261631,7 +261630,7 @@ GameObject:
   m_Component:
   - component: {fileID: 956994645}
   - component: {fileID: 956994646}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -263913,7 +263912,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -263936,7 +263935,7 @@ GameObject:
   m_Component:
   - component: {fileID: 984458056}
   - component: {fileID: 984458057}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -266101,7 +266100,7 @@ GameObject:
   - component: {fileID: 998397656}
   - component: {fileID: 998397655}
   - component: {fileID: 998397657}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -266198,7 +266197,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -268947,7 +268946,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1019369081}
   - component: {fileID: 1019369082}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -286795,7 +286794,7 @@ GameObject:
   - component: {fileID: 1164420781}
   - component: {fileID: 1164420780}
   - component: {fileID: 1164420782}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -286892,7 +286891,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -292332,7 +292331,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1215713684}
   - component: {fileID: 1215713685}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -301810,7 +301809,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1297296054}
   - component: {fileID: 1297296055}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305462,7 +305461,7 @@ GameObject:
   - component: {fileID: 1332967203}
   - component: {fileID: 1332967202}
   - component: {fileID: 1332967204}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305559,7 +305558,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -365556,7 +365555,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1860878250}
   - component: {fileID: 1860878251}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -375483,7 +375482,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1962279045}
   - component: {fileID: 1962279046}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -395654,7 +395653,7 @@ GameObject:
   - component: {fileID: 2133171740}
   - component: {fileID: 2133171739}
   - component: {fileID: 2133171741}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SM_Stairs_B_01_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -395751,7 +395750,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
@@ -396610,7 +396609,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2144793946}
   - component: {fileID: 2144793947}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: __StairGameplayRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -399118,27 +399117,6 @@ LODGroup:
     - renderer: {fileID: 31042}
     - renderer: {fileID: 0}
   m_Enabled: 1
---- !u!65 &183409990120561843
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 13640}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &183409990120561844
 MeshCollider:
   m_ObjectHideFlags: 0

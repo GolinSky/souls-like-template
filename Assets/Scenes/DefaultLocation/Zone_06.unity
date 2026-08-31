@@ -24895,7 +24895,6 @@ GameObject:
   - component: {fileID: 15217}
   - component: {fileID: 15222}
   - component: {fileID: 15223}
-  - component: {fileID: 183409990120559243}
   - component: {fileID: 183409990120559244}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -238100,7 +238099,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 768
   m_UseGeometry: 1
   m_DefaultArea: 0
   m_GenerateLinks: 0
@@ -238110,9 +238109,9 @@ MonoBehaviour:
   m_TileSize: 256
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 4603ea330c011114a9d063026330bfd6, type: 2}
-  m_BuildHeightMesh: 0
+  m_MinRegionArea: 0
+  m_NavMeshData: {fileID: 23800000, guid: 2c42d31571282c549b2c086a8a06f926, type: 2}
+  m_BuildHeightMesh: 1
 --- !u!1 &591253630
 GameObject:
   m_ObjectHideFlags: 0
@@ -315466,48 +315465,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000005148218305317559987, type: 3}
---- !u!65 &183409990120555515
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8202116483168228853}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
---- !u!65 &183409990120559243
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 15216}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &183409990120559244
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -331858,7 +331815,6 @@ GameObject:
   - component: {fileID: 1524362600816683015}
   - component: {fileID: 1524362600816683008}
   - component: {fileID: 1524362600816683009}
-  - component: {fileID: 1705744816617636349}
   - component: {fileID: 1705744816617636350}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -332330,7 +332286,6 @@ GameObject:
   - component: {fileID: 1524362601618362897}
   - component: {fileID: 1524362601618362902}
   - component: {fileID: 1524362601618362903}
-  - component: {fileID: 1705744817410980843}
   - component: {fileID: 1705744817410980844}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -333200,7 +333155,6 @@ GameObject:
   - component: {fileID: 1524362602336999671}
   - component: {fileID: 1524362602336999664}
   - component: {fileID: 1524362602336999665}
-  - component: {fileID: 1705744817697009933}
   - component: {fileID: 1705744817697009934}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -333782,7 +333736,6 @@ GameObject:
   - component: {fileID: 1524362602684624860}
   - component: {fileID: 1524362602684624859}
   - component: {fileID: 1524362602684624858}
-  - component: {fileID: 1705744818439505446}
   - component: {fileID: 1705744818439505447}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -334403,27 +334356,6 @@ LODGroup:
     - renderer: {fileID: 831904745231011366}
     - renderer: {fileID: 0}
   m_Enabled: 1
---- !u!65 &1705744816617636349
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524362600816683014}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &1705744816617636350
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -334446,27 +334378,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000015044835453643105097, type: 3}
---- !u!65 &1705744817410980843
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524362601618362896}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &1705744817410980844
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -334489,27 +334400,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000015044835453643105097, type: 3}
---- !u!65 &1705744817697009933
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524362602336999670}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &1705744817697009934
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -334532,27 +334422,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000015044835453643105097, type: 3}
---- !u!65 &1705744818439505446
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1524362602684624861}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &1705744818439505447
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -336500,7 +336369,6 @@ GameObject:
   - component: {fileID: 2084849432095400884}
   - component: {fileID: 2084849432095400883}
   - component: {fileID: 2084849432095400882}
-  - component: {fileID: 2190233661878323790}
   - component: {fileID: 2190233661878323791}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -336853,7 +336721,6 @@ GameObject:
   - component: {fileID: 2084849432826544005}
   - component: {fileID: 2084849432826544002}
   - component: {fileID: 2084849432826544003}
-  - component: {fileID: 2190233662168503935}
   - component: {fileID: 2190233662168503936}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -337313,27 +337180,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2084849432826544008}
   m_Mesh: {fileID: 4300006, guid: abc00000000015044835453643105097, type: 3}
---- !u!65 &2190233661878323790
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084849432095400885}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &2190233661878323791
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -337356,27 +337202,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000015044835453643105097, type: 3}
---- !u!65 &2190233662168503935
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084849432826544004}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &2190233662168503936
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -340554,27 +340379,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000005148218305317559987, type: 3}
---- !u!65 &3201839923879694509
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3379003845872433494}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!1 &3379003845872433482
 GameObject:
   m_ObjectHideFlags: 0
@@ -340758,7 +340562,6 @@ GameObject:
   - component: {fileID: 3379003845872433495}
   - component: {fileID: 3379003845872433488}
   - component: {fileID: 3379003845872433489}
-  - component: {fileID: 3201839923879694509}
   - component: {fileID: 1409174820}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -350282,27 +350085,6 @@ LODGroup:
     - renderer: {fileID: 1012412089}
     - renderer: {fileID: 0}
   m_Enabled: 1
---- !u!65 &5235091676741492911
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5345018830464944468}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!65 &5236484388122318115
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -357078,7 +356860,6 @@ GameObject:
   - component: {fileID: 5345018830464944469}
   - component: {fileID: 5345018830464944466}
   - component: {fileID: 5345018830464944467}
-  - component: {fileID: 5235091676741492911}
   - component: {fileID: 5345018830464944471}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -373133,7 +372914,6 @@ GameObject:
   - component: {fileID: 8202116483168228861}
   - component: {fileID: 8202116483168228806}
   - component: {fileID: 8202116483168228814}
-  - component: {fileID: 183409990120555515}
   - component: {fileID: 8202116483168228862}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -379012,7 +378792,6 @@ GameObject:
   - component: {fileID: 8651790081822079185}
   - component: {fileID: 8651790081822079190}
   - component: {fileID: 8651790081822079191}
-  - component: {fileID: 8834601594011275563}
   - component: {fileID: 8834601594011275564}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -384878,7 +384657,6 @@ GameObject:
   - component: {fileID: 8651790082387544378}
   - component: {fileID: 8651790082387544381}
   - component: {fileID: 8651790082387544380}
-  - component: {fileID: 8834601594538549440}
   - component: {fileID: 8834601594538549441}
   m_Layer: 0
   m_Name: SM_Tower_Top_LOD0
@@ -386081,27 +385859,6 @@ LODGroup:
     - renderer: {fileID: 1895895671}
     - renderer: {fileID: 0}
   m_Enabled: 1
---- !u!65 &8834601594011275563
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8651790081822079184}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &8834601594011275564
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -386124,27 +385881,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000015044835453643105097, type: 3}
---- !u!65 &8834601594538549440
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8651790082387544379}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 10.250851, y: 13.866483, z: 10.11759}
-  m_Center: {x: -0.13903117, y: 6.457193, z: -0.04396653}
 --- !u!64 &8834601594538549441
 MeshCollider:
   m_ObjectHideFlags: 0
