@@ -58,20 +58,8 @@ namespace SoulsLike.Ui.Inventory
         [SerializeField] private Image loreItemArtwork;
         [SerializeField] private TMP_Text loreFullText;
 
-        [Header("Column 3: Character Stats & Delta Comparison")]
-        [SerializeField] private TMP_Text statVigor;
-        [SerializeField] private TMP_Text statMind;
-        [SerializeField] private TMP_Text statEndurance;
-        [SerializeField] private TMP_Text statStrength;
-        [SerializeField] private TMP_Text statDexterity;
-        [SerializeField] private TMP_Text statIntelligence;
-        [SerializeField] private TMP_Text statFaith;
-        [SerializeField] private TMP_Text statArcane;
-        [SerializeField] private TMP_Text statR1Attack;
-        [SerializeField] private TMP_Text statL1Attack;
-        [SerializeField] private TMP_Text statEquipLoadText;
-        [SerializeField] private Image statEquipLoadBar;
-        [SerializeField] private TMP_Text statPoise;
+        [Header("Column 3: Character Stats")]
+        [SerializeField] private CharacterStatsUi characterStatsUi;
 
         [Header("Footer Legend")]
         [SerializeField] private TMP_Text legendSelectText;
@@ -80,12 +68,12 @@ namespace SoulsLike.Ui.Inventory
         [SerializeField] private TMP_Text legendSimpleViewText;
 
         public static readonly Color ColorParchmentPrimary = new(0.902f, 0.882f, 0.773f);
-        public static readonly Color ColorStatBuff = new(0.384f, 0.710f, 0.965f);
-        public static readonly Color ColorStatNerf = new(0.937f, 0.325f, 0.314f);
         public static readonly Color ColorUnmetRequirement = new(0.898f, 0.224f, 0.208f);
 
         private readonly List<InventorySlotUI> _spawnedSlots = new();
         private IInventoryPresenter _presenter;
+
+        public CharacterStatsUi CharacterStats => characterStatsUi;
 
         public void AssignPresenter(IInventoryPresenter presenter)
         {
@@ -165,46 +153,6 @@ namespace SoulsLike.Ui.Inventory
             loreFullText.text = $"{item.Description}\n\n{item.LoreDescription}";
         }
 
-        public void DisplayCharacterStats(Character character, float equipWeight, float maxEquipWeight)
-        {
-            if (character == null)
-            {
-                throw new ArgumentNullException(nameof(character));
-            }
-
-            CharacterAttributeStats attributes = character.Attributes;
-            statVigor.text = attributes.Vigor.ToString();
-            statMind.text = attributes.Mind.ToString();
-            statEndurance.text = attributes.Endurance.ToString();
-            statStrength.text = attributes.Strength.ToString();
-            statDexterity.text = attributes.Dexterity.ToString();
-            statIntelligence.text = attributes.Intelligence.ToString();
-            statFaith.text = attributes.Faith.ToString();
-            statArcane.text = attributes.Arcane.ToString();
-            statEquipLoadText.text = $"{equipWeight:F1} / {maxEquipWeight:F1}";
-            statEquipLoadBar.fillAmount = maxEquipWeight <= 0f
-                ? 0f
-                : Mathf.Clamp01(equipWeight / maxEquipWeight);
-            statPoise.text = "0";
-        }
-
-        public void UpdateStatComparison(int currentAttack, int candidateAttack)
-        {
-            int delta = candidateAttack - currentAttack;
-            statR1Attack.text = delta switch
-            {
-                > 0 => $"{candidateAttack} (+{delta})",
-                < 0 => $"{candidateAttack} ({delta})",
-                _ => candidateAttack.ToString()
-            };
-            statR1Attack.color = delta switch
-            {
-                > 0 => ColorStatBuff,
-                < 0 => ColorStatNerf,
-                _ => ColorParchmentPrimary
-            };
-        }
-
         public void ToggleLoreView() => viewStateController.ToggleLoreView();
         public void ToggleSimpleView() => viewStateController.ToggleSimpleView();
 
@@ -229,7 +177,8 @@ namespace SoulsLike.Ui.Inventory
                 || subCategoryIconContainer == null
                 || gridContentParent == null
                 || gridScrollRect == null
-                || slotPrefab == null)
+                || slotPrefab == null
+                || characterStatsUi == null)
             {
                 throw new InvalidOperationException(
                     $"{nameof(InventoryUi)} '{name}' has missing structural references.");

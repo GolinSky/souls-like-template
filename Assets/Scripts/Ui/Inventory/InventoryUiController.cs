@@ -108,7 +108,7 @@ namespace SoulsLike.Ui.Inventory
                 currentAttack = _itemCatalog.GetStats(activeRight.ItemId).PhysicalAttack;
             }
 
-            _view.UpdateStatComparison(currentAttack, item.Stats.PhysicalAttack);
+            _view.CharacterStats.UpdateRightAttackComparison(currentAttack, item.Stats.PhysicalAttack);
         }
 
         public void OnItemSubmitted(InventoryEntryId entryId)
@@ -196,9 +196,21 @@ namespace SoulsLike.Ui.Inventory
             }
 
             _view.PopulateGrid(items);
+            EquipmentLoadout loadout = _equipment.BuildLoadout();
             float equipWeight = CalculateEquipmentWeight();
             float maxEquipWeight = 45f + _character.Attributes.Endurance * 1.5f;
-            _view.DisplayCharacterStats(_character, equipWeight, maxEquipWeight);
+            int rightAttack = loadout.AssignedRight == null
+                ? 0
+                : _itemCatalog.GetStats(loadout.AssignedRight.ItemId).PhysicalAttack;
+            int leftAttack = loadout.AssignedLeft == null
+                ? 0
+                : _itemCatalog.GetStats(loadout.AssignedLeft.ItemId).PhysicalAttack;
+            _view.CharacterStats.Display(
+                _character,
+                equipWeight,
+                maxEquipWeight,
+                rightAttack,
+                leftAttack);
             if (items.Count > 0)
             {
                 OnItemFocused(items[0].EntryId);

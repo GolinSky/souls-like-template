@@ -184,12 +184,13 @@ namespace SoulsLike.Ui.Equipment
             int leftAttack = loadout.AssignedLeft == null
                 ? 0
                 : _itemCatalog.GetStats(loadout.AssignedLeft.ItemId).PhysicalAttack;
-            _view.DisplayCharacterStatus(
+            _view.CharacterStats.Display(
                 _character,
                 equipWeight,
                 maxEquipWeight,
                 rightAttack,
                 leftAttack);
+            _view.DisplayPlayerSummary(_character);
         }
 
         private InventoryItemViewData BuildViewData(InventoryEntry entry)

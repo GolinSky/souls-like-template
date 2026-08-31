@@ -44,17 +44,8 @@ namespace SoulsLike.Ui.Equipment
         [SerializeField] private TMP_Text inspectorScalingText;
         [SerializeField] private TMP_Text inspectorWeightText;
 
-        [Header("Zone 4: Character Status Panel")]
-        [SerializeField] private TMP_Text vitalsHpText;
-        [SerializeField] private TMP_Text vitalsFpText;
-        [SerializeField] private TMP_Text vitalsStaminaText;
-        [SerializeField] private TMP_Text equipLoadText;
-        [SerializeField] private TMP_Text weightClassBadgeText;
-        [SerializeField] private Image equipLoadFillBar;
-        [SerializeField] private TMP_Text attackPowerRightText;
-        [SerializeField] private TMP_Text attackPowerLeftText;
-        [SerializeField] private TMP_Text defenseNegationText;
-        [SerializeField] private TMP_Text resistancesText;
+        [Header("Zone 4: Character Stats")]
+        [SerializeField] private CharacterStatsUi characterStatsUi;
 
         [Header("Zone 5: Bottom Action Bar")]
         [SerializeField] private TMP_Text actionPromptsText;
@@ -71,6 +62,7 @@ namespace SoulsLike.Ui.Equipment
         private EquipmentSlotUI _selectedSlot;
 
         public bool IsPickerOpen => inventoryPickerOverlay.activeSelf;
+        public CharacterStatsUi CharacterStats => characterStatsUi;
 
         public void AssignPresenter(IEquipmentPresenter presenter)
         {
@@ -142,30 +134,8 @@ namespace SoulsLike.Ui.Equipment
             inspectorWeightText.text = $"Weight {item.Weight:F1}";
         }
 
-        public void DisplayCharacterStatus(
-            Character character,
-            float equipWeight,
-            float maxEquipWeight,
-            int rightAttack,
-            int leftAttack)
+        public void DisplayPlayerSummary(Character character)
         {
-            vitalsHpText.text = $"HP {character.HealthStats.CurrentHealth:F0} / {character.HealthStats.MaxHealth:F0}";
-            vitalsFpText.text = $"FP {character.HealthStats.CurrentFocus:F0} / {character.HealthStats.MaxFocus:F0}";
-            vitalsStaminaText.text = $"Stamina {character.HealthStats.DisplayCurrentStamina:F0} / {character.HealthStats.MaxStamina:F0}";
-            equipLoadText.text = $"{equipWeight:F1} / {maxEquipWeight:F1}";
-            float loadRatio = maxEquipWeight <= 0f ? 0f : equipWeight / maxEquipWeight;
-            equipLoadFillBar.fillAmount = Mathf.Clamp01(loadRatio);
-            weightClassBadgeText.text = loadRatio switch
-            {
-                < 0.3f => "Light Load",
-                <= 0.7f => "Medium Load",
-                <= 1f => "Heavy Load",
-                _ => "Overencumbered"
-            };
-            attackPowerRightText.text = $"R-Armament {rightAttack}";
-            attackPowerLeftText.text = $"L-Armament {leftAttack}";
-            defenseNegationText.text = "Defense Negation -";
-            resistancesText.text = "Resistances -";
             playerSummaryText.text = $"Runes {character.HeldCurrency:N0}";
         }
 
@@ -359,7 +329,8 @@ namespace SoulsLike.Ui.Equipment
                 || inventoryPickerOverlay == null
                 || inventoryPickerGridContainer == null
                 || comparisonPanel == null
-                || inventoryPickerSlotPrefab == null)
+                || inventoryPickerSlotPrefab == null
+                || characterStatsUi == null)
             {
                 throw new InvalidOperationException(
                     $"{nameof(EquipmentUi)} '{name}' has missing structural references.");

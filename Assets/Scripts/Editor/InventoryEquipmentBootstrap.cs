@@ -401,8 +401,8 @@ namespace SoulsLike.Editor
                 EnsureText(serialized, "inspectorReqFth", inspector, "InspectorReqFth");
                 EnsureText(serialized, "inspectorReqArc", inspector, "InspectorReqArc");
 
-                Transform status = FindRequiredChild(root.transform, "CharacterStatusPanel");
-                EnsureImage(serialized, "equipLoadFillBar", status, "EquipLoadFillBar");
+                CharacterStatsUi characterStats = root.GetComponentInChildren<CharacterStatsUi>(true);
+                SetObject(serialized, "characterStatsUi", characterStats, false);
                 serialized.ApplyModifiedPropertiesWithoutUndo();
                 PrefabUtility.SaveAsPrefabAsset(root, EQUIPMENT_UI_PREFAB_PATH);
             }
