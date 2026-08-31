@@ -53,6 +53,7 @@ namespace SoulsLike.Entities.Character
             _cameraService.SetTarget(_character.CameraTarget);
             _gameStateNotifier.RegisterObserver(this);
             _healthComponent.Model.OnDied += HandleDied;
+            _character.OnDeathAnimationCompleted += HandleDeathAnimationCompleted;
             _currentGameState = _gameStateNotifier.CurrentGameState;
         }
 
@@ -60,6 +61,7 @@ namespace SoulsLike.Entities.Character
         {
             _gameStateNotifier.UnregisterObserver(this);
             _healthComponent.Model.OnDied -= HandleDied;
+            _character.OnDeathAnimationCompleted -= HandleDeathAnimationCompleted;
         }
 
         public void OnGameStateChanged(GameState newState)
@@ -84,7 +86,8 @@ namespace SoulsLike.Entities.Character
 
         public void Tick()
         {
-            if (_character.IsInputBlocked
+            if (!_healthComponent.Stats.IsAlive
+                || _character.IsInputBlocked
                 || (_currentGameState != GameState.Idle && _currentGameState != GameState.Paused))
             {
                 _interactionController.ClearTarget();
@@ -109,7 +112,7 @@ namespace SoulsLike.Entities.Character
 
             if (_currentGameState == GameState.Idle)
             {
-                Vector2 look = _character.IsInputBlocked
+                Vector2 look = !_healthComponent.Stats.IsAlive || _character.IsInputBlocked
                     ? Vector2.zero
                     : _inputService.CharacterActions.Look.ReadValue<Vector2>();
                 _cameraService.UpdateRotation(look);
@@ -159,6 +162,11 @@ namespace SoulsLike.Entities.Character
         }
 
         private void HandleDied(long sourceEntityId)
+        {
+            _character.PlayDeath();
+        }
+
+        private void HandleDeathAnimationCompleted()
         {
             _coreGameOrchestrator.RespawnAtLastGrace().Forget();
         }

@@ -16,6 +16,8 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
             _health = health;
         }
 
+        public HealthStats Stats => _health.Stats;
+
         public DamageResult Execute(in ApplyDamageRequest request)
         {
             if (!_entityLocator.TryGetEntity(request.SourceEntityId, out IEntity source)
@@ -28,6 +30,11 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
             DamageRequest damage = request.Damage;
             damage.SourceEntityId = request.SourceEntityId;
             return _health.ApplyDamage(in damage);
+        }
+
+        public DamageResult ExecuteDirect(in DamageRequest request)
+        {
+            return _health.ApplyDamage(in request);
         }
     }
 }

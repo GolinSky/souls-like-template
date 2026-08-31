@@ -106,6 +106,7 @@ namespace SoulsLike.Services
                 _fadeService.FadeIn(RESPAWN_FADE_DURATION, () => fadeInCompleted.TrySetResult(true));
                 await fadeInCompleted.Task;
 
+                _character.CompleteDeathAnimation();
                 SetGameState(GameState.Ended);
                 Vector3 lastGracePosition = _characterSpawnService.GetLastGracePosition();
                 _character.SetPosition(lastGracePosition);

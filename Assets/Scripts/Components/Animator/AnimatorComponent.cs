@@ -34,6 +34,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int AnimIdLockOn = Animator.StringToHash("LockOn");
         private static readonly int SpawnTrigger = Animator.StringToHash("Spawn");
         private static readonly int HitTrigger = Animator.StringToHash("Hit");
+        private static readonly int DeathTrigger = Animator.StringToHash("Death");
         private static readonly int LightAttackTrigger = Animator.StringToHash("LightAttack");
         private static readonly int LightAttackAltTrigger = Animator.StringToHash("LightAttackAlt");
         private static readonly int HeavyAttackTrigger = Animator.StringToHash("HeavyAttack");
@@ -52,6 +53,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int EquipmentSwapInTrigger = Animator.StringToHash("EquipmentSwapIn");
         private static readonly int LeftEquipmentSwapOutTrigger = Animator.StringToHash("LeftEquipmentSwapOut");
         private static readonly int LeftEquipmentSwapInTrigger = Animator.StringToHash("LeftEquipmentSwapIn");
+        private static readonly int OneHandedFreeLocomotionState = Animator.StringToHash("OneHandedLayer.FreeLocomotion");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_ACTIONS_LAYER = "UpperBodyActions";
@@ -84,6 +86,7 @@ namespace SoulsLike.Entities.Character.Components
         private bool _observingStateMachine;
         private RuntimeAnimatorController _defaultController;
         private bool _supportsLeftHandAttacks;
+        private bool _isDeathAnimationPlaying;
 
         private Animator Animator => animator;
 
@@ -246,6 +249,21 @@ namespace SoulsLike.Entities.Character.Components
             BeginRootMotionAction();
             animator.SetTrigger(HitTrigger);
         }
+
+        public void TriggerDeath()
+        {
+            _isDeathAnimationPlaying = true;
+            animator.SetLayerWeight(GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER), 0.0f);
+            animator.SetLayerWeight(GetRequiredLayerIndex(FULL_BODY_ACTIONS_LAYER), 0.0f);
+            animator.SetTrigger(DeathTrigger);
+        }
+
+        public void CompleteDeathAnimation()
+        {
+            _isDeathAnimationPlaying = false;
+            animator.Play(OneHandedFreeLocomotionState, GetRequiredLayerIndex(ONE_HANDED_LAYER), 0.0f);
+            SetActionLayerWeights(animator.GetBool(AnimIdMoving));
+        }
         
         public void TriggerRoll(Vector2 direction)
         {
@@ -360,7 +378,10 @@ namespace SoulsLike.Entities.Character.Components
             bool isMoving = _targetSpeed > 0.01f || _targetLocomotion.sqrMagnitude > 0.0001f || _currentLocomotion.sqrMagnitude > 0.0001f;
             animator.SetBool(AnimIdMoving, isMoving);
             UpdateHandModeLayerWeights(dt);
-            UpdateActionLayerWeights(isMoving, dt);
+            if (!_isDeathAnimationPlaying)
+            {
+                UpdateActionLayerWeights(isMoving, dt);
+            }
         }
 
         private void SetHandModeTarget(HandMode handMode)

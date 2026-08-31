@@ -20,6 +20,17 @@ namespace SoulsLike.Entities.Character.Adapters
 
         public bool IsActive => _phase != SwapPhase.None;
 
+        public void Cancel(EquipmentPresentation presentation)
+        {
+            if (!IsActive)
+            {
+                return;
+            }
+
+            presentation.SetArmamentVisible(_slotGroup, true);
+            _phase = SwapPhase.None;
+        }
+
         public CharacterCommandExecutionStatus StartSwap(
             EquipmentSlotGroup slotGroup,
             EquipmentComponent equipment,

@@ -19,6 +19,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
         EquipmentSwapIn = 14,
         ShieldBlock = 15,
         Parry = 16,
+        Death = 17,
         None = -1
     }
 }

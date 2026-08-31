@@ -51,6 +51,7 @@ namespace SoulsLike.Entities.Character
         private ICombatStateNotifier _combatStateNotifier;
         private CharacterData _characterData;
         private int _heldCurrency;
+        private bool _isDeathAnimationPlaying;
 
         public Transform CameraTarget => cameraTarget;
         public bool IsGrounded => movementComponent.Model.Grounded;
@@ -62,6 +63,7 @@ namespace SoulsLike.Entities.Character
         public bool IsInputBlocked => _runtime.IsInputBlocked;
         public CharacterActionStateId CurrentActionState => _runtime.ActionState;
         public bool IsEquipmentActionInProgress => _equipmentSwapCoordinator.IsActive;
+        public event Action OnDeathAnimationCompleted;
 
         [Inject]
         public void ConfigureRuntime(
@@ -164,6 +166,20 @@ namespace SoulsLike.Entities.Character
 
         public CharacterCommandDisposition Submit(CharacterCommand command) =>
             _runtime.Submit(command, this);
+
+        public void PlayDeath()
+        {
+            _equipmentSwapCoordinator.Cancel(equipmentPresentation);
+            _isDeathAnimationPlaying = true;
+            _runtime.SetInputBlocked(true);
+            animatorComponent.TriggerDeath();
+        }
+
+        public void CompleteDeathAnimation()
+        {
+            animatorComponent.CompleteDeathAnimation();
+            _runtime.SetInputBlocked(false);
+        }
 
         public CharacterCommandExecutionStatus TryStartAttack(in AttackRequest request)
         {
@@ -337,6 +353,14 @@ namespace SoulsLike.Entities.Character
             {
                 if (state.State == StateMachineState.Enter) _runtime.SetInputBlocked(true);
                 else if (state.State == StateMachineState.Exit) _runtime.SetInputBlocked(false);
+            }
+
+            if (state.StateMachineName == StateMachineName.Death
+                && state.State == StateMachineState.Exit
+                && _isDeathAnimationPlaying)
+            {
+                _isDeathAnimationPlaying = false;
+                OnDeathAnimationCompleted?.Invoke();
             }
 
             if (state.StateMachineName == StateMachineName.Parry)

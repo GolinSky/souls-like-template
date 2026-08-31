@@ -639,6 +639,7 @@ namespace SoulsLike.Editor
 
                 var serialized = new SerializedObject(controller);
                 SetObject(serialized, "hitbox", hitbox, false);
+                SetObject(serialized, "debugRenderer", RequireComponent<Renderer>(root), false);
                 SetInt(serialized, "hitZone", 0);
                 PrefabUtility.SaveAsPrefabAsset(root, SWORD_PREFAB_PATH);
             }
