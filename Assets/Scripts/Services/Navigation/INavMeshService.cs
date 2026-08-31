@@ -15,5 +15,10 @@ namespace SoulsLike.Services.Navigation
             float maxDistance,
             NavMeshQueryFilter queryFilter,
             out NavMeshHit hit);
+
+        bool TrySampleNearestPosition(
+            Vector3 position,
+            NavMeshQueryFilter queryFilter,
+            out NavMeshHit hit);
     }
 }

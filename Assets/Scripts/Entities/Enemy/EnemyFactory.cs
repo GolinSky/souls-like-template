@@ -42,15 +42,24 @@ namespace SoulsLike.Entities.Enemy
                 agentTypeID = prefabAgent.agentTypeID,
                 areaMask = prefabAgent.areaMask
             };
-            if (!_navMeshService.TrySamplePosition(
+            bool hasSpawnPosition = _navMeshService.TrySamplePosition(
+                spawn.transform.position,
+                prefabAgent.radius,
+                queryFilter,
+                out NavMeshHit spawnHit);
+            if (!hasSpawnPosition)
+            {
+                hasSpawnPosition = _navMeshService.TrySampleNearestPosition(
                     spawn.transform.position,
-                    prefabAgent.radius,
                     queryFilter,
-                    out NavMeshHit spawnHit))
+                    out spawnHit);
+            }
+
+            if (!hasSpawnPosition)
             {
                 throw new InvalidOperationException(
-                    $"Enemy spawn point '{spawn.name}' must be within "
-                    + $"{prefabAgent.radius} units of a baked NavMesh.");
+                    $"No compatible baked NavMesh could be found for enemy spawn point "
+                    + $"'{spawn.name}'.");
             }
 
             EnemyActor actor = UnityEngine.Object.Instantiate(
