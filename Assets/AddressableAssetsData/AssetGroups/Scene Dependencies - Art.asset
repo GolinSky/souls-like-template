@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Scene Dependencies - Art
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Scene Dependencies - Art
+  m_GUID: 0ec944817ff3761488aad8ed0ac659e2
+  m_SerializeEntries:
+  - m_GUID: 26317b4c5bdf71d42b035ec82848e1f9
+    m_Address: Assets/Art/Materials/Grace/GraceMotes.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 321023aa18fd1b44faaf67657380316a
+    m_Address: Assets/Art/Materials/Grace/GraceGroundGlow.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7caf2a27ae7d9814a8bd26c9a5e4255a
+    m_Address: Assets/Art/Materials/Grace/GraceCoreTaper.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93b7aab1f9017044d9d3e3de1e2cfd95
+    m_Address: Assets/Art/Materials/Grace/GraceCore.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c99220cb7c698e843b54ae13759c1f94
+    m_Address: Assets/Art/Materials/Grace/GraceRibbons.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: b190c9b4e7781224aa9823b8f4e1f863, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 5027f6bb740f8c24e847491368742a8f, type: 2}
+    - {fileID: 11400000, guid: 17f60fa60f80cab49bc8866fd24a0c24, type: 2}

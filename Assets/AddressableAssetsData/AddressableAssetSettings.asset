@@ -58,14 +58,21 @@ MonoBehaviour:
   m_ContentStateBuildPathProfileVariableName: <default settings path>
   m_CustomContentStateBuildPath: 
   m_ContentStateBuildPath: 
-  m_BuildAddressablesWithPlayerBuild: 0
+  m_BuildAddressablesWithPlayerBuild: 1
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
+  - {fileID: 11400000, guid: 854c0b8a4bb66544b9c17d2a141f3000, type: 2}
+  - {fileID: 11400000, guid: a3da3fc1f7a88644e9eb60a41f8ac5f4, type: 2}
   - {fileID: 11400000, guid: bad8ce66a24256f47a3809a2ebbedf35, type: 2}
   - {fileID: 11400000, guid: 63723c6cd12ed6a41aabe44497691a1d, type: 2}
   - {fileID: 11400000, guid: 4e090bd5faf7f9a48b9b175c926e504a, type: 2}
+  - {fileID: 11400000, guid: 0a974815898300a46a04f71e97598578, type: 2}
   - {fileID: 11400000, guid: fa240e9d8cc720e44970d875ed0e755e, type: 2}
+  - {fileID: 11400000, guid: fe4367755da75ae4bacfc4cf7b062a0c, type: 2}
+  - {fileID: 11400000, guid: 91700b4560c7eaf4dac5843676c3992c, type: 2}
+  - {fileID: 11400000, guid: 7c0071d71b825dc429c4c770222eee54, type: 2}
   - {fileID: 11400000, guid: cc477a8bb8108a949baa58f451192aa7, type: 2}
+  - {fileID: 11400000, guid: 70e5e3482a728724580f726334429ed0, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
     m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles

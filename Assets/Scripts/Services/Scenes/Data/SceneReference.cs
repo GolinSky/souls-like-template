@@ -2,7 +2,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -87,12 +86,6 @@ namespace SoulsLike.Services.Scenes.Data
 		/// Is scene actually set to this instance?
 		/// </summary>
 		public bool IsEmpty => string.IsNullOrEmpty(ScenePath);
-
-		/// <summary>
-		/// Get the index of the scene in the build settings.
-		/// </summary>
-		public int BuildIndex => UnityEngine.SceneManagement.SceneUtility.GetBuildIndexByScenePath(ScenePath);
-
 
 		public override bool Equals(object obj)
 		{
@@ -244,21 +237,8 @@ namespace SoulsLike.Services.Scenes.Data
 	[CanEditMultipleObjects]
 	internal class SceneReferencePropertyDrawer : PropertyDrawer
 	{
-		private static GUIStyle s_AddRemoveButtonStyle;
-		private static GUIContent s_AddButtonContent;
-		private static GUIContent s_RemoveButtonContent;
-
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
-			if (s_AddButtonContent == null) {
-				s_AddRemoveButtonStyle = new GUIStyle(EditorStyles.miniButtonRight);
-				s_AddRemoveButtonStyle.padding = new RectOffset(4, 4, 4, 4);
-				s_AddRemoveButtonStyle.fontStyle = FontStyle.Bold;
-
-				s_AddButtonContent = new GUIContent(EditorGUIUtility.IconContent("CreateAddNew").image, "Scene is missing in the Editor Build Settings. Click here to add it.");
-				s_RemoveButtonContent = new GUIContent(EditorGUIUtility.IconContent("Toolbar Minus").image, "Scene is already in the Editor Build Settings. Click here to remove it."); //EditorGUIUtility.IconContent("CrossIcon");
-			}
-
 			var isDirtyProperty = property.FindPropertyRelative("isDirty");
 			if (isDirtyProperty.boolValue) {
 				isDirtyProperty.boolValue = false;
@@ -267,60 +247,16 @@ namespace SoulsLike.Services.Scenes.Data
 			}
 
 			EditorGUI.BeginProperty(position, label, property);
-			position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
-
-			const float buildSettingsWidth = 20f;
-			const float padding = 2f;
-
-			Rect assetPos = position;
-			assetPos.width -= buildSettingsWidth + padding;
-
-			Rect buildSettingsPos = position;
-			buildSettingsPos.x += position.width - buildSettingsWidth + padding;
-			buildSettingsPos.width = buildSettingsWidth;
 
 			var sceneAssetProperty = property.FindPropertyRelative("sceneAsset");
 			bool hadReference = sceneAssetProperty.objectReferenceValue != null;
 
-			EditorGUI.PropertyField(assetPos, sceneAssetProperty, new GUIContent());
-
-			string guid = string.Empty;
-			int indexInSettings = -1;
-
+			EditorGUI.PropertyField(position, sceneAssetProperty, label);
 			if (sceneAssetProperty.objectReferenceValue) {
-				long localId;
-				if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(sceneAssetProperty.objectReferenceValue, out guid, out localId)) {
-					indexInSettings = Array.FindIndex(EditorBuildSettings.scenes, s => s.guid.ToString() == guid);
-				}
+				property.FindPropertyRelative("scenePath").stringValue = AssetDatabase.GetAssetPath(sceneAssetProperty.objectReferenceValue);
 			} else if (hadReference) {
 				property.FindPropertyRelative("scenePath").stringValue = string.Empty;
 			}
-
-			GUIContent settingsContent = indexInSettings != -1
-				? s_RemoveButtonContent
-				: s_AddButtonContent
-				;
-
-			Color prevBackgroundColor = GUI.backgroundColor;
-			GUI.backgroundColor = indexInSettings != -1 ? Color.red : Color.green;
-
-			if (GUI.Button(buildSettingsPos, settingsContent, s_AddRemoveButtonStyle) && sceneAssetProperty.objectReferenceValue) {
-				if (indexInSettings != -1) {
-					var scenes = EditorBuildSettings.scenes.ToList();
-					scenes.RemoveAt(indexInSettings);
-
-					EditorBuildSettings.scenes = scenes.ToArray();
-
-				} else {
-					var newScenes = new EditorBuildSettingsScene[] {
-						new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(sceneAssetProperty.objectReferenceValue), true)
-					};
-
-					EditorBuildSettings.scenes = EditorBuildSettings.scenes.Concat(newScenes).ToArray();
-				}
-			}
-
-			GUI.backgroundColor = prevBackgroundColor;
 
 			EditorGUI.EndProperty();
 		}

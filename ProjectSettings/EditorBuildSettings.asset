@@ -6,44 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu/MainMenu.unity
-    guid: 8e78d87b7d4f00549997b35045848a8c
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/DefaultLocation.unity
-    guid: e1e3c7572dbb88649b71d17c69aa6429
-  - enabled: 1
-    path: Assets/Scenes/Loading/Loading.unity
-    guid: 32fc1e9958cfb81459eb7b6f3e270bca
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Zone_01.unity
-    guid: ce81741ae1d91f04ca0a0f2a3728e1cb
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Zone_02.unity
-    guid: bf4a7347472562b44b0d55a3429d4296
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Zone_03.unity
-    guid: d25bee38c56545543ba41ae9df135cea
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Zone_04.unity
-    guid: 9fbc572b0f2a10247b6fe76b3e0a8135
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Zone_05.unity
-    guid: 6627b208115216d4893115870a97c059
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Zone_06.unity
-    guid: 6c5d3f42013c9184da9469cf9d5cf197
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Zone_07.unity
-    guid: 8a39a4a1d099de841ba9caeca5ab6888
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Zone_08.unity
-    guid: 46e0770836d66334dbd808b22f9dcc96
-  - enabled: 1
-    path: Assets/Scenes/DefaultLocation/Rocks.unity
-    guid: 2f74995d3115c7b4db0ef500f27cd461
-  - enabled: 1
-    path: Assets/Scenes/WorkShop/WorkShop.unity
-    guid: 238720e6e7b816043a74ed1ac1259bdb
+    path: Assets/Scenes/Bootstrap/Bootstrap.unity
+    guid: 25656d06117d187418d92d5c9be4d366
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: e5739fce5cf33bd4495ef0a2c394bec8, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}

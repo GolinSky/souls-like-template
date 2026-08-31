@@ -1,4 +1,5 @@
-﻿using SoulsLike.Services;
+﻿using Cysharp.Threading.Tasks;
+using SoulsLike.Services;
 using SoulsLike.Services.Spawn;
 using VContainer.Unity;
 
@@ -23,7 +24,7 @@ namespace SoulsLike.Orchestrators.MainMenu
         
         public void PlayGame()
         {
-            _gameOrchestrator.LoadLevel(_characterSpawnService.PrepareResume());
+            _gameOrchestrator.LoadLevel(_characterSpawnService.PrepareResume()).Forget();
         }
 
         public void OpenOptions()

@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Scenes - DefaultLocation
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Scenes - DefaultLocation
+  m_GUID: 54c930896234a8e42bdd8eff121e620e
+  m_SerializeEntries:
+  - m_GUID: 2f74995d3115c7b4db0ef500f27cd461
+    m_Address: Assets/Scenes/DefaultLocation/Rocks.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46e0770836d66334dbd808b22f9dcc96
+    m_Address: Assets/Scenes/DefaultLocation/Zone_08.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6627b208115216d4893115870a97c059
+    m_Address: Assets/Scenes/DefaultLocation/Zone_05.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c5d3f42013c9184da9469cf9d5cf197
+    m_Address: Assets/Scenes/DefaultLocation/Zone_06.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8a39a4a1d099de841ba9caeca5ab6888
+    m_Address: Assets/Scenes/DefaultLocation/Zone_07.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9fbc572b0f2a10247b6fe76b3e0a8135
+    m_Address: Assets/Scenes/DefaultLocation/Zone_04.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bf4a7347472562b44b0d55a3429d4296
+    m_Address: Assets/Scenes/DefaultLocation/Zone_02.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce81741ae1d91f04ca0a0f2a3728e1cb
+    m_Address: Assets/Scenes/DefaultLocation/Zone_01.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d25bee38c56545543ba41ae9df135cea
+    m_Address: Assets/Scenes/DefaultLocation/Zone_03.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1e3c7572dbb88649b71d17c69aa6429
+    m_Address: Assets/Scenes/DefaultLocation/DefaultLocation.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: b190c9b4e7781224aa9823b8f4e1f863, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 1a6e31edc22d4b04987f7f5736a3192c, type: 2}
+    - {fileID: 11400000, guid: 0bc200d26d6a8b44a8c75df7d7cbe15f, type: 2}

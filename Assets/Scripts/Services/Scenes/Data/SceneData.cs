@@ -29,15 +29,7 @@ namespace SoulsLike.Services.Scenes.Data
 
         public SceneType GetSceneById(Scene activeScene)
         {
-            foreach (var keyValuePair in scenes.Dictionary)
-            {
-                if (keyValuePair.Value != null && keyValuePair.Value.BuildIndex == activeScene.buildIndex)
-                {
-                    return keyValuePair.Key;
-                }
-            }
-
-            return SceneType.Undefined;
+            return GetSceneByPath(activeScene.path);
         }
 
         public SceneType GetSceneByPath(string scenePath)
