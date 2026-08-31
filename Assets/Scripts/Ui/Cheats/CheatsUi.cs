@@ -77,6 +77,11 @@ namespace SoulsLike.Ui.Cheats
             {
                 _presenter.KillPlayer();
             }
+
+            if (GUI.Button(CreateButtonRect(contentWidth, 2), "Reset Open Graces"))
+            {
+                _presenter.ResetOpenGraces();
+            }
         }
 
         private void DrawEnemyActions(float contentWidth)

@@ -3,6 +3,7 @@ namespace SoulsLike.Entities.Character.Components.Health
     public interface IHealthComponent
     {
         HealthStats Stats { get; }
+        bool IsInvulnerable { get; }
 
         HealthStats BuildDefaultStats();
         HealthStats ApplyStatUpdate(HealthStats currentStats, HealthStatUpdate update);
@@ -19,5 +20,6 @@ namespace SoulsLike.Entities.Character.Components.Health
         void TickStaminaRecovery(float deltaTime, bool isGuarding);
         void ApplyAuthoritativeStats(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
+        void SetInvulnerable(bool isInvulnerable);
     }
 }

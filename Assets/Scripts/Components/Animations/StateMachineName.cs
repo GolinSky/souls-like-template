@@ -20,6 +20,10 @@ namespace SoulsLike.Entities.Character.Components.Animations
         ShieldBlock = 15,
         Parry = 16,
         Death = 17,
+        GraceUnblock = 18,
+        GraceRestStart = 19,
+        GraceRestIdle = 20,
+        GraceRestEnd = 21,
         None = -1
     }
 }

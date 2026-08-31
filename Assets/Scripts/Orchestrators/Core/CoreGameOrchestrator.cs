@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using System.Threading;
 using SoulsLike.Entities.Character;
 using SoulsLike.Services.Fade;
 using SoulsLike.Services.Spawn;
@@ -14,7 +15,9 @@ namespace SoulsLike.Services
         GameState CurrentGameState { get; }
         void ResumeGame();
         void PauseGame();
-        UniTask OnGraceSit(GraceId graceId);
+        UniTask PlayGraceUnblock(CancellationToken token);
+        UniTask OnGraceSit(GraceId graceId, CancellationToken token);
+        UniTask ExitGraceState(CancellationToken token);
         UniTask RespawnAtLastGrace();
         void QuitGame();
     }
@@ -60,7 +63,14 @@ namespace SoulsLike.Services
         
         public void Start()
         {
-            SetGameState(_startsOnGrace ? GameState.OnGraceSit : GameState.Idle);
+            if (_startsOnGrace)
+            {
+                _character.EnterGraceRestIdle();
+                SetGameState(GameState.OnGraceSit);
+                return;
+            }
+
+            SetGameState(GameState.Idle);
         }
 
      
@@ -68,7 +78,7 @@ namespace SoulsLike.Services
         {
             if (CurrentGameState == newState) return;
 
-            Cursor.lockState = newState != GameState.Idle
+            Cursor.lockState = newState is not GameState.Idle and not GameState.Blocked
                 ? CursorLockMode.None
                 : CursorLockMode.Locked;
             CurrentGameState = newState;
@@ -85,11 +95,52 @@ namespace SoulsLike.Services
             SetGameState(GameState.Paused);
         }
 
-        public UniTask OnGraceSit(GraceId graceId)
+        public async UniTask PlayGraceUnblock(CancellationToken token)
         {
-            _characterSpawnService.SaveLastGrace(graceId);
-            SetGameState(GameState.OnGraceSit);
-            return UniTask.CompletedTask;
+            SetGameState(GameState.Blocked);
+            try
+            {
+                await _character.PlayGraceUnblock(token);
+            }
+            finally
+            {
+                if (CurrentGameState == GameState.Blocked)
+                {
+                    SetGameState(GameState.Idle);
+                }
+            }
+        }
+
+        public async UniTask OnGraceSit(GraceId graceId, CancellationToken token)
+        {
+            SetGameState(GameState.Blocked);
+            try
+            {
+                await _character.EnterGraceRest(token);
+                token.ThrowIfCancellationRequested();
+                _characterSpawnService.SaveLastGrace(graceId);
+                SetGameState(GameState.OnGraceSit);
+            }
+            finally
+            {
+                if (CurrentGameState == GameState.Blocked)
+                {
+                    _character.CancelGraceRest();
+                    SetGameState(GameState.Idle);
+                }
+            }
+        }
+
+        public async UniTask ExitGraceState(CancellationToken token)
+        {
+            try
+            {
+                await _character.ExitGraceRest(token);
+            }
+            finally
+            {
+                SetGameState(GameState.Idle);
+            }
         }
 
         public async UniTask RespawnAtLastGrace()

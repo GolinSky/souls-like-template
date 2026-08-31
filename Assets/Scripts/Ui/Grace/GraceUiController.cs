@@ -28,6 +28,7 @@ namespace SoulsLike.Ui.Grace
         private GraceUi _view;
         private UiRouteStack _routeStack;
         private bool _isOnGraceSit;
+        private bool _isLeaving;
 
         public GraceUiController(
             IUiService uiService,
@@ -68,7 +69,7 @@ namespace SoulsLike.Ui.Grace
 
         public void Tick()
         {
-            if (!_isOnGraceSit || !_inputService.UiBackAction.WasPressedThisFrame())
+            if (!_isOnGraceSit || _isLeaving || !_inputService.UiBackAction.WasPressedThisFrame())
             {
                 return;
             }
@@ -85,6 +86,12 @@ namespace SoulsLike.Ui.Grace
 
         public void Leave()
         {
+            if (_isLeaving)
+            {
+                return;
+            }
+
+            _isLeaving = true;
             _view.Hide();
             _graceSystem.ExitGraceState();
         }
@@ -94,6 +101,7 @@ namespace SoulsLike.Ui.Grace
             if (newState == GameState.OnGraceSit)
             {
                 _isOnGraceSit = true;
+                _isLeaving = false;
                 _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION);
 
                 if (!_routeStack.HasOpenRoutes)
@@ -109,6 +117,8 @@ namespace SoulsLike.Ui.Grace
                 _isOnGraceSit = false;
                 _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION);
             }
+
+            _isLeaving = false;
 
             _routeStack.CloseAll();
             _view.Hide();

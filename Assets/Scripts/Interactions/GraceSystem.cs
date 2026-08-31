@@ -73,18 +73,27 @@ namespace SoulsLike.Interactions
 
         public InteractionPrompt GetFailurePrompt() => new(CANNOT_SIT_AT_GRACE_PROMPT);
 
-        public UniTask InteractAsync(GraceView graceView, CancellationToken token)
+        public async UniTask InteractAsync(GraceView graceView, CancellationToken token)
         {
             if (!IsGraceOpen(graceView.GraceId))
             {
+                await _coreGameOrchestrator.PlayGraceUnblock(token);
+                token.ThrowIfCancellationRequested();
                 OpenGrace(graceView);
-                return UniTask.CompletedTask;
+                return;
             }
 
-            return SitOnGrace(graceView);
+            await SitOnGrace(graceView, token);
         }
 
-        public void ExitGraceState() => _coreGameOrchestrator.ResumeGame();
+        public void ExitGraceState() =>
+            _coreGameOrchestrator.ExitGraceState(destroyCancellationToken).Forget();
+
+        public void ResetOpenGraces()
+        {
+            _openGraceIds.Clear();
+            _storageRegistry.DeleteData(OPEN_GRACES_KEY);
+        }
 
         private void OpenGrace(GraceView graceView)
         {
@@ -95,6 +104,7 @@ namespace SoulsLike.Interactions
         private bool IsGraceOpen(GraceId graceId) =>
             _openGraceIds.Contains(_locationData.GetGrace(graceId).Name);
 
-        private UniTask SitOnGrace(GraceView graceView) => _coreGameOrchestrator.OnGraceSit(graceView.GraceId);
+        private UniTask SitOnGrace(GraceView graceView, CancellationToken token) =>
+            _coreGameOrchestrator.OnGraceSit(graceView.GraceId, token);
     }
 }

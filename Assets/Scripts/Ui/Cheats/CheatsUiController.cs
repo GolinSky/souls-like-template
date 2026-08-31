@@ -4,6 +4,7 @@ using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Enemy;
+using SoulsLike.Interactions;
 using SoulsLike.Services;
 using UnityEngine;
 using VContainer.Unity;
@@ -23,6 +24,7 @@ namespace SoulsLike.Ui.Cheats
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly IEntityLocator _entityLocator;
         private readonly EnemyEncounterSystem _enemyEncounterSystem;
+        private readonly GraceSystem _graceSystem;
         private readonly List<IEntity> _entities = new();
 
         private CheatsUi _view;
@@ -35,13 +37,15 @@ namespace SoulsLike.Ui.Cheats
             IInputService inputService,
             IGameStateNotifier gameStateNotifier,
             IEntityLocator entityLocator,
-            EnemyEncounterSystem enemyEncounterSystem)
+            EnemyEncounterSystem enemyEncounterSystem,
+            GraceSystem graceSystem)
             : base(uiService)
         {
             _inputService = inputService;
             _gameStateNotifier = gameStateNotifier;
             _entityLocator = entityLocator;
             _enemyEncounterSystem = enemyEncounterSystem;
+            _graceSystem = graceSystem;
         }
 
         public void Initialize()
@@ -90,6 +94,11 @@ namespace SoulsLike.Ui.Cheats
             }
 
             ApplyDamage(player, player.Id, GetApplyDamageCommand(player).Stats.CurrentHealth);
+        }
+
+        public void ResetOpenGraces()
+        {
+            _graceSystem.ResetOpenGraces();
         }
 
         public void HitAllEnemies()

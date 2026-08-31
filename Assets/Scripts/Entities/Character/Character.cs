@@ -1,4 +1,6 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Entities.Character.Adapters;
@@ -29,6 +31,15 @@ namespace SoulsLike.Entities.Character
     {
         private const float NORMAL_ATTACK_SPEED = 1.0f;
 
+        private enum GracePhase
+        {
+            None,
+            Unblock,
+            RestStart,
+            RestIdle,
+            RestEnd
+        }
+
         [SerializeField] private MovementComponent movementComponent;
         [SerializeField] private AnimatorComponent animatorComponent;
         [SerializeField] private CharacterAudioComponent characterAudioComponent;
@@ -52,6 +63,8 @@ namespace SoulsLike.Entities.Character
         private CharacterData _characterData;
         private int _heldCurrency;
         private bool _isDeathAnimationPlaying;
+        private UniTaskCompletionSource<bool> _graceTransitionCompletionSource;
+        private GracePhase _gracePhase;
 
         public Transform CameraTarget => cameraTarget;
         public bool IsGrounded => movementComponent.Model.Grounded;
@@ -179,6 +192,77 @@ namespace SoulsLike.Entities.Character
         {
             animatorComponent.CompleteDeathAnimation();
             _runtime.SetInputBlocked(false);
+        }
+
+        public async UniTask PlayGraceUnblock(CancellationToken token)
+        {
+            BeginGraceTransition(GracePhase.Unblock);
+            animatorComponent.TriggerGraceUnblock();
+
+            try
+            {
+                await _graceTransitionCompletionSource.Task.AttachExternalCancellation(token);
+            }
+            finally
+            {
+                if (_gracePhase == GracePhase.Unblock)
+                {
+                    CompleteGraceTransition();
+                }
+            }
+        }
+
+        public async UniTask EnterGraceRest(CancellationToken token)
+        {
+            BeginGraceTransition(GracePhase.RestStart);
+            animatorComponent.TriggerGraceRestStart();
+
+            try
+            {
+                await _graceTransitionCompletionSource.Task.AttachExternalCancellation(token);
+            }
+            finally
+            {
+                if (_gracePhase == GracePhase.RestStart)
+                {
+                    CompleteGraceTransition();
+                }
+            }
+        }
+
+        public void EnterGraceRestIdle()
+        {
+            _gracePhase = GracePhase.RestIdle;
+            SetGraceProtection(true);
+            animatorComponent.EnterGraceRestIdle();
+        }
+
+        public void CancelGraceRest()
+        {
+            if (_gracePhase is GracePhase.RestStart or GracePhase.RestIdle)
+            {
+                CompleteGraceTransition();
+            }
+        }
+
+        public async UniTask ExitGraceRest(CancellationToken token)
+        {
+            _gracePhase = GracePhase.RestEnd;
+            _graceTransitionCompletionSource = new UniTaskCompletionSource<bool>();
+            SetGraceProtection(true);
+            animatorComponent.TriggerGraceRestEnd();
+
+            try
+            {
+                await _graceTransitionCompletionSource.Task.AttachExternalCancellation(token);
+            }
+            finally
+            {
+                if (_gracePhase == GracePhase.RestEnd)
+                {
+                    CompleteGraceTransition();
+                }
+            }
         }
 
         public CharacterCommandExecutionStatus TryStartAttack(in AttackRequest request)
@@ -352,8 +436,11 @@ namespace SoulsLike.Entities.Character
             if (state.StateMachineName == StateMachineName.Spawn)
             {
                 if (state.State == StateMachineState.Enter) _runtime.SetInputBlocked(true);
-                else if (state.State == StateMachineState.Exit) _runtime.SetInputBlocked(false);
+                else if (state.State == StateMachineState.Exit && _gracePhase == GracePhase.None)
+                    _runtime.SetInputBlocked(false);
             }
+
+            HandleGraceAnimationState(state);
 
             if (state.StateMachineName == StateMachineName.Death
                 && state.State == StateMachineState.Exit
@@ -396,6 +483,53 @@ namespace SoulsLike.Entities.Character
             {
                 animatorComponent.InterruptRollForSprint();
             }
+        }
+
+        private void BeginGraceTransition(GracePhase phase)
+        {
+            _gracePhase = phase;
+            _graceTransitionCompletionSource = new UniTaskCompletionSource<bool>();
+            SetGraceProtection(true);
+        }
+
+        private void HandleGraceAnimationState(AnimatorStateMachineDto state)
+        {
+            if (state.StateMachineName == StateMachineName.GraceUnblock
+                && state.State == StateMachineState.Exit
+                && _gracePhase == GracePhase.Unblock)
+            {
+                CompleteGraceTransition();
+                return;
+            }
+
+            if (state.StateMachineName == StateMachineName.GraceRestIdle
+                && state.State == StateMachineState.Enter
+                && _gracePhase == GracePhase.RestStart)
+            {
+                _gracePhase = GracePhase.RestIdle;
+                _graceTransitionCompletionSource.TrySetResult(true);
+                return;
+            }
+
+            if (state.StateMachineName == StateMachineName.GraceRestEnd
+                && state.State == StateMachineState.Exit
+                && _gracePhase == GracePhase.RestEnd)
+            {
+                CompleteGraceTransition();
+            }
+        }
+
+        private void CompleteGraceTransition()
+        {
+            _gracePhase = GracePhase.None;
+            SetGraceProtection(false);
+            _graceTransitionCompletionSource.TrySetResult(true);
+        }
+
+        private void SetGraceProtection(bool isProtected)
+        {
+            _runtime.SetInputBlocked(isProtected);
+            healthComponent.SetInvulnerable(isProtected);
         }
 
         public void SetMovementBlocked(bool blocked)

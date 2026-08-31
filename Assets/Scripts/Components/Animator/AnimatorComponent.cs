@@ -53,7 +53,12 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int EquipmentSwapInTrigger = Animator.StringToHash("EquipmentSwapIn");
         private static readonly int LeftEquipmentSwapOutTrigger = Animator.StringToHash("LeftEquipmentSwapOut");
         private static readonly int LeftEquipmentSwapInTrigger = Animator.StringToHash("LeftEquipmentSwapIn");
+        private static readonly int GraceUnblockTrigger = Animator.StringToHash("GraceUnblock");
+        private static readonly int GraceRestStartTrigger = Animator.StringToHash("GraceRestStart");
+        private static readonly int GraceRestEndTrigger = Animator.StringToHash("GraceRestEnd");
         private static readonly int OneHandedFreeLocomotionState = Animator.StringToHash("OneHandedLayer.FreeLocomotion");
+        private static readonly int OneHandedGraceRestIdleState = Animator.StringToHash("OneHandedLayer.GraceRestIdle");
+        private static readonly int TwoHandedGraceRestIdleState = Animator.StringToHash("TwoHandedLayer.GraceRestIdle");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_ACTIONS_LAYER = "UpperBodyActions";
@@ -242,6 +247,30 @@ namespace SoulsLike.Entities.Character.Components
         public void TriggerSpawn()
         {
             animator.SetTrigger(SpawnTrigger);
+        }
+
+        public void TriggerGraceUnblock()
+        {
+            animator.SetTrigger(GraceUnblockTrigger);
+        }
+
+        public void TriggerGraceRestStart()
+        {
+            animator.SetTrigger(GraceRestStartTrigger);
+        }
+
+        public void EnterGraceRestIdle()
+        {
+            bool isTwoHanded = _targetHandMode == HandMode.TwoHanded;
+            animator.Play(
+                isTwoHanded ? TwoHandedGraceRestIdleState : OneHandedGraceRestIdleState,
+                GetRequiredLayerIndex(isTwoHanded ? TWO_HANDED_LAYER : ONE_HANDED_LAYER),
+                0.0f);
+        }
+
+        public void TriggerGraceRestEnd()
+        {
+            animator.SetTrigger(GraceRestEndTrigger);
         }
 
         public void TriggerHit()

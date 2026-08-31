@@ -10,8 +10,10 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         private float _staminaRecoveryDelayRemaining;
         private bool _staminaSpentSinceRecoveryTick;
+        private bool _isInvulnerable;
 
         public HealthStats Stats => Model.Stats;
+        public bool IsInvulnerable => _isInvulnerable;
 
         public void Initialize()
         {
@@ -85,7 +87,7 @@ namespace SoulsLike.Entities.Character.Components.Health
             HealthStats stats = NormalizeStats(currentStats);
             float incomingAmount = Mathf.Max(0f, request.Amount);
 
-            if (!stats.IsAlive || incomingAmount <= 0f)
+            if (_isInvulnerable || !stats.IsAlive || incomingAmount <= 0f)
             {
                 return new DamageResult
                 {
@@ -122,6 +124,11 @@ namespace SoulsLike.Entities.Character.Components.Health
         public DamageResult ApplyDamage(in DamageRequest request)
         {
             DamageResult result = CalculateDamage(request, Stats);
+            if (_isInvulnerable)
+            {
+                return result;
+            }
+
             Model.SetDamageSource(request.SourceEntityId);
             ApplyAuthoritativeStats(result.NewStats);
             NotifyDamageApplied(result);
@@ -251,6 +258,11 @@ namespace SoulsLike.Entities.Character.Components.Health
         public void NotifyDamageApplied(DamageResult result)
         {
             Model.NotifyDamageApplied(result);
+        }
+
+        public void SetInvulnerable(bool isInvulnerable)
+        {
+            _isInvulnerable = isInvulnerable;
         }
 
         private HealthStats NormalizeStats(HealthStats stats)
