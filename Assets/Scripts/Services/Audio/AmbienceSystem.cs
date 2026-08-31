@@ -11,6 +11,8 @@ namespace SoulsLike.Services.Audio
 {
     public class AmbienceSystem : IAmbienceSystem, IInitializable, ITickable, IDisposable, IObserver<IAudioSettingsData>, ICombatStateObserver
     {
+        private const float DEFAULT_CLIP_FADE_DURATION = 0.5f;
+
         private readonly AmbienceData _data;
         private readonly IAudioService _audioService;
         private readonly ISceneService _sceneService;
@@ -31,6 +33,10 @@ namespace SoulsLike.Services.Audio
 
         private float _audioScale = 1f;
         private Tween _fadeTween;
+        private Tween _musicTransitionTween;
+        private Tween _ambienceTransitionTween;
+        private float _musicTransitionScale = 1f;
+        private float _ambienceTransitionScale = 1f;
 
         public event Action<float> VolumeScaleChanged;
 
@@ -79,18 +85,31 @@ namespace SoulsLike.Services.Audio
 
         public void Tick()
         {
-            if (_sceneAmbienceClips == null || _sceneAmbienceClips.Length <= 1 || _ambienceSource.isPlaying)
+            if (_sceneAmbienceClips == null || _sceneAmbienceClips.Length <= 1 || IsAmbienceTransitioning())
             {
                 return;
             }
 
-            PlayNextSceneAmbience();
+            if (!_ambienceSource.isPlaying)
+            {
+                PlayNextSceneAmbience();
+                return;
+            }
+
+            if (_ambienceSource.time >= _ambienceSource.clip.length - DEFAULT_CLIP_FADE_DURATION)
+            {
+                PlayNextSceneAmbience(GetAmbienceOutgoingFadeDuration());
+            }
         }
 
         public void Dispose()
         {
             _fadeTween?.Kill();
             _fadeTween = null;
+            _musicTransitionTween?.Kill();
+            _musicTransitionTween = null;
+            _ambienceTransitionTween?.Kill();
+            _ambienceTransitionTween = null;
             if (_sceneService != null)
             {
                 _sceneService.OnSceneChanged -= OnSceneChanged;
@@ -168,17 +187,13 @@ namespace SoulsLike.Services.Audio
             }
 
             _currentMusic = type;
-            _musicSource.clip = clip;
-            ApplyMusicVolume();
-            _musicSource.Play();
+            TransitionMusicTo(clip);
         }
 
         public void StopMusic()
         {
             _currentMusic = MusicType.None;
-            if (_musicSource == null) return;
-            _musicSource.Stop();
-            _musicSource.clip = null;
+            TransitionMusicTo(null);
         }
 
         public void PlayAmbience(MusicType type)
@@ -208,9 +223,7 @@ namespace SoulsLike.Services.Audio
             }
 
             _currentAmbience = type;
-            _ambienceSource.clip = clip;
-            ApplyAmbienceVolume();
-            _ambienceSource.Play();
+            TransitionAmbienceTo(clip);
         }
 
         public void StopAmbience()
@@ -218,9 +231,7 @@ namespace SoulsLike.Services.Audio
             _currentAmbience = MusicType.None;
             _combatAmbienceActive = false;
             ClearSceneAmbiencePlaylist();
-            if (_ambienceSource == null) return;
-            _ambienceSource.Stop();
-            _ambienceSource.clip = null;
+            TransitionAmbienceTo(null);
         }
 
         public void PlaySfx(SfxType type)
@@ -289,8 +300,7 @@ namespace SoulsLike.Services.Audio
             {
                 Debug.LogError($"{nameof(AmbienceSystem)}.PlayCombatAmbience(): no clips mapped in {nameof(AmbienceData)}.combatAmbienceClips.");
                 ClearSceneAmbiencePlaylist();
-                _ambienceSource.Stop();
-                _ambienceSource.clip = null;
+                TransitionAmbienceTo(null);
                 return;
             }
 
@@ -302,23 +312,26 @@ namespace SoulsLike.Services.Audio
             _currentAmbience = MusicType.None;
             _sceneAmbienceClips = (AudioClip[])clips.Clone();
             _sceneAmbienceIndex = 0;
-            _ambienceSource.Stop();
             _ambienceSource.loop = _sceneAmbienceClips.Length == 1;
+            var outgoingFadeDuration = GetAmbienceOutgoingFadeDuration();
             ShuffleSceneAmbience();
-            PlayNextSceneAmbience();
+            PlayNextSceneAmbience(outgoingFadeDuration);
         }
 
-        private void PlayNextSceneAmbience()
+        private void PlayNextSceneAmbience(float outgoingFadeDuration = DEFAULT_CLIP_FADE_DURATION)
         {
+            if (_sceneAmbienceClips == null || _sceneAmbienceClips.Length == 0)
+            {
+                return;
+            }
+
             if (_sceneAmbienceIndex >= _sceneAmbienceClips.Length)
             {
                 ShuffleSceneAmbience();
                 _sceneAmbienceIndex = 0;
             }
 
-            _ambienceSource.clip = _sceneAmbienceClips[_sceneAmbienceIndex++];
-            ApplyAmbienceVolume();
-            _ambienceSource.Play();
+            TransitionAmbienceTo(_sceneAmbienceClips[_sceneAmbienceIndex++], true, outgoingFadeDuration);
         }
 
         private void ShuffleSceneAmbience()
@@ -345,14 +358,123 @@ namespace SoulsLike.Services.Audio
         {
             if (_musicSource == null) return;
             var clipVolume = _data != null ? _data.MusicClipVolume : 1f;
-            _musicSource.volume = clipVolume * _musicSettingsVolume * _audioScale;
+            _musicSource.volume = clipVolume * _musicSettingsVolume * _audioScale * _musicTransitionScale;
         }
 
         private void ApplyAmbienceVolume()
         {
             if (_ambienceSource == null) return;
             var clipVolume = _data != null ? _data.MusicClipVolume : 1f;
-            _ambienceSource.volume = clipVolume * _musicSettingsVolume * _audioScale;
+            _ambienceSource.volume = clipVolume * _musicSettingsVolume * _audioScale * _ambienceTransitionScale;
+        }
+
+        private void TransitionMusicTo(AudioClip clip)
+        {
+            _musicTransitionTween?.Kill();
+            _musicTransitionTween = TransitionTo(_musicSource, clip, false, DEFAULT_CLIP_FADE_DURATION);
+        }
+
+        private void TransitionAmbienceTo(AudioClip clip, bool forceRestart = false, float outgoingFadeDuration = DEFAULT_CLIP_FADE_DURATION)
+        {
+            _ambienceTransitionTween?.Kill();
+            _ambienceTransitionTween = TransitionTo(_ambienceSource, clip, forceRestart, outgoingFadeDuration);
+        }
+
+        private Tween TransitionTo(AudioSource source, AudioClip clip, bool forceRestart, float outgoingFadeDuration)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            if (!source.isPlaying)
+            {
+                if (clip == null)
+                {
+                    source.Stop();
+                    source.clip = null;
+                    SetTransitionScale(source, 1f);
+                    return null;
+                }
+
+                source.clip = clip;
+                SetTransitionScale(source, 0f);
+                source.Play();
+                return CreateFadeTween(source, 1f);
+            }
+
+            if (!forceRestart && source.clip == clip)
+            {
+                return CreateFadeTween(source, 1f);
+            }
+
+            var transition = DOTween.Sequence();
+            transition.Append(CreateFadeTween(source, GetTransitionScale(source), 0f, outgoingFadeDuration));
+            transition.AppendCallback(() =>
+            {
+                source.Stop();
+                source.clip = clip;
+                if (clip != null)
+                {
+                    source.Play();
+                }
+            });
+
+            if (clip != null)
+            {
+                transition.Append(CreateFadeTween(source, 0f, 1f, DEFAULT_CLIP_FADE_DURATION));
+            }
+            else
+            {
+                transition.AppendCallback(() => SetTransitionScale(source, 1f));
+            }
+
+            return transition;
+        }
+
+        private Tween CreateFadeTween(AudioSource source, float target)
+        {
+            return CreateFadeTween(source, GetTransitionScale(source), target, DEFAULT_CLIP_FADE_DURATION);
+        }
+
+        private Tween CreateFadeTween(AudioSource source, float start, float target, float duration)
+        {
+            return DOVirtual.Float(start, target, duration, value => SetTransitionScale(source, value))
+                .SetEase(Ease.InOutSine);
+        }
+
+        private float GetTransitionScale(AudioSource source)
+        {
+            return source == _musicSource ? _musicTransitionScale : _ambienceTransitionScale;
+        }
+
+        private void SetTransitionScale(AudioSource source, float value)
+        {
+            if (source == _musicSource)
+            {
+                _musicTransitionScale = value;
+                ApplyMusicVolume();
+                return;
+            }
+
+            _ambienceTransitionScale = value;
+            ApplyAmbienceVolume();
+        }
+
+        private bool IsAmbienceTransitioning()
+        {
+            return _ambienceTransitionTween != null && _ambienceTransitionTween.IsActive() && _ambienceTransitionTween.IsPlaying();
+        }
+
+        private float GetAmbienceOutgoingFadeDuration()
+        {
+            if (!_ambienceSource.isPlaying || _ambienceSource.loop)
+            {
+                return DEFAULT_CLIP_FADE_DURATION;
+            }
+
+            var remainingPlaybackTime = Mathf.Max(0f, _ambienceSource.clip.length - _ambienceSource.time);
+            return Mathf.Min(DEFAULT_CLIP_FADE_DURATION, remainingPlaybackTime);
         }
     }
 }
