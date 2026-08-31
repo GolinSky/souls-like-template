@@ -14,15 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.WeaponMovesetDefinition
   weaponId: 1
   animatorController: {fileID: 9100000, guid: d2e181e35c903c24f8c225e05fc7b74e, type: 2}
-  combatIdle: {fileID: 6842057716766215316, guid: 01639a762a9751c41b75241c02778d6e, type: 3}
-  walkForward: {fileID: -390927730355987687, guid: 7f4b3ea5940ea9a448707d0e32df77a4, type: 3}
-  walkBackward: {fileID: 8906066752504640911, guid: 824db54e6fd37064bb8730b871b83067, type: 3}
-  walkLeft: {fileID: 5029939399171040729, guid: 60d0330fc808c2c4f931f32fd359d6ca, type: 3}
-  walkRight: {fileID: 8890350787285056275, guid: a18812b729a6a4344811897ab0d8c5e0, type: 3}
-  runForward: {fileID: 8952007183208305176, guid: bf6f86e23e0da9045a554234a0421659, type: 3}
-  runBackward: {fileID: 5335149876630324875, guid: dfeb07f5d4d287148bc2e1c9cf63cb28, type: 3}
-  runLeft: {fileID: 1176163273412670069, guid: c9e34221e5e01544d86101c344fcbe3b, type: 3}
-  runRight: {fileID: -5267155906788140163, guid: fb8e5a5f2eb7afa4fa968f7a5e2606d4, type: 3}
   actions:
   - {fileID: 11400000, guid: f1c9a1696381b1846ad21155211a2c6a, type: 2}
   - {fileID: 11400000, guid: 315c5d369973bfc4d8212f8550253724, type: 2}
