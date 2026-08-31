@@ -88,6 +88,13 @@ namespace SoulsLike.Ui.PauseNavigation
                 return;
             }
 
+            if (_gameOrchestrator.CurrentGameState == GameState.Paused
+                && _inputService.CharacterActions.Pause.WasPressedThisFrame())
+            {
+                HandleUiBack();
+                return;
+            }
+
             if (_gameOrchestrator.CurrentGameState == GameState.Idle
                 && _inputService.CharacterActions.Pause.WasPressedThisFrame())
             {
