@@ -12,9 +12,10 @@ namespace SoulsLike.Entities.Combat
     {
         [SerializeField] private Collider hitbox;
         [SerializeField] private int hitZone;
-        [SerializeField] private Light debugLight;
+        [SerializeField] private Renderer debugRenderer;
         public event Action OnHitConfirmed;
 
+        private static readonly int _baseColorId = Shader.PropertyToID("_BaseColor");
         private readonly HashSet<long> _hitEntityIds = new();
         //todo: lot of duplicated data around 
         private IEntityLocator _entityLocator;
@@ -22,6 +23,8 @@ namespace SoulsLike.Entities.Combat
         private ItemId _weaponId;
         private CharacterActionId _actionId;
         private float _damage;
+        private Material _debugMaterialInstance;
+        private Color _inactiveDebugColor;
 
         public void Initialize(
             IEntityLocator entityLocator,
@@ -32,6 +35,12 @@ namespace SoulsLike.Entities.Combat
             _entityLocator = entityLocator;
             _ownerEntityId = ownerEntityId;
             _weaponId = weaponId;
+            if (debugRenderer != null)
+            {
+                _debugMaterialInstance = debugRenderer.material;
+                _inactiveDebugColor = _debugMaterialInstance.GetColor(_baseColorId);
+            }
+
             Close();
         }
 
@@ -41,14 +50,22 @@ namespace SoulsLike.Entities.Combat
             _damage = damage;
             _hitEntityIds.Clear();
             hitbox.enabled = true;
-            debugLight.enabled = true;
+            SetDebugColor(Color.red);
         }
 
         public void Close()
         {
             hitbox.enabled = false;
             _hitEntityIds.Clear();
-            debugLight.enabled = false;
+            SetDebugColor(_inactiveDebugColor);
+        }
+
+        private void SetDebugColor(Color color)
+        {
+            if (_debugMaterialInstance != null)
+            {
+                _debugMaterialInstance.SetColor(_baseColorId, color);
+            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -99,6 +116,14 @@ namespace SoulsLike.Entities.Combat
         private void OnDisable()
         {
             _hitEntityIds.Clear();
+        }
+
+        private void OnDestroy()
+        {
+            if (_debugMaterialInstance != null)
+            {
+                Destroy(_debugMaterialInstance);
+            }
         }
     }
 }
