@@ -480,15 +480,6 @@ namespace SoulsLike.Editor
             var serialized = new SerializedObject(moveset);
             SetInt(serialized, "weaponId", (int)ItemId.GreatSword, false);
             SetObject(serialized, "animatorController", controller, false);
-            SetObject(serialized, "combatIdle", LoadClip(IDLE_PATH), false);
-            SetObject(serialized, "walkForward", LoadClip(WALK_FORWARD_PATH), false);
-            SetObject(serialized, "walkBackward", LoadClip(WALK_BACKWARD_PATH), false);
-            SetObject(serialized, "walkLeft", LoadClip(WALK_LEFT_PATH), false);
-            SetObject(serialized, "walkRight", LoadClip(WALK_RIGHT_PATH), false);
-            SetObject(serialized, "runForward", LoadClip(RUN_FORWARD_PATH), false);
-            SetObject(serialized, "runBackward", LoadClip(RUN_BACKWARD_PATH), false);
-            SetObject(serialized, "runLeft", LoadClip(RUN_LEFT_PATH), false);
-            SetObject(serialized, "runRight", LoadClip(RUN_RIGHT_PATH), false);
             SerializedProperty property = RequireProperty(serialized, "actions");
             CharacterActionId[] orderedActions =
             {

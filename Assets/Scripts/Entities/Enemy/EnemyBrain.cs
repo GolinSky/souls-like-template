@@ -15,6 +15,7 @@ namespace SoulsLike.Entities.Enemy
         IDisposable
     {
         private const float FACING_ANGLE = 20f;
+        private const float ATTACK_MINIMUM_TARGET_TRACKING_SPEED = 360f;
 
         private readonly EnemyActor _actor;
         private readonly EnemyNavigationMotor _motor;
@@ -155,6 +156,12 @@ namespace SoulsLike.Entities.Enemy
 
         private void Decide(float now)
         {
+            if (Goal == EnemyGoal.ReturnHome)
+            {
+                MoveTo(_actor.HomePosition);
+                return;
+            }
+
             bool observed = _perception.TryObserve(
                 _actor.transform.position,
                 _actor.transform.forward,
@@ -164,9 +171,10 @@ namespace SoulsLike.Entities.Enemy
 
             if (observed)
             {
-                if (IsOutsideLeash(target.Position))
+                if (IsOutsideLeash())
                 {
-                    EnterGoal(EnemyGoal.ReturnHome);
+                    _motor.Stop();
+                    EnterGoal(EnemyGoal.Search);
                     return;
                 }
 
@@ -184,6 +192,36 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
+            if (_perception.HasRecentMemory(now, _actor.BehaviourProfile)
+                && !_perception.Memory.Value.HadLineOfSight
+                && _perception.TryResolveRememberedTarget(out target))
+            {
+                if (IsOutsideLeash())
+                {
+                    _motor.Stop();
+                    EnterGoal(EnemyGoal.Search);
+                    return;
+                }
+
+                BeginReaction(target.EntityId, now);
+                if (now < _reactionReadyTime)
+                {
+                    EnterGoal(EnemyGoal.Investigate);
+                    _motor.Stop();
+                    _motor.Face(target.Position, 360f, Time.deltaTime);
+                    return;
+                }
+
+                EnterGoal(EnemyGoal.Combat);
+                DecideCombat(target, now);
+                return;
+            }
+
+            if (Goal == EnemyGoal.Search)
+            {
+                return;
+            }
+
             if (_perception.HasRecentMemory(now, _actor.BehaviourProfile))
             {
                 EnterGoal(EnemyGoal.Investigate);
@@ -197,8 +235,7 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
-            if (IsOutsideLeash(_actor.transform.position)
-                || Goal == EnemyGoal.ReturnHome)
+            if (IsOutsideLeash())
             {
                 EnterGoal(EnemyGoal.ReturnHome);
                 MoveTo(_actor.HomePosition);
@@ -304,7 +341,13 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
-            _motor.Face(target.LockPoint, _animation.CurrentTurnSpeed, deltaTime);
+            float turnSpeed = _animation.Phase is EnemyActionPhase.Windup
+                or EnemyActionPhase.Active
+                ? Mathf.Max(
+                    ATTACK_MINIMUM_TARGET_TRACKING_SPEED,
+                    _animation.CurrentTurnSpeed)
+                : _animation.CurrentTurnSpeed;
+            _motor.Face(target.LockPoint, turnSpeed, deltaTime);
             if (!_animation.ComboWindowOpen)
             {
                 return;
@@ -471,8 +514,8 @@ namespace SoulsLike.Entities.Enemy
             goal is EnemyGoal.Investigate
                 or EnemyGoal.Combat;
 
-        private bool IsOutsideLeash(Vector3 position) =>
-            (position - _actor.HomePosition).sqrMagnitude
+        private bool IsOutsideLeash() =>
+            (_actor.transform.position - _actor.HomePosition).sqrMagnitude
             > _actor.BehaviourProfile.LeashDistance
             * _actor.BehaviourProfile.LeashDistance;
 
@@ -510,7 +553,7 @@ namespace SoulsLike.Entities.Enemy
                 _animation.PlayHit();
             }
 
-            if (Goal == EnemyGoal.Dormant)
+            if (Goal is EnemyGoal.Dormant or EnemyGoal.ReturnHome)
             {
                 EnterGoal(EnemyGoal.Investigate);
             }

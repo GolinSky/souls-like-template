@@ -41,9 +41,12 @@ namespace SoulsLike.Entities.Enemy
                 TargetingSnapshot snapshot = targeting.Read();
                 Vector3 toTarget = snapshot.LockPoint - (origin + Vector3.up * profile.EyeHeight);
                 float distanceSqr = toTarget.sqrMagnitude;
+                bool isWithinPreferredRange = distanceSqr
+                    <= profile.PreferredRangeMax * profile.PreferredRangeMax;
                 if (!snapshot.IsAlive
                     || distanceSqr > closestDistanceSqr
-                    || Vector3.Angle(forward, toTarget) > profile.FieldOfView * 0.5f
+                    || (!isWithinPreferredRange
+                        && Vector3.Angle(forward, toTarget) > profile.FieldOfView * 0.5f)
                     || !HasLineOfSight(origin, snapshot, profile))
                 {
                     continue;
