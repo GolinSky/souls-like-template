@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using SoulsLike.Services;
 using SoulsLike.Services.Spawn;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace SoulsLike.Orchestrators.MainMenu
@@ -20,6 +21,8 @@ namespace SoulsLike.Orchestrators.MainMenu
         
         public void Initialize()
         {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
         
         public void PlayGame()
