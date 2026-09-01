@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using SoulsLike.Services.Scenes.Data;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.Toolbars;
@@ -14,7 +16,7 @@ namespace SoulsLike.EditorTools
     /// Unity 6 Main Toolbar extension providing:
     /// 1. Play Game Button: Starts Play mode with scene index 0 (MainMenu).
     /// 2. Fast Play Game Button: Starts Play mode with scene index 0 with Domain & Scene Reload disabled.
-    /// 3. Scenes Dropdown: Dynamic selector for scenes in Assets/Scenes.
+    /// 3. Scenes Dropdown: Dynamic selector for scenes in Assets/Scenes that loads configured dependencies for primary scenes.
     /// </summary>
     [InitializeOnLoad]
     public static class ToolbarSceneTools
@@ -23,6 +25,7 @@ namespace SoulsLike.EditorTools
         private const string FAST_PLAY_BUTTON_PATH = "SoulsLike/Fast Play Game";
         private const string SCENE_DROPDOWN_PATH = "SoulsLike/Scene Selector";
         private const string SCENES_ROOT = "Assets/Scenes";
+        private const string SCENE_DATA_PATH = "Assets/Settings/Data/SceneData.asset";
 
         private const string KEY_FAST_ACTIVE = "SoulsLike_IsFastPlayActive";
         private const string KEY_SAVED_ENABLED = "SoulsLike_SavedOptionsEnabled";
@@ -80,7 +83,7 @@ namespace SoulsLike.EditorTools
         {
             var activeSceneName = SceneManager.GetActiveScene().name;
             var label = string.IsNullOrEmpty(activeSceneName) ? "Select Scene" : $"🎬 {activeSceneName}";
-            var tooltip = "Open a scene from Assets/Scenes";
+            var tooltip = "Open a scene from Assets/Scenes and its configured dependencies";
 
             return new MainToolbarDropdown(
                 new MainToolbarContent(label, null, tooltip),
@@ -287,14 +290,67 @@ namespace SoulsLike.EditorTools
             var scenePath = scenePathValue as string;
             if (string.IsNullOrEmpty(scenePath)) return;
 
-            if (string.Equals(scenePath, SceneManager.GetActiveScene().path, StringComparison.OrdinalIgnoreCase))
+            if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
             {
                 return;
             }
 
-            if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+            SceneData sceneData = AssetDatabase.LoadAssetAtPath<SceneData>(SCENE_DATA_PATH);
+            if (sceneData == null)
             {
-                EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+                Debug.LogError($"[ToolbarSceneTools] Required SceneData asset was not found at '{SCENE_DATA_PATH}'.");
+                return;
+            }
+
+            SceneType sceneType = sceneData.GetSceneByPath(scenePath);
+            var dependencyPaths = new List<string>();
+            if (sceneType != SceneType.Undefined && sceneData.TryGetDependencies(sceneType, out SceneReference[] dependencies))
+            {
+                var loadedScenePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    scenePath,
+                };
+
+                foreach (SceneReference dependency in dependencies)
+                {
+                    if (dependency == null)
+                    {
+                        Debug.LogError($"[ToolbarSceneTools] SceneData dependency for '{sceneType}' is null.");
+                        return;
+                    }
+
+                    string dependencyPath = dependency.ScenePath;
+                    if (string.IsNullOrEmpty(dependencyPath))
+                    {
+                        Debug.LogError($"[ToolbarSceneTools] SceneData dependency for '{sceneType}' has an empty scene path.");
+                        return;
+                    }
+
+                    if (!loadedScenePaths.Add(dependencyPath))
+                    {
+                        continue;
+                    }
+
+                    SceneAsset dependencySceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(dependencyPath);
+                    if (dependencySceneAsset == null)
+                    {
+                        Debug.LogError($"[ToolbarSceneTools] SceneData dependency '{dependencyPath}' for '{sceneType}' could not be loaded as a SceneAsset.");
+                        return;
+                    }
+
+                    dependencyPaths.Add(dependencyPath);
+                }
+            }
+
+            Scene targetScene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+            foreach (string dependencyPath in dependencyPaths)
+            {
+                EditorSceneManager.OpenScene(dependencyPath, OpenSceneMode.Additive);
+            }
+
+            if (!EditorSceneManager.SetActiveScene(targetScene))
+            {
+                Debug.LogError($"[ToolbarSceneTools] Failed to set target scene '{scenePath}' as active.");
             }
         }
 

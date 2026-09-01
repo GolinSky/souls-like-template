@@ -16256,60 +16256,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4468dbe7a9a34623b996ce3506fc6c8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.CameraService.CameraService
-  switchAngleDuration: 0.4
-  switchAngleEase: 7
-  zoomFov: 30
-  zoomDuration: 0.3
-  zoomEase: 3
   targetCamera: {fileID: 1800770206}
   cinemachineCamera: {fileID: 1470855207966471111}
   cinemachineThirdPersonFollow: {fileID: 6260723787445959970}
-  airborneRiseLag: 0.65
-  airborneFallLag: 0.4
-  groundedFollowSmoothTime: 0.1
-  jumpFollowSmoothTime: 0.22
-  fallFollowSmoothTime: 0.15
-  longFallSmoothTime: 0.08
-  groundedMaxFollowSpeed: 5
-  jumpMaxFollowSpeed: 5
-  fallMaxFollowSpeed: 8
-  longFallMaxSpeed: 18
-  longFallCatchupDistance: 4
-  mouseYawDegreesPerPixel: 0.09
-  mousePitchDegreesPerPixel: 0.08
-  stickYawDegreesPerSecond: 220
-  stickPitchDegreesPerSecond: 150
-  topClamp: 70
-  bottomClamp: -30
-  cameraAngleOverride: 0
-  lockCameraPosition: 0
-  lockHeadingHoldDistance: 0.55
-  lockHeadingReleaseDistance: 0.9
-  lockYawSmoothTime: 0.12
-  lockYawMaxSpeed: 150
-  lockBasePitch: 6
-  lockMinPitchDistance: 1.5
-  lockVerticalCloseDistance: 1.25
-  lockVerticalFarDistance: 4
-  lockCloseVerticalInfluence: 0.25
-  lockFarVerticalInfluence: 0.65
-  lockPitchSmoothTime: 0.2
-  lockPitchMaxSpeed: 100
-  lockMinFocusDistance: 1.5
-  lockMinFocusHeight: -0.75
-  lockMaxFocusHeight: 1.25
-  lockTargetSmoothTime: 0.1
-  lockYawHalfTurnTolerance: 2
-  humanoidLockProfile:
-    shoulderOffset: {x: 1, y: 0.48, z: 0}
-    verticalArmLength: 0
-    cameraDistance: 3.3
-    cameraSide: 0.5
-    fieldOfView: 48
-    minPitch: -10
-    maxPitch: 16
-  lockRigBlendDuration: 0.2
-  lockRigBlendEase: 3
 --- !u!1 &4941954192799869488
 GameObject:
   m_ObjectHideFlags: 0

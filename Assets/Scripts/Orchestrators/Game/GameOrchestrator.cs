@@ -1,5 +1,4 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using SoulsLike.Services.Scenes;
 using SoulsLike.Services.Scenes.Data;
 using UnityEngine;
@@ -7,7 +6,7 @@ using VContainer.Unity;
 
 namespace SoulsLike.Services
 {
-    public class GameOrchestrator: IGameOrchestrator, ITickable
+    public class GameOrchestrator: IGameOrchestrator, IInitializable
     {
         private readonly ISceneService _sceneService;
         private readonly IInputService _inputService;
@@ -16,6 +15,11 @@ namespace SoulsLike.Services
         {
             _sceneService = sceneService;
             _inputService = inputService;
+        }
+
+        public void Initialize()
+        {
+            LoadMenu().Forget();
         }
 
         public async UniTaskVoid LoadMenu()
@@ -31,19 +35,6 @@ namespace SoulsLike.Services
         public void ExitGame()
         {
             Application.Quit();
-        }
-        
-
-        // ── tick ──────────────────────────────────────────────────────
-
-        public void Tick()
-        {
-            // if (_inputService.CharacterActions.Pause.WasPressedThisFrame())
-            // {
-            //     Cursor.lockState = Cursor.lockState == CursorLockMode.Locked
-            //         ? CursorLockMode.None
-            //         : CursorLockMode.Locked;
-            // }
         }
     }
 }
