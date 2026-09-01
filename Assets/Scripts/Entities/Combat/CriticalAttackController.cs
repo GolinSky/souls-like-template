@@ -127,7 +127,7 @@ namespace SoulsLike.Entities.Combat
             _meleeCombatRelay.Cancel();
 
             HandMode handMode = _attack.ActiveHandMode;
-            AlignActors(target);
+            AlignActors(target, isRiposte);
             target.BeginCritical(handMode, _cachedPreview.Killed);
             _animator.PlayCriticalAttack(handMode);
             return true;
@@ -225,14 +225,16 @@ namespace SoulsLike.Entities.Combat
                 <= rearHalfAngleDegrees;
         }
 
-        private void AlignActors(CriticalTargetCommand target)
+        private void AlignActors(CriticalTargetCommand target, bool isRiposte)
         {
             float targetYaw = target.ActorTransform.eulerAngles.y + victimYawOffsetDegrees;
             target.ActorTransform.rotation = Quaternion.Euler(0f, targetYaw, 0f);
-            _movement.SetPosition(target.ActorTransform.TransformPoint(attackerLocalOffset));
+            Vector3 attackerOffset = attackerLocalOffset;
+            attackerOffset.z = isRiposte ? -attackerOffset.z : attackerOffset.z;
+            _movement.SetPosition(target.ActorTransform.TransformPoint(attackerOffset));
             _movement.transform.rotation = Quaternion.Euler(
                 0f,
-                targetYaw + attackerYawOffsetDegrees,
+                targetYaw + attackerYawOffsetDegrees + (isRiposte ? 180f : 0f),
                 0f);
         }
 

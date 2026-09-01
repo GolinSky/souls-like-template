@@ -360,13 +360,13 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
-            float turnSpeed = _animation.Phase is EnemyActionPhase.Windup
-                or EnemyActionPhase.Active
-                ? Mathf.Max(
+            if (_animation.Phase == EnemyActionPhase.Windup)
+            {
+                float turnSpeed = Mathf.Max(
                     ATTACK_MINIMUM_TARGET_TRACKING_SPEED,
-                    _animation.CurrentTurnSpeed)
-                : _animation.CurrentTurnSpeed;
-            _motor.Face(target.LockPoint, turnSpeed, deltaTime);
+                    _animation.CurrentTurnSpeed);
+                _motor.Face(target.LockPoint, turnSpeed, deltaTime);
+            }
             if (!_animation.ComboWindowOpen)
             {
                 return;

@@ -66,7 +66,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int OneHandedFreeLocomotionState = Animator.StringToHash("OneHandedLayer.FreeLocomotion");
         private static readonly int OneHandedGraceRestIdleState = Animator.StringToHash("OneHandedLayer.GraceRestIdle");
         private static readonly int TwoHandedGraceRestIdleState = Animator.StringToHash("TwoHandedLayer.GraceRestIdle");
-        private static readonly int OneHandedCriticalAttackState = Animator.StringToHash("OneHandedLayer.CriticalAttack");
+        private static readonly int OneHandedCriticalAttackState = Animator.StringToHash("OneHandedLayer.Combat.CriticalAttack");
         private const float CRITICAL_TRANSITION_SECONDS = 0.05f;
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
