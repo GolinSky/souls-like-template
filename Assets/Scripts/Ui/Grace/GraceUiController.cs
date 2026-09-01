@@ -29,6 +29,7 @@ namespace SoulsLike.Ui.Grace
         private UiRouteStack _routeStack;
         private bool _isOnGraceSit;
         private bool _isLeaving;
+        private bool _isGraceUiReady;
 
         public GraceUiController(
             IUiService uiService,
@@ -69,7 +70,7 @@ namespace SoulsLike.Ui.Grace
 
         public void Tick()
         {
-            if (!_isOnGraceSit || _isLeaving || !_inputService.UiBackAction.WasPressedThisFrame())
+            if (!_isOnGraceSit || _isLeaving || !_isGraceUiReady || !_inputService.UiBackAction.WasPressedThisFrame())
             {
                 return;
             }
@@ -86,7 +87,7 @@ namespace SoulsLike.Ui.Grace
 
         public void Leave()
         {
-            if (_isLeaving)
+            if (_isLeaving || !_isGraceUiReady)
             {
                 return;
             }
@@ -102,12 +103,9 @@ namespace SoulsLike.Ui.Grace
             {
                 _isOnGraceSit = true;
                 _isLeaving = false;
-                _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION);
-
-                if (!_routeStack.HasOpenRoutes)
-                {
-                    _view.Show();
-                }
+                _isGraceUiReady = false;
+                _view.Hide();
+                _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION, ShowGraceUiAfterFade);
 
                 return;
             }
@@ -115,10 +113,10 @@ namespace SoulsLike.Ui.Grace
             if (_isOnGraceSit)
             {
                 _isOnGraceSit = false;
-                _fadeService.FadeInOut(FADE_DURATION, FADE_PAUSE_DURATION);
             }
 
             _isLeaving = false;
+            _isGraceUiReady = false;
 
             _routeStack.CloseAll();
             _view.Hide();
@@ -137,6 +135,15 @@ namespace SoulsLike.Ui.Grace
         private void CloseRoute()
         {
             _routeStack.CloseTop();
+        }
+
+        private void ShowGraceUiAfterFade()
+        {
+            if (_isOnGraceSit && !_isLeaving && !_routeStack.HasOpenRoutes)
+            {
+                _isGraceUiReady = true;
+                _view.Show();
+            }
         }
     }
 }
