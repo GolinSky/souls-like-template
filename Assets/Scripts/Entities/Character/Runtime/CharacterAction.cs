@@ -8,7 +8,7 @@ namespace SoulsLike.Entities.Character.Runtime
         public enum AttackIntent { Light, Heavy, Special }
         public enum EquipmentKind { SwitchRightWeapon, SwitchLeftWeapon, SwitchQuickItem, UseQuickItem, ToggleHandMode }
         public enum Result { Executed, TemporarilyBlocked, Invalid }
-        public enum State { Neutral, Attack, Roll, EquipmentSwap }
+        public enum State { Neutral, Attack, Roll, EquipmentSwap, Critical }
 
         public Kind ActionKind { get; }
         public AttackIntent Intent { get; }

@@ -15,12 +15,12 @@ namespace SoulsLike.Entities.Combat
         private IEntityLocator _entityLocator;
         private Entity _entity;
         private AttackComponent _attackComponent;
+        private AnimatorComponent _animatorComponent;
         private CharacterAudioComponent _audioComponent;
         private WeaponDatabase _weaponDatabase;
         private MeleeHitboxController _activeHitbox;
-        private CharacterActionId _actionId;
         private AudioResource _attackSfx;
-        private float _damage;
+        private MeleeAttackData _attack;
         private int _attackSequence;
 
         [Inject]
@@ -28,12 +28,14 @@ namespace SoulsLike.Entities.Combat
             IEntityLocator entityLocator,
             Entity entity,
             AttackComponent attackComponent,
+            AnimatorComponent animatorComponent,
             CharacterAudioComponent audioComponent,
             WeaponDatabase weaponDatabase)
         {
             _entityLocator = entityLocator;
             _entity = entity;
             _attackComponent = attackComponent;
+            _animatorComponent = animatorComponent;
             _audioComponent = audioComponent;
             _weaponDatabase = weaponDatabase;
         }
@@ -42,7 +44,7 @@ namespace SoulsLike.Entities.Combat
         {
             if (_activeHitbox != null)
             {
-                _activeHitbox.OnHitConfirmed -= OnHitConfirmed;
+                _activeHitbox.OnHitResolved -= OnHitResolved;
             }
 
             _attackSequence++;
@@ -69,12 +71,11 @@ namespace SoulsLike.Entities.Combat
             float multiplier = actionId == CharacterActionId.HeavyAttack
                 ? combatProfile.HeavyAttackMultiplier
                 : combatProfile.LightAttackMultiplier;
-            _actionId = actionId;
             WeaponDefinition weaponDefinition = _weaponDatabase.GetRequired(weaponId);
             _attackSfx = weaponDefinition.AttackSfx;
-            _damage = weaponDefinition.Stats.PhysicalAttack * multiplier;
+            _attack = BuildAttack(actionId, weaponDefinition, combatProfile, multiplier);
             _activeHitbox.Initialize(_entityLocator, _entity.Id, weaponId);
-            _activeHitbox.OnHitConfirmed += OnHitConfirmed;
+            _activeHitbox.OnHitResolved += OnHitResolved;
             return _attackSequence;
         }
 
@@ -86,7 +87,7 @@ namespace SoulsLike.Entities.Combat
                 return;
             }
 
-            _activeHitbox.Open(_actionId, _damage);
+            _activeHitbox.Open(_attack);
         }
 
         public void PlayAttackSfx(int attackSequence)
@@ -108,12 +109,66 @@ namespace SoulsLike.Entities.Combat
 
             if (_activeHitbox != null)
             {
-                _activeHitbox.OnHitConfirmed -= OnHitConfirmed;
+                _activeHitbox.OnHitResolved -= OnHitResolved;
                 _activeHitbox.Close();
                 _activeHitbox = null;
             }
         }
 
-        private void OnHitConfirmed() => _audioComponent.NotifySwordClash();
+        public void Cancel()
+        {
+            if (_activeHitbox != null)
+            {
+                _activeHitbox.Close();
+            }
+        }
+
+        private void OnHitResolved(MeleeHitResult result)
+        {
+            if (result.Type is MeleeHitResultType.Blocked
+                or MeleeHitResultType.GuardBroken
+                or MeleeHitResultType.Parried)
+            {
+                _audioComponent.NotifySwordClash();
+            }
+
+            if (result.Type == MeleeHitResultType.Parried)
+            {
+                Cancel();
+                _animatorComponent.TriggerParried();
+            }
+        }
+
+        private static MeleeAttackData BuildAttack(
+            CharacterActionId actionId,
+            WeaponDefinition weaponDefinition,
+            CombatProfile combatProfile,
+            float damageMultiplier)
+        {
+            bool isHeavy = actionId == CharacterActionId.HeavyAttack;
+            return new MeleeAttackData
+            {
+                ActionId = actionId,
+                HealthDamage = weaponDefinition.Stats.PhysicalAttack * damageMultiplier,
+                GuardDamage = isHeavy
+                    ? combatProfile.HeavyGuardDamage
+                    : combatProfile.LightGuardDamage,
+                PoiseDamage = isHeavy
+                    ? combatProfile.HeavyPoiseDamage
+                    : combatProfile.LightPoiseDamage,
+                StanceDamage = isHeavy
+                    ? combatProfile.HeavyStanceDamage
+                    : combatProfile.LightStanceDamage,
+                ImpactLevel = isHeavy
+                    ? combatProfile.HeavyImpactLevel
+                    : combatProfile.LightImpactLevel,
+                CanBeBlocked = isHeavy
+                    ? combatProfile.HeavyCanBeBlocked
+                    : combatProfile.LightCanBeBlocked,
+                CanBeParried = isHeavy
+                    ? combatProfile.HeavyCanBeParried
+                    : combatProfile.LightCanBeParried
+            };
+        }
     }
 }

@@ -9,6 +9,12 @@ namespace SoulsLike.Entities.Combat
         [SerializeField] private CharacterActionId actionId;
         [SerializeField, Range(0f, 1f)] private float activeStart = 0.15f;
         [SerializeField, Range(0f, 1f)] private float activeEnd = 0.55f;
+        [Header("Hyper Armor")]
+        [SerializeField] private bool hasHyperArmorWindow;
+        [SerializeField, Range(0f, 1f)] private float hyperArmorStart;
+        [SerializeField, Range(0f, 1f)] private float hyperArmorEnd = 1f;
+        [SerializeField, Min(0f)] private float hyperArmorPoiseBonus;
+        [SerializeField] private bool canBeInterruptedDuringHyperArmor;
 
         private bool _opened;
         private bool _playedAttackSfx;
@@ -50,6 +56,13 @@ namespace SoulsLike.Entities.Combat
                 _closed = true;
                 relay.Close(_attackSequence);
             }
+
+            ResolveDefense(animator).SetHyperArmor(
+                hasHyperArmorWindow
+                && progress >= hyperArmorStart
+                && progress <= hyperArmorEnd,
+                hyperArmorPoiseBonus,
+                canBeInterruptedDuringHyperArmor);
         }
 
         public override void OnStateExit(
@@ -58,9 +71,13 @@ namespace SoulsLike.Entities.Combat
             int layerIndex)
         {
             ResolveRelay(animator).Close(_attackSequence);
+            ResolveDefense(animator).SetHyperArmor(false);
         }
 
         private static PlayerMeleeCombatRelay ResolveRelay(Animator animator) =>
             animator.GetComponentInParent<PlayerMeleeCombatRelay>();
+
+        private static CombatDefenseComponent ResolveDefense(Animator animator) =>
+            animator.GetComponentInParent<CombatDefenseComponent>();
     }
 }

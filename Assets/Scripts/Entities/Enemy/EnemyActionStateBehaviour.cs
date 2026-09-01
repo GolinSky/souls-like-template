@@ -13,6 +13,12 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField, Range(0f, 1f)] private float comboStart = 0.45f;
         [SerializeField, Range(0f, 1f)] private float comboEnd = 0.7f;
         [SerializeField, Range(0f, 1f)] private float recoveryStart = 0.6f;
+        [Header("Hyper Armor")]
+        [SerializeField] private bool hasHyperArmorWindow;
+        [SerializeField, Range(0f, 1f)] private float hyperArmorStart;
+        [SerializeField, Range(0f, 1f)] private float hyperArmorEnd = 1f;
+        [SerializeField, Min(0f)] private float hyperArmorPoiseBonus;
+        [SerializeField] private bool canBeInterruptedDuringHyperArmor;
 
         private bool _activeStarted;
         private bool _activeEnded;
@@ -66,6 +72,13 @@ namespace SoulsLike.Entities.Enemy
                 _recoveryStarted = true;
                 controller.ReportRecoveryStarted(actionId);
             }
+
+            ResolveDefense(animator).SetHyperArmor(
+                hasHyperArmorWindow
+                && progress >= hyperArmorStart
+                && progress <= hyperArmorEnd,
+                hyperArmorPoiseBonus,
+                canBeInterruptedDuringHyperArmor);
         }
 
         public override void OnStateExit(
@@ -77,10 +90,14 @@ namespace SoulsLike.Entities.Enemy
             controller.ReportActiveEnded(actionId);
             controller.ReportComboWindow(actionId, false);
             controller.ReportStateExited(actionId);
+            ResolveDefense(animator).SetHyperArmor(false);
         }
 
         private static EnemyAnimationController ResolveController(Animator animator) =>
             animator.GetComponentInParent<EnemyAnimationController>();
+
+        private static CombatDefenseComponent ResolveDefense(Animator animator) =>
+            animator.GetComponentInParent<CombatDefenseComponent>();
 
         private void ResetState()
         {

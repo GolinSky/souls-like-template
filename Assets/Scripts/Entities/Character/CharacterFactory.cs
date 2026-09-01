@@ -66,6 +66,8 @@ namespace SoulsLike.Entities.Character
             TargetLockNode targetLockNode = GetRequiredComponentInChildren<TargetLockNode>(instance);
             PlayerMeleeCombatRelay meleeCombatRelay =
                 GetRequiredComponent<PlayerMeleeCombatRelay>(instance);
+            CriticalAttackController criticalAttackController =
+                GetRequiredComponent<CriticalAttackController>(instance);
 
             AnimatorComponent animatorComponent = GetRequiredComponent<AnimatorComponent>(instance);
             CharacterAudioComponent audioComponent = GetRequiredComponentInChildren<CharacterAudioComponent>(instance);
@@ -76,6 +78,8 @@ namespace SoulsLike.Entities.Character
                 GetRequiredComponent<EquipmentPresentation>(instance);
             InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
+            CombatDefenseComponent combatDefense = GetRequiredComponent<CombatDefenseComponent>(instance);
+            animatorComponent.ConfigureCharacter(character, movementComponent);
             long entityId = RootScope.Container.Resolve<IUniqueIdGenerator>().GenerateUniqueId();
 
             _characterScope = RootScope.CreateChild(builder =>
@@ -86,6 +90,9 @@ namespace SoulsLike.Entities.Character
                 builder.Register<InteractionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<GroundItemCollectionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<ApplyDamageCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<ResolveMeleeHitCommand>(Lifetime.Singleton)
+                    .AsSelf()
+                    .AsImplementedInterfaces();
                 builder.Register<TargetingCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
                 builder.RegisterComponent(character).AsSelf().AsImplementedInterfaces();
@@ -98,6 +105,7 @@ namespace SoulsLike.Entities.Character
 
                 builder.RegisterComponent(attackComponent).AsSelf().AsImplementedInterfaces();
                 builder.RegisterComponent(meleeCombatRelay).AsSelf();
+                builder.RegisterComponent(criticalAttackController).AsSelf().AsImplementedInterfaces();
 
                 builder.Register<MovementModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterScriptableObject<MovementData>().As<IMovementData>();
@@ -120,6 +128,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<CharacterHealthData>(Lifetime.Singleton).As<IHealthData>();
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponent(combatDefense).AsSelf().AsImplementedInterfaces();
                 builder.Register<PlayerHudUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<InventoryUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

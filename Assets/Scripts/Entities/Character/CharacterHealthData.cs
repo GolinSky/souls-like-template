@@ -8,10 +8,10 @@ namespace SoulsLike.Entities.Character
         private const float HEALTH_PER_VIGOR = 20f;
 
         private readonly HealthData _healthData;
-        private readonly Character _character;
+        private readonly CharacterData _characterData;
 
         public float MaxHealth =>
-            _healthData.MaxHealth + _character.Attributes.Vigor * HEALTH_PER_VIGOR;
+            _healthData.MaxHealth + _characterData.Attributes.Vigor * HEALTH_PER_VIGOR;
 
         public float StartingHealth =>
             MaxHealth * _healthData.StartingHealth / _healthData.MaxHealth;
@@ -26,10 +26,10 @@ namespace SoulsLike.Entities.Character
         public bool CanDie => _healthData.CanDie;
         public float InvulnerableOnSpawnSeconds => _healthData.InvulnerableOnSpawnSeconds;
 
-        public CharacterHealthData(HealthData healthData, Character character)
+        public CharacterHealthData(HealthData healthData, CharacterData characterData)
         {
             _healthData = healthData;
-            _character = character;
+            _characterData = characterData;
         }
     }
 }

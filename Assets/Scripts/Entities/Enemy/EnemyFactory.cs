@@ -74,6 +74,8 @@ namespace SoulsLike.Entities.Enemy
                 actor.gameObject);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(
                 actor.gameObject);
+            CombatDefenseComponent combatDefense = GetRequiredComponent<CombatDefenseComponent>(
+                actor.gameObject);
             VisibilityComponent visibilityComponent =
                 GetRequiredComponent<VisibilityComponent>(actor.gameObject);
             EnemyHealthUiComponent healthUiComponent =
@@ -101,6 +103,7 @@ namespace SoulsLike.Entities.Enemy
 
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponent(combatDefense).AsSelf().AsImplementedInterfaces();
                 builder.RegisterComponent(visibilityComponent).AsSelf().AsImplementedInterfaces();
                 builder.RegisterComponent(healthUiComponent).AsSelf().AsImplementedInterfaces();
 
@@ -111,6 +114,12 @@ namespace SoulsLike.Entities.Enemy
                 builder.RegisterComponent(meleeHitbox).AsSelf();
 
                 builder.Register<ApplyDamageCommand>(Lifetime.Singleton)
+                    .AsSelf()
+                    .AsImplementedInterfaces();
+                builder.Register<ResolveMeleeHitCommand>(Lifetime.Singleton)
+                    .AsSelf()
+                    .AsImplementedInterfaces();
+                builder.Register<CriticalTargetCommand>(Lifetime.Singleton)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.Register<TargetingCommand>(Lifetime.Singleton)

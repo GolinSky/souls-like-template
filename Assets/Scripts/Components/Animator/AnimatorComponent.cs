@@ -3,9 +3,9 @@ using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Movement;
+using SoulsLike.Entities.Combat;
 using SoulsLike.Items;
 using UnityEngine;
-using VContainer;
 
 namespace SoulsLike.Entities.Character.Components
 {
@@ -32,7 +32,15 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int AnimIdSpeed = Animator.StringToHash("Speed");
         private static readonly int AnimIdLockOn = Animator.StringToHash("LockOn");
         private static readonly int SpawnTrigger = Animator.StringToHash("Spawn");
-        private static readonly int HitTrigger = Animator.StringToHash("Hit");
+        private static readonly int HitFrontTrigger = Animator.StringToHash("HitFront");
+        private static readonly int HitBackTrigger = Animator.StringToHash("HitBack");
+        private static readonly int HitLeftTrigger = Animator.StringToHash("HitLeft");
+        private static readonly int HitRightTrigger = Animator.StringToHash("HitRight");
+        private static readonly int BlockedTrigger = Animator.StringToHash("Blocked");
+        private static readonly int GuardBrokenTrigger = Animator.StringToHash("GuardBroken");
+        private static readonly int ParriedTrigger = Animator.StringToHash("Parried");
+        private static readonly int PoiseStaggeredTrigger = Animator.StringToHash("PoiseStaggered");
+        private static readonly int StanceBrokenTrigger = Animator.StringToHash("StanceBroken");
         private static readonly int DeathTrigger = Animator.StringToHash("Death");
         private static readonly int LightAttackTrigger = Animator.StringToHash("LightAttack");
         private static readonly int LightAttackAltTrigger = Animator.StringToHash("LightAttackAlt");
@@ -58,6 +66,8 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int OneHandedFreeLocomotionState = Animator.StringToHash("OneHandedLayer.FreeLocomotion");
         private static readonly int OneHandedGraceRestIdleState = Animator.StringToHash("OneHandedLayer.GraceRestIdle");
         private static readonly int TwoHandedGraceRestIdleState = Animator.StringToHash("TwoHandedLayer.GraceRestIdle");
+        private static readonly int OneHandedCriticalAttackState = Animator.StringToHash("OneHandedLayer.CriticalAttack");
+        private const float CRITICAL_TRANSITION_SECONDS = 0.05f;
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_ACTIONS_LAYER = "UpperBodyActions";
@@ -93,8 +103,7 @@ namespace SoulsLike.Entities.Character.Components
 
         private Animator Animator => animator;
 
-        [Inject]
-        public void InjectCharacter(Character character, MovementComponent movementComponent)
+        public void ConfigureCharacter(Character character, MovementComponent movementComponent)
         {
             _character = character;
             _defaultController = animator.runtimeAnimatorController;
@@ -270,10 +279,25 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetTrigger(GraceRestEndTrigger);
         }
 
-        public void TriggerHit()
+        public void TriggerHit(in MeleeHitResult result)
         {
             BeginRootMotionAction();
-            animator.SetTrigger(HitTrigger);
+            animator.SetTrigger(GetHitTrigger(result));
+        }
+
+        public void TriggerParried()
+        {
+            BeginRootMotionAction();
+            animator.SetTrigger(ParriedTrigger);
+        }
+
+        public void PlayCriticalAttack(HandMode handMode)
+        {
+            BeginRootMotionAction();
+            animator.CrossFadeInFixedTime(
+                OneHandedCriticalAttackState,
+                CRITICAL_TRANSITION_SECONDS,
+                GetRequiredLayerIndex(ONE_HANDED_LAYER));
         }
 
         public void TriggerDeath()
@@ -528,6 +552,27 @@ namespace SoulsLike.Entities.Character.Components
             }
 
             return layerIndex;
+        }
+
+        private static int GetHitTrigger(in MeleeHitResult result)
+        {
+            return result.Type switch
+            {
+                MeleeHitResultType.Blocked => BlockedTrigger,
+                MeleeHitResultType.GuardBroken => GuardBrokenTrigger,
+                MeleeHitResultType.Parried => ParriedTrigger,
+                MeleeHitResultType.PoiseStaggered => PoiseStaggeredTrigger,
+                MeleeHitResultType.StanceBroken => StanceBrokenTrigger,
+                _ => result.Direction switch
+                {
+                    HitDirection.Front => HitFrontTrigger,
+                    HitDirection.Back => HitBackTrigger,
+                    HitDirection.Left => HitLeftTrigger,
+                    HitDirection.Right => HitRightTrigger,
+                    _ => throw new ArgumentOutOfRangeException(
+                        nameof(result.Direction), result.Direction, null)
+                }
+            };
         }
 
     }

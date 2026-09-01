@@ -835,6 +835,8 @@ GameObject:
   - component: {fileID: 4953552906734793246}
   - component: {fileID: 3163265144927869977}
   - component: {fileID: 3037876965645412385}
+  - component: {fileID: 5262512520456380466}
+  - component: {fileID: 7159643812481444141}
   m_Layer: 6
   m_Name: Character
   m_TagString: Player
@@ -1032,6 +1034,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33d6a8db243f0574e8316d9cdcd0399c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.PlayerMeleeCombatRelay
+--- !u!114 &5262512520456380466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4657128601297372913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b503c431d9c971b4591a293add47587b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.CombatDefenseComponent
+  guardAngle: 120
+  guardBreakDurationSeconds: 1.5
+  maxPoise: 100
+  poiseRecoveryPerSecond: 25
+  poiseRecoveryDelaySeconds: 1
+  maxStance: 100
+  stanceRecoveryPerSecond: 10
+  criticalOpportunityDurationSeconds: 2
+--- !u!114 &7159643812481444141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4657128601297372913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d12c31a97871d984ca502199db45e248, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.CriticalAttackController
+  rearHalfAngleDegrees: 45
+  maxCriticalDistance: 1.5
+  maxHeightDifference: 0.5
+  requiredNeutralSeconds: 0.1
+  attackerLocalOffset: {x: 0, y: 0, z: -0.9}
+  attackerYawOffsetDegrees: 0
+  victimYawOffsetDegrees: 0
 --- !u!1 &5237542798037926601
 GameObject:
   m_ObjectHideFlags: 0

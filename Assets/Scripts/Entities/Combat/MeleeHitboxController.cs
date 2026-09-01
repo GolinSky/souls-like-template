@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
-using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Items;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ namespace SoulsLike.Entities.Combat
         [SerializeField] private Collider hitbox;
         [SerializeField] private int hitZone;
         [SerializeField] private Renderer debugRenderer;
-        public event Action OnHitConfirmed;
+        public event Action<MeleeHitResult> OnHitResolved;
 
         private static readonly int _baseColorId = Shader.PropertyToID("_BaseColor");
         private readonly HashSet<long> _hitEntityIds = new();
@@ -21,8 +20,8 @@ namespace SoulsLike.Entities.Combat
         private IEntityLocator _entityLocator;
         private long _ownerEntityId;
         private ItemId _weaponId;
-        private CharacterActionId _actionId;
-        private float _damage;
+        private MeleeAttackData _attack;
+        private int _attackInstanceId;
         private Material _debugMaterialInstance;
         private Color _inactiveDebugColor;
 
@@ -44,10 +43,10 @@ namespace SoulsLike.Entities.Combat
             Close();
         }
 
-        public void Open(CharacterActionId actionId, float damage)
+        public void Open(in MeleeAttackData attack)
         {
-            _actionId = actionId;
-            _damage = damage;
+            _attackInstanceId++;
+            _attack = attack;
             _hitEntityIds.Clear();
             hitbox.enabled = true;
             SetDebugColor(Color.red);
@@ -71,10 +70,16 @@ namespace SoulsLike.Entities.Combat
         private void OnTriggerEnter(Collider other)
         {
             if (!_entityLocator.TryGetEntity(other, out IEntity target)
-                || target.Id == _ownerEntityId
                 || _hitEntityIds.Contains(target.Id))
             {
                 return;
+            }
+
+            if (!target.TryGetComponent(out ResolveMeleeHitCommand resolveMeleeHit))
+            {
+                throw new InvalidOperationException(
+                    $"Entity {target.Id} ({target.EntityType}) is missing "
+                    + $"{nameof(ResolveMeleeHitCommand)}.");
             }
 
             if (!_entityLocator.TryGetEntity(_ownerEntityId, out IEntity owner))
@@ -83,33 +88,31 @@ namespace SoulsLike.Entities.Combat
                 return;
             }
 
-            if (target.EntityType == owner.EntityType)
-            {
-                return;
-            }
-
-            if (!target.TryGetComponent(out ApplyDamageCommand applyDamage))
+            if (!owner.TryGetComponent(out TargetingCommand targeting))
             {
                 throw new InvalidOperationException(
-                    $"Entity {target.Id} ({target.EntityType}) is missing "
-                    + $"{nameof(ApplyDamageCommand)}.");
+                    $"Entity {owner.Id} ({owner.EntityType}) is missing "
+                    + $"{nameof(TargetingCommand)}.");
             }
 
-            DamageRequest damage = new DamageRequest
-            {
-                Amount = _damage,
-                HitPoint = other.ClosestPoint(transform.position),
-                HitZone = hitZone
-            };
-            DamageResult result = applyDamage.Execute(new ApplyDamageRequest(
+            MeleeHitRequest request = new(
                 _ownerEntityId,
                 _weaponId,
-                _actionId,
-                damage));
-            if (result.HealthDamageAmount > 0f)
+                _attackInstanceId,
+                targeting.Read().Position,
+                other.ClosestPoint(transform.position),
+                hitZone,
+                _attack);
+            MeleeHitResult result = resolveMeleeHit.Execute(request);
+            if (result.Type != MeleeHitResultType.Ignored)
             {
                 _hitEntityIds.Add(target.Id);
-                OnHitConfirmed?.Invoke();
+                if (result.Type == MeleeHitResultType.Parried)
+                {
+                    Close();
+                }
+
+                OnHitResolved?.Invoke(result);
             }
         }
 

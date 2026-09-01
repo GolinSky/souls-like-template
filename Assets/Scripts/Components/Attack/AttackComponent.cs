@@ -57,6 +57,7 @@ namespace SoulsLike.Entities.Character.Components.Attack
         private ItemCatalog _itemCatalog;
 
         public ItemId? ActiveWeaponId { get; private set; }
+        public ItemId? RightWeaponId => _rightWeaponId;
         public CombatProfile ActiveCombatProfile { get; private set; }
         public WeaponRuntime ActiveWeaponRuntime { get; private set; }
         public HandMode ActiveHandMode { get; private set; } = HandMode.OneHanded;

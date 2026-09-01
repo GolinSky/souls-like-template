@@ -11,6 +11,7 @@ using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Entities.Character.Runtime;
+using SoulsLike.Entities.Combat;
 using SoulsLike.Items;
 using SoulsLike.Services;
 using UnityEngine;
@@ -50,6 +51,9 @@ namespace SoulsLike.Entities.Character
         private ItemCatalog _itemCatalog;
         private IEntityLocator _entityLocator;
         private ICombatStateNotifier _combatStateNotifier;
+        private CombatDefenseComponent _combatDefense;
+        private PlayerMeleeCombatRelay _meleeCombatRelay;
+        private CriticalAttackController _criticalAttackController;
         private CharacterData _characterData;
         private int _heldCurrency;
         private bool _isDeathAnimationPlaying;
@@ -75,7 +79,10 @@ namespace SoulsLike.Entities.Character
             ItemCatalog itemCatalog,
             IEntityLocator entityLocator,
             ICombatStateNotifier combatStateNotifier,
-            CharacterData characterData)
+            CharacterData characterData,
+            CombatDefenseComponent combatDefense,
+            PlayerMeleeCombatRelay meleeCombatRelay,
+            CriticalAttackController criticalAttackController)
         {
             _attackComponent = attackComponent;
             equipmentPresentation = presentation;
@@ -83,12 +90,17 @@ namespace SoulsLike.Entities.Character
             _entityLocator = entityLocator;
             _combatStateNotifier = combatStateNotifier;
             _characterData = characterData;
+            _combatDefense = combatDefense;
+            _meleeCombatRelay = meleeCombatRelay;
+            _criticalAttackController = criticalAttackController;
             _heldCurrency = characterData.StartingCurrency;
         }
 
         public void Initialize()
         {
             healthComponent.Model.OnDamageApplied += OnDamageApplied;
+            _combatDefense.OnHitResolved += OnHitResolved;
+            _criticalAttackController.OnCompleted += OnCriticalCompleted;
             movementComponent.Initialize();
             animatorComponent.SetHandMode(equipmentComponent.Model.ActiveHandMode);
             ApplyEquipmentLoadout(equipmentComponent.BuildLoadout());
@@ -101,6 +113,8 @@ namespace SoulsLike.Entities.Character
         public void Dispose()
         {
             healthComponent.Model.OnDamageApplied -= OnDamageApplied;
+            _combatDefense.OnHitResolved -= OnHitResolved;
+            _criticalAttackController.OnCompleted -= OnCriticalCompleted;
         }
 
         public void Tick(in CharacterInput input)
@@ -113,6 +127,11 @@ namespace SoulsLike.Entities.Character
             }
 
             _actionStateMachine.Tick(input.SprintHeld, equipmentComponent.IsSwapInProgress);
+            _criticalAttackController.UpdateNeutralEligibility(
+                _actionStateMachine.CurrentState == CharacterAction.State.Neutral
+                && !_combatDefense.IsInHitReaction
+                && !_combatDefense.IsParryStunned
+                && !_combatDefense.IsInCriticalState);
             Submit(input.FirstAction, now);
             Submit(input.SecondAction, now);
             _actionStateMachine.PruneExpiredBuffer(now);
@@ -164,6 +183,8 @@ namespace SoulsLike.Entities.Character
 
             animatorComponent.SetShieldBlock(shieldBlock);
             animatorComponent.SetWeaponBlock(weaponBlock);
+            _combatDefense.SetBlocking(shieldBlock || weaponBlock);
+            _combatDefense.TickRecovery(Time.deltaTime);
             healthComponent.TickStaminaRecovery(Time.deltaTime, shieldBlock || weaponBlock);
             ApplyMovementPresentation();
         }
@@ -426,6 +447,18 @@ namespace SoulsLike.Entities.Character
                 else if (state.State == StateMachineState.Exit) { _actionStateMachine.SetInputBlocked(false); SetMovementLock(MovementLockReason.Parry, false); }
             }
 
+            if (state.StateMachineName == StateMachineName.HitReaction
+                && state.State is StateMachineState.Enter or StateMachineState.Exit)
+            {
+                _combatDefense.SetHitReaction(state.State == StateMachineState.Enter);
+            }
+
+            if (state.StateMachineName == StateMachineName.ParryStun
+                && state.State is StateMachineState.Enter or StateMachineState.Exit)
+            {
+                _combatDefense.SetParryStunned(state.State == StateMachineState.Enter);
+            }
+
             if (state.State == StateMachineState.Progress
                 && state.StateMachineName is StateMachineName.HeavyAttack
                     or StateMachineName.HeavyAttackAlt)
@@ -536,10 +569,27 @@ namespace SoulsLike.Entities.Character
             }
 
             characterAudioComponent.NotifyHit();
-            if (!damage.Killed)
+        }
+
+        private void OnHitResolved(MeleeHitResult result)
+        {
+            if (result.Type is MeleeHitResultType.Ignored
+                or MeleeHitResultType.Invulnerable
+                or MeleeHitResultType.Parried
+                or MeleeHitResultType.Killed)
             {
-                animatorComponent.TriggerHit();
+                return;
             }
+
+            if (result.Type is MeleeHitResultType.PoiseStaggered
+                or MeleeHitResultType.StanceBroken
+                or MeleeHitResultType.GuardBroken)
+            {
+                _combatDefense.SetHitReaction(true);
+                _meleeCombatRelay.Cancel();
+            }
+
+            animatorComponent.TriggerHit(result);
         }
 
         public void Heal(float amount) => healthComponent.ApplyAuthoritativeStats(
@@ -699,6 +749,21 @@ namespace SoulsLike.Entities.Character
 
         private void ExecuteAction(in CharacterAction action, bool buffered, float now)
         {
+            if (!buffered
+                && action.ActionKind == CharacterAction.Kind.Attack
+                && action.Intent == CharacterAction.AttackIntent.Light
+                && !action.IsLeftHand
+                && _actionStateMachine.CurrentState == CharacterAction.State.Neutral
+                && !_actionStateMachine.HasBufferedAction
+                && _criticalAttackController.TryStart())
+            {
+                _actionStateMachine.EnterCritical();
+                _actionStateMachine.SetInputBlocked(true);
+                SetMovementLock(MovementLockReason.Critical, true);
+                movementComponent.SetMovementBlocked(true);
+                return;
+            }
+
             CharacterAction.Result result = action.ActionKind switch
             {
                 CharacterAction.Kind.Attack => StartAttack(action),
@@ -716,6 +781,14 @@ namespace SoulsLike.Entities.Character
             };
             if (buffered) _actionStateMachine.ReportBufferedExecution(result, state);
             else _actionStateMachine.ReportExecution(action, result, state, now);
+        }
+
+        private void OnCriticalCompleted()
+        {
+            _actionStateMachine.CompleteCritical();
+            _actionStateMachine.SetInputBlocked(false);
+            SetMovementLock(MovementLockReason.Critical, false);
+            movementComponent.SetMovementBlocked(_movementLockReasons != MovementLockReason.None);
         }
 
         private bool CanGuard() => _movementLockReasons == MovementLockReason.None || (_movementLockReasons == MovementLockReason.Animation && _actionStateMachine.CanGuardDuringAnimationBlock);
@@ -772,6 +845,6 @@ namespace SoulsLike.Entities.Character
         }
 
         [Flags]
-        private enum MovementLockReason { None = 0, Manual = 1, Animation = 2, Spawn = 4, Parry = 8 }
+        private enum MovementLockReason { None = 0, Manual = 1, Animation = 2, Spawn = 4, Parry = 8, Critical = 16 }
     }
 }

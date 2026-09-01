@@ -19,5 +19,11 @@ MonoBehaviour:
   windupTurnSpeed: 180
   activeTurnSpeed: 15
   recoveryTurnSpeed: 65
+  guardDamage: 25
+  poiseDamage: 25
+  stanceDamage: 18
+  impactLevel: 1
+  canBeBlocked: 1
+  canBeParried: 1
   followUps:
   - {fileID: 11400000, guid: fcf10cd16f5896941aaca0f0be379694, type: 2}

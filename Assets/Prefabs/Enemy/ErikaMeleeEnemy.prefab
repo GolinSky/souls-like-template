@@ -63,6 +63,7 @@ GameObject:
   - component: {fileID: 9216140226880738682}
   - component: {fileID: 5728496263157501801}
   - component: {fileID: 2228271053214878040}
+  - component: {fileID: 3687523779650105343}
   m_Layer: 7
   m_Name: ErikaMeleeEnemy
   m_TagString: Untagged
@@ -211,6 +212,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe51880baf918b54688ebe1595c9b656, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyHealthUiComponent
+--- !u!114 &3687523779650105343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687018139822308439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b503c431d9c971b4591a293add47587b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.CombatDefenseComponent
+  guardAngle: 120
+  guardBreakDurationSeconds: 1.5
+  maxPoise: 100
+  poiseRecoveryPerSecond: 25
+  poiseRecoveryDelaySeconds: 1
+  maxStance: 100
+  stanceRecoveryPerSecond: 10
+  criticalOpportunityDurationSeconds: 2
 --- !u!1001 &2849579958771515057
 PrefabInstance:
   m_ObjectHideFlags: 0

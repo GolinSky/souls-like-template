@@ -12,6 +12,13 @@ namespace SoulsLike.Entities.Combat
         [SerializeField, Min(0f)] private float windupTurnSpeed = 120f;
         [SerializeField, Min(0f)] private float activeTurnSpeed;
         [SerializeField, Min(0f)] private float recoveryTurnSpeed = 45f;
+        [Header("Melee Hit")]
+        [SerializeField, Min(0f)] private float guardDamage = 20f;
+        [SerializeField, Min(0f)] private float poiseDamage = 20f;
+        [SerializeField, Min(0f)] private float stanceDamage = 15f;
+        [SerializeField] private ImpactLevel impactLevel = ImpactLevel.Light;
+        [SerializeField] private bool canBeBlocked = true;
+        [SerializeField] private bool canBeParried = true;
         [SerializeField] private CharacterActionDefinition[] followUps = { };
 
         public CharacterActionId ActionId => actionId;
@@ -21,6 +28,12 @@ namespace SoulsLike.Entities.Combat
         public float WindupTurnSpeed => windupTurnSpeed;
         public float ActiveTurnSpeed => activeTurnSpeed;
         public float RecoveryTurnSpeed => recoveryTurnSpeed;
+        public float GuardDamage => guardDamage;
+        public float PoiseDamage => poiseDamage;
+        public float StanceDamage => stanceDamage;
+        public ImpactLevel ImpactLevel => impactLevel;
+        public bool CanBeBlocked => canBeBlocked;
+        public bool CanBeParried => canBeParried;
         public CharacterActionDefinition[] FollowUps => followUps;
     }
 }

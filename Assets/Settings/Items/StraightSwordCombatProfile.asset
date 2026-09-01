@@ -14,4 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.CombatProfile
   <LightAttackMultiplier>k__BackingField: 1
   <HeavyAttackMultiplier>k__BackingField: 1.5
+  <LightAttackStaminaCost>k__BackingField: 14
+  <LightAttackStaminaStartThreshold>k__BackingField: 0
+  <HeavyAttackStaminaCost>k__BackingField: 30
+  <HeavyAttackStaminaStartThreshold>k__BackingField: 0
   <StaminaCostMultiplier>k__BackingField: 1
+  lightGuardDamage: 20
+  lightPoiseDamage: 20
+  lightStanceDamage: 15
+  lightImpactLevel: 0
+  lightCanBeBlocked: 1
+  lightCanBeParried: 1
+  heavyGuardDamage: 40
+  heavyPoiseDamage: 45
+  heavyStanceDamage: 35
+  heavyImpactLevel: 2
+  heavyCanBeBlocked: 1
+  heavyCanBeParried: 1

@@ -17,6 +17,7 @@ namespace SoulsLike.Entities.Character.Runtime
 
         public CharacterAction.State CurrentState => _currentState;
         public bool IsInputBlocked => _inputBlocked;
+        public bool HasBufferedAction => _bufferedAction.HasValue;
         public bool CanGuardDuringAnimationBlock => _currentState == CharacterAction.State.Attack && _queueWindowOpen;
         public void SetInputBlocked(bool blocked) => _inputBlocked = blocked;
 
@@ -135,6 +136,20 @@ namespace SoulsLike.Entities.Character.Runtime
             else if (result == CharacterAction.Result.Invalid) _bufferedAction = null;
         }
 
+        public void EnterCritical()
+        {
+            _bufferedAction = null;
+            Enter(CharacterAction.State.Critical);
+        }
+
+        public void CompleteCritical()
+        {
+            if (_currentState == CharacterAction.State.Critical)
+            {
+                Enter(CharacterAction.State.Neutral);
+            }
+        }
+
         private void Buffer(in CharacterAction action, float now)
         {
             _bufferedAction = action;
@@ -146,6 +161,7 @@ namespace SoulsLike.Entities.Character.Runtime
             CharacterAction.State.Neutral => true,
             CharacterAction.State.Attack or CharacterAction.State.Roll => _queueWindowOpen && action.ActionKind != CharacterAction.Kind.Equipment,
             CharacterAction.State.EquipmentSwap => _acceptEquipmentCompanion && action.ActionKind == CharacterAction.Kind.Equipment,
+            CharacterAction.State.Critical => false,
             _ => throw new ArgumentOutOfRangeException()
         };
 
@@ -182,6 +198,11 @@ namespace SoulsLike.Entities.Character.Runtime
                     break;
                 case CharacterAction.State.EquipmentSwap:
                     _acceptEquipmentCompanion = true;
+                    break;
+                case CharacterAction.State.Critical:
+                case CharacterAction.State.Neutral:
+                    _queueWindowOpen = false;
+                    _ignoreNextActionExit = false;
                     break;
             }
         }

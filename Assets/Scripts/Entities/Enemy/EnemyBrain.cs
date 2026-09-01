@@ -23,6 +23,7 @@ namespace SoulsLike.Entities.Enemy
         private readonly EnemyPerception _perception;
         private readonly EnemyActionSelector _actionSelector;
         private readonly HealthModel _healthModel;
+        private readonly CombatDefenseComponent _defense;
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly ICombatStateNotifier _combatStateNotifier;
 
@@ -45,6 +46,7 @@ namespace SoulsLike.Entities.Enemy
             EnemyPerception perception,
             EnemyActionSelector actionSelector,
             HealthModel healthModel,
+            CombatDefenseComponent defense,
             IGameStateNotifier gameStateNotifier,
             ICombatStateNotifier combatStateNotifier)
         {
@@ -54,6 +56,7 @@ namespace SoulsLike.Entities.Enemy
             _perception = perception;
             _actionSelector = actionSelector;
             _healthModel = healthModel;
+            _defense = defense;
             _gameStateNotifier = gameStateNotifier;
             _combatStateNotifier = combatStateNotifier;
         }
@@ -67,6 +70,7 @@ namespace SoulsLike.Entities.Enemy
             _gameStateNotifier.RegisterObserver(this);
             _healthModel.OnDamageApplied += OnDamageApplied;
             _healthModel.OnDied += OnDied;
+            _defense.OnHitResolved += OnHitResolved;
             Goal = _actor.BehaviourProfile.StartsDormant
                 ? EnemyGoal.Dormant
                 : _actor.HasPatrolPositions
@@ -86,6 +90,7 @@ namespace SoulsLike.Entities.Enemy
             _gameStateNotifier.UnregisterObserver(this);
             _healthModel.OnDamageApplied -= OnDamageApplied;
             _healthModel.OnDied -= OnDied;
+            _defense.OnHitResolved -= OnHitResolved;
         }
 
         public void OnGameStateChanged(GameState newState)
@@ -127,7 +132,15 @@ namespace SoulsLike.Entities.Enemy
             }
 
             float deltaTime = Time.deltaTime;
+            _defense.TickRecovery(deltaTime);
             float now = Time.time;
+            if (_defense.IsInCriticalState)
+            {
+                _motor.Stop();
+                _animation.SetLocomotion(Vector3.zero);
+                return;
+            }
+
             if (_animation.IsHitReactionRunning)
             {
                 _motor.Tick(deltaTime, false);
@@ -159,6 +172,12 @@ namespace SoulsLike.Entities.Enemy
             if (Goal == EnemyGoal.ReturnHome)
             {
                 MoveTo(_actor.HomePosition);
+                return;
+            }
+
+            if (_animation.IsCriticalVictimRunning)
+            {
+                _motor.Stop();
                 return;
             }
 
@@ -542,32 +561,61 @@ namespace SoulsLike.Entities.Enemy
             float now = Time.time;
             _perception.RegisterDamageStimulus(damage.SourceEntityId, now);
             BeginReaction(damage.SourceEntityId, now);
-            if (!damage.Killed && damage.HealthDamageAmount > 0f)
-            {
-                _isRetreating = false;
-                _waitUntil = 0f;
-                _nextDecisionTime = now;
-                CurrentIntent = new EnemyIntent(
-                    EnemyIntentKind.Wait,
-                    _actor.transform.position);
-                _animation.PlayHit();
-            }
-
             if (Goal is EnemyGoal.Dormant or EnemyGoal.ReturnHome)
             {
                 EnterGoal(EnemyGoal.Investigate);
             }
         }
 
+        private void OnHitResolved(MeleeHitResult result)
+        {
+            if (result.Type is MeleeHitResultType.Ignored
+                or MeleeHitResultType.Invulnerable
+                or MeleeHitResultType.Parried
+                or MeleeHitResultType.Killed)
+            {
+                return;
+            }
+
+            _isRetreating = false;
+            _waitUntil = 0f;
+            _nextDecisionTime = Time.time;
+            CurrentIntent = new EnemyIntent(
+                EnemyIntentKind.Wait,
+                _actor.transform.position);
+
+            if (result.Type is MeleeHitResultType.PoiseStaggered
+                or MeleeHitResultType.StanceBroken
+                or MeleeHitResultType.GuardBroken)
+            {
+                _defense.SetHitReaction(true);
+                _animation.PlayHit(result);
+                return;
+            }
+
+            _animation.TriggerHitReaction(result);
+        }
+
         private void OnDied(long sourceEntityId)
         {
             EnterGoal(EnemyGoal.Dead);
             _motor.Stop();
+            if (_animation.IsCriticalVictimRunning && _animation.IsCriticalVictimLethal)
+            {
+                _deathAnimationStarted = true;
+                return;
+            }
+
             _animation.Interrupt();
         }
 
         private void TickDeath()
         {
+            if (_animation.IsCriticalVictimRunning)
+            {
+                return;
+            }
+
             if (!_deathAnimationStarted)
             {
                 _deathAnimationStarted = true;

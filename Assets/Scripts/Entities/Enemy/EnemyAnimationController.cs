@@ -1,4 +1,5 @@
 using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Items;
 using UnityEngine;
@@ -11,10 +12,23 @@ namespace SoulsLike.Entities.Enemy
     {
         private const float ACTION_TRANSITION_SECONDS = 0.08f;
         private const string BASE_LAYER_PREFIX = "Base Layer.";
+        private const string CRITICAL_HIT_ONE_HAND_STATE = "Base Layer.CriticalHitOneHand";
+        private const string CRITICAL_HIT_ONE_HAND_DIE_STATE = "Base Layer.CriticalHitOneHandDie";
+        private const string CRITICAL_HIT_TWO_HAND_STATE = "Base Layer.CriticalHitTwoHand";
+        private const string CRITICAL_HIT_TWO_HAND_DIE_STATE = "Base Layer.CriticalHitTwoHandDie";
+        private const string LOCOMOTION_STATE = "Base Layer.Locomotion";
         private static readonly int SPEED = Animator.StringToHash("Speed");
         private static readonly int MOVE_X = Animator.StringToHash("MoveX");
         private static readonly int MOVE_Y = Animator.StringToHash("MoveY");
-        private static readonly int HIT_TRIGGER = Animator.StringToHash("Hit");
+        private static readonly int HIT_FRONT_TRIGGER = Animator.StringToHash("HitFront");
+        private static readonly int HIT_BACK_TRIGGER = Animator.StringToHash("HitBack");
+        private static readonly int HIT_LEFT_TRIGGER = Animator.StringToHash("HitLeft");
+        private static readonly int HIT_RIGHT_TRIGGER = Animator.StringToHash("HitRight");
+        private static readonly int BLOCKED_TRIGGER = Animator.StringToHash("Blocked");
+        private static readonly int GUARD_BROKEN_TRIGGER = Animator.StringToHash("GuardBroken");
+        private static readonly int PARRIED_TRIGGER = Animator.StringToHash("Parried");
+        private static readonly int POISE_STAGGERED_TRIGGER = Animator.StringToHash("PoiseStaggered");
+        private static readonly int STANCE_BROKEN_TRIGGER = Animator.StringToHash("StanceBroken");
 
         [SerializeField] private Animator animator;
         [SerializeField] private EnemyNavigationMotor motor;
@@ -24,6 +38,7 @@ namespace SoulsLike.Entities.Enemy
         private IEntityLocator _entityLocator;
         private Entity _entity;
         private WeaponDatabase _weaponDatabase;
+        private CombatDefenseComponent _defense;
         private CharacterActionDefinition _queuedFollowUp;
 
         public CharacterActionDefinition CurrentAction { get; private set; }
@@ -32,6 +47,8 @@ namespace SoulsLike.Entities.Enemy
         public bool ComboWindowOpen { get; private set; }
         public bool IsActionRunning => Status == EnemyActionStatus.Running;
         public bool IsHitReactionRunning { get; private set; }
+        public bool IsCriticalVictimRunning { get; private set; }
+        public bool IsCriticalVictimLethal { get; private set; }
 
         public float CurrentTurnSpeed => Phase switch
         {
@@ -45,11 +62,13 @@ namespace SoulsLike.Entities.Enemy
         public void Construct(
             IEntityLocator entityLocator,
             Entity entity,
-            WeaponDatabase weaponDatabase)
+            WeaponDatabase weaponDatabase,
+            CombatDefenseComponent defense)
         {
             _entityLocator = entityLocator;
             _entity = entity;
             _weaponDatabase = weaponDatabase;
+            _defense = defense;
         }
 
         public void Initialize()
@@ -62,6 +81,7 @@ namespace SoulsLike.Entities.Enemy
                 _entityLocator,
                 _entity.Id,
                 actor.Moveset.WeaponId);
+            meleeHitbox.OnHitResolved += OnMeleeHitResolved;
         }
 
         public bool PlayAction(CharacterActionDefinition action)
@@ -115,12 +135,19 @@ namespace SoulsLike.Entities.Enemy
             }
 
             Phase = EnemyActionPhase.Active;
-            ItemStatSnapshot weaponStats = _weaponDatabase
-                .GetRequired(actor.Moveset.WeaponId)
-                .Stats;
-            meleeHitbox.Open(
-                actionId,
-                weaponStats.PhysicalAttack * CurrentAction.DamageMultiplier);
+            WeaponDefinition weaponDefinition = _weaponDatabase.GetRequired(actor.Moveset.WeaponId);
+            meleeHitbox.Open(new MeleeAttackData
+            {
+                ActionId = actionId,
+                HealthDamage = weaponDefinition.Stats.PhysicalAttack
+                    * CurrentAction.DamageMultiplier,
+                GuardDamage = CurrentAction.GuardDamage,
+                PoiseDamage = CurrentAction.PoiseDamage,
+                StanceDamage = CurrentAction.StanceDamage,
+                ImpactLevel = CurrentAction.ImpactLevel,
+                CanBeBlocked = CurrentAction.CanBeBlocked,
+                CanBeParried = CurrentAction.CanBeParried
+            });
         }
 
         public void ReportActiveEnded(CharacterActionId actionId)
@@ -184,24 +211,32 @@ namespace SoulsLike.Entities.Enemy
             CurrentAction = null;
         }
 
-        public void PlayHit()
+        public void PlayHit(in MeleeHitResult result)
         {
             Interrupt();
             motor.Stop();
             motor.SetRootMotion(true);
             IsHitReactionRunning = true;
-            animator.SetTrigger(HIT_TRIGGER);
+            animator.SetTrigger(GetHitTrigger(result));
+        }
+
+        public void TriggerHitReaction(in MeleeHitResult result)
+        {
+            animator.SetTrigger(GetHitTrigger(result));
         }
 
         public void ReportHitEntered()
         {
             IsHitReactionRunning = true;
+            _defense.SetHitReaction(true);
             motor.SetRootMotion(true);
         }
 
         public void ReportHitExited()
         {
             IsHitReactionRunning = false;
+            _defense.SetHitReaction(false);
+            _defense.SetParryStunned(false);
             motor.SetRootMotion(false);
         }
 
@@ -211,8 +246,41 @@ namespace SoulsLike.Entities.Enemy
             BeginAction(actor.Moveset.GetAction(CharacterActionId.Death));
         }
 
+        public void PlayCriticalVictim(HandMode handMode, bool lethal)
+        {
+            Interrupt();
+            motor.Stop();
+            motor.SetRootMotion(false);
+            IsCriticalVictimRunning = true;
+            IsCriticalVictimLethal = lethal;
+            animator.CrossFadeInFixedTime(
+                ResolveCriticalVictimState(handMode, lethal),
+                ACTION_TRANSITION_SECONDS);
+        }
+
+        public void CompleteCriticalVictim()
+        {
+            if (!IsCriticalVictimRunning)
+            {
+                return;
+            }
+
+            bool lethal = IsCriticalVictimLethal;
+            IsCriticalVictimRunning = false;
+            IsCriticalVictimLethal = false;
+            if (!lethal)
+            {
+                animator.CrossFadeInFixedTime(LOCOMOTION_STATE, ACTION_TRANSITION_SECONDS);
+            }
+        }
+
         private void OnAnimatorMove()
         {
+            if (IsCriticalVictimRunning)
+            {
+                return;
+            }
+
             if (IsHitReactionRunning ||
                 IsActionRunning && CurrentAction.UsesRootMotion)
             {
@@ -247,6 +315,58 @@ namespace SoulsLike.Entities.Enemy
             }
 
             return false;
+        }
+
+        private static string ResolveCriticalVictimState(HandMode handMode, bool lethal)
+        {
+            return handMode switch
+            {
+                HandMode.OneHanded => lethal
+                    ? CRITICAL_HIT_ONE_HAND_DIE_STATE
+                    : CRITICAL_HIT_ONE_HAND_STATE,
+                HandMode.TwoHanded => lethal
+                    ? CRITICAL_HIT_TWO_HAND_DIE_STATE
+                    : CRITICAL_HIT_TWO_HAND_STATE,
+                _ => throw new System.ArgumentOutOfRangeException(nameof(handMode), handMode, null)
+            };
+        }
+
+        private void OnMeleeHitResolved(MeleeHitResult result)
+        {
+            if (result.Type == MeleeHitResultType.Parried)
+            {
+                Interrupt();
+                animator.SetTrigger(PARRIED_TRIGGER);
+            }
+        }
+
+        private static int GetHitTrigger(in MeleeHitResult result)
+        {
+            return result.Type switch
+            {
+                MeleeHitResultType.Blocked => BLOCKED_TRIGGER,
+                MeleeHitResultType.GuardBroken => GUARD_BROKEN_TRIGGER,
+                MeleeHitResultType.Parried => PARRIED_TRIGGER,
+                MeleeHitResultType.PoiseStaggered => POISE_STAGGERED_TRIGGER,
+                MeleeHitResultType.StanceBroken => STANCE_BROKEN_TRIGGER,
+                _ => result.Direction switch
+                {
+                    HitDirection.Front => HIT_FRONT_TRIGGER,
+                    HitDirection.Back => HIT_BACK_TRIGGER,
+                    HitDirection.Left => HIT_LEFT_TRIGGER,
+                    HitDirection.Right => HIT_RIGHT_TRIGGER,
+                    _ => throw new System.ArgumentOutOfRangeException(
+                        nameof(result.Direction), result.Direction, null)
+                }
+            };
+        }
+
+        private void OnDestroy()
+        {
+            if (meleeHitbox != null)
+            {
+                meleeHitbox.OnHitResolved -= OnMeleeHitResolved;
+            }
         }
     }
 }

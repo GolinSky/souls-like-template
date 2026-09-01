@@ -24,6 +24,8 @@ namespace SoulsLike.Entities.Character.Components.Animations
         GraceRestStart = 19,
         GraceRestIdle = 20,
         GraceRestEnd = 21,
+        HitReaction = 22,
+        ParryStun = 23,
         None = -1
     }
 }
