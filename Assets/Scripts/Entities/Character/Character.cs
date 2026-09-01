@@ -785,6 +785,7 @@ namespace SoulsLike.Entities.Character
 
         private void OnCriticalCompleted()
         {
+            animatorComponent.ClearGroundedOverride();
             _actionStateMachine.CompleteCritical();
             _actionStateMachine.SetInputBlocked(false);
             SetMovementLock(MovementLockReason.Critical, false);

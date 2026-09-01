@@ -100,6 +100,8 @@ namespace SoulsLike.Entities.Character.Components
         private RuntimeAnimatorController _defaultController;
         private bool _supportsLeftHandAttacks;
         private bool _isDeathAnimationPlaying;
+        private bool _modelGrounded;
+        private bool _groundedOverrideActive;
 
         private Animator Animator => animator;
 
@@ -107,6 +109,7 @@ namespace SoulsLike.Entities.Character.Components
         {
             _character = character;
             _defaultController = animator.runtimeAnimatorController;
+            _modelGrounded = animator.GetBool(AnimIdGrounded);
             rootMotionRelay.Initialize(character, movementComponent);
             _targetChargedAttackSpeed = animator.GetFloat(ChargedSpeedParameter);
 
@@ -118,6 +121,14 @@ namespace SoulsLike.Entities.Character.Components
 
             animator.applyRootMotion = true;
             SetActionLayerWeights(animator.GetBool(AnimIdMoving));
+        }
+
+        private void OnDisable()
+        {
+            if (_groundedOverrideActive)
+            {
+                SetGroundedOverride(false);
+            }
         }
 
         public void ApplyAnimationProfile(
@@ -137,10 +148,9 @@ namespace SoulsLike.Entities.Character.Components
 
             float upperBodyActionsLayerWeight = animator.GetLayerWeight(
                 GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER));
-            bool isGrounded = animator.GetBool(AnimIdGrounded);
             bool isMoving = animator.GetBool(AnimIdMoving);
             animator.runtimeAnimatorController = targetController;
-            SetGrounded(isGrounded);
+            SetGrounded(_modelGrounded);
             animator.SetBool(AnimIdMoving, isMoving);
             stateMachineReceiver.InitializeStateMachines();
             SetHandMode(_targetHandMode);
@@ -157,10 +167,9 @@ namespace SoulsLike.Entities.Character.Components
 
             float upperBodyActionsLayerWeight = animator.GetLayerWeight(
                 GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER));
-            bool isGrounded = animator.GetBool(AnimIdGrounded);
             bool isMoving = animator.GetBool(AnimIdMoving);
             animator.runtimeAnimatorController = _defaultController;
-            SetGrounded(isGrounded);
+            SetGrounded(_modelGrounded);
             animator.SetBool(AnimIdMoving, isMoving);
             stateMachineReceiver.InitializeStateMachines();
             SetHandMode(_targetHandMode);
@@ -174,7 +183,14 @@ namespace SoulsLike.Entities.Character.Components
         
         public void SetGrounded(bool modelGrounded)
         {
-            animator.SetBool(AnimIdGrounded, modelGrounded);
+            _modelGrounded = modelGrounded;
+            animator.SetBool(AnimIdGrounded, modelGrounded || _groundedOverrideActive);
+        }
+
+        private void SetGroundedOverride(bool active)
+        {
+            _groundedOverrideActive = active;
+            animator.SetBool(AnimIdGrounded, _modelGrounded || active);
         }
 
         public void SetAirborneMotion(float verticalVelocity, LandingType landingType)
@@ -237,6 +253,12 @@ namespace SoulsLike.Entities.Character.Components
 
         public void UpdateState(AnimatorStateMachineDto state)
         {
+            if (state.StateMachineName == StateMachineName.BackStep
+                && state.State == StateMachineState.Exit)
+            {
+                SetGroundedOverride(false);
+            }
+
             _character.OnAnimationStateChanged(state);
         }
 
@@ -293,6 +315,7 @@ namespace SoulsLike.Entities.Character.Components
 
         public void PlayCriticalAttack(HandMode handMode)
         {
+            SetGroundedOverride(true);
             BeginRootMotionAction();
             animator.CrossFadeInFixedTime(
                 OneHandedCriticalAttackState,
@@ -325,8 +348,14 @@ namespace SoulsLike.Entities.Character.Components
 
         public void TriggerBackStep()
         {
+            SetGroundedOverride(true);
             BeginRootMotionAction();
             animator.SetTrigger(AnimIdBackStep);
+        }
+
+        public void ClearGroundedOverride()
+        {
+            SetGroundedOverride(false);
         }
 
         public void SetWeaponBlock(bool isBlocking)
