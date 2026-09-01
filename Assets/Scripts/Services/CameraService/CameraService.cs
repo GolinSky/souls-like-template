@@ -29,6 +29,8 @@ namespace SoulsLike.Services.CameraService
     public class CameraService : MonoBehaviour, ICameraService
     {
         private const float DIRECTION_THRESHOLD_SQR = 0.0001f;
+        private const float LOCK_TARGET_ACQUISITION_DIRECTION_ANGLE_THRESHOLD_DEGREES = 1f;
+        private const float LOCK_TARGET_ACQUISITION_MAX_DURATION_MULTIPLIER = 4f;
 
         [SerializeField] private Camera targetCamera;
         [SerializeField] private CinemachineCamera cinemachineCamera;
@@ -56,8 +58,10 @@ namespace SoulsLike.Services.CameraService
         private bool _wasGrounded = true;
         private bool _hasStableLockDirection;
         private bool _holdingCloseHeading;
+        private bool _isLockTargetAcquiring;
         private bool _isZoomed;
         private int _lastLockYawTurnSign;
+        private float _lockTargetAcquisitionElapsed;
 
         private void OnDestroy()
         {
@@ -352,13 +356,22 @@ namespace SoulsLike.Services.CameraService
                 _lastLockYawTurnSign = yawDelta > 0f ? 1 : -1;
             }
 
-            _cinemachineTargetYaw = Mathf.SmoothDampAngle(
+            if (_isLockTargetAcquiring)
+            {
+                _cinemachineTargetYaw = Mathf.SmoothDampAngle(
+                    _cinemachineTargetYaw,
+                    _cinemachineTargetYaw + yawDelta,
+                    ref _yawVelocity,
+                    _cameraData.LockYawSmoothTime,
+                    _cameraData.LockYawMaxSpeed,
+                    Time.deltaTime);
+                return;
+            }
+
+            _cinemachineTargetYaw = Mathf.MoveTowardsAngle(
                 _cinemachineTargetYaw,
                 _cinemachineTargetYaw + yawDelta,
-                ref _yawVelocity,
-                _cameraData.LockYawSmoothTime,
-                _cameraData.LockYawMaxSpeed,
-                Time.deltaTime);
+                _cameraData.LockYawMaxSpeed * Time.deltaTime);
         }
 
         private void UpdateLockBodyPitch(TargetingSnapshot snapshot)
@@ -390,13 +403,36 @@ namespace SoulsLike.Services.CameraService
             float planarDistance = new Vector2(toTarget.x, toTarget.z).magnitude;
             Vector3 desiredOffset = _stableLockDirection * Mathf.Max(planarDistance, _cameraData.LockMinFocusDistance);
             desiredOffset.y = Mathf.Clamp(toTarget.y, _cameraData.LockMinFocusHeight, _cameraData.LockMaxFocusHeight);
-            _smoothedFocusOffset = Vector3.SmoothDamp(
-                _smoothedFocusOffset,
-                desiredOffset,
-                ref _focusOffsetVelocity,
-                _cameraData.LockTargetSmoothTime,
-                Mathf.Infinity,
-                Time.deltaTime);
+            if (_isLockTargetAcquiring)
+            {
+                _smoothedFocusOffset = Vector3.SmoothDamp(
+                    _smoothedFocusOffset,
+                    desiredOffset,
+                    ref _focusOffsetVelocity,
+                    _cameraData.LockTargetSmoothTime,
+                    Mathf.Infinity,
+                    Time.deltaTime);
+                _lockTargetAcquisitionElapsed += Time.deltaTime;
+
+                Vector3 cameraPosition = targetCamera.transform.position;
+                Vector3 currentLookAtDirection = _followTarget.position + _smoothedFocusOffset - cameraPosition;
+                Vector3 desiredLookAtDirection = _followTarget.position + desiredOffset - cameraPosition;
+                bool isAlignedWithTarget = currentLookAtDirection.sqrMagnitude > DIRECTION_THRESHOLD_SQR
+                    && desiredLookAtDirection.sqrMagnitude > DIRECTION_THRESHOLD_SQR
+                    && Vector3.Angle(currentLookAtDirection, desiredLookAtDirection) <= LOCK_TARGET_ACQUISITION_DIRECTION_ANGLE_THRESHOLD_DEGREES;
+                if (isAlignedWithTarget
+                    || _lockTargetAcquisitionElapsed >= _cameraData.LockTargetSmoothTime * LOCK_TARGET_ACQUISITION_MAX_DURATION_MULTIPLIER)
+                {
+                    _isLockTargetAcquiring = false;
+                    _focusOffsetVelocity = Vector3.zero;
+                    _smoothedFocusOffset = desiredOffset;
+                }
+            }
+            else
+            {
+                _smoothedFocusOffset = desiredOffset;
+            }
+
             _lockLookAtTarget.position = _followTarget.position + _smoothedFocusOffset;
             cinemachineCamera.LookAt = _lockLookAtTarget;
         }
@@ -489,9 +525,12 @@ namespace SoulsLike.Services.CameraService
 
         private void InitializeLockLookAtTarget()
         {
-            Vector3 forward = Quaternion.Euler(0f, _cinemachineTargetYaw, 0f) * Vector3.forward;
-            _smoothedFocusOffset = forward * _cameraData.LockMinFocusDistance;
+            Vector3 viewPoint = targetCamera.transform.position
+                + targetCamera.transform.forward * _cameraData.LockMinFocusDistance;
+            _smoothedFocusOffset = viewPoint - _followTarget.position;
             _focusOffsetVelocity = Vector3.zero;
+            _lockTargetAcquisitionElapsed = 0f;
+            _isLockTargetAcquiring = true;
             _lockLookAtTarget.position = _followTarget.position + _smoothedFocusOffset;
         }
 
@@ -504,6 +543,8 @@ namespace SoulsLike.Services.CameraService
             _stableLockDirection = Vector3.zero;
             _hasStableLockDirection = false;
             _holdingCloseHeading = false;
+            _isLockTargetAcquiring = false;
+            _lockTargetAcquisitionElapsed = 0f;
             _lastLockYawTurnSign = 0;
         }
 
