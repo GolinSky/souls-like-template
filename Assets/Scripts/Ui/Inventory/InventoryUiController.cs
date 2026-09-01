@@ -99,7 +99,8 @@ namespace SoulsLike.Ui.Inventory
         public void OnItemFocused(InventoryEntryId entryId)
         {
             InventoryItemViewData item = BuildViewData(_inventory.GetRequiredEntry(entryId));
-            _view.DisplayItemDetails(item, _character.Attributes);
+            _view.ItemDetails.Display(item, _character.Attributes);
+            _view.LoreCard.Display(item);
 
             int currentAttack = 0;
             EquippedItemContext activeRight = _equipment.BuildLoadout().AssignedRight;

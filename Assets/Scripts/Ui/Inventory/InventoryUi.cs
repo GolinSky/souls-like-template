@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SoulsLike.Entities.Character;
-using SoulsLike.Items;
 using SoulsLike.Ui.Base;
 using SoulsLike.Ui.Inventory.Data;
 using TMPro;
@@ -28,35 +26,10 @@ namespace SoulsLike.Ui.Inventory
         [SerializeField] private InventorySlotUI slotPrefab;
 
         [Header("Column 2: Item Details")]
-        [SerializeField] private Image detailItemArtwork;
-        [SerializeField] private TMP_Text detailItemName;
-        [SerializeField] private TMP_Text detailItemType;
-        [SerializeField] private TMP_Text detailItemWeight;
-        [SerializeField] private TMP_Text detailAttackPhysical;
-        [SerializeField] private TMP_Text detailAttackMagic;
-        [SerializeField] private TMP_Text detailAttackFire;
-        [SerializeField] private TMP_Text detailAttackLightning;
-        [SerializeField] private TMP_Text detailAttackHoly;
-        [SerializeField] private TMP_Text detailAttackCritical;
-        [SerializeField] private TMP_Text detailGuardBoost;
-        [SerializeField] private TMP_Text detailScaleStr;
-        [SerializeField] private TMP_Text detailScaleDex;
-        [SerializeField] private TMP_Text detailScaleInt;
-        [SerializeField] private TMP_Text detailScaleFth;
-        [SerializeField] private TMP_Text detailScaleArc;
-        [SerializeField] private TMP_Text detailReqStr;
-        [SerializeField] private TMP_Text detailReqDex;
-        [SerializeField] private TMP_Text detailReqInt;
-        [SerializeField] private TMP_Text detailReqFth;
-        [SerializeField] private TMP_Text detailReqArc;
-        [SerializeField] private TMP_Text detailSkillName;
-        [SerializeField] private TMP_Text detailSkillFpCost;
-        [SerializeField] private TMP_Text detailEffectDescription;
+        [SerializeField] private ItemDetailsUi itemDetailsUi;
 
-        [Header("Column 2: Lore Card State")]
-        [SerializeField] private TMP_Text loreItemName;
-        [SerializeField] private Image loreItemArtwork;
-        [SerializeField] private TMP_Text loreFullText;
+        [Header("Column 2: Lore Card")]
+        [SerializeField] private LoreCardUi loreCardUi;
 
         [Header("Column 3: Character Stats")]
         [SerializeField] private CharacterStatsUi characterStatsUi;
@@ -67,13 +40,14 @@ namespace SoulsLike.Ui.Inventory
         [SerializeField] private TMP_Text legendToggleLoreText;
         [SerializeField] private TMP_Text legendSimpleViewText;
 
-        public static readonly Color ColorParchmentPrimary = new(0.902f, 0.882f, 0.773f);
-        public static readonly Color ColorUnmetRequirement = new(0.898f, 0.224f, 0.208f);
-
         private readonly List<InventorySlotUI> _spawnedSlots = new();
         private IInventoryPresenter _presenter;
 
         public CharacterStatsUi CharacterStats => characterStatsUi;
+        public ItemDetailsUi ItemDetails => itemDetailsUi;
+        public LoreCardUi LoreCard => loreCardUi;
+        public static Color ColorParchmentPrimary => ItemDetailsUi.ColorParchmentPrimary;
+        public static Color ColorUnmetRequirement => ItemDetailsUi.ColorUnmetRequirement;
 
         public void AssignPresenter(IInventoryPresenter presenter)
         {
@@ -111,48 +85,6 @@ namespace SoulsLike.Ui.Inventory
             }
         }
 
-        public void DisplayItemDetails(
-            InventoryItemViewData item,
-            CharacterAttributeStats attributes)
-        {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
-            ItemStatSnapshot stats = item.Stats;
-            detailItemArtwork.sprite = item.Icon;
-            detailItemArtwork.enabled = item.Icon != null;
-            detailItemName.text = item.DisplayName;
-            detailItemType.text = item.ItemType.ToString();
-            detailItemWeight.text = item.Weight.ToString("F1");
-            detailAttackPhysical.text = stats.PhysicalAttack.ToString();
-            detailAttackMagic.text = stats.MagicAttack.ToString();
-            detailAttackFire.text = stats.FireAttack.ToString();
-            detailAttackLightning.text = stats.LightningAttack.ToString();
-            detailAttackHoly.text = stats.HolyAttack.ToString();
-            detailAttackCritical.text = stats.Critical.ToString();
-            detailGuardBoost.text = stats.GuardBoost.ToString("F0");
-            detailScaleStr.text = FormatScaling(stats.Scaling.Strength);
-            detailScaleDex.text = FormatScaling(stats.Scaling.Dexterity);
-            detailScaleInt.text = FormatScaling(stats.Scaling.Intelligence);
-            detailScaleFth.text = FormatScaling(stats.Scaling.Faith);
-            detailScaleArc.text = FormatScaling(stats.Scaling.Arcane);
-            SetRequirementField(detailReqStr, stats.Requirements.Strength, attributes.Strength);
-            SetRequirementField(detailReqDex, stats.Requirements.Dexterity, attributes.Dexterity);
-            SetRequirementField(detailReqInt, stats.Requirements.Intelligence, attributes.Intelligence);
-            SetRequirementField(detailReqFth, stats.Requirements.Faith, attributes.Faith);
-            SetRequirementField(detailReqArc, stats.Requirements.Arcane, attributes.Arcane);
-            detailSkillName.text = string.IsNullOrWhiteSpace(stats.SkillName) ? "-" : stats.SkillName;
-            detailSkillFpCost.text = stats.SkillFocusCost > 0 ? $"FP {stats.SkillFocusCost}" : "-";
-            detailEffectDescription.text = item.Description;
-
-            loreItemName.text = item.DisplayName;
-            loreItemArtwork.sprite = item.Icon;
-            loreItemArtwork.enabled = item.Icon != null;
-            loreFullText.text = $"{item.Description}\n\n{item.LoreDescription}";
-        }
-
         public void ToggleLoreView() => viewStateController.ToggleLoreView();
         public void ToggleSimpleView() => viewStateController.ToggleSimpleView();
 
@@ -178,6 +110,8 @@ namespace SoulsLike.Ui.Inventory
                 || gridContentParent == null
                 || gridScrollRect == null
                 || slotPrefab == null
+                || itemDetailsUi == null
+                || loreCardUi == null
                 || characterStatsUi == null)
             {
                 throw new InvalidOperationException(
@@ -237,17 +171,5 @@ namespace SoulsLike.Ui.Inventory
                 $"{nameof(InventoryUi)} requires a presenter before use.");
         }
 
-        private static string FormatScaling(Items.ScalingGrade grade)
-        {
-            return grade == Items.ScalingGrade.None ? "-" : grade.ToString();
-        }
-
-        private static void SetRequirementField(TMP_Text field, int requiredValue, int playerValue)
-        {
-            field.text = requiredValue > 0 ? requiredValue.ToString() : "-";
-            field.color = playerValue < requiredValue
-                ? ColorUnmetRequirement
-                : ColorParchmentPrimary;
-        }
     }
 }
