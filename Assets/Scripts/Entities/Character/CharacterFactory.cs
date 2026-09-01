@@ -9,9 +9,7 @@ using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
-using SoulsLike.Entities.Character.Adapters;
 using SoulsLike.Entities.Character.Input;
-using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Extensions;
 using SoulsLike.Factory;
 using SoulsLike.Interactions;
@@ -129,16 +127,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<SystemUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<PauseNavigationUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
-                builder.Register<UnityCharacterClock>(Lifetime.Singleton).As<ICharacterClock>();
-                builder.Register<MovementGate>(Lifetime.Singleton).AsSelf();
-                builder.Register<CharacterCommandBuffer>(Lifetime.Singleton).AsSelf();
-                builder.Register<CharacterActionStateMachine>(Lifetime.Singleton).AsSelf();
-                builder.Register<CharacterRuntime>(Lifetime.Singleton).AsSelf();
-                builder.Register<CharacterAnimationAdapter>(Lifetime.Singleton).AsSelf();
-                builder.Register<EquipmentSwapCoordinator>(Lifetime.Singleton).AsSelf();
-                builder.Register<SprintRollGestureResolver>(Lifetime.Singleton).AsSelf();
-                builder.Register<HeavyAttackGestureResolver>(Lifetime.Singleton).AsSelf();
-                builder.Register<PlayerCharacterInputAdapter>(Lifetime.Singleton).AsSelf();
+                builder.Register<PlayerInputReader>(Lifetime.Singleton).AsSelf();
                 builder.Register<InteractionController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<InteractionUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

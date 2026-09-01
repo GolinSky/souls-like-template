@@ -20,7 +20,7 @@ namespace SoulsLike.Entities.Character
         private readonly ITargetingService _targetingService;
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly HealthComponent _healthComponent;
-        private readonly PlayerCharacterInputAdapter _inputAdapter;
+        private readonly PlayerInputReader _inputReader;
         private readonly InteractionController _interactionController;
         private readonly ICoreGameOrchestrator _coreGameOrchestrator;
 
@@ -33,7 +33,7 @@ namespace SoulsLike.Entities.Character
             ITargetingService targetingService,
             IGameStateNotifier gameStateNotifier,
             HealthComponent healthComponent,
-            PlayerCharacterInputAdapter inputAdapter,
+            PlayerInputReader inputReader,
             InteractionController interactionController,
             ICoreGameOrchestrator coreGameOrchestrator)
         {
@@ -43,7 +43,7 @@ namespace SoulsLike.Entities.Character
             _targetingService = targetingService;
             _gameStateNotifier = gameStateNotifier;
             _healthComponent = healthComponent;
-            _inputAdapter = inputAdapter;
+            _inputReader = inputReader;
             _interactionController = interactionController;
             _coreGameOrchestrator = coreGameOrchestrator;
         }
@@ -97,13 +97,13 @@ namespace SoulsLike.Entities.Character
             if (_currentGameState == GameState.Paused)
             {
                 _interactionController.ClearTarget();
-                _character.Tick(_inputAdapter.ReadMovementOnly());
+                _character.Tick(_inputReader.ReadMovementOnly());
                 return;
             }
 
             HandleLockOnInput();
             _interactionController.Tick();
-            _character.Tick(_inputAdapter.Read(_character.CurrentActionState));
+            _character.Tick(_inputReader.Read(_character.CurrentActionState));
         }
 
         public void LateTick()

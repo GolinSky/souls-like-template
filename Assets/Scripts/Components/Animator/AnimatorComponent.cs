@@ -6,7 +6,6 @@ using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Items;
 using UnityEngine;
 using VContainer;
-using SoulsLike.Entities.Character.Ports;
 
 namespace SoulsLike.Entities.Character.Components
 {
@@ -75,8 +74,7 @@ namespace SoulsLike.Entities.Character.Components
         [SerializeField] private AnimatorRootMotionRelay rootMotionRelay;
         
         
-        private IAnimationStateSink _stateSink;
-        private IRootMotionSink _rootMotionSink;
+        private Character _character;
         private Vector2 _targetLocomotion;
         private Vector2 _currentLocomotion;
         private Vector3 _targetAimPosition;
@@ -96,12 +94,11 @@ namespace SoulsLike.Entities.Character.Components
         private Animator Animator => animator;
 
         [Inject]
-        public void InjectSinks(IAnimationStateSink stateSink, IRootMotionSink rootMotionSink)
+        public void InjectCharacter(Character character, MovementComponent movementComponent)
         {
-            _stateSink = stateSink;
-            _rootMotionSink = rootMotionSink;
+            _character = character;
             _defaultController = animator.runtimeAnimatorController;
-            rootMotionRelay.Initialize(rootMotionSink);
+            rootMotionRelay.Initialize(character, movementComponent);
             _targetChargedAttackSpeed = animator.GetFloat(ChargedSpeedParameter);
 
             if (!_observingStateMachine)
@@ -231,7 +228,7 @@ namespace SoulsLike.Entities.Character.Components
 
         public void UpdateState(AnimatorStateMachineDto state)
         {
-            _stateSink.OnAnimationStateChanged(state);
+            _character.OnAnimationStateChanged(state);
         }
 
         public void SetJump()

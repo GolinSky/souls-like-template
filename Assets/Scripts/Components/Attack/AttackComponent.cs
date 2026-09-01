@@ -96,22 +96,22 @@ namespace SoulsLike.Entities.Character.Components.Attack
         }
 
         public AttackResolution ResolveAttack(
-            in AttackRequest request,
+            in CharacterAction action,
             in AttackExecutionContext context)
         {
-            SetActionWeapon(request.IsLeftHand);
-            AttackType attackType = request.IsLeftHand
+            SetActionWeapon(action.IsLeftHand);
+            AttackType attackType = action.IsLeftHand
                 ? ResolveLeftHandAttack(context.ActiveState)
-                : request.Intent switch
+                : action.Intent switch
                 {
-                    AttackIntent.Light => ResolveLightAttack(request.IsSprinting, context),
-                    AttackIntent.Heavy => ResolveHeavyAttack(context.ActiveState),
-                    AttackIntent.Special => AttackType.SpecialAttack,
+                    CharacterAction.AttackIntent.Light => ResolveLightAttack(action.IsSprinting, context),
+                    CharacterAction.AttackIntent.Heavy => ResolveHeavyAttack(context.ActiveState),
+                    CharacterAction.AttackIntent.Special => AttackType.SpecialAttack,
                     _ => throw new ArgumentOutOfRangeException(
-                        nameof(request.Intent), request.Intent, null)
+                        nameof(action.Intent), action.Intent, null)
                 };
-            float chargedSpeed = !request.IsLeftHand
-                && request.IsHeavy
+            float chargedSpeed = !action.IsLeftHand
+                && action.Intent == CharacterAction.AttackIntent.Heavy
                 && _strongInputActive
                 ? CHARGED_HEAVY_SPEED
                 : NORMAL_ATTACK_SPEED;
@@ -119,7 +119,7 @@ namespace SoulsLike.Entities.Character.Components.Attack
             ClearContextualAttack();
             return new AttackResolution(
                 attackType,
-                request.IsLeftHand,
+                action.IsLeftHand,
                 chargedSpeed);
         }
 

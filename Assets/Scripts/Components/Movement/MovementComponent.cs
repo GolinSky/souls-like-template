@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using Prospector.Utility.Timer;
 using UnityEngine;
-using VContainer.Unity;
-using VContainer;
-using SoulsLike.Entities.Character.Ports;
 
 namespace SoulsLike.Entities.Character.Components.Movement
 {
-    public class MovementComponent : BaseComponent<MovementModel>, IInitializable, IMovementComponent
+    public class MovementComponent : BaseComponent<MovementModel>
     {
         private const float MAX_MOVEMENT_DELTA_TIME = 0.05f;
         private const float INPUT_DEAD_ZONE = 0.01f;
@@ -23,7 +20,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private readonly Dictionary<SpeedMultiplierKey, float> _speedMultipliers = new Dictionary<SpeedMultiplierKey, float>();
         private readonly RaycastHit[] _groundProbeHits = new RaycastHit[GROUND_PROBE_HIT_CAPACITY];
 
-        private IMovementPresentationSink _presentationSink;
         private MovementMode _movementMode = MovementMode.Free;
         private Transform _lockOnTarget;
         private Transform _activeRollTarget;
@@ -57,6 +53,10 @@ namespace SoulsLike.Entities.Character.Components.Movement
         private bool _hasGroundProbeSample;
         private bool _hasGroundProbeHit;
         private bool _lastGroundProbeWasWalkable;
+        private bool _jumpStarted;
+        private bool _rollStarted;
+        private bool _backStepStarted;
+        private bool _landed;
 
         public LocomotionState CurrentLocomotionState { get; private set; } = LocomotionState.Grounded;
         public LandingType CurrentLandingType { get; private set; } = LandingType.None;
@@ -66,6 +66,16 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public float VerticalVelocity => _verticalVelocity;
         public float JumpTime => _jumpTime;
         public bool WasSprintingAtTakeoff => _wasSprintingAtTakeoff;
+        public MovementPresentation Presentation => new MovementPresentation(_animationBlend, _animationBlendDirection, _turnAmount, _verticalVelocity, CurrentLandingType, Model.Grounded, _isCrouching);
+
+        public bool TryConsumeJumpStarted() => Consume(ref _jumpStarted);
+        public bool TryConsumeRollStarted(out Vector2 direction)
+        {
+            direction = _activeRollDirection;
+            return Consume(ref _rollStarted);
+        }
+        public bool TryConsumeBackStepStarted() => Consume(ref _backStepStarted);
+        public bool TryConsumeLanded() => Consume(ref _landed);
 
         public void Initialize()
         {
@@ -75,13 +85,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _defaultControllerHeight = controller.height;
             _defaultControllerCenter = controller.center;
             SynchronizeGroundedState();
-            _presentationSink.SetAirborneMotion(_verticalVelocity, CurrentLandingType);
-        }
-
-        [Inject]
-        public void InjectPresentationSink(IMovementPresentationSink presentationSink)
-        {
-            _presentationSink = presentationSink;
         }
 
         public void SetPosition(Vector3 position)
@@ -196,9 +199,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
             ResolveMovementCollisions(collisionFlags);
             MaintainGroundContact();
 
-            _presentationSink.SetLocomotion(_animationBlend, _animationBlendDirection);
-            _presentationSink.SetTurn(_turnAmount);
-            _presentationSink.SetAirborneMotion(_verticalVelocity, CurrentLandingType);
         }
 
         public void FaceInputDirection(Vector2 moveInput, float cameraYaw)
@@ -273,11 +273,11 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 .Start();
             if (isBackStep)
             {
-                _presentationSink.PlayBackStep();
+                _backStepStarted = true;
             }
             else
             {
-                _presentationSink.PlayRoll(rollDirection);
+                _rollStarted = true;
             }
 
             return true;
@@ -357,7 +357,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             _wasSprintingAtTakeoff = sprinting;
             _fallGraceTimer.Stop();
             SetGrounded(false);
-            _presentationSink.PlayJump();
+            _jumpStarted = true;
             return true;
         }
 
@@ -535,7 +535,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
             }
 
             _lastNotifiedGrounded = grounded;
-            _presentationSink.SetGrounded(grounded);
         }
 
         private void UpdateVerticalVelocity(float deltaTime)
@@ -608,7 +607,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 .ChangeDuration(Model.FallTimeout)
                 .Start();
             SetGrounded(true);
-            _presentationSink.NotifyLand();
+            _landed = true;
             _verticalVelocity = GROUNDED_VERTICAL_VELOCITY;
         }
 
@@ -850,7 +849,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 controller.center = _defaultControllerCenter;
             }
 
-            _presentationSink.SetCrouch(crouched);
         }
 
         private float GetExternalSpeedMultiplier()
@@ -862,6 +860,35 @@ namespace SoulsLike.Entities.Character.Components.Movement
             }
 
             return total;
+        }
+
+        private static bool Consume(ref bool value)
+        {
+            if (!value) return false;
+            value = false;
+            return true;
+        }
+
+        public readonly struct MovementPresentation
+        {
+            public float Speed { get; }
+            public Vector2 BlendDirection { get; }
+            public float TurnAmount { get; }
+            public float VerticalVelocity { get; }
+            public LandingType LandingType { get; }
+            public bool Grounded { get; }
+            public bool Crouching { get; }
+
+            public MovementPresentation(float speed, Vector2 blendDirection, float turnAmount, float verticalVelocity, LandingType landingType, bool grounded, bool crouching)
+            {
+                Speed = speed;
+                BlendDirection = blendDirection;
+                TurnAmount = turnAmount;
+                VerticalVelocity = verticalVelocity;
+                LandingType = landingType;
+                Grounded = grounded;
+                Crouching = crouching;
+            }
         }
 
         private void OnDrawGizmosSelected()

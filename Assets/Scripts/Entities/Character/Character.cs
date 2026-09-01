@@ -3,7 +3,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
-using SoulsLike.Entities.Character.Adapters;
 using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Attack;
@@ -11,7 +10,6 @@ using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
-using SoulsLike.Entities.Character.Ports;
 using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Items;
 using SoulsLike.Services;
@@ -21,13 +19,7 @@ using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character
 {
-    public sealed class Character : MonoBehaviour, IInitializable,
-        ICharacterActionExecutor,
-        IMovementPresentationSink,
-        IAnimationStateSink,
-        IRootMotionSink,
-        IEquipmentLoadoutSink,
-        IDisposable
+    public sealed class Character : MonoBehaviour, IInitializable, IDisposable
     {
         private const float NORMAL_ATTACK_SPEED = 1.0f;
 
@@ -54,9 +46,7 @@ namespace SoulsLike.Entities.Character
         [SerializeField] private LayerMask aimLayerMask;
 
         private AttackComponent _attackComponent;
-        private CharacterRuntime _runtime;
-        private CharacterAnimationAdapter _animationAdapter;
-        private EquipmentSwapCoordinator _equipmentSwapCoordinator;
+        private readonly CharacterActionStateMachine _actionStateMachine = new CharacterActionStateMachine();
         private ItemCatalog _itemCatalog;
         private IEntityLocator _entityLocator;
         private ICombatStateNotifier _combatStateNotifier;
@@ -65,6 +55,7 @@ namespace SoulsLike.Entities.Character
         private bool _isDeathAnimationPlaying;
         private UniTaskCompletionSource<bool> _graceTransitionCompletionSource;
         private GracePhase _gracePhase;
+        private MovementLockReason _movementLockReasons;
 
         public Transform CameraTarget => cameraTarget;
         public bool IsGrounded => movementComponent.Model.Grounded;
@@ -73,17 +64,13 @@ namespace SoulsLike.Entities.Character
         public HealthStats HealthStats => healthComponent.Stats;
         public int HeldCurrency => _heldCurrency;
         public CharacterAttributeStats Attributes => _characterData.Attributes;
-        public bool IsInputBlocked => _runtime.IsInputBlocked;
-        public CharacterActionStateId CurrentActionState => _runtime.ActionState;
-        public bool IsEquipmentActionInProgress => _equipmentSwapCoordinator.IsActive;
+        public bool IsInputBlocked => _actionStateMachine.IsInputBlocked;
+        public CharacterAction.State CurrentActionState => _actionStateMachine.CurrentState;
         public event Action OnDeathAnimationCompleted;
 
         [Inject]
-        public void ConfigureRuntime(
+        public void Configure(
             AttackComponent attackComponent,
-            CharacterRuntime runtime,
-            CharacterAnimationAdapter animationAdapter,
-            EquipmentSwapCoordinator equipmentSwapCoordinator,
             EquipmentPresentation presentation,
             ItemCatalog itemCatalog,
             IEntityLocator entityLocator,
@@ -91,9 +78,6 @@ namespace SoulsLike.Entities.Character
             CharacterData characterData)
         {
             _attackComponent = attackComponent;
-            _runtime = runtime;
-            _animationAdapter = animationAdapter;
-            _equipmentSwapCoordinator = equipmentSwapCoordinator;
             equipmentPresentation = presentation;
             _itemCatalog = itemCatalog;
             _entityLocator = entityLocator;
@@ -105,10 +89,12 @@ namespace SoulsLike.Entities.Character
         public void Initialize()
         {
             healthComponent.Model.OnDamageApplied += OnDamageApplied;
+            movementComponent.Initialize();
             animatorComponent.SetHandMode(equipmentComponent.Model.ActiveHandMode);
             ApplyEquipmentLoadout(equipmentComponent.BuildLoadout());
+            ApplyMovementPresentation();
             Cursor.lockState = CursorLockMode.Locked;
-            _runtime.SetInputBlocked(true);
+            SetInputBlocked(true);
             animatorComponent.TriggerSpawn();
         }
 
@@ -117,20 +103,24 @@ namespace SoulsLike.Entities.Character
             healthComponent.Model.OnDamageApplied -= OnDamageApplied;
         }
 
-        public void Tick(in CharacterInputBatch input)
+        public void Tick(in CharacterInput input)
         {
-            _attackComponent.SetStrongAttackHeld(input.ControlFrame.StrongAttackHeld);
-            if (!input.ControlFrame.StrongAttackHeld)
+            float now = Time.time;
+            _attackComponent.SetStrongAttackHeld(input.StrongAttackHeld);
+            if (!input.StrongAttackHeld)
             {
                 animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
             }
 
-            _runtime.Tick(input, this);
-            ApplyRuntimeAnimationRequests();
-            MovementPolicy policy = _runtime.ResolveMovementPolicy(false);
+            _actionStateMachine.Tick(input.SprintHeld, equipmentComponent.IsSwapInProgress);
+            Submit(input.FirstAction, now);
+            Submit(input.SecondAction, now);
+            _actionStateMachine.PruneExpiredBuffer(now);
+            TryExecuteBufferedAction(now);
+            ApplyActionStateMachineRequests();
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
-            bool blockRequested = input.ControlFrame.GuardHeld
-                && policy.GuardAllowed
+            bool blockRequested = input.GuardHeld
+                && CanGuard()
                 && movementComponent.Model.Grounded;
             bool shieldBlock = blockRequested
                 && loadout.HandMode == HandMode.OneHanded
@@ -143,25 +133,25 @@ namespace SoulsLike.Entities.Character
             MovementModel movementModel = movementComponent.Model;
             bool combatSprintDrainsStamina =
                 _combatStateNotifier.CurrentCombatState == CombatState.Combat
-                && input.ControlFrame.SprintHeld
-                && !input.ControlFrame.CrouchHeld;
+                && input.SprintHeld
+                && !input.CrouchHeld;
             float sprintStaminaCost =
                 movementModel.CombatSprintStaminaDrainPerSecond * Time.deltaTime;
             bool sprintAllowed = !combatSprintDrainsStamina
                 || healthComponent.CanConsumeStamina(
                     sprintStaminaCost,
                     movementModel.CombatSprintStaminaStartThreshold);
-            movementComponent.SetMovementBlocked(policy.MovementBlocked);
+            movementComponent.SetMovementBlocked(_movementLockReasons != MovementLockReason.None);
             movementComponent.Move(
-                input.ControlFrame.MoveInput,
-                input.ControlFrame.CameraYaw,
-                input.ControlFrame.SprintHeld && sprintAllowed,
-                input.ControlFrame.CrouchHeld);
+                input.MoveInput,
+                input.CameraYaw,
+                input.SprintHeld && sprintAllowed,
+                input.CrouchHeld);
             characterAudioComponent.Tick(
                 movementComponent.IsMoving,
-                input.ControlFrame.SprintHeld
+                input.SprintHeld
                 && sprintAllowed
-                && !input.ControlFrame.CrouchHeld);
+                && !input.CrouchHeld);
 
             if (combatSprintDrainsStamina
                 && sprintAllowed
@@ -175,23 +165,21 @@ namespace SoulsLike.Entities.Character
             animatorComponent.SetShieldBlock(shieldBlock);
             animatorComponent.SetWeaponBlock(weaponBlock);
             healthComponent.TickStaminaRecovery(Time.deltaTime, shieldBlock || weaponBlock);
+            ApplyMovementPresentation();
         }
-
-        public CharacterCommandDisposition Submit(CharacterCommand command) =>
-            _runtime.Submit(command, this);
 
         public void PlayDeath()
         {
-            _equipmentSwapCoordinator.Cancel(equipmentPresentation);
+            equipmentComponent.CancelSwap();
             _isDeathAnimationPlaying = true;
-            _runtime.SetInputBlocked(true);
+            SetInputBlocked(true);
             animatorComponent.TriggerDeath();
         }
 
         public void CompleteDeathAnimation()
         {
             animatorComponent.CompleteDeathAnimation();
-            _runtime.SetInputBlocked(false);
+            SetInputBlocked(false);
         }
 
         public async UniTask PlayGraceUnblock(CancellationToken token)
@@ -265,97 +253,99 @@ namespace SoulsLike.Entities.Character
             }
         }
 
-        public CharacterCommandExecutionStatus TryStartAttack(in AttackRequest request)
+        private CharacterAction.Result StartAttack(in CharacterAction action)
         {
-            bool canInterrupt = _runtime.ActionState is CharacterActionStateId.Attack
-                or CharacterActionStateId.Roll;
+            bool canInterrupt = _actionStateMachine.CurrentState is CharacterAction.State.Attack or CharacterAction.State.Roll;
             if (!movementComponent.Model.Grounded
-                || _runtime.MovementGate.IsSet(MovementGateReason.Manual)
-                || _runtime.MovementGate.IsSet(MovementGateReason.Spawn)
-                || (_runtime.MovementGate.IsSet(MovementGateReason.Animation) && !canInterrupt))
+                || IsMovementLocked(MovementLockReason.Manual)
+                || IsMovementLocked(MovementLockReason.Spawn)
+                || (IsMovementLocked(MovementLockReason.Animation) && !canInterrupt))
             {
-                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                return CharacterAction.Result.TemporarilyBlocked;
             }
 
-            if (request.Intent == AttackIntent.Special
-                && _runtime.ActionState == CharacterActionStateId.Roll)
+            if (action.Intent == CharacterAction.AttackIntent.Special
+                && _actionStateMachine.CurrentState == CharacterAction.State.Roll)
             {
-                return CharacterCommandExecutionStatus.Invalid;
+                return CharacterAction.Result.Invalid;
             }
 
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
-            if (request.Intent == AttackIntent.Special
+            if (action.Intent == CharacterAction.AttackIntent.Special
                 && loadout.HandMode == HandMode.OneHanded
                 && loadout.EffectiveLeft != null
                 && _itemCatalog.GetItem(loadout.EffectiveLeft.ItemId).ItemType == ItemType.Shield)
             {
                 animatorComponent.TriggerParry();
-                _runtime.SetParryLocked(true);
-                return CharacterCommandExecutionStatus.Executed;
+                _actionStateMachine.SetInputBlocked(true);
+                SetMovementLock(MovementLockReason.Parry, true);
+                return CharacterAction.Result.Executed;
             }
 
             ItemId? rightWeaponId = ResolveAttackWeaponId(loadout, false);
             ItemId? leftWeaponId = ResolveAttackWeaponId(loadout, true);
             bool hasRightWeapon = rightWeaponId.HasValue;
             bool hasLeftWeapon = leftWeaponId.HasValue;
-            if ((request.IsLeftHand && !hasLeftWeapon)
-                || (!request.IsLeftHand && !hasRightWeapon))
+            if ((action.IsLeftHand && !hasLeftWeapon)
+                || (!action.IsLeftHand && !hasRightWeapon))
             {
-                return CharacterCommandExecutionStatus.Invalid;
+                return CharacterAction.Result.Invalid;
             }
 
-            ItemId? weaponId = request.IsLeftHand
+            ItemId? weaponId = action.IsLeftHand
                 ? leftWeaponId
                 : rightWeaponId;
             if (weaponId.HasValue)
             {
                 CombatProfile combatProfile = _itemCatalog.GetWeapon(weaponId.Value).CombatProfile;
-                float staminaCost = ResolveAttackStaminaCost(request, combatProfile);
-                float staminaStartThreshold = ResolveAttackStaminaStartThreshold(request, combatProfile);
+                float staminaCost = ResolveAttackStaminaCost(action, combatProfile);
+                float staminaStartThreshold = ResolveAttackStaminaStartThreshold(action, combatProfile);
                 if (!healthComponent.CanConsumeStamina(staminaCost, staminaStartThreshold))
                 {
-                    return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                    return CharacterAction.Result.TemporarilyBlocked;
                 }
 
                 healthComponent.ConsumeStamina(staminaCost);
             }
 
             AttackExecutionContext context = _attackComponent.CurrentExecutionContext;
-            AttackResolution resolution = _attackComponent.ResolveAttack(request, context);
+            AttackResolution resolution = _attackComponent.ResolveAttack(action, context);
             animatorComponent.SetChargedAttackSpeed(resolution.ChargedSpeed);
-            movementComponent.FaceInputDirection(request.MoveInput, request.CameraYaw);
+            movementComponent.FaceInputDirection(action.MoveInput, action.CameraYaw);
             animatorComponent.PlayAttack(
                 resolution.AttackType,
                 resolution.IsLeftHandAttack);
-            return CharacterCommandExecutionStatus.Executed;
+            return CharacterAction.Result.Executed;
         }
 
-        public CharacterCommandExecutionStatus TryStartRoll(in RollRequest request)
+        private CharacterAction.Result StartRoll(in CharacterAction action)
         {
-            bool canInterrupt = _runtime.ActionState != CharacterActionStateId.Neutral;
+            bool canInterrupt = _actionStateMachine.CurrentState != CharacterAction.State.Neutral;
             MovementModel movementModel = movementComponent.Model;
             float staminaCost = movementModel.RollStaminaCost;
             if (!healthComponent.CanConsumeStamina(
                     staminaCost,
                     movementModel.RollStaminaStartThreshold))
             {
-                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                return CharacterAction.Result.TemporarilyBlocked;
             }
 
             if (!movementComponent.TryStartRoll(
-                    request.MoveInput,
-                    request.CameraYaw,
+                    action.MoveInput,
+                    action.CameraYaw,
                     true,
                     canInterrupt))
             {
-                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                return CharacterAction.Result.TemporarilyBlocked;
             }
 
             healthComponent.ConsumeStamina(staminaCost);
-            return CharacterCommandExecutionStatus.Executed;
+            if (movementComponent.TryConsumeBackStepStarted()) animatorComponent.TriggerBackStep();
+            else if (movementComponent.TryConsumeRollStarted(out Vector2 direction)) animatorComponent.TriggerRoll(direction);
+            return CharacterAction.Result.Executed;
         }
 
-        public CharacterCommandExecutionStatus TryStartJump(in JumpRequest request)
+        private CharacterAction.Result StartJump(in CharacterAction action)
         {
             MovementModel movementModel = movementComponent.Model;
             float staminaCost = movementModel.JumpStaminaCost;
@@ -363,81 +353,61 @@ namespace SoulsLike.Entities.Character
                     staminaCost,
                     movementModel.JumpStaminaStartThreshold))
             {
-                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                return CharacterAction.Result.TemporarilyBlocked;
             }
 
-            if (!movementComponent.TryStartJump(true, request.IsSprinting))
+            if (!movementComponent.TryStartJump(true, action.IsSprinting))
             {
-                return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                return CharacterAction.Result.TemporarilyBlocked;
             }
 
             healthComponent.ConsumeStamina(staminaCost);
-            return CharacterCommandExecutionStatus.Executed;
+            if (movementComponent.TryConsumeJumpStarted()) animatorComponent.SetJump();
+            return CharacterAction.Result.Executed;
         }
 
-        public CharacterCommandExecutionStatus TryStartEquipmentAction(
-            in EquipmentActionRequest request)
+        private CharacterAction.Result StartEquipmentAction(in CharacterAction action)
         {
-            switch (request.Kind)
+            switch (action.EquipmentAction)
             {
-                case EquipmentActionKind.SwitchRightWeapon:
-                    return _equipmentSwapCoordinator.StartSwap(
-                        EquipmentSlotGroup.RightHandArmament,
-                        equipmentComponent,
-                        animatorComponent,
-                        equipmentPresentation);
-                case EquipmentActionKind.SwitchLeftWeapon:
-                    return _equipmentSwapCoordinator.StartSwap(
-                        EquipmentSlotGroup.LeftHandArmament,
-                        equipmentComponent,
-                        animatorComponent,
-                        equipmentPresentation);
-                case EquipmentActionKind.SwitchQuickItem:
+                case CharacterAction.EquipmentKind.SwitchRightWeapon:
+                    return equipmentComponent.StartSwap(EquipmentSlotGroup.RightHandArmament);
+                case CharacterAction.EquipmentKind.SwitchLeftWeapon:
+                    return equipmentComponent.StartSwap(EquipmentSlotGroup.LeftHandArmament);
+                case CharacterAction.EquipmentKind.SwitchQuickItem:
                     equipmentComponent.SwitchActive(EquipmentSlotGroup.QuickItem);
-                    return CharacterCommandExecutionStatus.Executed;
-                case EquipmentActionKind.UseQuickItem:
+                    return CharacterAction.Result.Executed;
+                case CharacterAction.EquipmentKind.UseQuickItem:
                     return TryUseActiveQuickItem()
-                        ? CharacterCommandExecutionStatus.Executed
-                        : CharacterCommandExecutionStatus.Invalid;
-                case EquipmentActionKind.ToggleHandMode:
+                        ? CharacterAction.Result.Executed
+                        : CharacterAction.Result.Invalid;
+                case CharacterAction.EquipmentKind.ToggleHandMode:
                     if (!movementComponent.Model.Grounded
-                        || _runtime.MovementGate.IsSet(MovementGateReason.Manual)
-                        || _runtime.MovementGate.IsSet(MovementGateReason.Animation)
-                        || _runtime.MovementGate.IsSet(MovementGateReason.Spawn))
+                        || IsMovementLocked(MovementLockReason.Manual)
+                        || IsMovementLocked(MovementLockReason.Animation)
+                        || IsMovementLocked(MovementLockReason.Spawn))
                     {
-                        return CharacterCommandExecutionStatus.TemporarilyBlocked;
+                        return CharacterAction.Result.TemporarilyBlocked;
                     }
 
                     return equipmentComponent.TrySwitchHandMode(out _)
-                        ? CharacterCommandExecutionStatus.Executed
-                        : CharacterCommandExecutionStatus.Invalid;
+                        ? CharacterAction.Result.Executed
+                        : CharacterAction.Result.Invalid;
                 default:
-                    return CharacterCommandExecutionStatus.Invalid;
+                    return CharacterAction.Result.Invalid;
             }
         }
-
-        public CharacterCommandExecutionStatus TryAdvanceEquipmentAction() =>
-            _equipmentSwapCoordinator.IsActive
-                ? CharacterCommandExecutionStatus.TemporarilyBlocked
-                : CharacterCommandExecutionStatus.Executed;
 
         public void OnAnimationStateChanged(AnimatorStateMachineDto state)
         {
             _attackComponent.HandleAnimatorState(state);
-            if (_equipmentSwapCoordinator.IsActive)
-            {
-                _equipmentSwapCoordinator.HandleAnimationState(
-                    state,
-                    equipmentComponent,
-                    animatorComponent,
-                    equipmentPresentation);
-            }
+            if (equipmentComponent.IsSwapInProgress) equipmentComponent.HandleAnimationState(state);
 
             if (state.StateMachineName == StateMachineName.Spawn)
             {
-                if (state.State == StateMachineState.Enter) _runtime.SetInputBlocked(true);
+                if (state.State == StateMachineState.Enter) SetInputBlocked(true);
                 else if (state.State == StateMachineState.Exit && _gracePhase == GracePhase.None)
-                    _runtime.SetInputBlocked(false);
+                    SetInputBlocked(false);
             }
 
             HandleGraceAnimationState(state);
@@ -452,8 +422,8 @@ namespace SoulsLike.Entities.Character
 
             if (state.StateMachineName == StateMachineName.Parry)
             {
-                if (state.State == StateMachineState.Enter) _runtime.SetParryLocked(true);
-                else if (state.State == StateMachineState.Exit) _runtime.SetParryLocked(false);
+                if (state.State == StateMachineState.Enter) { _actionStateMachine.SetInputBlocked(true); SetMovementLock(MovementLockReason.Parry, true); }
+                else if (state.State == StateMachineState.Exit) { _actionStateMachine.SetInputBlocked(false); SetMovementLock(MovementLockReason.Parry, false); }
             }
 
             if (state.State == StateMachineState.Progress
@@ -463,23 +433,37 @@ namespace SoulsLike.Entities.Character
                 animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
             }
 
-            if (_animationAdapter.TryAdapt(state, out CharacterAnimationSignal signal))
+            if (TryResolveActionState(state.StateMachineName, out CharacterAction.State actionState))
             {
-                if (!_runtime.HandleAnimation(signal, this))
+                bool handled = state.State switch
+                {
+                    StateMachineState.Enter => _actionStateMachine.HandleEntered(actionState),
+                    StateMachineState.QueueCheck => _actionStateMachine.HandleQueueCheck(actionState),
+                    StateMachineState.Exit => _actionStateMachine.HandleExited(actionState),
+                    StateMachineState.Progress => true,
+                    StateMachineState.Loop => true,
+                    _ => throw new ArgumentOutOfRangeException(
+                        nameof(state.State), state.State, null)
+                };
+                if (!handled)
                 {
                     Debug.LogWarning(
-                        $"Ignoring {signal.ActionState} animation signal while runtime is in "
-                        + $"{_runtime.ActionState}.",
+                        $"Ignoring {actionState} animation signal while state machine is in "
+                        + $"{_actionStateMachine.CurrentState}.",
                         this);
                 }
 
-                ApplyRuntimeAnimationRequests();
+                if (handled && state.State == StateMachineState.QueueCheck)
+                {
+                    TryExecuteBufferedAction(Time.time);
+                    ApplyActionStateMachineRequests();
+                }
             }
         }
 
-        private void ApplyRuntimeAnimationRequests()
+        private void ApplyActionStateMachineRequests()
         {
-            if (_runtime.TryConsumeRollSprintInterrupt())
+            if (_actionStateMachine.TryConsumeRollSprintInterrupt())
             {
                 animatorComponent.InterruptRollForSprint();
             }
@@ -528,41 +512,21 @@ namespace SoulsLike.Entities.Character
 
         private void SetGraceProtection(bool isProtected)
         {
-            _runtime.SetInputBlocked(isProtected);
+            SetInputBlocked(isProtected);
             healthComponent.SetInvulnerable(isProtected);
         }
 
         public void SetMovementBlocked(bool blocked)
         {
-            _runtime.SetMovementBlocked(blocked);
-            movementComponent.SetMovementBlocked(_runtime.MovementGate.IsBlocked);
+            SetMovementLock(MovementLockReason.Manual, blocked);
+            movementComponent.SetMovementBlocked(_movementLockReasons != MovementLockReason.None);
         }
 
-        public void SetAnimationMotionContract(bool movementBlocked, bool useRootMotion)
+        public void SetAnimationMotionContract(bool movementBlocked)
         {
-            _runtime.SetAnimationMotionContract(movementBlocked, useRootMotion);
-            movementComponent.SetMovementBlocked(_runtime.MovementGate.IsBlocked);
+            SetMovementLock(MovementLockReason.Animation, movementBlocked);
+            movementComponent.SetMovementBlocked(_movementLockReasons != MovementLockReason.None);
         }
-
-        public void ApplyRootMotion(Vector3 deltaPosition, Quaternion deltaRotation)
-        {
-            if (_runtime.CanApplyRootMotion)
-            {
-                movementComponent.ApplyAnimationMovement(deltaPosition, deltaRotation);
-            }
-        }
-
-        public void SetLocomotion(float speed, Vector2 blendDirection) =>
-            animatorComponent.SetLocomotion(speed, blendDirection);
-        public void SetTurn(float turnAmount) => animatorComponent.SetTurn(turnAmount);
-        public void SetGrounded(bool grounded) => animatorComponent.SetGrounded(grounded);
-        public void NotifyLand() => characterAudioComponent.NotifyLand();
-        public void SetAirborneMotion(float velocity, LandingType landingType) =>
-            animatorComponent.SetAirborneMotion(velocity, landingType);
-        public void PlayJump() => animatorComponent.SetJump();
-        public void PlayRoll(Vector2 direction) => animatorComponent.TriggerRoll(direction);
-        public void PlayBackStep() => animatorComponent.TriggerBackStep();
-        public void SetCrouch(bool crouching) => animatorComponent.SetCrouch(crouching);
 
         private void OnDamageApplied(DamageResult damage)
         {
@@ -702,24 +666,112 @@ namespace SoulsLike.Entities.Character
         }
 
         private static float ResolveAttackStaminaCost(
-            in AttackRequest request,
+            in CharacterAction action,
             CombatProfile combatProfile)
         {
-            float baseCost = request.Intent == AttackIntent.Heavy
-                || request.Intent == AttackIntent.Special
+            float baseCost = action.Intent == CharacterAction.AttackIntent.Heavy
+                || action.Intent == CharacterAction.AttackIntent.Special
                     ? combatProfile.HeavyAttackStaminaCost
                     : combatProfile.LightAttackStaminaCost;
             return baseCost * combatProfile.StaminaCostMultiplier;
         }
 
         private static float ResolveAttackStaminaStartThreshold(
-            in AttackRequest request,
+            in CharacterAction action,
             CombatProfile combatProfile)
         {
-            return request.Intent == AttackIntent.Heavy
-                || request.Intent == AttackIntent.Special
+            return action.Intent == CharacterAction.AttackIntent.Heavy
+                || action.Intent == CharacterAction.AttackIntent.Special
                     ? combatProfile.HeavyAttackStaminaStartThreshold
                     : combatProfile.LightAttackStaminaStartThreshold;
         }
+
+        private void Submit(CharacterAction? action, float now)
+        {
+            if (!action.HasValue || !_actionStateMachine.TryDispatch(action.Value, now)) return;
+            ExecuteAction(action.Value, false, now);
+        }
+
+        private void TryExecuteBufferedAction(float now)
+        {
+            if (_actionStateMachine.TryGetBufferedAction(out CharacterAction action)) ExecuteAction(action, true, now);
+        }
+
+        private void ExecuteAction(in CharacterAction action, bool buffered, float now)
+        {
+            CharacterAction.Result result = action.ActionKind switch
+            {
+                CharacterAction.Kind.Attack => StartAttack(action),
+                CharacterAction.Kind.Roll => StartRoll(action),
+                CharacterAction.Kind.Jump => StartJump(action),
+                CharacterAction.Kind.Equipment => StartEquipmentAction(action),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            CharacterAction.State state = action.ActionKind switch
+            {
+                CharacterAction.Kind.Attack => CharacterAction.State.Attack,
+                CharacterAction.Kind.Roll => CharacterAction.State.Roll,
+                CharacterAction.Kind.Equipment when equipmentComponent.IsSwapInProgress => CharacterAction.State.EquipmentSwap,
+                _ => CharacterAction.State.Neutral
+            };
+            if (buffered) _actionStateMachine.ReportBufferedExecution(result, state);
+            else _actionStateMachine.ReportExecution(action, result, state, now);
+        }
+
+        private bool CanGuard() => _movementLockReasons == MovementLockReason.None || (_movementLockReasons == MovementLockReason.Animation && _actionStateMachine.CanGuardDuringAnimationBlock);
+        private void SetInputBlocked(bool blocked)
+        {
+            _actionStateMachine.SetInputBlocked(blocked);
+            SetMovementLock(MovementLockReason.Spawn, blocked);
+        }
+        private bool IsMovementLocked(MovementLockReason reason) => (_movementLockReasons & reason) != 0;
+        private void SetMovementLock(MovementLockReason reason, bool value)
+        {
+            if (value) _movementLockReasons |= reason;
+            else _movementLockReasons &= ~reason;
+        }
+
+        private void ApplyMovementPresentation()
+        {
+            MovementComponent.MovementPresentation presentation = movementComponent.Presentation;
+            animatorComponent.SetLocomotion(presentation.Speed, presentation.BlendDirection);
+            animatorComponent.SetTurn(presentation.TurnAmount);
+            animatorComponent.SetGrounded(presentation.Grounded);
+            animatorComponent.SetAirborneMotion(presentation.VerticalVelocity, presentation.LandingType);
+            animatorComponent.SetCrouch(presentation.Crouching);
+            if (movementComponent.TryConsumeLanded()) characterAudioComponent.NotifyLand();
+        }
+
+        private static bool TryResolveActionState(StateMachineName stateMachineName, out CharacterAction.State state)
+        {
+            switch (stateMachineName)
+            {
+                case StateMachineName.LightAttack:
+                case StateMachineName.LightAttackAlt:
+                case StateMachineName.HeavyAttack:
+                case StateMachineName.HeavyAttackAlt:
+                case StateMachineName.RollAttack:
+                case StateMachineName.BackStepAttack:
+                case StateMachineName.RunAttack:
+                case StateMachineName.SpecialAttack:
+                case StateMachineName.Parry:
+                    state = CharacterAction.State.Attack;
+                    return true;
+                case StateMachineName.Roll:
+                case StateMachineName.BackStep:
+                    state = CharacterAction.State.Roll;
+                    return true;
+                case StateMachineName.EquipmentSwapOut:
+                case StateMachineName.EquipmentSwapIn:
+                    state = CharacterAction.State.EquipmentSwap;
+                    return true;
+                default:
+                    state = default;
+                    return false;
+            }
+        }
+
+        [Flags]
+        private enum MovementLockReason { None = 0, Manual = 1, Animation = 2, Spawn = 4, Parry = 8 }
     }
 }

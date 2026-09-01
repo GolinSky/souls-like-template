@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using SoulsLike.Entities.Character.Ports;
+using SoulsLike.Entities.Character.Components.Movement;
 
 namespace SoulsLike.Entities.Character.Components
 {
@@ -11,7 +11,8 @@ namespace SoulsLike.Entities.Character.Components
         private const string MOVEMENT_BLOCKED_TAG = "MovementBlocked";
 
         private Animator _animator;
-        private IRootMotionSink _rootMotionSink;
+        private Character _character;
+        private MovementComponent _movementComponent;
         private bool _movementBlocked;
         private bool _usesRootMotion;
         private bool _initialized;
@@ -25,9 +26,10 @@ namespace SoulsLike.Entities.Character.Components
             }
         }
 
-        public void Initialize(IRootMotionSink rootMotionSink)
+        public void Initialize(Character character, MovementComponent movementComponent)
         {
-            _rootMotionSink = rootMotionSink;
+            _character = character;
+            _movementComponent = movementComponent;
             _initialized = true;
         }
 
@@ -56,7 +58,7 @@ namespace SoulsLike.Entities.Character.Components
             bool usesRootMotion = HasActiveStateTag(ROOT_MOTION_TAG);
             bool movementBlocked = usesRootMotion || HasActiveStateTag(MOVEMENT_BLOCKED_TAG);
             SynchronizeMovementContract(movementBlocked, usesRootMotion);
-            _rootMotionSink.ApplyRootMotion(_animator.deltaPosition, _animator.deltaRotation);
+            if (_usesRootMotion) _movementComponent.ApplyAnimationMovement(_animator.deltaPosition, _animator.deltaRotation);
         }
 
         private bool HasActiveStateTag(string tag)
@@ -86,7 +88,7 @@ namespace SoulsLike.Entities.Character.Components
 
             _movementBlocked = movementBlocked;
             _usesRootMotion = usesRootMotion;
-            _rootMotionSink.SetAnimationMotionContract(movementBlocked, usesRootMotion);
+            _character.SetAnimationMotionContract(movementBlocked);
         }
 
         private void OnDisable()
@@ -95,7 +97,7 @@ namespace SoulsLike.Entities.Character.Components
             {
                 _movementBlocked = false;
                 _usesRootMotion = false;
-                _rootMotionSink.SetAnimationMotionContract(false, false);
+                _character.SetAnimationMotionContract(false);
             }
         }
     }
