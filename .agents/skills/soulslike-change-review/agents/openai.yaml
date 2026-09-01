@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike Change Review"
+  short_description: "Review SoulsLike Unity changes"
+  default_prompt: "Use $soulslike-change-review to review the assigned diff and report actionable findings."

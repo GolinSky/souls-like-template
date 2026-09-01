@@ -5,6 +5,8 @@ model_reasoning_effort = "low"
 sandbox_mode = "read-only"
 
 developer_instructions = """
+Use `$soulslike-context` for every assigned project-context retrieval or handoff.
+
 Use Context Mode only for the exact retrieval or handoff request assigned by the parent.
 
 Return only:

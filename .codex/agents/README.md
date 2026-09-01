@@ -23,3 +23,5 @@ Use this set only after a fresh parent session can successfully spawn gpt-5.6-lu
 - Each child has `[agents] enabled = false` so it cannot recursively create more subagents.
 - Only the MCP server required by the role is enabled. This reduces tool-selection noise and accidental cross-role work.
 - `graph_explorer` is now an actual Graphify specialist. If you intentionally do not want Graphify, rename it to `code_explorer`, disable Graphify, and remove Graphify from the description.
+- Project skill packages live under `.agents/skills`. Each agent TOML names its required workflow skill; the parent handoff names only applicable conditional/domain skills.
+- Obsidian context is resolved by exact registry key through `$soulslike-context`; the checked-in Markdown fallback keeps the workflow available when Obsidian is offline.

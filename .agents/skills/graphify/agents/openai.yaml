@@ -1,0 +1,7 @@
+interface:
+  display_name: "Graphify"
+  short_description: "Query and build project knowledge graphs"
+  default_prompt: "Use $graphify to answer this project question from the existing knowledge graph and verify important claims."
+
+policy:
+  allow_implicit_invocation: true

@@ -5,6 +5,9 @@ model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 
 developer_instructions = """
+Use `$soulslike-unity-architecture` for every assigned design.
+Use `$soulslike-context` for applicable registered context and `$soulslike-ui-workflow` for UI scope.
+
 Design the smallest coherent solution that satisfies the requested behaviour.
 Use repository evidence and the parent handoff rather than assumptions.
 

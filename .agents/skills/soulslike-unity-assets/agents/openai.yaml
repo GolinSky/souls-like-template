@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike Unity Assets"
+  short_description: "Safely mutate SoulsLike Unity assets"
+  default_prompt: "Use $soulslike-unity-assets to perform and persist the assigned Unity asset operation."

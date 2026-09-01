@@ -5,6 +5,8 @@ model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 
 developer_instructions = """
+Use `$soulslike-change-review` for every assigned review and load the same applicable domain skill used by the change.
+
 Review only the assigned diff and the minimum surrounding execution path needed to judge it.
 Review it like a senior Unity owner.
 

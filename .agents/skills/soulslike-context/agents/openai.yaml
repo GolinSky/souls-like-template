@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike Context"
+  short_description: "Resolve curated SoulsLike project context"
+  default_prompt: "Use $soulslike-context to load the exact registered project context needed for this task."

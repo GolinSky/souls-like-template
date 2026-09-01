@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike CSharp Change"
+  short_description: "Implement bounded SoulsLike CSharp changes"
+  default_prompt: "Use $soulslike-csharp-change to implement the assigned C# scope with minimal verified edits."

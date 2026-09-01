@@ -5,6 +5,8 @@ model_reasoning_effort = "low"
 sandbox_mode = "read-only"
 
 developer_instructions = """
+Use `$soulslike-validation` for every assigned validation and load the same applicable domain skill used by the target.
+
 Validate only the behaviour, test assembly, or reproduction steps assigned by the parent.
 
 - Inspect Unity state before starting.

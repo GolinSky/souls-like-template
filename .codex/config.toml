@@ -1,6 +1,6 @@
 [mcp_servers.unity]
 command = "unity"
-args = [ "mcp", "--project-path", "F:\\Private\\SoulsLikeTemplate" ]
+args = [ "mcp" ]
 
 [mcp_servers.serena]
 command = "uvx"
@@ -12,12 +12,11 @@ args = [
   "--project-from-cwd",
   "--enable-web-dashboard", "false",
 ]
-cwd = "F:\\Private\\SoulsLikeTemplate"
 startup_timeout_sec = 60
 tool_timeout_sec = 120
 
 [mcp_servers.serena.env]
-SERENA_HOME = "F:\\Private\\SoulsLikeTemplate\\.serena\\home"
+SERENA_HOME = ".serena/home"
 PYTHONUTF8 = "1"
 
 [mcp_servers.obsidian]
@@ -25,9 +24,8 @@ url = "http://127.0.0.1:27123/mcp/"
 http_headers = { Authorization = "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e19342ae1cc0304271a68257e4cc43" }
 
 [mcp_servers.graphify]
-command = "C:\\Users\\golin\\AppData\\Roaming\\uv\\tools\\graphifyy\\Scripts\\python.exe"
-args = [ "-m", "graphify.serve", "F:\\Private\\SoulsLikeTemplate\\graphify-out\\graph.json" ]
-cwd = "F:\\Private\\SoulsLikeTemplate"
+command = "uvx"
+args = [ "--from", "graphifyy", "python", "-m", "graphify.serve", "graphify-out/graph.json" ]
 enabled = false
 enabled_tools = [ "query_graph", "get_node", "get_neighbors", "god_nodes", "graph_stats", "shortest_path" ]
 default_tools_approval_mode = "approve"
@@ -37,7 +35,8 @@ tool_timeout_sec = 60
 [mcp_servers.graphify.env]
 GRAPHIFY_QUERY_LOG_DISABLE = "1"
 
-# The project uses the official `unity mcp` bridge above.
+# Compatibility tombstone: the user-level config still defines this legacy server.
+# Keep it disabled here so the project exposes only the official `unity mcp` bridge.
 [mcp_servers.unityMCP]
 enabled = false
 

@@ -5,6 +5,9 @@ model_reasoning_effort = "high"
 sandbox_mode = "read-only"
 
 developer_instructions = """
+Use `$soulslike-performance-analysis` for every assigned profiling investigation.
+Use `$soulslike-context` only when the parent supplies an applicable registered context key.
+
 Use measured profiler evidence before drawing conclusions.
 
 - Define or confirm the reproduction scenario and build/editor conditions.

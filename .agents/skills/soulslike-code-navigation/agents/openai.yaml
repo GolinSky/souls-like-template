@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike Code Navigation"
+  short_description: "Map SoulsLike code paths and dependencies"
+  default_prompt: "Use $soulslike-code-navigation to map the assigned code path and produce a verified handoff."

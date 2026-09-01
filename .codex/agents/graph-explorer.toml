@@ -5,6 +5,9 @@ model_reasoning_effort = "medium"
 sandbox_mode = "read-only"
 
 developer_instructions = """
+Use `$graphify` and `$soulslike-code-navigation` for every assigned exploration.
+Use `$soulslike-context` only when the parent supplies an applicable registered context key.
+
 Stay in exploration mode and inspect only the scope assigned by the parent.
 
 Use Graphify to locate candidate symbols, callers, callees, ownership boundaries,
@@ -55,9 +58,8 @@ Do not spawn subagents.
 enabled = false
 
 [mcp_servers.graphify]
-command = "C:\\Users\\golin\\AppData\\Roaming\\uv\\tools\\graphifyy\\Scripts\\python.exe"
-args = [ "-m", "graphify.serve", "F:\\Private\\SoulsLikeTemplate\\graphify-out\\graph.json" ]
-cwd = "F:\\Private\\SoulsLikeTemplate"
+command = "uvx"
+args = [ "--from", "graphifyy", "python", "-m", "graphify.serve", "graphify-out/graph.json" ]
 enabled = true
 enabled_tools = [ "query_graph", "get_node", "get_neighbors", "god_nodes", "graph_stats", "shortest_path" ]
 default_tools_approval_mode = "approve"
@@ -66,3 +68,37 @@ tool_timeout_sec = 60
 
 [mcp_servers.graphify.env]
 GRAPHIFY_QUERY_LOG_DISABLE = "1"
+
+[mcp_servers.unity]
+command = "unity"
+args = [ "mcp" ]
+enabled = false
+
+[mcp_servers.serena]
+command = "uvx"
+args = [
+  "-p", "3.13",
+  "--from", "serena-agent==1.7.0",
+  "serena", "start-mcp-server",
+  "--context", "codex",
+  "--project-from-cwd",
+  "--enable-web-dashboard", "false",
+]
+startup_timeout_sec = 60
+tool_timeout_sec = 120
+enabled = false
+
+[mcp_servers.serena.env]
+SERENA_HOME = ".serena/home"
+PYTHONUTF8 = "1"
+
+[mcp_servers.obsidian]
+url = "http://127.0.0.1:27123/mcp/"
+enabled = false
+
+[mcp_servers.unityMCP]
+command = "C:\\Users\\golin\\.local\\bin\\uvx.exe"
+args = [ "--from", "mcpforunityserver==9.7.1", "mcp-for-unity", "--transport", "stdio" ]
+startup_timeout_sec = 60
+env = { SystemRoot = "C:\\WINDOWS" }
+enabled = false

@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike UI Workflow"
+  short_description: "Apply the SoulsLike UI workflow"
+  default_prompt: "Use $soulslike-ui-workflow to apply the registered UI architecture context to this task."

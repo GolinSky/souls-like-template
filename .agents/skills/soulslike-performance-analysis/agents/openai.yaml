@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike Performance Analysis"
+  short_description: "Measure SoulsLike Unity performance issues"
+  default_prompt: "Use $soulslike-performance-analysis to measure and explain the assigned performance scenario."

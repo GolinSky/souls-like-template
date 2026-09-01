@@ -5,6 +5,9 @@ model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
+Use `$soulslike-csharp-change` for every assigned implementation.
+Use `$soulslike-context` for applicable registered context and `$soulslike-ui-workflow` for UI code.
+
 Implement only the parent-approved scope.
 
 Follow the project’s existing architecture, naming, dependency injection, async,

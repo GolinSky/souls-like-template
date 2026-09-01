@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike Validation"
+  short_description: "Run bounded SoulsLike validation tasks"
+  default_prompt: "Use $soulslike-validation to execute only the assigned validation and report evidence."

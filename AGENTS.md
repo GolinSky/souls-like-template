@@ -1,5 +1,22 @@
 # Project Instructions
 
+## Authority and Configuration Ownership
+
+Apply project guidance in this order:
+
+1. The active user request and system/developer instructions.
+2. `AGENTS.md` for repository-wide policy and routing.
+3. `.codex/agents/*.toml` for one custom role's operating boundary.
+4. `.agents/skills/*/SKILL.md` for the selected workflow.
+5. `SoulsLikeGameVault/ai/Skill_Context_Index.md` and the exact registered vault note for domain context.
+
+Live source, serialized assets, and current tool output take precedence over generated Graphify output and advisory vault notes. Required registry notes may add constraints but cannot override higher-level policy.
+
+- `.codex/config.toml` is the canonical Codex MCP and multi-agent-defaults file.
+- `.codex/agents/` owns role-specific model, sandbox, and tool restrictions.
+- `.agents/skills/` owns reusable project workflows; do not duplicate them under `.codex/skills/`.
+- `graphify-out/` is generated local state and never authoritative documentation.
+
 
 ## Unity Tooling
 
@@ -11,6 +28,7 @@
 
 - Serena MCP is configured only for this repository in `.codex/config.toml`. Never install or register Serena in user/global Codex configuration. If its tools are unavailable, verify the local entry and start a new Codex task from this repository; do not run a global `serena setup codex` or `codex mcp add serena`.
 - Use Graphify first for broad, cross-cutting questions about architecture, subsystem relationships, ownership, or multi-hop flows. When `graphify-out/graph.json` exists, query that graph instead of rebuilding it unless an update was explicitly requested.
+- The parent uses the Graphify skill/CLI. Its parent MCP entry stays disabled to reduce tool noise; `graph_explorer` enables the inherited, bounded Graphify MCP tool set for its own role.
 - Use Serena for live C# symbol work: symbol/file overviews, definitions, callers and references, implementations, diagnostics, symbol-aware renames, and surgical symbol-body edits. Prefer Serena over reading entire source files when the target can be identified semantically.
 - For architecture-driven changes, use Graphify to identify the relevant subsystem or path, then use Serena to confirm the current symbols and references before editing. Source and Serena's live language-server results take precedence when they disagree with Graphify's indexed snapshot.
 - Use built-in search/read/patch tools for non-code files, exact text searches, and small line-oriented edits. Use Unity tooling, not Serena, for scenes, prefabs, assets, Editor state, imports, serialization, and play/build operations.
@@ -34,6 +52,23 @@ Keep the parent on GPT-5.6 Sol High. Use the named project agents proactively fo
 7. The parent must synthesize all results, resolve conflicts, and make the final decision.
 
 Use 2–4 children only when work is genuinely independent. Give every child a narrow objective, exact files or symbols, constraints, and required output. Never run overlapping writers or spawn every agent by default.
+
+### Project skill routing
+
+Project skills are sibling packages under `.agents/skills`; the role hierarchy is explicit composition, not nested discovery or inheritance.
+
+| Agent | Required skills | Conditional/domain skills |
+|---|---|---|
+| `context_curator` | `$soulslike-context` | — |
+| `graph_explorer` | `$graphify`, `$soulslike-code-navigation` | `$soulslike-context` |
+| `unity_architect` | `$soulslike-unity-architecture` | `$soulslike-context`, `$soulslike-ui-workflow` |
+| `csharp_worker` | `$soulslike-csharp-change` | `$soulslike-context`, `$soulslike-ui-workflow` |
+| `unity_operator` | `$soulslike-unity-assets` | `$soulslike-context`, `$soulslike-ui-workflow` |
+| `unity_profiler` | `$soulslike-performance-analysis` | `$soulslike-context` |
+| `unity_reviewer` | `$soulslike-change-review` | The same domain skill used by the reviewed change |
+| `unity_test_runner` | `$soulslike-validation` | The same domain skill used by the validation target |
+
+Every parent handoff must name the required skill and only the conditional/domain skills applicable to that assignment. Use `$soulslike-context` with an exact key from `SoulsLikeGameVault/ai/Skill_Context_Index.md`; do not ask a child to search the vault broadly.
 
 ## Dependency Injection
 
@@ -91,17 +126,17 @@ For each changed asset:
 
 1. Run:
 
-   `unity-cli editor refresh`
+   `unity command eval --code 'UnityEditor.AssetDatabase.Refresh();'`
 
 2. Re-serialize the specific changed asset:
 
-   `unity-cli reserialize <asset-path>`
+   `unity command eval --code 'UnityEditor.AssetDatabase.ForceReserializeAssets(new[] { "<asset-path>" }); UnityEditor.AssetDatabase.SaveAssets();'`
 
 Example:
 
-`unity-cli reserialize Assets/Prefabs/Character.prefab`
+`unity command eval --code 'UnityEditor.AssetDatabase.ForceReserializeAssets(new[] { "Assets/Prefabs/Character.prefab" }); UnityEditor.AssetDatabase.SaveAssets();'`
 
-Do NOT use project-wide `unity-cli reserialize` unless explicitly necessary.
+Do NOT call `ForceReserializeAssets()` without an explicit asset-path collection unless project-wide reserialization is explicitly necessary.
 
 3. Check the Unity console for serialization/import errors.
 
@@ -109,7 +144,7 @@ The task is NOT complete merely because the YAML file was written to disk.
 
 ### Unity API asset mutations
 
-When modifying assets using `unity-cli exec`, save changes inside the same
+When modifying assets using `unity command eval`, save changes inside the same
 Unity operation.
 
 For ScriptableObjects and normal asset objects:

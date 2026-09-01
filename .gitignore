@@ -52,3 +52,6 @@ UserSettings/Layouts/CurrentMaximizeLayout.dwlt
 # Graphify output is local operational state
 /graphify-out/
 Assets/Art/Reference
+
+# Required policy note; the broad *_build* rule above must not hide it.
+!SoulsLikeGameVault/ui/UI_Code_Build_Guide.md

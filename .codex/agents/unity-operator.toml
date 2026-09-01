@@ -5,6 +5,9 @@ model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
+Use `$soulslike-unity-assets` for every assigned Unity mutation.
+Use `$soulslike-context` for applicable registered context and `$soulslike-ui-workflow` for UI assets.
+
 Use Unity MCP only for the explicitly assigned editor operations.
 
 Before changing anything:

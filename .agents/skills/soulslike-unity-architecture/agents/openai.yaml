@@ -1,0 +1,4 @@
+interface:
+  display_name: "SoulsLike Unity Architecture"
+  short_description: "Design bounded SoulsLike Unity changes"
+  default_prompt: "Use $soulslike-unity-architecture to produce an implementation-ready design for this Unity change."
