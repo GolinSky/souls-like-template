@@ -2134,8 +2134,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3394907750be658458a59462925f97ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.ParryWindowStateBehaviour
-  activeStart: 0.25
-  activeEnd: 0.55
+  activeStart: 0
+  activeEnd: 1
 --- !u!1102 &-3014315015504851690
 AnimatorState:
   serializedVersion: 6
@@ -4358,7 +4358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4423baee491137e4dabf304ca5d9c20d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Animations.AnimatorStateMachine
-  stateMachineName: 22
+  stateMachineName: 23
   isReportingProgress: 0
   progressNormalizedTime: 0.5
   reportsQueueCheck: 0

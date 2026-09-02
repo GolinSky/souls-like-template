@@ -16342,6 +16342,11 @@ MonoBehaviour:
   targetCamera: {fileID: 1800770206}
   cinemachineCamera: {fileID: 1470855207966471111}
   cinemachineThirdPersonFollow: {fileID: 6260723787445959970}
+  debugIsYawOrbiting: 0
+  debugIsPitchOrbiting: 0
+  debugYawVelocity: 0
+  debugLockBlend: 0
+  debugFilteredLockPoint: {x: 0, y: 0, z: 0}
 --- !u!1 &4941954192799869488
 GameObject:
   m_ObjectHideFlags: 0

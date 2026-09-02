@@ -36,31 +36,35 @@ MonoBehaviour:
   <BottomClamp>k__BackingField: -30
   <CameraAngleOverride>k__BackingField: 0
   <LockCameraPosition>k__BackingField: 0
+  <LockBlendDuration>k__BackingField: 0.3
+  <LockBlendEase>k__BackingField: 4
+  <LockInitialFocusMinDistance>k__BackingField: 1.5
+  <LockAimSmoothTime>k__BackingField: 0.08
+  <LockAimMaxSpeed>k__BackingField: 40
+  <LockMinFocusHeight>k__BackingField: -0.75
+  <LockMaxFocusHeight>k__BackingField: 1.25
+  <LockOrbitYawEnterAngle>k__BackingField: 7
+  <LockOrbitYawReleaseAngle>k__BackingField: 3.5
+  <LockOrbitYawSmoothTime>k__BackingField: 0.32
+  <LockOrbitYawMaxSpeed>k__BackingField: 110
+  <LockYawHalfTurnTolerance>k__BackingField: 2
   <LockHeadingHoldDistance>k__BackingField: 0.55
   <LockHeadingReleaseDistance>k__BackingField: 0.9
-  <LockYawDeadZoneDegrees>k__BackingField: 4
-  <LockYawSmoothTime>k__BackingField: 0.12
-  <LockYawMaxSpeed>k__BackingField: 150
   <LockBasePitch>k__BackingField: 6
+  <LockOrbitPitchEnterAngle>k__BackingField: 10
+  <LockOrbitPitchReleaseAngle>k__BackingField: 5
+  <LockOrbitPitchSmoothTime>k__BackingField: 0.35
+  <LockOrbitPitchMaxSpeed>k__BackingField: 60
   <LockMinPitchDistance>k__BackingField: 1.5
   <LockVerticalCloseDistance>k__BackingField: 1.25
   <LockVerticalFarDistance>k__BackingField: 4
   <LockCloseVerticalInfluence>k__BackingField: 0.25
   <LockFarVerticalInfluence>k__BackingField: 0.65
-  <LockPitchSmoothTime>k__BackingField: 0.2
-  <LockPitchMaxSpeed>k__BackingField: 100
-  <LockMinFocusDistance>k__BackingField: 1.5
-  <LockMinFocusHeight>k__BackingField: -0.75
-  <LockMaxFocusHeight>k__BackingField: 1.25
-  <LockTargetSmoothTime>k__BackingField: 0.1
-  <LockYawHalfTurnTolerance>k__BackingField: 2
   <HumanoidLockProfile>k__BackingField:
-    ShoulderOffset: {x: 1, y: 0.48, z: 0}
+    ShoulderOffset: {x: 0, y: 0.48, z: 0}
     VerticalArmLength: 0
     CameraDistance: 3.3
     CameraSide: 0.5
     FieldOfView: 48
     MinPitch: -10
     MaxPitch: 16
-  <LockRigBlendDuration>k__BackingField: 0.2
-  <LockRigBlendEase>k__BackingField: 3

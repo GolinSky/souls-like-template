@@ -48,28 +48,42 @@ namespace SoulsLike.Services.CameraService
         [field: SerializeField, Tooltip("For locking the camera position on all axes")]
         public bool LockCameraPosition { get; private set; }
 
-        [Header("Lock On")]
+        [Header("Lock Acquisition")]
+        [field: SerializeField, Min(0f)] public float LockBlendDuration { get; private set; } = 0.3f;
+        [field: SerializeField] public Ease LockBlendEase { get; private set; } = Ease.InOutSine;
+        [field: SerializeField, Min(0f)] public float LockInitialFocusMinDistance { get; private set; } = 1.50f;
+
+        [Header("Lock Aim")]
+        [field: SerializeField, Min(0.01f)] public float LockAimSmoothTime { get; private set; } = 0.08f;
+        [field: SerializeField, Min(0f)] public float LockAimMaxSpeed { get; private set; } = 40f;
+        [field: SerializeField] public float LockMinFocusHeight { get; private set; } = -0.75f;
+        [field: SerializeField] public float LockMaxFocusHeight { get; private set; } = 1.25f;
+
+        [Header("Lock Orbit Yaw")]
+        [field: SerializeField, Min(0f)] public float LockOrbitYawEnterAngle { get; private set; } = 7f;
+        [field: SerializeField, Min(0f)] public float LockOrbitYawReleaseAngle { get; private set; } = 3.5f;
+        [field: SerializeField, Min(0.01f)] public float LockOrbitYawSmoothTime { get; private set; } = 0.32f;
+        [field: SerializeField, Min(0f)] public float LockOrbitYawMaxSpeed { get; private set; } = 110f;
+        [field: SerializeField, Min(0f)] public float LockYawHalfTurnTolerance { get; private set; } = 2f;
         [field: SerializeField, Min(0f)] public float LockHeadingHoldDistance { get; private set; } = 0.55f;
         [field: SerializeField, Min(0f)] public float LockHeadingReleaseDistance { get; private set; } = 0.90f;
-        [field: SerializeField, Min(0f)] public float LockYawDeadZoneDegrees { get; private set; } = 4f;
-        [field: SerializeField, Min(0.01f)] public float LockYawSmoothTime { get; private set; } = 0.12f;
-        [field: SerializeField, Min(0f)] public float LockYawMaxSpeed { get; private set; } = 150f;
+
+        [Header("Lock Orbit Pitch")]
         [field: SerializeField] public float LockBasePitch { get; private set; } = 6f;
+        [field: SerializeField, Min(0f)] public float LockOrbitPitchEnterAngle { get; private set; } = 10f;
+        [field: SerializeField, Min(0f)] public float LockOrbitPitchReleaseAngle { get; private set; } = 5f;
+        [field: SerializeField, Min(0.01f)] public float LockOrbitPitchSmoothTime { get; private set; } = 0.35f;
+        [field: SerializeField, Min(0f)] public float LockOrbitPitchMaxSpeed { get; private set; } = 60f;
         [field: SerializeField, Min(0f)] public float LockMinPitchDistance { get; private set; } = 1.50f;
         [field: SerializeField, Min(0f)] public float LockVerticalCloseDistance { get; private set; } = 1.25f;
         [field: SerializeField, Min(0f)] public float LockVerticalFarDistance { get; private set; } = 4f;
         [field: SerializeField, Range(0f, 1f)] public float LockCloseVerticalInfluence { get; private set; } = 0.25f;
         [field: SerializeField, Range(0f, 1f)] public float LockFarVerticalInfluence { get; private set; } = 0.65f;
-        [field: SerializeField, Min(0.01f)] public float LockPitchSmoothTime { get; private set; } = 0.20f;
-        [field: SerializeField, Min(0f)] public float LockPitchMaxSpeed { get; private set; } = 100f;
-        [field: SerializeField, Min(0f)] public float LockMinFocusDistance { get; private set; } = 1.50f;
-        [field: SerializeField] public float LockMinFocusHeight { get; private set; } = -0.75f;
-        [field: SerializeField] public float LockMaxFocusHeight { get; private set; } = 1.25f;
-        [field: SerializeField, Min(0.01f)] public float LockTargetSmoothTime { get; private set; } = 0.10f;
-        [field: SerializeField, Min(0f)] public float LockYawHalfTurnTolerance { get; private set; } = 2f;
+
+        [Header("Lock Rig Profile")]
         [field: SerializeField] public CameraRigProfile HumanoidLockProfile { get; private set; } = new CameraRigProfile
         {
-            ShoulderOffset = new Vector3(1f, 0.48f, 0f),
+            ShoulderOffset = new Vector3(0f, 0.48f, 0f),
             VerticalArmLength = 0f,
             CameraDistance = 3.30f,
             CameraSide = 0.5f,
@@ -77,8 +91,6 @@ namespace SoulsLike.Services.CameraService
             MinPitch = -10f,
             MaxPitch = 16f
         };
-        [field: SerializeField, Min(0f)] public float LockRigBlendDuration { get; private set; } = 0.2f;
-        [field: SerializeField] public Ease LockRigBlendEase { get; private set; } = Ease.OutSine;
 
         [Serializable]
         public struct CameraRigProfile

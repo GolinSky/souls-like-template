@@ -50,15 +50,6 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
                     noDamage);
             }
 
-            if (_health.IsInvulnerable)
-            {
-                return Publish(CreateResult(
-                    request,
-                    MeleeHitResultType.Invulnerable,
-                    direction,
-                    noDamage));
-            }
-
             if (request.Attack.CanBeParried && _defense.IsParryWindowActive)
             {
                 if (attacker.TryGetComponent(out CombatDefenseComponent attackerDefense))
@@ -70,6 +61,15 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
                 return Publish(CreateResult(
                     request,
                     MeleeHitResultType.Parried,
+                    direction,
+                    noDamage));
+            }
+
+            if (_health.IsInvulnerable)
+            {
+                return Publish(CreateResult(
+                    request,
+                    MeleeHitResultType.Invulnerable,
                     direction,
                     noDamage));
             }
