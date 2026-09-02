@@ -9,7 +9,7 @@ namespace SoulsLike.Entities.Enemy
             AnimatorStateInfo stateInfo,
             int layerIndex)
         {
-            ResolveController(animator).ReportHitEntered();
+            ResolveExecutor(animator).ReportHitEntered();
         }
 
         public override void OnStateExit(
@@ -17,10 +17,10 @@ namespace SoulsLike.Entities.Enemy
             AnimatorStateInfo stateInfo,
             int layerIndex)
         {
-            ResolveController(animator).ReportHitExited();
+            ResolveExecutor(animator).ReportHitExited();
         }
 
-        private static EnemyAnimationController ResolveController(Animator animator) =>
-            animator.GetComponentInParent<EnemyAnimationController>();
+        private static EnemyActionExecutor ResolveExecutor(Animator animator) =>
+            animator.GetComponentInParent<EnemyActionExecutor>();
     }
 }

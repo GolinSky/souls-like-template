@@ -12,6 +12,7 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         private readonly IHealthComponent _health;
 
         public Transform TargetTransform => _lockNode.TargetTransform;
+        public bool IsAlive => _health.Stats.IsAlive;
 
         public TargetingCommand(Entity entity, ViewEntity viewEntity, TargetLockNode lockNode, IHealthComponent health)
             : base(entity)

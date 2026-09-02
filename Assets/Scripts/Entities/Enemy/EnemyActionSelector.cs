@@ -1,75 +1,156 @@
 using System.Collections.Generic;
-using SoulsLike.Entities.Combat;
-using SoulsLike.Entities.Combat.AI;
 
 namespace SoulsLike.Entities.Enemy
 {
     public sealed class EnemyActionSelector
     {
-        private readonly DeterministicEnemyActionSelector _selector;
-        private readonly List<EnemyActionCandidate> _candidates = new();
+        private readonly int _randomSeed;
+        private readonly Dictionary<EnemyMove, float> _cooldownEnds = new();
+        private readonly List<EnemyMove> _candidates = new();
+        private readonly List<float> _weights = new();
+        private int _committedSelectionCount;
 
-        public EnemyActionSelector(EnemyBehaviourProfile profile)
+        public EnemyActionSelector(EnemyActor actor)
         {
-            _selector = new DeterministicEnemyActionSelector(profile.RandomSeed);
+            _randomSeed = EnemyRandomStreams.GetActionSelectionSeed(actor);
         }
 
-        public CharacterActionId PreviousAction => _selector.PreviousAction;
+        public EnemyMove PreviousMove { get; private set; }
 
-        public CharacterActionDefinition Select(
-            IReadOnlyList<AiActionRule> rules,
+        public EnemyMove Choose(
+            IReadOnlyList<EnemyMove> moves,
             float distance,
             float angle,
             bool hasLineOfSight,
-            bool comboWindowOpen,
+            EnemyMove currentMove,
+            bool isFollowUp,
             float now)
         {
             _candidates.Clear();
-            foreach (AiActionRule rule in rules)
+            _weights.Clear();
+            float totalWeight = 0f;
+            foreach (EnemyMove move in moves)
             {
-                if (rule.Action == null)
+                if (!IsEligible(move, distance, angle, hasLineOfSight, currentMove, isFollowUp, now))
                 {
                     continue;
                 }
 
-                _candidates.Add(new EnemyActionCandidate(
-                    rule.Action.ActionId,
-                    rule.MinimumDistance,
-                    rule.MaximumDistance,
-                    rule.MaximumAngle,
-                    rule.RequiresLineOfSight,
-                    rule.BaseWeight,
-                    rule.Cooldown,
-                    rule.RepetitionPenalty,
-                    rule.RequiresComboWindow,
-                    rule.RequiredPreviousAction));
+                float weight = move.Weight;
+                if (move == PreviousMove)
+                {
+                    weight *= move.RepetitionPenalty;
+                }
+
+                if (weight <= 0f)
+                {
+                    continue;
+                }
+
+                _candidates.Add(move);
+                _weights.Add(weight);
+                totalWeight += weight;
             }
 
-            EnemyActionSelectionContext context = new EnemyActionSelectionContext(
-                distance,
-                angle,
-                hasLineOfSight,
-                comboWindowOpen);
-            CharacterActionId? selected = _selector.Select(_candidates, context, now);
-            if (!selected.HasValue)
+            if (_candidates.Count == 0)
             {
                 return null;
             }
 
-            foreach (AiActionRule rule in rules)
+            float roll = GetSelectionRoll() * totalWeight;
+            for (int index = 0; index < _candidates.Count; index++)
             {
-                if (rule.Action != null && rule.Action.ActionId == selected.Value)
+                roll -= _weights[index];
+                if (roll <= 0f)
                 {
-                    return rule.Action;
+                    return _candidates[index];
                 }
             }
 
-            return null;
+            return _candidates[^1];
         }
 
-        public float Range(float minimum, float maximum) =>
-            _selector.Range(minimum, maximum);
+        public void CommitStarted(EnemyMove move, float now)
+        {
+            PreviousMove = move;
+            _cooldownEnds[move] = now + move.Cooldown;
+            _committedSelectionCount++;
+        }
 
-        public bool NextBool() => _selector.NextBool();
+        public bool IsWithinAnyMoveRange(IReadOnlyList<EnemyMove> moves, float distance)
+        {
+            foreach (EnemyMove move in moves)
+            {
+                if (move != null
+                    && move.Action != null
+                    && move.MoveUsage != EnemyMove.Usage.FollowUp
+                    && distance >= move.MinimumDistance
+                    && distance <= move.MaximumDistance)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private float GetSelectionRoll()
+        {
+            uint value = unchecked((uint)_randomSeed)
+                + (uint)_committedSelectionCount * 0x9E3779B9u;
+            value ^= value >> 16;
+            value *= 0x85EBCA6Bu;
+            value ^= value >> 13;
+            value *= 0xC2B2AE35u;
+            value ^= value >> 16;
+            return (value & 0x00FFFFFFu) / 16777216f;
+        }
+
+        private bool IsEligible(
+            EnemyMove move,
+            float distance,
+            float angle,
+            bool hasLineOfSight,
+            EnemyMove currentMove,
+            bool isFollowUp,
+            float now)
+        {
+            if (move == null
+                || move.Action == null
+                || distance < move.MinimumDistance
+                || distance > move.MaximumDistance
+                || angle > move.MaximumAngle
+                || move.RequiresLineOfSight && !hasLineOfSight
+                || _cooldownEnds.TryGetValue(move, out float cooldownEnd) && now < cooldownEnd)
+            {
+                return false;
+            }
+
+            if (isFollowUp)
+            {
+                return move.MoveUsage != EnemyMove.Usage.Opener
+                    && IsLegalFollowUp(currentMove, move);
+            }
+
+            return move.MoveUsage != EnemyMove.Usage.FollowUp;
+        }
+
+        public static bool IsLegalFollowUp(EnemyMove currentMove, EnemyMove nextMove)
+        {
+            if (currentMove == null || currentMove.Action == null || nextMove == null)
+            {
+                return false;
+            }
+
+            foreach (var followUp in currentMove.Action.FollowUps)
+            {
+                if (followUp == nextMove.Action)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

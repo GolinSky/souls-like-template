@@ -11,12 +11,14 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField] private WeaponMovesetDefinition moveset;
         [SerializeField] private HealthData healthData;
         [SerializeField] private Transform[] patrolPoints = { };
+        [SerializeField] private int randomSeedOffset;
 
         public EnemyActor EnemyPrefab => enemyPrefab;
         public EnemyBehaviourProfile BehaviourProfile => behaviourProfile;
         public WeaponMovesetDefinition Moveset => moveset;
         public HealthData HealthData => healthData;
         public bool HasPatrolPositions => patrolPoints is { Length: > 0 };
+        public int RandomSeedOffset => randomSeedOffset;
 
         public Vector3[] BuildPatrolPositions()
         {

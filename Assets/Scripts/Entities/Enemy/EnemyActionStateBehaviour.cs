@@ -13,6 +13,9 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField, Range(0f, 1f)] private float comboStart = 0.45f;
         [SerializeField, Range(0f, 1f)] private float comboEnd = 0.7f;
         [SerializeField, Range(0f, 1f)] private float recoveryStart = 0.6f;
+        [Header("Tracking")]
+        [SerializeField] private bool hasTrackingWindow = true;
+        [SerializeField, Range(0f, 1f)] private float trackingEnd = 0.6f;
         [Header("Hyper Armor")]
         [SerializeField] private bool hasHyperArmorWindow;
         [SerializeField, Range(0f, 1f)] private float hyperArmorStart;
@@ -25,6 +28,7 @@ namespace SoulsLike.Entities.Enemy
         private bool _comboStarted;
         private bool _comboEnded;
         private bool _recoveryStarted;
+        private bool _trackingEnded;
 
         public override void OnStateEnter(
             Animator animator,
@@ -32,7 +36,8 @@ namespace SoulsLike.Entities.Enemy
             int layerIndex)
         {
             ResetState();
-            ResolveController(animator).ReportStateEntered(actionId);
+            ResolveExecutor(animator).ReportStateEntered(actionId);
+            ResolveExecutor(animator).ReportTrackingWindow(actionId, hasTrackingWindow);
         }
 
         public override void OnStateUpdate(
@@ -40,40 +45,46 @@ namespace SoulsLike.Entities.Enemy
             AnimatorStateInfo stateInfo,
             int layerIndex)
         {
-            EnemyAnimationController controller = ResolveController(animator);
+            EnemyActionExecutor executor = ResolveExecutor(animator);
             float progress = Mathf.Clamp01(stateInfo.normalizedTime);
 
             if (hasHitboxWindow && !_activeStarted && progress >= activeStart)
             {
                 _activeStarted = true;
-                controller.ReportActiveStarted(actionId);
+                executor.ReportActiveStarted(actionId);
             }
 
             if (hasHitboxWindow && !_activeEnded && progress >= activeEnd)
             {
                 _activeEnded = true;
-                controller.ReportActiveEnded(actionId);
+                executor.ReportActiveEnded(actionId);
             }
 
             if (hasComboWindow && !_comboStarted && progress >= comboStart)
             {
                 _comboStarted = true;
-                controller.ReportComboWindow(actionId, true);
+                executor.ReportComboWindow(actionId, true);
             }
 
             if (hasComboWindow && !_comboEnded && progress >= comboEnd)
             {
                 _comboEnded = true;
-                controller.ReportComboWindow(actionId, false);
+                executor.ReportComboWindow(actionId, false);
             }
 
             if (!_recoveryStarted && progress >= recoveryStart)
             {
                 _recoveryStarted = true;
-                controller.ReportRecoveryStarted(actionId);
+                executor.ReportRecoveryStarted(actionId);
             }
 
-            ResolveDefense(animator).SetHyperArmor(
+            if (hasTrackingWindow && !_trackingEnded && progress >= trackingEnd)
+            {
+                _trackingEnded = true;
+                executor.ReportTrackingWindow(actionId, false);
+            }
+
+            executor.ReportHyperArmor(
                 hasHyperArmorWindow
                 && progress >= hyperArmorStart
                 && progress <= hyperArmorEnd,
@@ -86,18 +97,16 @@ namespace SoulsLike.Entities.Enemy
             AnimatorStateInfo stateInfo,
             int layerIndex)
         {
-            EnemyAnimationController controller = ResolveController(animator);
-            controller.ReportActiveEnded(actionId);
-            controller.ReportComboWindow(actionId, false);
-            controller.ReportStateExited(actionId);
-            ResolveDefense(animator).SetHyperArmor(false);
+            EnemyActionExecutor executor = ResolveExecutor(animator);
+            executor.ReportActiveEnded(actionId);
+            executor.ReportComboWindow(actionId, false);
+            executor.ReportTrackingWindow(actionId, false);
+            executor.ReportStateExited(actionId);
+            executor.ReportHyperArmor(false, 0f, false);
         }
 
-        private static EnemyAnimationController ResolveController(Animator animator) =>
-            animator.GetComponentInParent<EnemyAnimationController>();
-
-        private static CombatDefenseComponent ResolveDefense(Animator animator) =>
-            animator.GetComponentInParent<CombatDefenseComponent>();
+        private static EnemyActionExecutor ResolveExecutor(Animator animator) =>
+            animator.GetComponentInParent<EnemyActionExecutor>();
 
         private void ResetState()
         {
@@ -106,6 +115,7 @@ namespace SoulsLike.Entities.Enemy
             _comboStarted = false;
             _comboEnded = false;
             _recoveryStarted = false;
+            _trackingEnded = false;
         }
     }
 }

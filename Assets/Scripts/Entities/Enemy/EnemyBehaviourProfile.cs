@@ -1,6 +1,5 @@
-using System;
-using SoulsLike.Entities.Combat;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SoulsLike.Entities.Enemy
 {
@@ -10,18 +9,32 @@ namespace SoulsLike.Entities.Enemy
         [Header("Awareness")]
         [SerializeField, Min(0f)] private float perceptionRange = 12f;
         [SerializeField, Range(0f, 360f)] private float fieldOfView = 120f;
+        [SerializeField, Range(0f, 360f)] private float verticalFieldOfView = 180f;
+        [SerializeField, Min(0f)] private float closeAwarenessRange = 2.6f;
         [SerializeField, Min(0f)] private float eyeHeight = 1.5f;
         [SerializeField] private LayerMask lineOfSightMask = ~0;
-        [SerializeField, Min(0f)] private float targetMemorySeconds = 4f;
+        [SerializeField, Min(0f)] private float sightConfirmationSeconds;
+        [FormerlySerializedAs("targetMemorySeconds")]
+        [SerializeField, Min(0f)] private float sightForgetSeconds = 4f;
+        [SerializeField, Min(0f)] private float soundForgetSeconds = 3f;
+        [SerializeField, Min(0f)] private float damageForgetSeconds = 6f;
+        [SerializeField, Min(0f)] private float allyForgetSeconds = 4f;
+        [SerializeField] private bool sharesAllyAlerts;
         [SerializeField, Min(0f)] private float reactionDelayMin = 0.15f;
         [SerializeField, Min(0f)] private float reactionDelayMax = 0.35f;
 
         [Header("Home and Patrol")]
-        [SerializeField] private bool startsDormant;
-        [SerializeField, Min(0f)] private float leashDistance = 20f;
+        [SerializeField] private EnemyActivationMode activationMode;
+        [SerializeField, Min(0f)] private float softLeashDistance = 16f;
+        [FormerlySerializedAs("leashDistance")]
+        [SerializeField, Min(0f)] private float hardLeashDistance = 20f;
+        [SerializeField, Min(0f)] private float returnHysteresis = 2f;
         [SerializeField, Min(0f)] private float patrolWaitSeconds = 1.5f;
         [SerializeField, Min(0f)] private float searchSeconds = 4f;
         [SerializeField, Min(0f)] private float searchTurnSpeed = 90f;
+        [SerializeField, Range(0, 2)] private int searchPointCount = 2;
+        [SerializeField, Min(0f)] private float searchPointRadius = 2f;
+        [SerializeField, Min(0f)] private float searchPauseSeconds = 0.75f;
         [SerializeField, Min(0f)] private float arrivalDistance = 0.35f;
 
         [Header("Combat Decisions")]
@@ -30,54 +43,49 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField, Min(0f)] private float preferredRangeMax = 2.6f;
         [SerializeField, Min(0f)] private float strafeDistance = 1.5f;
         [SerializeField, Min(0f)] private float waitSeconds = 0.35f;
+        [SerializeField, Min(0f)] private float decisionJitterSeconds;
+        [SerializeField, Min(0f)] private float firstAttackHesitationMin;
+        [SerializeField, Min(0f)] private float firstAttackHesitationMax;
+        [SerializeField] private bool usesPressureSlot;
         [SerializeField] private int randomSeed = 1;
-        [SerializeField] private AiActionRule[] actionRules = { };
 
         public float PerceptionRange => perceptionRange;
         public float FieldOfView => fieldOfView;
+        public float VerticalFieldOfView => verticalFieldOfView;
+        public float CloseAwarenessRange => closeAwarenessRange;
         public float EyeHeight => eyeHeight;
         public LayerMask LineOfSightMask => lineOfSightMask;
-        public float TargetMemorySeconds => targetMemorySeconds;
+        public float SightConfirmationSeconds => sightConfirmationSeconds;
+        public float SightForgetSeconds => sightForgetSeconds;
+        public float SoundForgetSeconds => soundForgetSeconds;
+        public float DamageForgetSeconds => damageForgetSeconds;
+        public float AllyForgetSeconds => allyForgetSeconds;
+        public bool SharesAllyAlerts => sharesAllyAlerts;
         public float ReactionDelayMin => reactionDelayMin;
         public float ReactionDelayMax => Mathf.Max(reactionDelayMin, reactionDelayMax);
-        public bool StartsDormant => startsDormant;
-        public float LeashDistance => leashDistance;
+        public EnemyActivationMode ActivationMode => activationMode;
+        public float HardLeashDistance => Mathf.Max(softLeashDistance, hardLeashDistance);
+        public float SoftLeashDistance => Mathf.Min(softLeashDistance, HardLeashDistance);
+        public float ReturnHysteresis => returnHysteresis;
+        public float ReturnHomeDistance => Mathf.Max(0f, SoftLeashDistance - returnHysteresis);
         public float PatrolWaitSeconds => patrolWaitSeconds;
         public float SearchSeconds => searchSeconds;
         public float SearchTurnSpeed => searchTurnSpeed;
+        public int SearchPointCount => Mathf.Clamp(searchPointCount, 0, 2);
+        public float SearchPointRadius => searchPointRadius;
+        public float SearchPauseSeconds => searchPauseSeconds;
         public float ArrivalDistance => arrivalDistance;
         public float DecisionInterval => decisionInterval;
         public float PreferredRangeMin => preferredRangeMin;
         public float PreferredRangeMax => Mathf.Max(preferredRangeMin, preferredRangeMax);
         public float StrafeDistance => strafeDistance;
         public float WaitSeconds => waitSeconds;
+        public float DecisionJitterSeconds => decisionJitterSeconds;
+        public float FirstAttackHesitationMin => firstAttackHesitationMin;
+        public float FirstAttackHesitationMax => Mathf.Max(
+            firstAttackHesitationMin,
+            firstAttackHesitationMax);
+        public bool UsesPressureSlot => usesPressureSlot;
         public int RandomSeed => randomSeed;
-        public AiActionRule[] ActionRules => actionRules;
-    }
-
-    [Serializable]
-    public sealed class AiActionRule
-    {
-        [SerializeField] private CharacterActionDefinition action;
-        [SerializeField, Min(0f)] private float minimumDistance;
-        [SerializeField, Min(0f)] private float maximumDistance = 4f;
-        [SerializeField, Range(0f, 180f)] private float maximumAngle = 180f;
-        [SerializeField] private bool requiresLineOfSight = true;
-        [SerializeField, Min(0f)] private float baseWeight = 1f;
-        [SerializeField, Min(0f)] private float cooldown;
-        [SerializeField, Range(0f, 1f)] private float repetitionPenalty = 0.5f;
-        [SerializeField] private bool requiresComboWindow;
-        [SerializeField] private CharacterActionId requiredPreviousAction;
-
-        public CharacterActionDefinition Action => action;
-        public float MinimumDistance => minimumDistance;
-        public float MaximumDistance => maximumDistance;
-        public float MaximumAngle => maximumAngle;
-        public bool RequiresLineOfSight => requiresLineOfSight;
-        public float BaseWeight => baseWeight;
-        public float Cooldown => cooldown;
-        public float RepetitionPenalty => repetitionPenalty;
-        public bool RequiresComboWindow => requiresComboWindow;
-        public CharacterActionId RequiredPreviousAction => requiredPreviousAction;
     }
 }

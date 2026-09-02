@@ -187,7 +187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActor
   animator: {fileID: 2834942489604600573}
   meleeHitbox: {fileID: 8605734287247393485}
-  <NavMeshAgent>k__BackingField: {fileID: 409155159547918936}
+  navMeshAgent: {fileID: 409155159547918936}
 --- !u!114 &5728496263157501801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -727,7 +727,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9673a13cf9867de4ba076c35c1d169f7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyAnimationController
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionExecutor
   animator: {fileID: 2834942489604600573}
   motor: {fileID: 1159516110400620642}
   actor: {fileID: 9216140226880738682}

@@ -111,6 +111,7 @@ MonoBehaviour:
   moveset: {fileID: 11400000, guid: 1ddec27955b1a6143b5450f26262d037, type: 2}
   healthData: {fileID: 11400000, guid: bf8276a3814be5441b37093b029f1881, type: 2}
   patrolPoints: []
+  randomSeedOffset: 3
 --- !u!1 &2927633110591006639
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,6 +166,10 @@ MonoBehaviour:
   - {fileID: 5491401896638966171}
   - {fileID: 5774327086117888350}
   spawnOnStart: 1
+  respawnOnGrace: 1
+  respawnOnGameEnded: 1
+  maxPressureSlots: 1
+  pressureSlotTimeoutSeconds: 3
 --- !u!1 &4846245521169120973
 GameObject:
   m_ObjectHideFlags: 0
@@ -214,6 +219,7 @@ MonoBehaviour:
   moveset: {fileID: 11400000, guid: 1ddec27955b1a6143b5450f26262d037, type: 2}
   healthData: {fileID: 11400000, guid: bf8276a3814be5441b37093b029f1881, type: 2}
   patrolPoints: []
+  randomSeedOffset: 1
 --- !u!1 &5218878594018366240
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,6 +269,7 @@ MonoBehaviour:
   moveset: {fileID: 11400000, guid: 1ddec27955b1a6143b5450f26262d037, type: 2}
   healthData: {fileID: 11400000, guid: bf8276a3814be5441b37093b029f1881, type: 2}
   patrolPoints: []
+  randomSeedOffset: 2
 --- !u!1 &7728417752804511700
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,3 +323,4 @@ MonoBehaviour:
   patrolPoints:
   - {fileID: 1836797811463607727}
   - {fileID: 8185188909647937474}
+  randomSeedOffset: 0

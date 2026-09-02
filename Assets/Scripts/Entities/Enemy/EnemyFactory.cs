@@ -27,7 +27,7 @@ namespace SoulsLike.Entities.Enemy
             _navMeshService = navMeshService;
         }
 
-        public EnemyActor CreateEnemy(EnemySpawnPoint spawn)
+        public EnemyActor CreateEnemy(EnemySpawnPoint spawn, EnemyGroupCoordinator groupCoordinator)
         {
             EnemyActor prefab = spawn.EnemyPrefab;
             if (prefab == null)
@@ -62,79 +62,135 @@ namespace SoulsLike.Entities.Enemy
                     + $"'{spawn.name}'.");
             }
 
-            EnemyActor actor = UnityEngine.Object.Instantiate(
-                prefab,
-                spawnHit.position,
-                spawn.transform.rotation);
-            actor.name = $"{prefab.name}_Instance";
-            actor.ConfigureSpawn(spawnHit.position, spawn.BuildPatrolPositions());
-
-            ViewEntity viewEntity = GetRequiredComponent<ViewEntity>(actor.gameObject);
-            TargetLockNode targetLockNode = GetRequiredComponentInChildren<TargetLockNode>(
-                actor.gameObject);
-            HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(
-                actor.gameObject);
-            CombatDefenseComponent combatDefense = GetRequiredComponent<CombatDefenseComponent>(
-                actor.gameObject);
-            VisibilityComponent visibilityComponent =
-                GetRequiredComponent<VisibilityComponent>(actor.gameObject);
-            EnemyHealthUiComponent healthUiComponent =
-                GetRequiredComponent<EnemyHealthUiComponent>(actor.gameObject);
-            EnemyNavigationMotor motor = GetRequiredComponent<EnemyNavigationMotor>(
-                actor.gameObject);
-            EnemyAnimationController animationController =
-                GetRequiredComponentInChildren<EnemyAnimationController>(actor.gameObject);
-            MeleeHitboxController meleeHitbox =
-                GetRequiredComponentInChildren<MeleeHitboxController>(actor.gameObject);
-            long entityId = RootScope.Container
-                .Resolve<IUniqueIdGenerator>()
-                .GenerateUniqueId();
-
-            LifetimeScope enemyScope = RootScope.CreateChild(builder =>
+            EnemyActor actor = null;
+            GameObject lifetimeRoot = null;
+            try
             {
-                builder.RegisterEntitySystemExt(EntityType.Enemy, entityId);
-                builder.RegisterComponent(viewEntity).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(targetLockNode).AsSelf();
+                actor = UnityEngine.Object.Instantiate(
+                    prefab,
+                    spawnHit.position,
+                    spawn.transform.rotation);
+                actor.name = $"{prefab.name}_Instance";
+                actor.ConfigureSpawn(
+                    spawnHit.position,
+                    spawn.BuildPatrolPositions(),
+                    spawn.RandomSeedOffset);
 
-                builder.RegisterInstance(spawn.HealthData).AsImplementedInterfaces().AsSelf();
-                builder.RegisterInstance(spawn.BehaviourProfile);
-                builder.RegisterInstance(spawn.Moveset);
-                builder.RegisterComponent(actor).AsSelf();
+                ViewEntity viewEntity = GetRequiredComponent<ViewEntity>(actor.gameObject);
+                TargetLockNode targetLockNode = GetRequiredComponentInChildren<TargetLockNode>(
+                    actor.gameObject);
+                HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(
+                    actor.gameObject);
+                CombatDefenseComponent combatDefense = GetRequiredComponent<CombatDefenseComponent>(
+                    actor.gameObject);
+                VisibilityComponent visibilityComponent =
+                    GetRequiredComponent<VisibilityComponent>(actor.gameObject);
+                EnemyHealthUiComponent healthUiComponent =
+                    GetRequiredComponent<EnemyHealthUiComponent>(actor.gameObject);
+                EnemyNavigationMotor motor = GetRequiredComponent<EnemyNavigationMotor>(
+                    actor.gameObject);
+                EnemyActionExecutor actionExecutor =
+                    GetRequiredComponentInChildren<EnemyActionExecutor>(actor.gameObject);
+                MeleeHitboxController meleeHitbox =
+                    GetRequiredComponentInChildren<MeleeHitboxController>(actor.gameObject);
+                EnemyActivationTrigger[] activationTriggers =
+                    actor.GetComponentsInChildren<EnemyActivationTrigger>(true);
+                if (activationTriggers.Length > 1)
+                {
+                    throw new InvalidOperationException(
+                        $"Enemy prefab '{prefab.name}' may contain only one {nameof(EnemyActivationTrigger)}.");
+                }
 
-                builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
-                builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(combatDefense).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(visibilityComponent).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(healthUiComponent).AsSelf().AsImplementedInterfaces();
+                EnemyActivationTrigger activationTrigger = activationTriggers.Length == 1
+                    ? activationTriggers[0]
+                    : null;
+                long entityId = RootScope.Container
+                    .Resolve<IUniqueIdGenerator>()
+                    .GenerateUniqueId();
 
-                builder.RegisterScriptableObject<WeaponDatabase>();
+                lifetimeRoot = new GameObject($"{prefab.name}_LifetimeRoot");
+                lifetimeRoot.SetActive(false);
+                lifetimeRoot.transform.SetParent(RootScope.transform, false);
+                using (LifetimeScope.EnqueueParent(RootScope))
+                using (LifetimeScope.Enqueue(builder =>
+                {
+                    builder.RegisterEntitySystemExt(EntityType.Enemy, entityId);
+                    builder.RegisterComponent(viewEntity).AsSelf().AsImplementedInterfaces();
+                    builder.RegisterComponent(targetLockNode).AsSelf();
 
-                builder.RegisterComponent(motor).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(animationController).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(meleeHitbox).AsSelf();
+                    builder.RegisterInstance(spawn.HealthData).AsImplementedInterfaces().AsSelf();
+                    builder.RegisterInstance(spawn.BehaviourProfile);
+                    builder.RegisterInstance(spawn.Moveset);
+                    builder.RegisterInstance(groupCoordinator);
+                    builder.RegisterComponent(actor).AsSelf();
 
-                builder.Register<ApplyDamageCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<ResolveMeleeHitCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<CriticalTargetCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<TargetingCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<EnemyPerception>(Lifetime.Singleton).AsSelf();
-                builder.Register<EnemyActionSelector>(Lifetime.Singleton).AsSelf();
-                builder.Register<EnemyBrain>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-            });
+                    builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
+                    builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
+                    builder.RegisterComponent(combatDefense).AsSelf().AsImplementedInterfaces();
+                    builder.RegisterComponent(visibilityComponent).AsSelf().AsImplementedInterfaces();
+                    builder.RegisterComponent(healthUiComponent).AsSelf().AsImplementedInterfaces();
 
-            actor.transform.SetParent(enemyScope.transform, true);
-            actor.AttachLifetime(enemyScope);
-            return actor;
+                    builder.RegisterScriptableObject<WeaponDatabase>();
+
+                    builder.RegisterComponent(motor).AsSelf().AsImplementedInterfaces();
+                    builder.RegisterComponent(actionExecutor).AsSelf().AsImplementedInterfaces();
+                    builder.RegisterComponent(meleeHitbox).AsSelf();
+                    if (activationTrigger != null)
+                    {
+                        builder.RegisterComponent(activationTrigger).AsSelf();
+                    }
+
+                    builder.Register<ApplyDamageCommand>(Lifetime.Singleton)
+                        .AsSelf()
+                        .AsImplementedInterfaces();
+                    builder.Register<ResolveMeleeHitCommand>(Lifetime.Singleton)
+                        .AsSelf()
+                        .AsImplementedInterfaces();
+                    builder.Register<CriticalTargetCommand>(Lifetime.Singleton)
+                        .AsSelf()
+                        .AsImplementedInterfaces();
+                    builder.Register<TargetingCommand>(Lifetime.Singleton)
+                        .AsSelf()
+                        .AsImplementedInterfaces();
+                    builder.Register<EnemyPerception>(Lifetime.Singleton).AsSelf();
+                    builder.Register<EnemyRandomStreams>(Lifetime.Singleton).AsSelf();
+                    builder.Register<EnemyActionSelector>(Lifetime.Singleton).AsSelf();
+                    builder.Register<EnemyController>(Lifetime.Singleton)
+                        .AsSelf()
+                        .AsImplementedInterfaces();
+                }))
+                {
+                    lifetimeRoot.AddComponent<LifetimeScope>();
+                    lifetimeRoot.SetActive(true);
+                }
+
+                actor.transform.SetParent(lifetimeRoot.transform, true);
+                actor.AttachLifetimeRoot(lifetimeRoot);
+                return actor;
+            }
+            catch
+            {
+                if (lifetimeRoot != null
+                    && actor != null
+                    && actor.transform.IsChildOf(lifetimeRoot.transform))
+                {
+                    UnityEngine.Object.Destroy(lifetimeRoot);
+                }
+                else
+                {
+                    if (actor != null)
+                    {
+                        UnityEngine.Object.Destroy(actor.gameObject);
+                    }
+
+                    if (lifetimeRoot != null)
+                    {
+                        UnityEngine.Object.Destroy(lifetimeRoot);
+                    }
+                }
+
+                throw;
+            }
         }
 
         private static TComponent GetRequiredComponent<TComponent>(GameObject instance)

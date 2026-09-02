@@ -19,8 +19,6 @@ namespace SoulsLike.Entities.Enemy
 
         public Vector3 WorldVelocity { get; private set; }
         public Vector3 LocalVelocity => transform.InverseTransformDirection(WorldVelocity);
-        public bool HasPath => agent.hasPath;
-        public bool IsStopped => agent.isStopped;
 
         public void Initialize()
         {

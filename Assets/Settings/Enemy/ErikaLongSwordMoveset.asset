@@ -14,11 +14,68 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.WeaponMovesetDefinition
   weaponId: 1
   animatorController: {fileID: 9100000, guid: d2e181e35c903c24f8c225e05fc7b74e, type: 2}
-  actions:
-  - {fileID: 11400000, guid: f1c9a1696381b1846ad21155211a2c6a, type: 2}
-  - {fileID: 11400000, guid: 315c5d369973bfc4d8212f8550253724, type: 2}
-  - {fileID: 11400000, guid: 15badae0cc13f6149a4daa1de92e109c, type: 2}
-  - {fileID: 11400000, guid: fcf10cd16f5896941aaca0f0be379694, type: 2}
-  - {fileID: 11400000, guid: 35416e9fa95a36d48b5aee855053b42f, type: 2}
-  - {fileID: 11400000, guid: a6f1da9b28eb9974b954bcb57f3b2f89, type: 2}
-  - {fileID: 11400000, guid: dd450f2f0cb5a3b49b171d1d952c1fb2, type: 2}
+  moves:
+  - action: {fileID: 11400000, guid: f1c9a1696381b1846ad21155211a2c6a, type: 2}
+    usage: 0
+    minimumDistance: 0.8
+    maximumDistance: 2.35
+    maximumAngle: 60
+    requiresLineOfSight: 1
+    weight: 3
+    cooldown: 0.55
+    repetitionPenalty: 0.35
+  - action: {fileID: 11400000, guid: 315c5d369973bfc4d8212f8550253724, type: 2}
+    usage: 0
+    minimumDistance: 0.8
+    maximumDistance: 2.2
+    maximumAngle: 60
+    requiresLineOfSight: 1
+    weight: 2
+    cooldown: 0.75
+    repetitionPenalty: 0.4
+  - action: {fileID: 11400000, guid: 315c5d369973bfc4d8212f8550253724, type: 2}
+    usage: 1
+    minimumDistance: 0.7
+    maximumDistance: 2.45
+    maximumAngle: 75
+    requiresLineOfSight: 1
+    weight: 4
+    cooldown: 0.45
+    repetitionPenalty: 0.5
+  - action: {fileID: 11400000, guid: 15badae0cc13f6149a4daa1de92e109c, type: 2}
+    usage: 0
+    minimumDistance: 1
+    maximumDistance: 2.65
+    maximumAngle: 55
+    requiresLineOfSight: 1
+    weight: 1.7
+    cooldown: 2.2
+    repetitionPenalty: 0.3
+  - action: {fileID: 11400000, guid: fcf10cd16f5896941aaca0f0be379694, type: 2}
+    usage: 1
+    minimumDistance: 0.65
+    maximumDistance: 2.6
+    maximumAngle: 75
+    requiresLineOfSight: 1
+    weight: 5
+    cooldown: 0
+    repetitionPenalty: 0.5
+  - action: {fileID: 11400000, guid: 35416e9fa95a36d48b5aee855053b42f, type: 2}
+    usage: 1
+    minimumDistance: 0.65
+    maximumDistance: 2.8
+    maximumAngle: 80
+    requiresLineOfSight: 1
+    weight: 5
+    cooldown: 0
+    repetitionPenalty: 0.5
+  - action: {fileID: 11400000, guid: a6f1da9b28eb9974b954bcb57f3b2f89, type: 2}
+    usage: 0
+    minimumDistance: 1.35
+    maximumDistance: 3.1
+    maximumAngle: 45
+    requiresLineOfSight: 1
+    weight: 1
+    cooldown: 3
+    repetitionPenalty: 0.25
+  deathAction: {fileID: 11400000, guid: dd450f2f0cb5a3b49b171d1d952c1fb2, type: 2}

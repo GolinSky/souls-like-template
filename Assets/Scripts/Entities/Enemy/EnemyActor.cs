@@ -1,11 +1,11 @@
+using System;
 using System.Collections.Generic;
 using SoulsLike.Entities.BaseEntity;
-using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Combat;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Serialization;
 using VContainer;
-using VContainer.Unity;
 
 namespace SoulsLike.Entities.Enemy
 {
@@ -14,48 +14,73 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField] private Animator animator;
         [SerializeField] private MeleeHitboxController meleeHitbox;
         private Vector3[] _patrolPoints = { };
-        private LifetimeScope _lifetimeScope;
+        private GameObject _lifetimeRoot;
+        private bool _hasLifetimeRoot;
+        private bool _isDespawned;
         
         
-        [field:SerializeField] public NavMeshAgent NavMeshAgent { get; private set; }
+        [FormerlySerializedAs("<NavMeshAgent>k__BackingField")]
+        [SerializeField] private NavMeshAgent navMeshAgent;
 
-        public Animator Animator => animator;
+        public NavMeshAgent NavMeshAgent => navMeshAgent;
         public EnemyBehaviourProfile BehaviourProfile { get; private set; }
         public WeaponMovesetDefinition Moveset { get; private set; }
-        public HealthData HealthData { get; private set; }
-        public MeleeHitboxController MeleeHitbox => meleeHitbox;
         public Entity Entity { get; private set; }
         public Vector3 HomePosition { get; private set; }
+        public int RandomSeedOffset { get; private set; }
         public IReadOnlyList<Vector3> PatrolPoints => _patrolPoints;
         public bool HasPatrolPositions => _patrolPoints.Length > 0;
+        public event Action<EnemyActor> Despawned;
 
         [Inject]
         public void Construct(
             Entity entity,
             EnemyBehaviourProfile behaviourProfile,
-            WeaponMovesetDefinition moveset,
-            HealthData healthData)
+            WeaponMovesetDefinition moveset)
         {
             Entity = entity;
             BehaviourProfile = behaviourProfile;
             Moveset = moveset;
-            HealthData = healthData;
         }
 
-        public void ConfigureSpawn(Vector3 homePosition, Vector3[] patrolPoints)
+        public void ConfigureSpawn(
+            Vector3 homePosition,
+            Vector3[] patrolPoints,
+            int randomSeedOffset)
         {
             HomePosition = homePosition;
             _patrolPoints = patrolPoints;
+            RandomSeedOffset = randomSeedOffset;
         }
 
-        public void AttachLifetime(LifetimeScope lifetimeScope)
+        public void AttachLifetimeRoot(GameObject lifetimeRoot)
         {
-            _lifetimeScope = lifetimeScope;
+            if (_hasLifetimeRoot)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(EnemyActor)} lifetime root is already attached.");
+            }
+
+            _lifetimeRoot = lifetimeRoot;
+            _hasLifetimeRoot = true;
         }
 
         public void Despawn()
         {
-            Destroy(_lifetimeScope.gameObject);
+            if (_isDespawned)
+            {
+                return;
+            }
+
+            _isDespawned = true;
+            try
+            {
+                Despawned?.Invoke(this);
+            }
+            finally
+            {
+                Destroy(_lifetimeRoot);
+            }
         }
     }
 }

@@ -289,6 +289,8 @@ MonoBehaviour:
   comboStart: 0.42
   comboEnd: 0.68
   recoveryStart: 0.64
+  hasTrackingWindow: 1
+  trackingEnd: 0.64
   hasHyperArmorWindow: 0
   hyperArmorStart: 0
   hyperArmorEnd: 1
@@ -314,6 +316,8 @@ MonoBehaviour:
   comboStart: 0.36
   comboEnd: 0.69
   recoveryStart: 0.62
+  hasTrackingWindow: 1
+  trackingEnd: 0.62
   hasHyperArmorWindow: 0
   hyperArmorStart: 0
   hyperArmorEnd: 1
@@ -495,6 +499,8 @@ MonoBehaviour:
   comboStart: 0.43
   comboEnd: 0.7
   recoveryStart: 0.64
+  hasTrackingWindow: 1
+  trackingEnd: 0.64
   hasHyperArmorWindow: 0
   hyperArmorStart: 0
   hyperArmorEnd: 1
@@ -582,6 +588,8 @@ MonoBehaviour:
   comboStart: 0
   comboEnd: 0
   recoveryStart: 0.66
+  hasTrackingWindow: 1
+  trackingEnd: 0.66
   hasHyperArmorWindow: 0
   hyperArmorStart: 0
   hyperArmorEnd: 1
@@ -635,6 +643,8 @@ MonoBehaviour:
   comboStart: 0
   comboEnd: 0
   recoveryStart: 0.72
+  hasTrackingWindow: 1
+  trackingEnd: 0.72
   hasHyperArmorWindow: 1
   hyperArmorStart: 0.15
   hyperArmorEnd: 0.62
@@ -1696,6 +1706,8 @@ MonoBehaviour:
   comboStart: 0
   comboEnd: 0
   recoveryStart: 0.66
+  hasTrackingWindow: 1
+  trackingEnd: 0.66
   hasHyperArmorWindow: 0
   hyperArmorStart: 0
   hyperArmorEnd: 1
@@ -1831,6 +1843,8 @@ MonoBehaviour:
   comboStart: 0
   comboEnd: 0
   recoveryStart: 0.92
+  hasTrackingWindow: 1
+  trackingEnd: 0.92
   hasHyperArmorWindow: 0
   hyperArmorStart: 0
   hyperArmorEnd: 1
