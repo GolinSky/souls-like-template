@@ -444,6 +444,7 @@ namespace SoulsLike.Entities.Character
             if (state.StateMachineName == StateMachineName.Parry)
             {
                 if (state.State == StateMachineState.Enter) { _actionStateMachine.SetInputBlocked(true); SetMovementLock(MovementLockReason.Parry, true); }
+                else if (state.State == StateMachineState.QueueCheck) { _actionStateMachine.SetInputBlocked(false); SetMovementLock(MovementLockReason.Parry, false); }
                 else if (state.State == StateMachineState.Exit) { _actionStateMachine.SetInputBlocked(false); SetMovementLock(MovementLockReason.Parry, false); }
             }
 

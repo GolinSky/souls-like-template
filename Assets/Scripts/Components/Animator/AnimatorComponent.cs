@@ -63,11 +63,10 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int GraceUnblockTrigger = Animator.StringToHash("GraceUnblock");
         private static readonly int GraceRestStartTrigger = Animator.StringToHash("GraceRestStart");
         private static readonly int GraceRestEndTrigger = Animator.StringToHash("GraceRestEnd");
+        private static readonly int CriticalAttackTrigger = Animator.StringToHash("CriticalAttack");
         private static readonly int OneHandedFreeLocomotionState = Animator.StringToHash("OneHandedLayer.FreeLocomotion");
         private static readonly int OneHandedGraceRestIdleState = Animator.StringToHash("OneHandedLayer.GraceRestIdle");
         private static readonly int TwoHandedGraceRestIdleState = Animator.StringToHash("TwoHandedLayer.GraceRestIdle");
-        private static readonly int OneHandedCriticalAttackState = Animator.StringToHash("OneHandedLayer.Combat.CriticalAttack");
-        private const float CRITICAL_TRANSITION_SECONDS = 0.05f;
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_ACTIONS_LAYER = "UpperBodyActions";
@@ -317,10 +316,7 @@ namespace SoulsLike.Entities.Character.Components
         {
             SetGroundedOverride(true);
             BeginRootMotionAction();
-            animator.CrossFadeInFixedTime(
-                OneHandedCriticalAttackState,
-                CRITICAL_TRANSITION_SECONDS,
-                GetRequiredLayerIndex(ONE_HANDED_LAYER));
+            animator.SetTrigger(CriticalAttackTrigger);
         }
 
         public void TriggerDeath()

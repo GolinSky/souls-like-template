@@ -704,6 +704,31 @@ MonoBehaviour:
   progressNormalizedTime: 0.5
   reportsQueueCheck: 0
   queueCheckNormalizedTime: 0.55
+--- !u!1101 &-7198057829520399055
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: CriticalAttack
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: -4195296818627799245}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.05
+  m_TransitionOffset: 0
+  m_ExitTime: 0.75
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 0
 --- !u!1102 &-7196112802346011419
 AnimatorState:
   serializedVersion: 6
@@ -2516,7 +2541,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.05
   m_TransitionOffset: 0
-  m_ExitTime: 1.48
+  m_ExitTime: 1
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -3774,6 +3799,12 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   - m_Name: StanceBroken
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: CriticalAttack
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -6526,6 +6557,7 @@ AnimatorStateMachine:
   - {fileID: 6244958722590723138}
   - {fileID: 721367996918991621}
   - {fileID: -4513108984486593644}
+  - {fileID: -7198057829520399055}
   m_EntryTransitions: []
   m_StateMachineTransitions:
   - first: {fileID: -2096565695800469902}
@@ -7067,7 +7099,7 @@ MonoBehaviour:
   stateMachineName: 16
   isReportingProgress: 0
   progressNormalizedTime: 0.5
-  reportsQueueCheck: 0
+  reportsQueueCheck: 1
   queueCheckNormalizedTime: 0.55
 --- !u!1102 &9198821582089180257
 AnimatorState:
