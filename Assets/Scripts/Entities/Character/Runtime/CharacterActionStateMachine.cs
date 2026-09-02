@@ -18,7 +18,7 @@ namespace SoulsLike.Entities.Character.Runtime
         public CharacterAction.State CurrentState => _currentState;
         public bool IsInputBlocked => _inputBlocked;
         public bool HasBufferedAction => _bufferedAction.HasValue;
-        public bool CanGuardDuringAnimationBlock => _currentState == CharacterAction.State.Attack && _queueWindowOpen;
+        public bool CanGuardDuringAnimationBlock => (_currentState == CharacterAction.State.Attack || _currentState == CharacterAction.State.BlockHit) && _queueWindowOpen;
         public void SetInputBlocked(bool blocked) => _inputBlocked = blocked;
 
         public bool TryConsumeRollSprintInterrupt()
@@ -95,6 +95,12 @@ namespace SoulsLike.Entities.Character.Runtime
 
         public bool HandleEntered(CharacterAction.State state)
         {
+            if (state == CharacterAction.State.BlockHit)
+            {
+                Enter(CharacterAction.State.BlockHit);
+                return true;
+            }
+
             if (state != _currentState) return false;
             if (_currentState == CharacterAction.State.Attack || _currentState == CharacterAction.State.ItemUse) _queueWindowOpen = false;
             return true;
@@ -116,7 +122,7 @@ namespace SoulsLike.Entities.Character.Runtime
 
         public bool TryGetBufferedAction(out CharacterAction action)
         {
-            bool canConsume = _currentState == CharacterAction.State.Neutral || ((_currentState == CharacterAction.State.Attack || _currentState == CharacterAction.State.Roll || _currentState == CharacterAction.State.ItemUse) && _queueWindowOpen);
+            bool canConsume = _currentState == CharacterAction.State.Neutral || ((_currentState == CharacterAction.State.Attack || _currentState == CharacterAction.State.Roll || _currentState == CharacterAction.State.ItemUse || _currentState == CharacterAction.State.BlockHit) && _queueWindowOpen);
             if (!canConsume || !_bufferedAction.HasValue)
             {
                 action = default;
@@ -159,7 +165,7 @@ namespace SoulsLike.Entities.Character.Runtime
         private bool CanExecute(in CharacterAction action) => _currentState switch
         {
             CharacterAction.State.Neutral => true,
-            CharacterAction.State.Attack or CharacterAction.State.Roll => _queueWindowOpen && (action.ActionKind != CharacterAction.Kind.Equipment || action.EquipmentAction == CharacterAction.EquipmentKind.UseQuickItem),
+            CharacterAction.State.Attack or CharacterAction.State.Roll or CharacterAction.State.BlockHit => _queueWindowOpen && (action.ActionKind != CharacterAction.Kind.Equipment || action.EquipmentAction == CharacterAction.EquipmentKind.UseQuickItem),
             CharacterAction.State.ItemUse => _queueWindowOpen && (action.ActionKind == CharacterAction.Kind.Roll || action.ActionKind == CharacterAction.Kind.Attack || (action.ActionKind == CharacterAction.Kind.Equipment && action.EquipmentAction == CharacterAction.EquipmentKind.UseQuickItem)),
             CharacterAction.State.EquipmentSwap => _acceptEquipmentCompanion && action.ActionKind == CharacterAction.Kind.Equipment,
             CharacterAction.State.Critical => false,
@@ -168,7 +174,7 @@ namespace SoulsLike.Entities.Character.Runtime
 
         private void HandleQueueWindow()
         {
-            if (_currentState != CharacterAction.State.Attack && _currentState != CharacterAction.State.Roll && _currentState != CharacterAction.State.ItemUse) return;
+            if (_currentState != CharacterAction.State.Attack && _currentState != CharacterAction.State.Roll && _currentState != CharacterAction.State.ItemUse && _currentState != CharacterAction.State.BlockHit) return;
             _queueWindowOpen = true;
             if (_currentState == CharacterAction.State.Roll && _sprintHeldDuringRoll) InterruptRollForSprint();
         }
@@ -190,6 +196,7 @@ namespace SoulsLike.Entities.Character.Runtime
             {
                 case CharacterAction.State.Attack:
                 case CharacterAction.State.ItemUse:
+                case CharacterAction.State.BlockHit:
                     _queueWindowOpen = false;
                     _ignoreNextActionExit = chained;
                     break;

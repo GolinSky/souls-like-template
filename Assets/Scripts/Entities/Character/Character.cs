@@ -281,7 +281,7 @@ namespace SoulsLike.Entities.Character
 
         private CharacterAction.Result StartAttack(in CharacterAction action)
         {
-            bool canInterrupt = _actionStateMachine.CurrentState is CharacterAction.State.Attack or CharacterAction.State.Roll;
+            bool canInterrupt = _actionStateMachine.CurrentState is CharacterAction.State.Attack or CharacterAction.State.Roll or CharacterAction.State.BlockHit;
             if (!movementComponent.Model.Grounded
                 || IsMovementLocked(MovementLockReason.Manual)
                 || IsMovementLocked(MovementLockReason.Spawn)
@@ -907,6 +907,9 @@ namespace SoulsLike.Entities.Character
                 case StateMachineName.ItemDrink:
                 case StateMachineName.ItemDrinkEmpty:
                     state = CharacterAction.State.ItemUse;
+                    return true;
+                case StateMachineName.BlockHit:
+                    state = CharacterAction.State.BlockHit;
                     return true;
                 default:
                     state = default;

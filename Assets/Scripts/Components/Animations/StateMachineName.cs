@@ -28,6 +28,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
         ParryStun = 23,
         ItemDrink = 24,
         ItemDrinkEmpty = 25,
+        BlockHit = 26,
         None = -1
     }
 }

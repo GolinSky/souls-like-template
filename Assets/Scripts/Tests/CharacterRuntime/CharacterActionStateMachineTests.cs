@@ -142,6 +142,41 @@ namespace SoulsLike.Tests.CharacterRuntime
             Assert.That(machine.CurrentState, Is.EqualTo(CharacterAction.State.Neutral));
         }
 
+        [Test]
+        public void BlockHitActionBuffersUntilQueueCheck()
+        {
+            var machine = new CharacterActionStateMachine();
+            Assert.That(machine.HandleEntered(CharacterAction.State.BlockHit), Is.True);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterAction.State.BlockHit));
+
+            Assert.That(machine.TryDispatch(Roll(), 1f), Is.False);
+            Assert.That(machine.HandleQueueCheck(CharacterAction.State.BlockHit), Is.True);
+            Assert.That(machine.TryGetBufferedAction(out CharacterAction buffered), Is.True);
+            Assert.That(buffered.ActionKind, Is.EqualTo(CharacterAction.Kind.Roll));
+        }
+
+        [Test]
+        public void BlockHitAllowsAttackAndRollAtQueueCheck()
+        {
+            var machine = new CharacterActionStateMachine();
+            machine.HandleEntered(CharacterAction.State.BlockHit);
+
+            Assert.That(machine.TryDispatch(Attack(), 1f), Is.False);
+            machine.HandleQueueCheck(CharacterAction.State.BlockHit);
+            Assert.That(machine.TryDispatch(Attack(), 1f), Is.True);
+        }
+
+        [Test]
+        public void BlockHitExitedReturnsToNeutral()
+        {
+            var machine = new CharacterActionStateMachine();
+            machine.HandleEntered(CharacterAction.State.BlockHit);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterAction.State.BlockHit));
+
+            machine.HandleExited(CharacterAction.State.BlockHit);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterAction.State.Neutral));
+        }
+
         private static CharacterAction Attack() => CharacterAction.Attack(
             CharacterAction.AttackIntent.Light, false, false, default, 0f);
         private static CharacterAction Roll() => CharacterAction.Roll(default, 0f);
