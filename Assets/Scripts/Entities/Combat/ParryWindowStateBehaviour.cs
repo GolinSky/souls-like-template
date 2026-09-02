@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace SoulsLike.Entities.Combat
 {
+    //todo: use stats from shield/weapon -> parry equipment 
     public sealed class ParryWindowStateBehaviour : StateMachineBehaviour
     {
         [SerializeField, Range(0f, 1f)] private float activeStart = 0.2f;
