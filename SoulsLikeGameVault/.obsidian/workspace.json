@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md",
+                "file": "Architecture/PROJECT_ORGANIZATION.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "FLASK_HEALING_SYSTEM_RESEARCH"
+              "title": "PROJECT_ORGANIZATION"
             }
           }
         ]
@@ -187,8 +187,10 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
-    "animation/Animator_SubState_Machine_Architecture_Guide.md",
+    "ai/GPT_PRO_REVIEW_PACKAGE.md",
     "ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md",
+    "Architecture/LAYER_SYSTEM_AUDIT_REPORT.md",
+    "animation/Animator_SubState_Machine_Architecture_Guide.md",
     "Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md",
     "animation",
     "features/Technical Specification - Roll & Backstep Vectoring Logic.md",
@@ -197,7 +199,6 @@
     "features/Locomotion Architecture Technical Specification.md",
     "features/Current Jump and Roll System.md",
     "features/Advanced Locomotion Architecture Prompt Specification.md",
-    "ai/GPT_PRO_REVIEW_PACKAGE.md",
     "ToDo/Project_Organization_Analysis_And_Fix_Plan.md",
     "Artifact/Hitbox System.md",
     "ToDo/Hitbox System.md",
@@ -213,7 +214,6 @@
     "ToDo/Character_Mediator_Architectural_Analysis.md",
     "Artifact/Hitbox System Implementation Plan.md",
     "ToDo/Character_Command_HSM_Runtime_Refactor_Plan.md",
-    "ToDo/Hitbox System Implementation Plan.md",
     "Architecture",
     "ai",
     "Artifact",
