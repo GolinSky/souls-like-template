@@ -12,12 +12,11 @@ namespace SoulsLike.Entities.Enemy
     {
         private const float ACTION_TRANSITION_SECONDS = 0.08f;
         private const float ACTION_ENTRY_TIMEOUT_SECONDS = 1f;
-        private const string BASE_LAYER_PREFIX = "Base Layer.";
-        private const string CRITICAL_HIT_ONE_HAND_STATE = "Base Layer.CriticalHitOneHand";
-        private const string CRITICAL_HIT_ONE_HAND_DIE_STATE = "Base Layer.CriticalHitOneHandDie";
-        private const string CRITICAL_HIT_TWO_HAND_STATE = "Base Layer.CriticalHitTwoHand";
-        private const string CRITICAL_HIT_TWO_HAND_DIE_STATE = "Base Layer.CriticalHitTwoHandDie";
-        private const string LOCOMOTION_STATE = "Base Layer.Locomotion";
+        private const string CRITICAL_HIT_ONE_HAND_STATE = "CriticalHitOneHand";
+        private const string CRITICAL_HIT_ONE_HAND_DIE_STATE = "CriticalHitOneHandDie";
+        private const string CRITICAL_HIT_TWO_HAND_STATE = "CriticalHitTwoHand";
+        private const string CRITICAL_HIT_TWO_HAND_DIE_STATE = "CriticalHitTwoHandDie";
+        private const string LOCOMOTION_STATE = "Locomotion";
         private static readonly int SPEED = Animator.StringToHash("Speed");
         private static readonly int MOVE_X = Animator.StringToHash("MoveX");
         private static readonly int MOVE_Y = Animator.StringToHash("MoveY");
@@ -406,7 +405,7 @@ namespace SoulsLike.Entities.Enemy
             motor.Stop();
             motor.SetRootMotion(action.UsesRootMotion);
             animator.CrossFadeInFixedTime(
-                BASE_LAYER_PREFIX + action.ActionId,
+                action.ActionId.ToString(),
                 ACTION_TRANSITION_SECONDS);
         }
 
