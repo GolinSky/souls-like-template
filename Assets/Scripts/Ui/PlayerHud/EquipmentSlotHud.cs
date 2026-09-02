@@ -21,7 +21,7 @@ namespace SoulsLike.Ui.PlayerHud
         public Color normalBorderColor = new Color(0.23f, 0.20f, 0.17f, 1f);
         public Color activeBorderColor = new Color(0.48f, 0.41f, 0.30f, 1f);
 
-        public void SetItem(Sprite itemIcon, int quantity = 0, bool isDimmed = false)
+        public void SetItem(Sprite itemIcon, int quantity = 0, bool isDimmed = false, bool forceShowQuantity = false)
         {
             if (icon != null)
             {
@@ -31,7 +31,7 @@ namespace SoulsLike.Ui.PlayerHud
 
             if (quantityText != null)
             {
-                bool showQuantity = quantity > 0;
+                bool showQuantity = quantity > 0 || forceShowQuantity;
                 quantityText.text = showQuantity ? quantity.ToString() : string.Empty;
                 quantityText.gameObject.SetActive(showQuantity);
             }

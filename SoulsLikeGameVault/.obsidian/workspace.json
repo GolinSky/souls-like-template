@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md",
+                "file": "ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md",
                 "mode": "source",
                 "source": false
               },
@@ -187,8 +187,11 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
-    "features/Technical Specification - Roll & Backstep Vectoring Logic.md",
+    "animation/Animator_SubState_Machine_Architecture_Guide.md",
+    "ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md",
     "Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md",
+    "animation",
+    "features/Technical Specification - Roll & Backstep Vectoring Logic.md",
     "features/System Specification - Souls-like Locomotion & Camera System.md",
     "features/Movement Mechanics Explained.md",
     "features/Locomotion Architecture Technical Specification.md",
@@ -211,8 +214,6 @@
     "Artifact/Hitbox System Implementation Plan.md",
     "ToDo/Character_Command_HSM_Runtime_Refactor_Plan.md",
     "ToDo/Hitbox System Implementation Plan.md",
-    "Architecture/HITBOX_SYSTEM_ARCHITECTURE.md",
-    "Architecture/CHARACTER_SYSTEM_ARCHITECTURE.md",
     "Architecture",
     "ai",
     "Artifact",

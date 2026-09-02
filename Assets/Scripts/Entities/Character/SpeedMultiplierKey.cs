@@ -5,6 +5,7 @@ namespace SoulsLike.Entities.Character
         InventoryWeight = 0,
         WeaponZoom = 1,
         WeaponTestRiffle = 2,
-        Slide = 3
+        Slide = 3,
+        ItemUse = 4
     }
 }

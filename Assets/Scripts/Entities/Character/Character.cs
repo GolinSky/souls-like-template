@@ -60,6 +60,11 @@ namespace SoulsLike.Entities.Character
         private UniTaskCompletionSource<bool> _graceTransitionCompletionSource;
         private GracePhase _gracePhase;
         private MovementLockReason _movementLockReasons;
+        private bool _isItemUseInProgress;
+        private bool _hasItemUseProgressFired;
+        private InventoryEntryId _activeItemEntryId;
+        private ItemId _activeItemId;
+        private ConsumableDefinition _activeConsumable;
 
         public Transform CameraTarget => cameraTarget;
         public bool IsGrounded => movementComponent.Model.Grounded;
@@ -399,9 +404,7 @@ namespace SoulsLike.Entities.Character
                     equipmentComponent.SwitchActive(EquipmentSlotGroup.QuickItem);
                     return CharacterAction.Result.Executed;
                 case CharacterAction.EquipmentKind.UseQuickItem:
-                    return TryUseActiveQuickItem()
-                        ? CharacterAction.Result.Executed
-                        : CharacterAction.Result.Invalid;
+                    return StartUseQuickItem();
                 case CharacterAction.EquipmentKind.ToggleHandMode:
                     if (!movementComponent.Model.Grounded
                         || IsMovementLocked(MovementLockReason.Manual)
@@ -465,6 +468,35 @@ namespace SoulsLike.Entities.Character
                     or StateMachineName.HeavyAttackAlt)
             {
                 animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
+            }
+
+            if (state.StateMachineName is StateMachineName.ItemDrink or StateMachineName.ItemDrinkEmpty)
+            {
+                if (state.State == StateMachineState.Progress
+                    && state.StateMachineName == StateMachineName.ItemDrink
+                    && !_hasItemUseProgressFired)
+                {
+                    _hasItemUseProgressFired = true;
+                    inventoryComponent.Consume(_activeItemEntryId, 1);
+                    Heal(_activeConsumable.EffectAmount);
+                }
+                else if (state.State == StateMachineState.Exit && _isItemUseInProgress)
+                {
+                    _isItemUseInProgress = false;
+                    movementComponent.RemoveSpeedMultiplier(SpeedMultiplierKey.ItemUse);
+                    equipmentPresentation.SetArmamentVisible(EquipmentSlotGroup.RightHandArmament, true);
+                }
+            }
+
+            if ((state.StateMachineName == StateMachineName.HitReaction
+                 || state.StateMachineName == StateMachineName.Death
+                 || state.StateMachineName == StateMachineName.GraceRestStart)
+                && state.State == StateMachineState.Enter
+                && _isItemUseInProgress)
+            {
+                _isItemUseInProgress = false;
+                movementComponent.RemoveSpeedMultiplier(SpeedMultiplierKey.ItemUse);
+                equipmentPresentation.SetArmamentVisible(EquipmentSlotGroup.RightHandArmament, true);
             }
 
             if (TryResolveActionState(state.StateMachineName, out CharacterAction.State actionState))
@@ -649,10 +681,19 @@ namespace SoulsLike.Entities.Character
                 loadout.HandMode);
         }
 
-        private bool TryUseActiveQuickItem()
+        private CharacterAction.Result StartUseQuickItem()
         {
+            if (!movementComponent.Model.Grounded
+                || IsMovementLocked(MovementLockReason.Manual)
+                || IsMovementLocked(MovementLockReason.Spawn)
+                || IsMovementLocked(MovementLockReason.Critical))
+            {
+                return CharacterAction.Result.TemporarilyBlocked;
+            }
+
             EquippedItemContext quickItem = equipmentComponent.BuildLoadout().ActiveQuickItem;
-            if (quickItem == null) return false;
+            if (quickItem == null) return CharacterAction.Result.Invalid;
+
             ItemDefinition item = _itemCatalog.GetItem(quickItem.ItemId);
             if (item.ItemType != ItemType.Consumable)
             {
@@ -661,6 +702,28 @@ namespace SoulsLike.Entities.Character
             }
 
             ConsumableDefinition consumable = _itemCatalog.GetConsumable(quickItem.ItemId);
+            if (quickItem.ItemId == ItemId.CrimsonFlask)
+            {
+                _isItemUseInProgress = true;
+                _hasItemUseProgressFired = false;
+                _activeItemEntryId = quickItem.Entry.EntryId;
+                _activeItemId = quickItem.ItemId;
+                _activeConsumable = consumable;
+
+                equipmentPresentation.SetArmamentVisible(EquipmentSlotGroup.RightHandArmament, false);
+                movementComponent.SetSpeedMultiplier(SpeedMultiplierKey.ItemUse, 0.35f);
+
+                if (quickItem.Entry.Quantity > 0)
+                {
+                    animatorComponent.TriggerItemDrink();
+                }
+                else
+                {
+                    animatorComponent.TriggerItemDrinkEmpty();
+                }
+
+                return CharacterAction.Result.Executed;
+            }
 
             switch (consumable.UseType)
             {
@@ -672,7 +735,7 @@ namespace SoulsLike.Entities.Character
                     break;
                 case ItemUseType.InfuseActiveWeapon:
                     WeaponRuntime runtime = equipmentPresentation.ActiveRightWeaponRuntime;
-                    if (runtime == null) return false;
+                    if (runtime == null) return CharacterAction.Result.Invalid;
                     runtime.ApplyLightningInfusion(
                         consumable.EffectAmount,
                         consumable.DurationSeconds);
@@ -683,7 +746,7 @@ namespace SoulsLike.Entities.Character
             }
 
             inventoryComponent.Consume(quickItem.Entry.EntryId);
-            return true;
+            return CharacterAction.Result.Executed;
         }
 
         private ItemId? GetWeaponId(EquippedItemContext context)
@@ -778,6 +841,7 @@ namespace SoulsLike.Entities.Character
                 CharacterAction.Kind.Attack => CharacterAction.State.Attack,
                 CharacterAction.Kind.Roll => CharacterAction.State.Roll,
                 CharacterAction.Kind.Equipment when equipmentComponent.IsSwapInProgress => CharacterAction.State.EquipmentSwap,
+                CharacterAction.Kind.Equipment when _isItemUseInProgress => CharacterAction.State.ItemUse,
                 _ => CharacterAction.State.Neutral
             };
             if (buffered) _actionStateMachine.ReportBufferedExecution(result, state);
@@ -839,6 +903,10 @@ namespace SoulsLike.Entities.Character
                 case StateMachineName.EquipmentSwapOut:
                 case StateMachineName.EquipmentSwapIn:
                     state = CharacterAction.State.EquipmentSwap;
+                    return true;
+                case StateMachineName.ItemDrink:
+                case StateMachineName.ItemDrinkEmpty:
+                    state = CharacterAction.State.ItemUse;
                     return true;
                 default:
                     state = default;

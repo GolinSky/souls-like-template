@@ -64,6 +64,8 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int GraceRestStartTrigger = Animator.StringToHash("GraceRestStart");
         private static readonly int GraceRestEndTrigger = Animator.StringToHash("GraceRestEnd");
         private static readonly int CriticalAttackTrigger = Animator.StringToHash("CriticalAttack");
+        private static readonly int ItemDrinkTrigger = Animator.StringToHash("ItemDrink");
+        private static readonly int ItemDrinkEmptyTrigger = Animator.StringToHash("ItemDrinkEmpty");
         private static readonly int OneHandedFreeLocomotionState = Animator.StringToHash("OneHandedLayer.FreeLocomotion");
         private static readonly int OneHandedGraceRestIdleState = Animator.StringToHash("OneHandedLayer.GraceRestIdle");
         private static readonly int TwoHandedGraceRestIdleState = Animator.StringToHash("TwoHandedLayer.GraceRestIdle");
@@ -381,6 +383,16 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetTrigger(slotGroup == EquipmentSlotGroup.LeftHandArmament
                 ? LeftEquipmentSwapInTrigger
                 : EquipmentSwapInTrigger);
+        }
+
+        public void TriggerItemDrink()
+        {
+            animator.SetTrigger(ItemDrinkTrigger);
+        }
+
+        public void TriggerItemDrinkEmpty()
+        {
+            animator.SetTrigger(ItemDrinkEmptyTrigger);
         }
 
         public void TransitionHandMode(HandMode handMode)

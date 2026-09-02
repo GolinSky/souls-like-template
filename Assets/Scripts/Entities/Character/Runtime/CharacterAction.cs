@@ -8,7 +8,7 @@ namespace SoulsLike.Entities.Character.Runtime
         public enum AttackIntent { Light, Heavy, Special }
         public enum EquipmentKind { SwitchRightWeapon, SwitchLeftWeapon, SwitchQuickItem, UseQuickItem, ToggleHandMode }
         public enum Result { Executed, TemporarilyBlocked, Invalid }
-        public enum State { Neutral, Attack, Roll, EquipmentSwap, Critical }
+        public enum State { Neutral, Attack, Roll, EquipmentSwap, Critical, ItemUse }
 
         public Kind ActionKind { get; }
         public AttackIntent Intent { get; }
@@ -17,7 +17,7 @@ namespace SoulsLike.Entities.Character.Runtime
         public bool IsSprinting { get; }
         public Vector2 MoveInput { get; }
         public float CameraYaw { get; }
-        public bool CanBuffer => ActionKind != Kind.Equipment;
+        public bool CanBuffer => ActionKind != Kind.Equipment || EquipmentAction == EquipmentKind.UseQuickItem;
 
         private CharacterAction(Kind actionKind, AttackIntent intent, EquipmentKind equipmentAction, bool isLeftHand, bool isSprinting, Vector2 moveInput, float cameraYaw)
         {

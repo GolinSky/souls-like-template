@@ -148,12 +148,14 @@ namespace SoulsLike.Ui.PlayerHud
                 ? null
                 : _itemCatalog.GetItem(loadout.ActiveQuickItem.ItemId).Icon;
             int quickItemQuantity = loadout.ActiveQuickItem?.Entry.Quantity ?? 0;
+            bool isDimmed = loadout.ActiveQuickItem != null && quickItemQuantity == 0;
             _playerHudUi.UpdateEquipment(
                 rightIcon,
                 leftIcon,
                 quickItemIcon,
                 quickItemQuantity,
-                loadout.HandMode == HandMode.TwoHanded);
+                loadout.HandMode == HandMode.TwoHanded,
+                isDimmed);
         }
 
         public void ShowAcquisition(string itemName, Sprite icon, int quantity)

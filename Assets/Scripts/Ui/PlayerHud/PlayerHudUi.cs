@@ -192,7 +192,8 @@ namespace SoulsLike.Ui.PlayerHud
             Sprite leftIcon,
             Sprite quickItemIcon,
             int quickItemQuantity,
-            bool isTwoHanded)
+            bool isTwoHanded,
+            bool isQuickItemDimmed = false)
         {
             // Right Hand Armament (Main Weapon)
             if (rightIcon != null)
@@ -220,7 +221,7 @@ namespace SoulsLike.Ui.PlayerHud
             // Bottom Slot (Quick Item / Consumable)
             if (quickItemIcon != null)
             {
-                bottomSlot.SetItem(quickItemIcon, quickItemQuantity);
+                bottomSlot.SetItem(quickItemIcon, quickItemQuantity, isQuickItemDimmed, isQuickItemDimmed);
             }
             else
             {

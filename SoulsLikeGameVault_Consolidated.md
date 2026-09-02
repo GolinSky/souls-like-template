@@ -29,7 +29,6 @@
      - [Hitbox System Implementation Plan.md](#file-artifacthitbox-system-implementation-planmd) (`Artifact/Hitbox System Implementation Plan.md`)
      - [elden_ring_inventory_equipment_architecture.md](#file-artifactelden-ring-inventory-equipment-architecturemd) (`Artifact/elden_ring_inventory_equipment_architecture.md`)
      - [ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md](#file-artifactelden-ring-style-settings-system-planmd) (`Artifact/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md`)
-     - [FLASK_HEALING_SYSTEM_RESEARCH.md](#file-artifactflask-healing-system-researchmd) (`Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md`)
    - [Locomotion & Gameplay Features](#locomotion-gameplay-features)
      - [Movement Mechanics Explained.md](#file-featuresmovement-mechanics-explainedmd) (`features/Movement Mechanics Explained.md`)
      - [Current Jump and Roll System.md](#file-featurescurrent-jump-and-roll-systemmd) (`features/Current Jump and Roll System.md`)
@@ -48,6 +47,7 @@
      - [Project_Organization_Analysis_And_Fix_Plan.md](#file-todoproject-organization-analysis-and-fix-planmd) (`ToDo/Project_Organization_Analysis_And_Fix_Plan.md`)
      - [Refactor_Pause_Navigation_Naming.md](#file-todorefactor-pause-navigation-namingmd) (`ToDo/Refactor_Pause_Navigation_Naming.md`)
      - [LIGHTING_BAKE_PLAN.md](#file-todolighting-bake-planmd) (`ToDo/LIGHTING_BAKE_PLAN.md`)
+     - [FLASK_HEALING_SYSTEM_RESEARCH.md](#file-todoflask-healing-system-researchmd) (`ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md`)
 
 ---
 
@@ -68,7 +68,6 @@ SoulsLikeGameVault/
 ├── Artifact/
 │   ├── elden_ring_inventory_equipment_architecture.md
 │   ├── ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md
-│   ├── FLASK_HEALING_SYSTEM_RESEARCH.md
 │   ├── Hitbox System Implementation Plan.md
 │   └── Hitbox System.md
 ├── features/
@@ -79,6 +78,7 @@ SoulsLikeGameVault/
 │   ├── System Specification - Souls-like Locomotion & Camera System.md
 │   └── Technical Specification - Roll & Backstep Vectoring Logic.md
 ├── ToDo/
+│   ├── FLASK_HEALING_SYSTEM_RESEARCH.md
 │   ├── LIGHTING_BAKE_PLAN.md
 │   ├── Project_Organization_Analysis_And_Fix_Plan.md
 │   └── Refactor_Pause_Navigation_Naming.md
@@ -109,22 +109,22 @@ SoulsLikeGameVault/
 | 10 | Design Plans & Feature Artifacts | [Hitbox System Implementation Plan.md](#file-artifacthitbox-system-implementation-planmd) | `Artifact/Hitbox System Implementation Plan.md` | 18,934 bytes |
 | 11 | Design Plans & Feature Artifacts | [elden_ring_inventory_equipment_architecture.md](#file-artifactelden-ring-inventory-equipment-architecturemd) | `Artifact/elden_ring_inventory_equipment_architecture.md` | 28,021 bytes |
 | 12 | Design Plans & Feature Artifacts | [ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md](#file-artifactelden-ring-style-settings-system-planmd) | `Artifact/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md` | 51,194 bytes |
-| 13 | Design Plans & Feature Artifacts | [FLASK_HEALING_SYSTEM_RESEARCH.md](#file-artifactflask-healing-system-researchmd) | `Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md` | 25,292 bytes |
-| 14 | Locomotion & Gameplay Features | [Movement Mechanics Explained.md](#file-featuresmovement-mechanics-explainedmd) | `features/Movement Mechanics Explained.md` | 12,069 bytes |
-| 15 | Locomotion & Gameplay Features | [Current Jump and Roll System.md](#file-featurescurrent-jump-and-roll-systemmd) | `features/Current Jump and Roll System.md` | 11,566 bytes |
-| 16 | Locomotion & Gameplay Features | [Locomotion Architecture Technical Specification.md](#file-featureslocomotion-architecture-technical-specificationmd) | `features/Locomotion Architecture Technical Specification.md` | 13,832 bytes |
-| 17 | Locomotion & Gameplay Features | [Advanced Locomotion Architecture Prompt Specification.md](#file-featuresadvanced-locomotion-architecture-prompt-specificationmd) | `features/Advanced Locomotion Architecture Prompt Specification.md` | 11,187 bytes |
-| 18 | Locomotion & Gameplay Features | [System Specification - Souls-like Locomotion & Camera System.md](#file-featuressystem-specification---souls-like-locomotion-camera-systemmd) | `features/System Specification - Souls-like Locomotion & Camera System.md` | 8,153 bytes |
-| 19 | Locomotion & Gameplay Features | [Technical Specification - Roll & Backstep Vectoring Logic.md](#file-featurestechnical-specification---roll-backstep-vectoring-logicmd) | `features/Technical Specification - Roll & Backstep Vectoring Logic.md` | 8,800 bytes |
-| 20 | UI Architecture & Navigation Routes | [UI_Code_Build_Guide.md](#file-uiui-code-build-guidemd) | `ui/UI_Code_Build_Guide.md` | 5,645 bytes |
-| 21 | UI Architecture & Navigation Routes | [UI_Route_Navigation_Architecture.md](#file-uiui-route-navigation-architecturemd) | `ui/UI_Route_Navigation_Architecture.md` | 11,215 bytes |
-| 22 | UI Architecture & Navigation Routes | [Pause_Navigation_Route_Architecture.md](#file-uipause-navigation-route-architecturemd) | `ui/Pause_Navigation_Route_Architecture.md` | 10,074 bytes |
-| 23 | UI Architecture & Navigation Routes | [Grace_Route_Navigation_Architecture.md](#file-uigrace-route-navigation-architecturemd) | `ui/Grace_Route_Navigation_Architecture.md` | 8,042 bytes |
-| 24 | UI Architecture & Navigation Routes | [Equipment UI-UX Architecture & Unity Implementation Guide.md](#file-uiequipment-ui-ux-architecture-unity-implementation-guidemd) | `ui/Equipment UI-UX Architecture & Unity Implementation Guide.md` | 19,037 bytes |
-| 25 | UI Architecture & Navigation Routes | [Inventory UI-UX Architecture & Unity Implementation Guide.md](#file-uiinventory-ui-ux-architecture-unity-implementation-guidemd) | `ui/Inventory UI-UX Architecture & Unity Implementation Guide.md` | 16,496 bytes |
-| 26 | Tasks & Migration Plans | [Project_Organization_Analysis_And_Fix_Plan.md](#file-todoproject-organization-analysis-and-fix-planmd) | `ToDo/Project_Organization_Analysis_And_Fix_Plan.md` | 23,756 bytes |
-| 27 | Tasks & Migration Plans | [Refactor_Pause_Navigation_Naming.md](#file-todorefactor-pause-navigation-namingmd) | `ToDo/Refactor_Pause_Navigation_Naming.md` | 3,931 bytes |
-| 28 | Tasks & Migration Plans | [LIGHTING_BAKE_PLAN.md](#file-todolighting-bake-planmd) | `ToDo/LIGHTING_BAKE_PLAN.md` | 3,977 bytes |
+| 13 | Locomotion & Gameplay Features | [Movement Mechanics Explained.md](#file-featuresmovement-mechanics-explainedmd) | `features/Movement Mechanics Explained.md` | 12,069 bytes |
+| 14 | Locomotion & Gameplay Features | [Current Jump and Roll System.md](#file-featurescurrent-jump-and-roll-systemmd) | `features/Current Jump and Roll System.md` | 11,566 bytes |
+| 15 | Locomotion & Gameplay Features | [Locomotion Architecture Technical Specification.md](#file-featureslocomotion-architecture-technical-specificationmd) | `features/Locomotion Architecture Technical Specification.md` | 13,832 bytes |
+| 16 | Locomotion & Gameplay Features | [Advanced Locomotion Architecture Prompt Specification.md](#file-featuresadvanced-locomotion-architecture-prompt-specificationmd) | `features/Advanced Locomotion Architecture Prompt Specification.md` | 11,187 bytes |
+| 17 | Locomotion & Gameplay Features | [System Specification - Souls-like Locomotion & Camera System.md](#file-featuressystem-specification---souls-like-locomotion-camera-systemmd) | `features/System Specification - Souls-like Locomotion & Camera System.md` | 8,153 bytes |
+| 18 | Locomotion & Gameplay Features | [Technical Specification - Roll & Backstep Vectoring Logic.md](#file-featurestechnical-specification---roll-backstep-vectoring-logicmd) | `features/Technical Specification - Roll & Backstep Vectoring Logic.md` | 8,800 bytes |
+| 19 | UI Architecture & Navigation Routes | [UI_Code_Build_Guide.md](#file-uiui-code-build-guidemd) | `ui/UI_Code_Build_Guide.md` | 5,645 bytes |
+| 20 | UI Architecture & Navigation Routes | [UI_Route_Navigation_Architecture.md](#file-uiui-route-navigation-architecturemd) | `ui/UI_Route_Navigation_Architecture.md` | 11,215 bytes |
+| 21 | UI Architecture & Navigation Routes | [Pause_Navigation_Route_Architecture.md](#file-uipause-navigation-route-architecturemd) | `ui/Pause_Navigation_Route_Architecture.md` | 10,074 bytes |
+| 22 | UI Architecture & Navigation Routes | [Grace_Route_Navigation_Architecture.md](#file-uigrace-route-navigation-architecturemd) | `ui/Grace_Route_Navigation_Architecture.md` | 8,042 bytes |
+| 23 | UI Architecture & Navigation Routes | [Equipment UI-UX Architecture & Unity Implementation Guide.md](#file-uiequipment-ui-ux-architecture-unity-implementation-guidemd) | `ui/Equipment UI-UX Architecture & Unity Implementation Guide.md` | 19,037 bytes |
+| 24 | UI Architecture & Navigation Routes | [Inventory UI-UX Architecture & Unity Implementation Guide.md](#file-uiinventory-ui-ux-architecture-unity-implementation-guidemd) | `ui/Inventory UI-UX Architecture & Unity Implementation Guide.md` | 16,496 bytes |
+| 25 | Tasks & Migration Plans | [Project_Organization_Analysis_And_Fix_Plan.md](#file-todoproject-organization-analysis-and-fix-planmd) | `ToDo/Project_Organization_Analysis_And_Fix_Plan.md` | 23,756 bytes |
+| 26 | Tasks & Migration Plans | [Refactor_Pause_Navigation_Naming.md](#file-todorefactor-pause-navigation-namingmd) | `ToDo/Refactor_Pause_Navigation_Naming.md` | 3,931 bytes |
+| 27 | Tasks & Migration Plans | [LIGHTING_BAKE_PLAN.md](#file-todolighting-bake-planmd) | `ToDo/LIGHTING_BAKE_PLAN.md` | 3,977 bytes |
+| 28 | Tasks & Migration Plans | [FLASK_HEALING_SYSTEM_RESEARCH.md](#file-todoflask-healing-system-researchmd) | `ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md` | 25,292 bytes |
 
 ---
 
@@ -6542,14 +6542,14 @@ This delivers a clean foundation with visible value and without locking the proj
 
 ---
 
-### File: `Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md`
-<a id="file-artifactflask-healing-system-researchmd"></a>
+### File: `ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md`
+<a id="file-todoflask-healing-system-researchmd"></a>
 
-- **Relative Path:** `SoulsLikeGameVault/Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md`
+- **Relative Path:** `SoulsLikeGameVault/ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md`
 - **File Size:** 25,292 bytes
-- **Section Category:** Design Plans & Feature Artifacts
+- **Section Category:** Tasks & Migration Plans
 
-> 📄 **Source File Begin: `SoulsLikeGameVault/Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md`**
+> 📄 **Source File Begin: `SoulsLikeGameVault/ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md`**
 
 # Elden Ring Flask Mechanics & SoulsLike Codebase Research
 
@@ -6847,7 +6847,7 @@ The project already contains dedicated item interaction and drinking animations 
 
 
 
-> 📄 **Source File End: `SoulsLikeGameVault/Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md`**
+> 📄 **Source File End: `SoulsLikeGameVault/ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md`**
 
 
 ---

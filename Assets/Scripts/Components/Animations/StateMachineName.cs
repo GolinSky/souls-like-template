@@ -26,6 +26,8 @@ namespace SoulsLike.Entities.Character.Components.Animations
         GraceRestEnd = 21,
         HitReaction = 22,
         ParryStun = 23,
+        ItemDrink = 24,
+        ItemDrinkEmpty = 25,
         None = -1
     }
 }

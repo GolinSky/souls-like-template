@@ -7,6 +7,7 @@ using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
 using SoulsLike.Services.Targeting;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
+using SoulsLike.Items;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -81,6 +82,7 @@ namespace SoulsLike.Entities.Character
                 stats.CurrentStamina = stats.MaxStamina;
                 stats.IsAlive = true;
                 _healthComponent.ApplyAuthoritativeStats(stats);
+                _character.InventoryComponent.RefillFlask(ItemId.CrimsonFlask, 5);
             }
         }
 

@@ -35,7 +35,8 @@ namespace SoulsLike.Entities.Character.Input
             Vector2 moveInput = actions.Move.ReadValue<Vector2>();
             float cameraYaw = _cameraService.GetYaw();
             bool hasMovement = moveInput.sqrMagnitude > 0.0001f;
-            bool sprinting = _sprintQualified && hasMovement;
+            bool isItemUseActive = currentState == CharacterAction.State.ItemUse;
+            bool sprinting = _sprintQualified && hasMovement && !isItemUseActive;
             bool rollActive = currentState == CharacterAction.State.Roll;
             bool strongAttackPressed = !rollActive && TryResolveHeavyAttack(
                 actions.StrongAttack.WasPressedThisFrame(),
@@ -119,7 +120,7 @@ namespace SoulsLike.Entities.Character.Input
                 }
             }
 
-            return new CharacterInput(moveInput, cameraYaw, sprinting, actions.Crouch.IsPressed(), actions.Guard.IsPressed(), actions.StrongAttack.IsPressed() && !rollActive, first, second);
+            return new CharacterInput(moveInput, cameraYaw, sprinting, !isItemUseActive && actions.Crouch.IsPressed(), actions.Guard.IsPressed(), actions.StrongAttack.IsPressed() && !rollActive, first, second);
         }
 
         private void UpdateSprintGesture(bool pressedThisFrame, bool isPressed, bool releasedThisFrame)

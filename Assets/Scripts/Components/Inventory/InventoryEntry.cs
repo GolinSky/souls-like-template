@@ -72,7 +72,7 @@ namespace SoulsLike.Entities.Character.Components.Inventory
                 throw new ArgumentOutOfRangeException(nameof(itemId), itemId, null);
             }
 
-            if (quantity < 1)
+            if (quantity < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(quantity), quantity, null);
             }
@@ -85,7 +85,7 @@ namespace SoulsLike.Entities.Character.Components.Inventory
 
         internal void SetQuantity(int quantity)
         {
-            if (quantity < 1)
+            if (quantity < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(quantity), quantity, null);
             }

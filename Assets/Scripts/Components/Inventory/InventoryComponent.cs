@@ -110,7 +110,33 @@ namespace SoulsLike.Entities.Character.Components.Inventory
                 throw new InvalidOperationException($"Item '{definition.DisplayName}' is not consumable.");
             }
 
+            if (entry.ItemId == ItemId.CrimsonFlask)
+            {
+                if (entry.Quantity < quantity)
+                {
+                    throw new InvalidOperationException(
+                        $"Cannot consume {quantity} from '{definition.DisplayName}' with {entry.Quantity} charges.");
+                }
+
+                Model.UpdateQuantity(entry, entry.Quantity - quantity);
+                return;
+            }
+
             Remove(entryId, quantity);
+        }
+
+        public void RefillFlask(ItemId itemId, int maxCharges = 5)
+        {
+            foreach (InventoryEntry entry in Model.Entries)
+            {
+                if (entry.ItemId == itemId)
+                {
+                    Model.UpdateQuantity(entry, maxCharges);
+                    return;
+                }
+            }
+
+            Add(itemId, maxCharges);
         }
 
         public bool TryGetEntry(InventoryEntryId entryId, out InventoryEntry entry)
