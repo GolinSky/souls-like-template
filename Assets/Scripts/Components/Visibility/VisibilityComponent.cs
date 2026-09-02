@@ -1,15 +1,25 @@
+using System;
 using System.Collections.Generic;
+using SoulsLike.Entities.BaseEntity;
 using UnityEngine;
+using VContainer;
 using VContainer.Unity;
 
 namespace SoulsLike.Components.Visibility
 {
-    public sealed class VisibilityComponent : MonoBehaviour, IInitializable
+    public sealed class VisibilityComponent : MonoBehaviour, IInitializable, IEntityComponent, IDisposable
     {
         private readonly List<IVisibilityObserver> _observers = new();
         private readonly HashSet<RendererVisibilityReporter> _visibleRenderers = new();
+        private Entity _entity;
 
         public bool IsVisible => _visibleRenderers.Count > 0;
+
+        [Inject]
+        public void Construct(Entity entity)
+        {
+            _entity = entity;
+        }
 
         public void Initialize()
         {
@@ -32,6 +42,13 @@ namespace SoulsLike.Components.Visibility
 
                 reporter.Initialize(this);
             }
+
+            _entity?.RegisterComponent(this);
+        }
+
+        public void Dispose()
+        {
+            _entity?.UnRegisterComponent(this);
         }
 
         public void RegisterObserver(IVisibilityObserver observer)

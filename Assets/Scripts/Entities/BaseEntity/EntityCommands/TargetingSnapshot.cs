@@ -10,6 +10,7 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         public Vector3 Forward { get; }
         public Vector3 LockPoint { get; }
         public bool IsAlive { get; }
+        public bool IsVisible { get; }
 
         public TargetingSnapshot(
             long entityId,
@@ -17,7 +18,8 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
             Vector3 position,
             Vector3 forward,
             Vector3 lockPoint,
-            bool isAlive)
+            bool isAlive,
+            bool isVisible = true)
         {
             EntityId = entityId;
             EntityType = entityType;
@@ -25,6 +27,7 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
             Forward = forward;
             LockPoint = lockPoint;
             IsAlive = isAlive;
+            IsVisible = isVisible;
         }
     }
 }

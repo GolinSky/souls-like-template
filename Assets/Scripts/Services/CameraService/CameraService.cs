@@ -348,7 +348,7 @@ namespace SoulsLike.Services.CameraService
 
         public Camera GetMainCamera()
         {
-            return targetCamera;
+            return targetCamera != null ? targetCamera : Camera.main;
         }
 
         public void UpdateRotation(Vector2 look)

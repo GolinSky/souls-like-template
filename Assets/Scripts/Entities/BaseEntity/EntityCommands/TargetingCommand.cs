@@ -1,3 +1,4 @@
+using SoulsLike.Components.Visibility;
 using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Character.Components.Health;
 using UnityEngine;
@@ -10,9 +11,11 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         private readonly ViewEntity _viewEntity;
         private readonly TargetLockNode _lockNode;
         private readonly IHealthComponent _health;
+        private readonly VisibilityComponent _visibilityComponent;
 
         public Transform TargetTransform => _lockNode.TargetTransform;
         public bool IsAlive => _health.Stats.IsAlive;
+        public bool IsVisible => _visibilityComponent == null || _visibilityComponent.IsVisible;
 
         public TargetingCommand(Entity entity, ViewEntity viewEntity, TargetLockNode lockNode, IHealthComponent health)
             : base(entity)
@@ -21,6 +24,8 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
             _viewEntity = viewEntity;
             _lockNode = lockNode;
             _health = health;
+            _visibilityComponent = viewEntity.GetComponent<VisibilityComponent>()
+                ?? viewEntity.GetComponentInChildren<VisibilityComponent>();
         }
 
         public TargetingSnapshot Read()
@@ -32,7 +37,8 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
                 root.position,
                 root.forward,
                 _lockNode.TargetTransform.position,
-                _health.Stats.IsAlive);
+                _health.Stats.IsAlive,
+                IsVisible);
         }
     }
 }
