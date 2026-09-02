@@ -34,7 +34,8 @@ namespace SoulsLike.Entities.Enemy
         private GameState _gameState;
         private float _nextDecisionTime;
         private float _reactionReadyTime;
-        private float _waitUntil;
+        private float _patrolWaitUntil;
+        private float _postActionDecisionUntil;
         private float _searchUntil;
         private float _searchPauseUntil;
         private float _firstAttackReadyTime;
@@ -170,7 +171,6 @@ namespace SoulsLike.Entities.Enemy
             {
                 _motor.Stop();
                 _executor.SetLocomotion(Vector3.zero);
-                _waitUntil = Mathf.Max(_waitUntil, now + _actor.BehaviourProfile.WaitSeconds);
                 return;
             }
 
@@ -198,7 +198,6 @@ namespace SoulsLike.Entities.Enemy
             {
                 _motor.Stop();
                 _executor.SetLocomotion(Vector3.zero);
-                _waitUntil = Mathf.Max(_waitUntil, now + _actor.BehaviourProfile.WaitSeconds);
                 return;
             }
 
@@ -350,7 +349,7 @@ namespace SoulsLike.Entities.Enemy
             bool hasLineOfSight,
             float now)
         {
-            if (now < _waitUntil)
+            if (now < _postActionDecisionUntil)
             {
                 return;
             }
@@ -372,7 +371,7 @@ namespace SoulsLike.Entities.Enemy
                     MoveTo(BiasCombatDestinationTowardHome(targetPosition));
                     return;
                 case EnemyCombatMovement.Retreat:
-                    _waitUntil = 0f;
+                    _postActionDecisionUntil = 0f;
                     MoveTo(BiasCombatDestinationTowardHome(
                         _actor.transform.position
                         + (toTarget.sqrMagnitude > 0f
@@ -498,7 +497,7 @@ namespace SoulsLike.Entities.Enemy
                 return false;
             }
 
-            if (now < _waitUntil)
+            if (now < _postActionDecisionUntil)
             {
                 return false;
             }
@@ -534,7 +533,6 @@ namespace SoulsLike.Entities.Enemy
             MoveTo(BiasCombatDestinationTowardHome(
                 _actor.transform.position
                 + side * _actor.BehaviourProfile.StrafeDistance));
-            _waitUntil = now + _actor.BehaviourProfile.WaitSeconds;
         }
 
         private void TickCommittedAction(float now, float deltaTime)
@@ -674,10 +672,10 @@ namespace SoulsLike.Entities.Enemy
                     _actor.BehaviourProfile.ArrivalDistance))
             {
                 _waitingAtPatrolPoint = true;
-                _waitUntil = now + _actor.BehaviourProfile.PatrolWaitSeconds;
+                _patrolWaitUntil = now + _actor.BehaviourProfile.PatrolWaitSeconds;
             }
 
-            if (_waitingAtPatrolPoint && now < _waitUntil)
+            if (_waitingAtPatrolPoint && now < _patrolWaitUntil)
             {
                 WaitAt();
                 return;
@@ -854,7 +852,7 @@ namespace SoulsLike.Entities.Enemy
             ReportCombatState(previousGoal, goal);
             if (goal == EnemyGoal.Combat)
             {
-                _waitUntil = 0f;
+                _postActionDecisionUntil = 0f;
                 if (previousGoal != EnemyGoal.Combat)
                 {
                     _hasStartedAttack = false;
@@ -1023,7 +1021,7 @@ namespace SoulsLike.Entities.Enemy
             {
                 _committedAttackPoint = default;
                 _groupCoordinator.ReleasePressureSlot(_actor);
-                _waitUntil = Mathf.Max(_waitUntil, Time.time + _actor.BehaviourProfile.WaitSeconds);
+                _postActionDecisionUntil = Time.time + _actor.BehaviourProfile.PostActionDecisionDelaySeconds;
             }
         }
 
@@ -1031,7 +1029,7 @@ namespace SoulsLike.Entities.Enemy
         {
             _committedAttackPoint = default;
             _groupCoordinator.ReleasePressureSlot(_actor);
-            _waitUntil = Mathf.Max(_waitUntil, Time.time + _actor.BehaviourProfile.WaitSeconds);
+            _postActionDecisionUntil = Time.time + _actor.BehaviourProfile.PostActionDecisionDelaySeconds;
         }
 
         public void ReceiveAllyAlert(Vector3 position, long sourceEntityId, float now)

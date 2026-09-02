@@ -42,7 +42,8 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField, Min(0f)] private float preferredRangeMin = 1.4f;
         [SerializeField, Min(0f)] private float preferredRangeMax = 2.6f;
         [SerializeField, Min(0f)] private float strafeDistance = 1.5f;
-        [SerializeField, Min(0f)] private float waitSeconds = 0.35f;
+        [FormerlySerializedAs("waitSeconds")]
+        [SerializeField, Min(0f)] private float postActionDecisionDelaySeconds = 0.35f;
         [SerializeField, Min(0f)] private float decisionJitterSeconds;
         [SerializeField, Min(0f)] private float firstAttackHesitationMin;
         [SerializeField, Min(0f)] private float firstAttackHesitationMax;
@@ -82,7 +83,8 @@ namespace SoulsLike.Entities.Enemy
         public float PreferredRangeMin => preferredRangeMin;
         public float PreferredRangeMax => Mathf.Max(preferredRangeMin, preferredRangeMax);
         public float StrafeDistance => strafeDistance;
-        public float WaitSeconds => waitSeconds;
+        public float PostActionDecisionDelaySeconds => postActionDecisionDelaySeconds;
+        public float WaitSeconds => postActionDecisionDelaySeconds;
         public float DecisionJitterSeconds => decisionJitterSeconds;
         public float FirstAttackHesitationMin => firstAttackHesitationMin;
         public float FirstAttackHesitationMax => Mathf.Max(

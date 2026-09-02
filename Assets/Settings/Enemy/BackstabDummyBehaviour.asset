@@ -43,7 +43,7 @@ MonoBehaviour:
   preferredRangeMin: 0
   preferredRangeMax: 0
   strafeDistance: 0
-  waitSeconds: 0
+  postActionDecisionDelaySeconds: 0
   decisionJitterSeconds: 0
   firstAttackHesitationMin: 0
   firstAttackHesitationMax: 0

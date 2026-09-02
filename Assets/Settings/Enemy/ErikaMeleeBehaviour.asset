@@ -43,9 +43,12 @@ MonoBehaviour:
   preferredRangeMin: 1.15
   preferredRangeMax: 2.8
   strafeDistance: 1.6
-  waitSeconds: 0.4
+  postActionDecisionDelaySeconds: 0.4
   decisionJitterSeconds: 0.05
   firstAttackHesitationMin: 0
   firstAttackHesitationMax: 0
   usesPressureSlot: 1
+  remainsStationary: 0
+  locksFacing: 0
+  maximumAttackCount: 0
   randomSeed: 1741

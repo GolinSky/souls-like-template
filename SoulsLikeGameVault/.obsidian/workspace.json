@@ -187,6 +187,8 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
+    "Architecture/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
+    "ToDo/LAYER_SERVICE_FIX_PLAN.md",
     "ai/GPT_PRO_REVIEW_PACKAGE.md",
     "ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md",
     "Architecture/LAYER_SYSTEM_AUDIT_REPORT.md",
@@ -212,8 +214,6 @@
     "ui/UI_Route_Navigation_Architecture.md",
     "Architecture/CHARACTER_ECOSYSTEM_ARCHITECTURE_ANALYSIS.md",
     "ToDo/Character_Mediator_Architectural_Analysis.md",
-    "Artifact/Hitbox System Implementation Plan.md",
-    "ToDo/Character_Command_HSM_Runtime_Refactor_Plan.md",
     "Architecture",
     "ai",
     "Artifact",

@@ -32,6 +32,7 @@ This index classifies checked-in vault Markdown so drafts and historical artifac
 | `ToDo/Refactor_Pause_Navigation_Naming.md` | advisory | ToDo tracking for refactoring IPauseNavigationRouteNavigation naming. |
 | `ToDo/Project_Organization_Analysis_And_Fix_Plan.md` | advisory | Audit analysis of project structure against PROJECT_ORGANIZATION.md and phased remediation plan. |
 | `ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md` | advisory | Reference research and architectural survey of Elden Ring flask mechanics and SoulsLike codebase integration. |
+| `ToDo/LAYER_SERVICE_FIX_PLAN.md` | advisory | Remediation plan for layer service configuration, fail-fast rules, and query mask ownership. |
 | `animation/Animator_SubState_Machine_Architecture_Guide.md` | advisory | Authoritative animator controller sub-state machine rules, layout coordinates, and empty default state standards. |
 | `Welcome.md` | historical | Obsidian starter note; no policy value. |
 
