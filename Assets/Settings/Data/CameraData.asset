@@ -38,6 +38,7 @@ MonoBehaviour:
   <LockCameraPosition>k__BackingField: 0
   <LockHeadingHoldDistance>k__BackingField: 0.55
   <LockHeadingReleaseDistance>k__BackingField: 0.9
+  <LockYawDeadZoneDegrees>k__BackingField: 4
   <LockYawSmoothTime>k__BackingField: 0.12
   <LockYawMaxSpeed>k__BackingField: 150
   <LockBasePitch>k__BackingField: 6

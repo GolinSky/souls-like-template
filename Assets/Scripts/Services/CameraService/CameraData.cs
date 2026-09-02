@@ -51,6 +51,7 @@ namespace SoulsLike.Services.CameraService
         [Header("Lock On")]
         [field: SerializeField, Min(0f)] public float LockHeadingHoldDistance { get; private set; } = 0.55f;
         [field: SerializeField, Min(0f)] public float LockHeadingReleaseDistance { get; private set; } = 0.90f;
+        [field: SerializeField, Min(0f)] public float LockYawDeadZoneDegrees { get; private set; } = 4f;
         [field: SerializeField, Min(0.01f)] public float LockYawSmoothTime { get; private set; } = 0.12f;
         [field: SerializeField, Min(0f)] public float LockYawMaxSpeed { get; private set; } = 150f;
         [field: SerializeField] public float LockBasePitch { get; private set; } = 6f;
