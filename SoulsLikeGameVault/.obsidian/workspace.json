@@ -13,30 +13,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ui/UI_Code_Build_Guide.md",
+                "file": "Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "UI_Code_Build_Guide"
-            }
-          },
-          {
-            "id": "97aeffa9e14002e7",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "ToDo/Hitbox System Implementation Plan.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Hitbox System Implementation Plan"
+              "title": "FLASK_HEALING_SYSTEM_RESEARCH"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -98,7 +83,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 660.5
+    "width": 857.5
   },
   "right": {
     "id": "85f30760e5cc5301",
@@ -200,34 +185,40 @@
       "bases:Create new base": false
     }
   },
-  "active": "97aeffa9e14002e7",
+  "active": "1da76326f671a503",
   "lastOpenFiles": [
-    "ToDo/Hitbox System.md",
-    "ToDo/Hitbox System Implementation Plan.md",
-    "ai/GPT_PRO_REVIEW_PACKAGE.md",
-    "Arhitecture/CHARACTER_ECOSYSTEM_ARCHITECTURE_ANALYSIS.md",
-    "ai/Skill_Context_Index.md",
-    "ai",
-    "ui/UI_Code_Build_Guide.md",
-    "Welcome.md",
-    "ui/Inventory UI-UX Architecture & Unity Implementation Guide.md",
-    "ui/Equipment UI-UX Architecture & Unity Implementation Guide.md",
-    "ToDo/LIGHTING_BAKE_PLAN.md",
-    "features/Current Jump and Roll System.md",
-    "features/Locomotion Architecture Technical Specification.md",
-    "Artifact/elden_ring_inventory_equipment_architecture.md",
-    "Artifact",
-    "ToDo/First Steps.md",
-    "features/Advanced Locomotion Architecture Prompt Specification.md",
     "features/Technical Specification - Roll & Backstep Vectoring Logic.md",
+    "Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md",
     "features/System Specification - Souls-like Locomotion & Camera System.md",
     "features/Movement Mechanics Explained.md",
-    "Arhitecture/PROJECT_ORGANIZATION.md",
+    "features/Locomotion Architecture Technical Specification.md",
+    "features/Current Jump and Roll System.md",
+    "features/Advanced Locomotion Architecture Prompt Specification.md",
+    "ai/GPT_PRO_REVIEW_PACKAGE.md",
+    "ToDo/Project_Organization_Analysis_And_Fix_Plan.md",
+    "Artifact/Hitbox System.md",
+    "ToDo/Hitbox System.md",
+    "ToDo/First Steps.md",
+    "ui/Pause_Navigation_Route_Architecture.md",
+    "Architecture/PROJECT_ORGANIZATION.md",
+    "Artifact/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md",
+    "ToDo/Refactor_Pause_Navigation_Naming.md",
+    "ui/Grace_Route_Navigation_Architecture.md",
+    "ui/UI_Code_Build_Guide.md",
+    "ui/UI_Route_Navigation_Architecture.md",
+    "Architecture/CHARACTER_ECOSYSTEM_ARCHITECTURE_ANALYSIS.md",
     "ToDo/Character_Mediator_Architectural_Analysis.md",
+    "Artifact/Hitbox System Implementation Plan.md",
+    "ToDo/Character_Command_HSM_Runtime_Refactor_Plan.md",
+    "ToDo/Hitbox System Implementation Plan.md",
+    "Architecture/HITBOX_SYSTEM_ARCHITECTURE.md",
+    "Architecture/CHARACTER_SYSTEM_ARCHITECTURE.md",
+    "Architecture",
+    "ai",
+    "Artifact",
     "ui",
     "features",
     "ToDo",
-    "Untitled.md",
     "Arhitecture"
   ]
 }

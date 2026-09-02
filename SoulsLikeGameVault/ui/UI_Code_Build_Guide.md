@@ -112,7 +112,7 @@ builder.Register<MainMenuUiController>(Lifetime.Singleton).AsSelf().AsImplemente
 ## 2. Prefab UI Asset Creation & Organization
 
 ### Save Folder Pattern
-According to the project organization rules defined in [`PROJECT_ORGANIZATION.md`](../Arhitecture/PROJECT_ORGANIZATION.md):
+According to the project organization rules defined in [`PROJECT_ORGANIZATION.md`](../Architecture/PROJECT_ORGANIZATION.md):
 - The project follows a **type-first** structure: root folder = asset type (`Prefabs/`), subfolder = domain (`Ui/`).
 - Save location: `Assets/Prefabs/Ui/<FeatureName>/<FeatureName>Ui.prefab`
 - Example: [`Assets/Prefabs/Ui/MainMenu/MainMenuUi.prefab`](../../Assets/Prefabs/Ui/MainMenu/MainMenuUi.prefab)

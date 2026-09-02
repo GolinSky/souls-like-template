@@ -10,151 +10,154 @@ status: implemented
 
 # Current Jump and Roll System
 
-> Implementation note for the current SoulsLikeTemplate movement system. This describes the code after the jump and roll rework, and calls out important differences from the design specification.
+> Implementation note for the current SoulsLikeTemplate movement and locomotion system. This document outlines the authoritative C# runtime architecture, movement state machines, and key differences from theoretical design specifications.
 
 ## Sources of truth
 
-- Design reference: `C:\Users\golin\Downloads\elden_ring_like_jump_unity_spec.md`
-- Movement authority: `Assets/Scripts/Components/Movement/MovementComponent.cs`
-- Movement tuning: `Assets/Scripts/Components/Movement/MovementData.cs` and `Assets/Settings/Player/MovementData.asset`
-- Input and action capture: `Assets/Scripts/Entities/Character/Character.cs`
-- Action buffer: `Assets/Scripts/Entities/Character/CharacterActionBuffer.cs`
-- Animation bridge: `Assets/Scripts/Components/Animator/AnimatorComponent.cs`
-- State definitions: `Assets/Scripts/Components/Movement/LocomotionState.cs`
+- **Movement Authority**: [`Assets/Scripts/Components/Movement/MovementComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Movement/MovementComponent.cs)
+- **Movement Tuning**: [`Assets/Scripts/Components/Movement/MovementData.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Movement/MovementData.cs) and [`Assets/Settings/Player/MovementData.asset`](file:///f:/Private/SoulsLikeTemplate/Assets/Settings/Player/MovementData.asset)
+- **Character Aggregate Facade**: [`Assets/Scripts/Entities/Character/Character.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Character.cs)
+- **Input Adapter**: [`Assets/Scripts/Entities/Character/Input/PlayerInputReader.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Input/PlayerInputReader.cs)
+- **Action State Machine & Buffer**: [`Assets/Scripts/Entities/Character/Runtime/CharacterActionStateMachine.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Runtime/CharacterActionStateMachine.cs) and [`CharacterAction.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Runtime/CharacterAction.cs)
+- **Animation Presentation Bridge**: [`Assets/Scripts/Components/Animator/AnimatorComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Animator/AnimatorComponent.cs) and [`AnimatorRootMotionRelay.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Animator/AnimatorRootMotionRelay.cs)
+- **Locomotion State Definitions**: [`Assets/Scripts/Components/Movement/LocomotionState.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Movement/LocomotionState.cs)
+- **Contextual Attack Follow-ups**: [`Assets/Scripts/Components/Attack/AttackComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Attack/AttackComponent.cs)
 
-The deleted `Assets/Art/Animation/CharacterAnimator.controller` is not a source of truth. The live runtime controllers are:
-
+### Active Runtime Controllers
+The live runtime controllers are:
 - `NoWeaponAnimator.controller`
 - `CharacterGreatSwordAnimator.controller`
 - `CharacterGreatSwordLeftHandAnimator.controller`
 - `CharacterGreatSwordDualWieldAnimator.controller`
 
-## Ownership and update flow
+---
 
-1. `Character.UpdateBehaviour` reads the Input System and captures actions.
-2. `CharacterActionBuffer` holds the most recent action until it can execute.
-3. `MovementComponent` owns the CharacterController, horizontal and vertical velocity, gravity, ground probing, collision resolution, jump state, and roll state.
-4. `AnimatorComponent` receives gameplay state and presents it; animation does not decide whether the character is grounded.
+## Ownership and Update Flow
 
-This keeps one authoritative grounded and movement owner, as required by the jump specification.
+```mermaid
+flowchart TD
+    PIR["PlayerInputReader\n(Evaluates 0.3s Sprint Hold & Actions)"] -->|CharacterInput| PC["PlayerController"]
+    PC -->|Tick(CharacterInput)| C["Character (Facade)"]
+    C --> CASM["CharacterActionStateMachine\n(1-Slot Buffer, 1.0s Window)"]
+    C -->|Move, Jump, Roll| MC["MovementComponent\n(CharacterController, Gravity, Probing)"]
+    MC -.->|MovementPresentation Snapshot| C
+    C -->|SetLocomotion, SetAirborneMotion| AC["AnimatorComponent"]
+    AC -->|RootMotion / MovementBlocked Tags| RMR["AnimatorRootMotionRelay"]
+    RMR -->|ApplyAnimationMovement| MC
+    AC -->|QueueCheck / Exit SMB DTOs| C
+    C -->|State Updates| CASM
+```
 
-## Jump state machine
+1. `PlayerInputReader.Read` parses raw Unity Input System presses and camera yaw into a semantic [`CharacterInput`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Runtime/CharacterInput.cs) struct.
+2. `PlayerController.Tick` delivers `CharacterInput` to `Character.Tick`.
+3. `CharacterActionStateMachine` holds and dispatches actions (Roll, Jump, Attack, Equipment) with a 1-slot buffer.
+4. `MovementComponent` owns the `CharacterController`, horizontal and vertical velocity, gravity, ground probing, collision resolution, jump state, and roll state.
+5. `MovementComponent` produces an immutable `MovementPresentation` struct snapshot each frame, which `Character` pushes to `AnimatorComponent` and `CharacterAudioComponent`.
+
+---
+
+## Jump State Machine
 
 ```text
 Grounded
-   │ jump accepted
+   │ jump accepted (TryStartJump)
    ▼
 JumpStart
-   │ vertical velocity reaches the apex threshold
+   │ vertical velocity reaches apex threshold (<= 0.35 m/s)
    ▼
 Airborne
    │ walkable contact while descending
-   ├──────────────► Landing ─────► Grounded
-   └ hard impact ► HardLanding ──► Grounded
+   ├──────────────► Landing (Impact < 12 m/s) ─────► Grounded
+   └ hard impact ► HardLanding (Impact >= 12 m/s) ──► Grounded
 ```
 
-If support is lost without a jump request, the character enters `Airborne` directly. A ledge fall therefore does not play the jump-start trigger.
+If support is lost without a jump request (e.g. running off a ledge), the character enters `Airborne` directly after the `FallTimeout` grace window expires. A ledge fall therefore does not play the jump-start trigger.
 
-### Jump acceptance and trajectory
+### Jump Acceptance and Trajectory
 
-- Jump is captured through the shared action buffer, not executed directly from the input edge.
-- `TryStartJump` requires a grounded character, an unblocked movement component, and a completed jump cooldown.
-- Takeoff vertical velocity is physics based: `sqrt(2 * JumpHeight * abs(Gravity))`.
-- Current horizontal momentum is preserved at takeoff.
-- Gravity updates vertical velocity every movement tick; there is no variable-height jump, double jump, or large coyote window.
-- The ground probe is ignored briefly after takeoff so the initial jump is not cancelled by the capsule still overlapping the takeoff surface.
-- Apex is detected from vertical velocity, not from animation timing.
-- A minimum airborne time prevents an immediate same-frame landing.
-- Landing requires walkable ground contact while descending. The impact speed is measured from the lowest downward velocity reached during the flight.
-- Normal landing and hard landing are separate gameplay states. Hard landing is selected when downward impact speed reaches the hard-landing threshold and temporarily blocks movement through the animation state.
-- A successful landing resets vertical velocity to a small grounded value rather than leaving residual falling velocity.
+- **Buffer Execution**: Jump is submitted as [`CharacterAction.Jump`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Runtime/CharacterAction.cs) into `CharacterActionStateMachine`.
+- **Preconditions**: `TryStartJump` requires grounded status (`Model.Grounded == true`), unblocked movement (`_movementLockReasons == MovementLockReason.None`), enough stamina (`JumpStaminaCost = 10`), and completed jump cooldown (`JumpTimeout = 0.5s`).
+- **Takeoff Velocity**: Physics-calculated:
+  $$v_{\text{takeoff}} = \sqrt{2 \cdot \text{JumpHeight} \cdot |\text{Gravity}|} = \sqrt{2 \cdot 1.2 \cdot 15} \approx 6.0\text{ m/s}$$
+- **Momentum Preservation**: Current horizontal momentum at takeoff is preserved into the air.
+- **Air Control**: Directional steering in mid-air uses `Vector3.MoveTowards` scaled by `AirAcceleration * AirControl` ($8.0 \cdot 0.25 = 2.0\text{ m/s}^2$).
+- **Takeoff Probe Suppression**: Ground probing is suppressed for `JumpGroundIgnoreTime = 0.12s` or while $v_y > 0$ so the capsule does not immediately re-land on the takeoff ledge.
+- **Apex Detection**: Evaluated from vertical velocity reaching `JumpApexThreshold = 0.35 m/s`, transitioning `LocomotionState.JumpStart` $\rightarrow$ `LocomotionState.Airborne`.
+- **Landing Evaluation**: Requires downward vertical velocity ($v_y \le 0$), minimum airborne duration (`MinimumAirborneTime = 0.08s`), and walkable ground contact (`SphereCastNonAlloc` within slope limit).
+- **Landing Severity**:
+  - **Normal Landing** ($|v_y| < 12.0\text{ m/s}$): Sets `LandingType.Normal`, transitions to `Landing` and immediately recovers.
+  - **Hard Landing** ($|v_y| \ge 12.0\text{ m/s}$): Sets `LandingType.Hard`, transitions to `HardLanding`.
 
-### Current jump tuning
+### Current Jump Tuning (`MovementData.asset`)
 
-| Setting | Current value | Purpose |
-| --- | ---: | --- |
-| Jump height | 1.2 m | Target vertical displacement |
-| Gravity | -15 m/s^2 | Downward acceleration |
-| Jump timeout | 0.50 s | Minimum time between jump starts |
-| Air control | 0.25 | Fraction of ground steering authority in air |
-| Air acceleration | 8 m/s^2 | Rate of horizontal air steering |
-| Air rotation smooth time | 0.25 s | Free-mode facing response while airborne |
-| Jump ground-ignore time | 0.12 s | Takeoff ground-probe suppression |
-| Minimum airborne time | 0.08 s | Prevents instant re-landing |
-| Apex threshold | 0.35 m/s | Switch from `JumpStart` to `Airborne` |
-| Fall timeout | 0.10 s | Support-loss grace used for stairs and ledges |
-| Hard landing speed | 12 m/s downward | Selects `HardLanding` |
+| Setting | Current Value | Purpose |
+|---|---:|---|
+| **Jump Height** | `1.2 m` | Target vertical displacement |
+| **Gravity** | `-15.0 m/s²` | Downward vertical acceleration |
+| **Jump Timeout** | `0.50 s` | Cooldown timer between jump starts |
+| **Air Control** | `0.25` | Authority multiplier for airborne horizontal steering |
+| **Air Acceleration** | `8.0 m/s²` | Horizontal acceleration rate applied to air steering |
+| **Air Rotation Smooth Time** | `0.25 s` | Facing response smoothing time while airborne |
+| **Jump Ground-Ignore Time** | `0.12 s` | Takeoff ground-probe suppression window |
+| **Minimum Airborne Time** | `0.08 s` | Prevents same-frame takeoff/landing glitches |
+| **Jump Apex Threshold** | `0.35 m/s` | Transition velocity from `JumpStart` to `Airborne` |
+| **Fall Timeout** | `0.10 s` | Grace timer before airborne state on stairs/ledges |
+| **Hard Landing Min Fall Speed** | `12.0 m/s` | Impact speed threshold selecting `HardLanding` |
+| **Jump Stamina Cost** | `10.0 pts` | Stamina consumed on jump takeoff |
 
-## Jump animation contract
+---
+
+## Jump Animation Contract
 
 `AnimatorComponent` receives:
+- `Grounded` (bool)
+- `Jump` (trigger)
+- `VerticalVelocity` (float)
+- `LandingType` (int: `0 = None`, `1 = Normal`, `2 = Hard`)
 
-- `Grounded` bool
-- `Jump` trigger
-- `VerticalVelocity` float
-- `LandingType` int (`Normal` or `Hard`)
+The live controllers use these values to drive jump takeoff, the airborne loop, falling blend trees, normal landings, and hard landing stumbles. The animation layer acts as a presentation sink; `MovementComponent` remains the sole authority for physical state, position, and velocity.
 
-The live controllers use those values to select jump start, the airborne loop, ledge fall, normal landing, and hard landing. The animation is a pose and timing layer; the movement component remains responsible for the physical arc and grounded state.
+---
 
-Roll and backstep root motion is applied as planar motion. Its animation Y delta is ignored so a roll cannot lift the CharacterController and leave the character falsely airborne. Collision flags are still resolved by `MovementComponent`.
+## Roll and Sprint Input
 
-## Roll and sprint input
+In [`PlayerInputReader.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Input/PlayerInputReader.cs), `Sprint` and `Roll` share the same physical button binding:
+- **Press**: Starts the hold timer (`_sprintHoldTime = 0`).
+- **Hold ($\ge 0.30\text{ s}$)**: Qualifies input as `SprintHeld = true`.
+- **Release ($< 0.30\text{ s}$)**: Dispatches [`CharacterAction.Roll(moveInput, cameraYaw)`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Runtime/CharacterAction.cs).
 
-`Sprint` and `Roll` share the same physical Space binding in `ProjectInputActions.inputactions`, so the action is disambiguated by hold duration:
+### Roll Execution
 
-- Press starts the sprint-hold timer.
-- Holding for at least `0.30 s` qualifies the input as sprint.
-- Releasing before the threshold captures a roll.
-- Pressing Space while an existing roll is active sets `_rollPressedDuringRoll`; releasing it can then capture the next roll even though the previous animation is still finishing.
+1. **Preconditions**: Grounded status, unblocked movement, sufficient stamina (`RollStaminaCost = 12.0`), and completed `RollCooldown = 0.20s` (or open animation cancel window).
+2. **Direction Resolution**:
+   - **Free-Aim Mode**: Character rotates to face `worldDirection` ($T_{\text{char}} \rightarrow \vec{D}$), and `rollDirection` is set to `Vector2.up`.
+   - **Locked-On Mode**: Character faces the lock-on target. `QuantizeLockedRollDirection` clamps input to 4 cardinal bins (`Left`, `Right`, `Forward`, `Backward`).
+   - **Neutral Input**: If $\|\vec{I}\| \le 0.01$, triggers **Backstep** (`rollDirection = Vector2.down`).
+3. **Motion Application**:
+   - Rolling animations use root motion tagged `"RootMotion"`.
+   - `AnimatorRootMotionRelay` captures root delta. Planar motion is extracted (`planarDelta = Vector3(dx, 0, dz)`).
+   - In Locked-On lateral rolls, `CalculateLockedRollDelta` converts linear root displacement into a circular orbit around the target:
+     $$\Delta \theta = -\text{dir}_x \cdot \frac{\Delta d}{r} \cdot \frac{180}{\pi}$$
+   - Vertical delta is zeroed during rolls to prevent false airborne detachment.
+4. **Follow-up Attacks**:
+   - In [`AttackComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Attack/AttackComponent.cs), rolling sets a 1.0s contextual attack window upon exit. Light attack within this window triggers `AttackType.RollingLightAttack` (or `AttackType.BackStepAttack` after a backstep).
 
-This release-based mapping is why a roll is not emitted on every key-down event. It is also the reason the active-roll press latch is needed when the player spams the shared key near the end of a roll.
+---
 
-### Roll execution
+## Action Buffering and Queue Windows
 
-- A buffered roll stores the movement input and camera yaw from capture time.
-- In free mode, a directional roll faces the resolved travel direction and the animation drives the displacement.
-- With lock-on enabled, the character faces the target. Forward/back rolls move along the target radial direction, while left/right rolls orbit around the target.
-- A neutral roll input becomes a backstep.
-- `TryStartRoll` rejects blocked, ungrounded, or cooldown-locked starts. If the character is descending but already has valid walkable contact, it completes the landing first and then starts the roll. This closes the falling-after-roll edge case.
-- The roll cooldown is currently `0.20 s`.
+[`CharacterActionStateMachine`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Runtime/CharacterActionStateMachine.cs) implements a deterministic 1-slot action buffer:
+- **Buffer Retention**: 1-slot with `BUFFER_DURATION_SECONDS = 1.0s`. Latest input overwrites any previously buffered action.
+- **Queue Check Window**: When an animation reaches its `QueueCheck` normalized frame (via `AnimatorStateMachine` SMB), `Character` calls `TryExecuteBufferedAction(now)`.
+- **Roll-to-Sprint Interrupt**: Holding sprint while rolling triggers `InterruptRollForSprint()` as soon as the `QueueCheck` window opens, breaking into a sprint without completing full recovery.
+- **Chained Action Exit Suppression**: Chained attacks or rolls set `_ignoreNextActionExit = true` so the preceding animation's `Exit` signal does not prematurely pop the state machine back to `Neutral`.
 
-## Action buffering and animation interruption
+---
 
-`CharacterActionBuffer` is a one-slot buffer with a nominal `1.0 s` lifetime. A new action replaces the previous buffered action. While another action is active, the pending action is retained instead of expiring; it is consumed when the corresponding transition window becomes executable.
+## Current Boundaries and Non-Implemented Systems
 
-Roll execution can interrupt an active animation only when the animation transition window is open. A roll input captured during the current roll therefore waits for that window and starts the next roll instead of being silently discarded. Repeated inputs are not a multi-entry queue: the latest captured action wins.
-
-The design specification describes a shorter 15–30 frame (approximately 250–500 ms) sliding buffer. The current implementation intentionally uses one retained slot and a 1 second timer, which makes spam input more forgiving but does not preserve a sequence of multiple actions.
-
-## Free movement and lock-on behavior
-
-- Free mode rotates toward travel direction. Airborne rotation follows horizontal momentum with a slower smoothing time, so the character does not snap instantly when the stick changes direction.
-- Lock-on mode keeps combat-facing orientation toward the target while movement and rolls use target-relative directions.
-- Air control uses `MoveTowards` with the air-control multiplier, so reversing direction is gradual rather than an instantaneous velocity replacement.
-
-## Alignment and current boundaries
-
-Implemented from the specification:
-
-- One authoritative movement, gravity, collision, and grounded owner.
-- Explicit `Grounded`, `JumpStart`, `Airborne`, `Landing`, and `HardLanding` states.
-- Momentum-preserving takeoff and limited air steering.
-- Physics-driven apex and landing severity.
-- Ledge falls entering the fall loop without a jump-start animation.
-- Target-facing lock-on behavior and travel-facing free movement.
-- Buffered roll/jump actions and a roll-end interruption window.
-- Planar roll root motion with controller collision resolution.
-
-Current boundaries:
-
-- No jump attack, fall-damage, or lower-body hurtbox system is implemented in the movement code.
-- No variable-height jump, double jump, or explicit coyote-time mechanic is implemented.
-- The current sprint/roll threshold is `0.30 s`; the specification describes approximately `0.25 s` at 60 FPS.
-- The current action buffer is one slot with a 1 second retention policy, rather than a multi-command 15–30 frame queue.
-
-## Useful verification points
-
-- Inspect `CurrentLocomotionState`, `CurrentLandingType`, `VerticalVelocity`, and `Model.Grounded` in `MovementComponent` when diagnosing jump or landing behavior.
-- Verify the active Animator controller is one of the four live controllers listed above.
-- If a roll causes upward drift or `grounded` to become false, check that the animation movement path is applying planar delta only while the roll is active.
-- If a spammed roll is missed, check the shared Space press/release sequence and `_rollPressedDuringRoll` before changing animation transitions.
+1. **No Spatial Lower-Body Hurtbox Toggling**: The jump currently provides no lower-body ground sweep pass-through.
+2. **No Weight-Tier i-Frame Scaling**: Rolls use standard root-motion clips without equipment-load i-frame branching.
+3. **No Foot Placement IK**: Ground snapping is purely kinematic via `SphereCastNonAlloc` and `GroundSnapDistance = 0.35m`.
+4. **Action Buffer Capacity**: Uses a 1-slot 1.0s buffer rather than a multi-command sliding frame queue.
+5. **Crouch Attack Aliasing**: Crouch does not automatically alias light attacks to rolling attacks; attacks from crouch execute normal light attacks while crouched.

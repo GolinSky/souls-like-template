@@ -1,3 +1,167 @@
-SYSTEM PROMPT / TECHNICAL SPECIFICATION: Locomotion ArchitectureYou are an expert Game Physics & Animation Systems Engineer specializing in FromSoftware-style action RPG locomotion architecture. Utilize the precise mathematical, algorithmic, and frame-accurate rules outlined below for state transitions, movement vectors, input buffer handling, root-motion processing, stairs handling, and movement blocking flags.  1. Input Engine & Buffer Management1.1 Key-Release Action Mapping (Sprint vs. Roll)Key-Down Event: Starts an internal timer ($t_{\text{hold}}$).  Key-Up Event ($t_{\text{hold}} < T_{\text{threshold}}$): Triggers the Roll state transition on key release.  Threshold $T_{\text{threshold}} \approx 15\text{--}20\text{ frames}$ ($250\text{ ms}$ at $60\text{ FPS}$).  Hold Event ($t_{\text{hold}} \ge T_{\text{threshold}}$): Cancels the Roll event registration and transitions locomotion directly into Sprint.  1.2 Input Buffer (Sliding Window)Buffer Size: $15\text{--}30\text{ frames}$ ($250\text{--}500\text{ ms}$).  Behavior: Any action command (Roll, Jump, Crouch, Attack) pressed during non-cancelable action recovery windows is cached. The queued action executes on frame 1 of the earliest cancel window (CanCancel flag = true).  2. Root-Motion Centric Locomotion ArchitectureUnlike standard dynamic arcade movement systems that rely purely on kinematic velocity vectors applied directly to a capsule, FromSoftware's locomotion engine heavily relies on Root-Motion Animation Curves augmented by dynamic input blending.  2.1 Motion Extraction & BlendingRoot Motion Primacy: The primary velocity ($\vec{V}$) and yaw rotation ($\Delta \theta$) are extracted directly from the root bone's translation vector ($\vec{\Delta P}_{\text{root}}$) and rotation quaternion ($\mathbf{Q}_{\text{root}}$) frame-by-frame:
-$$\vec{V}_{\text{frame}} = \frac{\vec{\Delta P}_{\text{root}}}{\Delta t}, \quad \Delta \theta_{\text{frame}} = \text{Yaw}(\mathbf{Q}_{\text{root}})$$  Velocity Decoupling: Standard kinematic controller acceleration is zeroed out during root-motion driven actions (attacks, rolls, staggers). The capsule translation is governed strictly by the keyframed delta in the animation asset.  Directional Blending: For standard locomotion (Walk/Run), root-motion clips are blended across 2D parametric blend spaces based on input direction relative to camera/target, aligning the capsule forward vector with input while maintaining realistic foot-placement velocity.  3. Movement Blocking & Action Locking SystemTo enforce weighty, commitment-based combat, the movement system exposes an Action State Locking API driven by bitwise flag parameters per animation frame.  3.1 Movement Lock State Flags0x01 (LOCK_MOVE_INPUT): Ignores directional stick input ($\vec{I}$). Vector speed drops to zero or relies purely on Root Motion.  0x02 (LOCK_TURN_INPUT): Fixes character facing vector ($\vec{F}$). Rotational input is suppressed.  0x04 (USE_ROOT_MOTION): Overrides character capsule movement exclusively with root-motion translation/rotation curves.  0x08 (ALLOW_ACTION_CANCEL): Enables input buffer evaluation for recovery cancels (Crouch cancel, Roll cancel, Attack chaining).  3.2 Action State BehaviorsAttacks & Weapon Skills: Sets LOCK_MOVE_INPUT, LOCK_TURN_INPUT, and USE_ROOT_MOTION. Player cannot steer manually; positional lunge or step-forward is governed strictly by the attack clip's root displacement.  Hit Reactions & Stagger: Hard lock on all user inputs (LOCK_MOVE_INPUT | LOCK_TURN_INPUT | USE_ROOT_MOTION). Character velocity is driven by the stagger recoil root motion animation curve corresponding to the Poise Damage tier.  Roll / Backstep: LOCK_MOVE_INPUT active during dodge execution. Direction vector is locked at Frame 0 based on input angle and cannot be steered mid-flight. Switches to ALLOW_ACTION_CANCEL on Frame 13 (Medium load), enabling early exit into crouch/attack/block.  Landing Recovery / Impact Stuns:Light Fall ($< 4\text{m}$): No movement lock; root motion blends smoothly into landing-run transition.  Medium Fall ($4\text{m} - 12\text{m}$): Sets LOCK_MOVE_INPUT for $12\text{--}25\text{ frames}$ based on vertical velocity ($v_z$).  Hard Landing ($12\text{m} - 16\text{m}$): Forces heavy knee-bend recovery animation with absolute input lock ($\sim 45\text{ frames}$).  4. Ground Alignment & Stairs LogicHandling uneven geometry and stairways without capsule snagging or floating feet relies on Raycast Probes, Inverse Kinematics (IK), and Root Motion Surface Snapping.  4.1 Foot-Placement Inverse Kinematics (2-Bone IK)Raycast Down Probes: Dual downward raycasts originate from the hip/ankle bone transforms during ground-contact animation frames.  Offset Calculation: Calculates height delta $\Delta z_i = z_{\text{hit}} - z_{\text{root\_plane}}$.  Leg Adjustment: Adjusts ankle end-effectors via 2-Bone IK (Hip-Knee-Ankle) to match stair treads, while bending knee joints analytically.  Pelvis Adaptation: Drops or raises the root pelvis bone transform height by $\min(\Delta z_{\text{left}}, \Delta z_{\text{right}})$ to keep leg extensions within realistic biomechanical limits on steep stairs.  4.2 Stair Stepping & Slope PhysicsMaximum Step Height: $h_{\text{step}} \approx 0.3\text{m}$. Obstacles below $h_{\text{step}}$ allow smooth capsule step-up without triggering jump or fall state machines.  Slope Angle Thresholds:$\theta \le 45^\circ$: Walkable ground. Velocity vector is projected onto the surface plane vector $\vec{V}_{\text{surface}} = \vec{V} - (\vec{V} \cdot \vec{N}) \vec{N}$.  $45^\circ < \theta \le 60^\circ$: Sliding slope. Adds downward gravity vector acceleration while scaling player control input down.  $\theta > 60^\circ$: Non-walkable wall. Capsule collision bounces horizontal velocity; character detaches from ground state machine into Falling.  Root Motion Stair Slope Matching: When traversing stairs using root motion, horizontal root displacement ($\Delta x, \Delta y$) is aligned with the surface plane tangent, preventing the character model from clipping inside stair geometry or hovering off step edges.  5. Locomotion Modes: Free-Aim (Unlocked) vs. Target Lock-On5.1 Unlocked Locomotion (Free-Aim)Coordinate System: World-Space relative to Camera View Vector $\vec{V}_{\text{cam}}$.  Facing Vector ($\vec{F}$): Rotates dynamically to match the 2D joystick input direction $\vec{I}$.  Velocity Vector ($\vec{V}$): Uniform $100\%$ speed scalar regardless of direction angle.  Pivot Decay: Turn angles $> 90^\circ$ trigger turn-pivot animation clips, introducing dynamic deceleration curves and momentary speed penalties.  5.2 Target Lock-On LocomotionCoordinate System: Target-Relative Polar Coordinates (Distance $r$, Angle $\theta$).  Facing Vector ($\vec{F}$): Fixed toward target transform $\vec{T}$.  Velocity Vector Scale:Forward ($0^\circ$): $100\%$ base velocity.  Lateral Arc ($\pm 90^\circ$): $\approx 80\text{--}85\%$ base velocity.  Backward ($180^\circ$): $\approx 70\text{--}75\%$ base velocity.  Pivot Decay: Eliminated; character strafes and backpedals seamlessly without directional turn animation stalls.  6. Movement Tiers & Velocity MetricsCrouch Walk: $\approx 2.0\text{ m/s}$ | Stamina: $0.0\text{ pts/s}$ | Stealth Radius: Minimal ($\approx 20\%$)  Walk: $\approx 2.5\text{ m/s}$ | Stamina: $0.0\text{ pts/s}$ | Stealth Radius: Low ($\approx 40\%$)  Crouch Run (Fast Crouch): $\approx 3.6\text{ m/s}$ | Stamina: $0.0\text{ pts/s}$ | Stealth Radius: Low-Medium ($\approx 50\%$)  Run (Default Stick): $\approx 4.8\text{ m/s}$ | Stamina: $0.0\text{ pts/s}$ | Stealth Radius: Standard ($100\%$)  Sprint: $\approx 6.7\text{ m/s}$ | Stamina: Combat $\sim 10.0\text{ pts/s}$ / Non-Combat $0.0$ | Stealth Radius: High ($150\%$)  7. Roll / Dodge Engine & Frame Data ($60\text{ FPS}$)Rolling toggles the player character's hurtbox layer collision flags to ignore enemy attack hitboxes.  7.1 Weight Load ClassificationsLight Load ($< 30.0\%$): $13\text{ i-frames}$ (Frames 0–12), $8\text{ recovery frames}$, $+20\%$ displacement distance.  Medium Load ($30.0\% \text{ to } 69.9\%$): $13\text{ i-frames}$ (Frames 0–12), $8\text{ recovery frames}$, standard displacement.  Heavy Load ($70.0\% \text{ to } 99.9\%$): $12\text{ i-frames}$ (Frames 0–11), $16\text{ recovery frames}$, reduced displacement.  Overloaded ($\ge 100.0\%$): $0\text{ i-frames}$, high recovery stumble animation.  7.2 Backstep Mechanicsi-Frames: $0\text{ frames}$ (default state).  Recovery: $8\text{--}10\text{ frames}$.  Utility: Rapid rearward displacement allowing immediate transition into backstep-unique attack animation trees.  8. Jump Logic & Aerial Physics8.1 Lower-Body Hurtbox DeactivationInvincibility Classification: Selective spatial hurtbox toggling (NOT global i-Frames).  Active Window: Frame 1 to Jump Apex ($\approx 20\text{--}25\text{ frames}$).  Mechanism: The collision layer for the lower body (hips down to feet) is disabled or set to pass-through for attack hitboxes flagged with GroundSweep or Shockwave tags.  Upper Torso: Remains fully vulnerable throughout the entire jump arc.  8.2 Aerial Steering & TrajectoryInitial Velocity Vector: $\vec{V}_{\text{air}} = \vec{V}_{\text{ground}} + \vec{V}_{\text{jump}}$.  Air Control Influence: Directional input allows a maximum of $\approx 20\text{--}30\%$ vector alteration angle mid-air. Neutral jumps maintain vertical momentum without horizontal drift.  9. Crouch Logic & Animation Interrupts9.1 Capsule CompressionCollision Capsule Height: Reduced by $\approx 45\%$ upon entering Crouch state.  High-Hitbox Evasion: Head and upper torso hurtboxes lower instantly, allowing high-horizontal attack hitboxes to pass over the character model without triggering hit registration ("crouch dodging").  9.2 Animation Recovery Cancels & State AliasingRecovery Interruption: Toggling Crouch during the terminal recovery window of specific weapon attack clips cancels recovery frames earlier than standard Idle transitions.  Attack Index Mapping:crouch_attack_id == rolling_attack_id  
-Executing an attack while in the Crouch state directly triggers the Rolling Attack animation script, bypassing stamina consumption and roll recovery requirements
+---
+name: advanced-locomotion-prompt-spec
+description: System prompt specification and mathematical reference for Souls-like character locomotion architecture, with implementation mapping to SoulsLikeTemplate C# systems.
+version: 2.0.0
+---
+
+# Advanced Locomotion Architecture Prompt Specification
+
+> **SYSTEM PROMPT & TECHNICAL REFERENCE**: Game Physics & Animation Systems for FromSoftware-style Action RPG Locomotion.
+
+This document serves as both a high-fidelity system prompt specification for AI reasoning and an architectural reference comparing theoretical FromSoftware mechanics with the live C# implementation in **SoulsLikeTemplate**.
+
+---
+
+## 1. Input Engine & Buffer Management
+
+### 1.1 Key-Release Action Mapping (Sprint vs. Roll)
+- **Key-Down Event**: Starts an internal timer ($t_{\text{hold}}$).
+- **Key-Up Event ($t_{\text{hold}} < T_{\text{threshold}}$)**: Triggers the `Roll` state transition on key release.
+  - Threshold: $T_{\text{threshold}} = 0.30\text{ s}$ ($18\text{ frames}$ at $60\text{ FPS}$).
+- **Hold Event ($t_{\text{hold}} \ge T_{\text{threshold}}$)**: Suppresses the Roll registration and transitions locomotion directly into `Sprint`.
+
+### 1.2 Input Buffer Model
+- **Buffer Architecture**: Deterministic 1-slot action buffer holding the latest user intent.
+- **Buffer Retention**: $1.0\text{ s}$ lifetime (`BUFFER_DURATION_SECONDS`).
+- **Behavior**: Any action command (`Attack`, `Roll`, `Jump`, `Equipment`) received during non-cancelable action states is cached.
+- **Cancel Evaluation**: The queued action executes on frame 1 of the earliest cancel window (when the `StateMachineState.QueueCheck` signal is received from an active StateMachineBehaviour).
+- **Roll-to-Sprint Interrupt**: Holding Sprint during a Roll breaks out of the roll animation on the first frame of `QueueCheck`.
+
+---
+
+## 2. Root-Motion Centric Locomotion Architecture
+
+```mermaid
+flowchart LR
+    Root["Animation Root Bone Translation & Rotation"] --> Relay["AnimatorRootMotionRelay"]
+    Relay --> Tags{"State Tag Check"}
+    Tags -->|RootMotion| RM["Apply Animation Movement"]
+    Tags -->|MovementBlocked| MB["Suppress Kinematic Move"]
+    RM --> Planar["Project Planar Delta on Ground"]
+    Planar --> Move["CharacterController.Move"]
+```
+
+### 2.1 Motion Extraction & Blending
+- **Root Motion Primacy**: Velocity ($\vec{V}$) and yaw rotation ($\Delta \theta$) are extracted directly from the root bone's translation vector ($\vec{\Delta P}_{\text{root}}$) and rotation quaternion ($\mathbf{Q}_{\text{root}}$) frame-by-frame:
+  $$\vec{V}_{\text{frame}} = \frac{\vec{\Delta P}_{\text{root}}}{\Delta t}, \quad \Delta \theta_{\text{frame}} = \text{Yaw}(\mathbf{Q}_{\text{root}})$$
+- **Velocity Decoupling**: Kinematic controller acceleration is zeroed out during root-motion driven actions (attacks, rolls, staggers). The capsule translation is governed strictly by the keyframed delta in the animation asset.
+- **Planar Isolation**: Vertical root-motion translation is filtered during grounded locomotion and rolls to prevent false airborne detachment:
+  $$\vec{\Delta P}_{\text{planar}} = (\Delta P_x, 0, \Delta P_z)$$
+
+---
+
+## 3. Movement Blocking & Action Locking System
+
+The movement system exposes an Action State Locking API driven by bitwise flags in [`Character.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Character.cs):
+
+### 3.1 Movement Lock State Flags (`MovementLockReason`)
+- `0x01` (`Manual`): External script pause or explicit movement freeze.
+- `0x02` (`Animation`): Root motion active or `"MovementBlocked"` tag active on current animator state.
+- `0x04` (`Spawn`): Initial character spawn sequence lock.
+- `0x08` (`Parry`): Active parry deflection window lock.
+- `0x10` (`Critical`): Synchronized riposte / backstab execution lock.
+
+### 3.2 Action State Behaviors
+- **Attacks & Weapon Skills**: Sets `MovementLockReason.Animation`. Player cannot steer manually; positional lunge or step-forward is governed strictly by the attack clip's root displacement.
+- **Hit Reactions & Stagger**: Hard lock on user inputs. Velocity is driven by the stagger recoil root motion animation curve corresponding to the impact direction.
+- **Roll / Backstep**: Direction vector is locked at Frame 0 based on input angle. Transitions to cancelable recovery window when `QueueCheck` is reached.
+- **Landing Recovery**:
+  - *Normal Fall* ($|v_y| < 12.0\text{ m/s}$): Smooth blending into grounded locomotion without movement lock.
+  - *Hard Landing* ($|v_y| \ge 12.0\text{ m/s}$): Selects `LandingType.Hard`, playing heavy landing recovery stumble.
+
+---
+
+## 4. Ground Alignment & Stairs Logic
+
+Handling uneven geometry and stairways without capsule snagging relies on non-allocating SphereCast probing and surface normal projection.
+
+```mermaid
+flowchart TD
+    Cast["Physics.SphereCastNonAlloc\n(Radius = 0.9 * controller.radius)"] --> Filter["Filter Hits by Layer & Slope Limit"]
+    Filter --> Walkable{"Walkable Ground Hit?"}
+    Walkable -->|Yes| Ground["Model.Grounded = true<br/>Save _groundNormal"]
+    Walkable -->|No| Air["Model.Grounded = false<br/>(After FallTimeout 0.10s)"]
+    Ground --> Snap["Snap Downward up to GroundSnapDistance (0.35m)"]
+    Ground --> Proj["Project Velocity onto Surface Normal Plane"]
+```
+
+### 4.1 Probing & Downward Snapping
+- **SphereCast NonAlloc**: Probes ground geometry using `Physics.SphereCastNonAlloc` with a preallocated 8-hit buffer.
+- **Slope Angle Limits**: Slopes exceeding `CharacterController.slopeLimit` are rejected as non-walkable.
+- **Ground Snapping**: When moving downward over slopes or stair treads, [`MaintainGroundContact()`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Movement/MovementComponent.cs) pulls the capsule down up to `GroundSnapDistance = 0.35m` to prevent bouncing or false airborne detachment.
+- **Surface Normal Projection**:
+  $$\vec{V}_{\text{surface}} = \text{Normalize}\left(\vec{V} - (\vec{V} \cdot \vec{N})\vec{N}\right) \cdot \|\vec{V}\|$$
+
+---
+
+## 5. Locomotion Modes: Free-Aim vs. Target Lock-On
+
+### 5.1 Unlocked Locomotion (Free-Aim)
+- **Coordinate System**: World-Space relative to Camera View Vector $\vec{V}_{\text{cam}}$.
+- **Facing Vector ($\vec{F}$)**: Rotates smoothly to match the 2D movement vector using `Mathf.SmoothDampAngle` (`RotationSmoothTime = 0.12s`).
+- **Velocity Vector ($\vec{V}$)**: Uniform $100\%$ speed scalar in all $360^\circ$ directions.
+
+### 5.2 Target Lock-On Locomotion
+- **Coordinate System**: Target-relative local axes.
+- **Facing Vector ($\vec{F}$)**: Fixed directly toward the locked target transform $\vec{T}$.
+- **Velocity Scaling**:
+  - Forward ($0^\circ$): $100\%$ base velocity ($1.00\times$).
+  - Lateral Arc ($\pm 90^\circ$): $85\%$ base velocity ($0.85\times$).
+  - Backward ($180^\circ$): $72\%$ base velocity ($0.72\times$).
+- **Orbital Rolls**: Locked lateral rolls orbit circularly around the locked target:
+  $$\Delta \theta = -\text{dir}_x \cdot \frac{\Delta d}{r} \cdot \frac{180}{\pi}$$
+
+---
+
+## 6. Movement Tiers & Velocity Metrics
+
+Authoritative values from [`Assets/Settings/Player/MovementData.asset`](file:///f:/Private/SoulsLikeTemplate/Assets/Settings/Player/MovementData.asset):
+
+- **Crouch Walk**: $2.0\text{ m/s}$ | Stamina: $0.0\text{ pts/s}$ | Capsule Height: $1.0\text{ m}$
+- **Run (Default Stick)**: $2.0\text{ m/s}$ | Stamina: $0.0\text{ pts/s}$ | Standard locomotion
+- **Sprint (Hold Space)**: $6.0\text{ m/s}$ | Stamina: Combat $10.0\text{ pts/s}$ / Non-Combat $0.0\text{ pts/s}$
+- **Slide**: $8.0\text{ m/s}$ | Duration: $0.80\text{ s}$
+
+---
+
+## 7. Roll / Dodge Engine & Contextual Combat
+
+### 7.1 Roll Mechanics
+- **Stamina Cost**: `RollStaminaCost = 12.0 pts`.
+- **Cooldown**: `RollCooldown = 0.20 s`.
+- **Directional Modes**:
+  - *Free-Aim*: Rotates character to `worldDirection`, triggering forward roll animation.
+  - *Target Lock-On*: Direction quantized into 4 cardinal bins (`Left`, `Right`, `Forward`, `Backward`) with lateral orbital displacement.
+- **Backstep**: Triggered when Space is released with stick magnitude $\|\vec{I}\| \le 0.01$.
+
+### 7.2 Contextual Attack Follow-ups
+In [`AttackComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Attack/AttackComponent.cs):
+- Roll completion sets a $1.0\text{ s}$ contextual attack timer (`CONTEXTUAL_ATTACK_WINDOW`).
+- Light attack during or immediately after roll $\rightarrow$ `AttackType.RollingLightAttack`.
+- Light attack during or immediately after backstep $\rightarrow$ `AttackType.BackStepAttack`.
+- Light attack while sprinting $\rightarrow$ `AttackType.SprintingAttack`.
+
+---
+
+## 8. Jump Logic & Aerial Physics
+
+### 8.1 Aerial Physics
+- **Takeoff Impulse**: $v_y = \sqrt{2 \cdot \text{JumpHeight} \cdot |\text{Gravity}|} = \sqrt{2 \cdot 1.2 \cdot 15} \approx 6.0\text{ m/s}$.
+- **Horizontal Preservation**: Preserves ground velocity vector at takeoff.
+- **Air Steering Authority**: Directional steering accelerated at $\text{AirAcceleration} \cdot \text{AirControl} = 8.0 \cdot 0.25 = 2.0\text{ m/s}^2$.
+- **Apex Transition**: Vertical velocity dropping below `JumpApexThreshold = 0.35 m/s` transitions state from `JumpStart` to `Airborne`.
+
+---
+
+## 9. Template Realization & Architecture Mapping
+
+| Theoretical FromSoftware Concept | SoulsLikeTemplate C# Implementation | File Location |
+|---|---|---|
+| Sliding Input Buffer (15–30 frames) | 1-slot buffer with 1.0s retention & `QueueCheck` SMB evaluation | [`CharacterActionStateMachine.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Runtime/CharacterActionStateMachine.cs) |
+| Bitwise Movement Lock Flags | `MovementLockReason` enum bitmask (Manual, Animation, Spawn, Parry, Critical) | [`Character.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Character.cs) |
+| Root Motion Interception | `OnAnimatorMove` relay filtering `"RootMotion"` and `"MovementBlocked"` tags | [`AnimatorRootMotionRelay.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Animator/AnimatorRootMotionRelay.cs) |
+| Foot Placement IK & Pelvis Adaptation | Kinematic SphereCast non-alloc ground probing and downward snap ($0.35\text{m}$) | [`MovementComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Movement/MovementComponent.cs) |
+| Lock-On Orbit Trajectory | `CalculateLockedRollDelta` computing circular angular displacement | [`MovementComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Movement/MovementComponent.cs) |
+| Contextual Roll/Backstep Attacks | `AttackComponent` observing `StateMachineName` exit events with 1.0s window | [`AttackComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Components/Attack/AttackComponent.cs) |
+| Combat Sprint Stamina Drain | `ICombatStateNotifier` checking `CombatState.Combat` draining $10.0\text{ pts/s}$ | [`Character.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Character/Character.cs) |
+| Invulnerability / i-Frames | `CombatDefenseComponent` and `ResolveMeleeHitCommand` checking `IsInvulnerable` | [`CombatDefenseComponent.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Entities/Combat/CombatDefenseComponent.cs) |

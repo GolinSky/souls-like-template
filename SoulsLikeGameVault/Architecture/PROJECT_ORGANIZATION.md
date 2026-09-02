@@ -1,6 +1,6 @@
-# Project Organization Guide - MirrorMultiplayerTemplate
+# Project Organization Guide - SoulsLikeTemplate
 
-This document outlines the asset organization rules for the **MirrorMultiplayerTemplate** Unity project. The project follows a **type-first** structure, where the root folder defines the asset type, and subfolders define the domain or category.
+This document outlines the asset organization rules for the **SoulsLikeTemplate** Unity project. The project follows a **type-first** structure, where the root folder defines the asset type, and subfolders define the domain or category.
 
 ## Structure Overview
 
@@ -20,7 +20,7 @@ graph TD
     Art --> Art1["Models/ - Meshes & character models"]
     Art --> Art2["Animation/ - Controllers & avatar masks"]
     Art --> Art3["Materials/ - Visual surface definitions"]
-    
+
     Prefabs --> P1["Models/ - Characters, items, and skins"]
     Prefabs --> P2["Ui/ - Canvas and menu elements"]
     Prefabs --> P3["View/ - Network and service orchestration"]

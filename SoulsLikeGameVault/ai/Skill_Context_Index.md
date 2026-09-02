@@ -13,4 +13,5 @@ This registry is the allow-list for project context loaded by Codex skills. Regi
 - Resolve context by exact key and read only the registered headings needed for the task.
 - A `required` note supplies project constraints. An `advisory` note supplies feature guidance and cannot override live source, serialized assets, or required policy.
 - If Obsidian MCP is unavailable, read the exact disk fallback. Missing headings, missing files, or conflicts must be reported.
-- Unregistered and unverified notes are not project policy. In particular, `Arhitecture/PROJECT_ORGANIZATION.md` and character or locomotion drafts are intentionally excluded pending review.
+- This registry intentionally stays narrow. `Markdown_Status_Index.md` classifies the rest of the vault but does not register additional context keys.
+- Unregistered and unverified notes are not project policy. In particular, `Architecture/PROJECT_ORGANIZATION.md` and character, locomotion, or hitbox drafts are intentionally excluded pending review.
