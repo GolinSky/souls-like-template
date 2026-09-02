@@ -41,6 +41,9 @@ namespace SoulsLike.Services.CameraService
         [SerializeField] private float debugYawVelocity;
         [SerializeField] private float debugLockBlend;
         [SerializeField] private Vector3 debugFilteredLockPoint;
+        [SerializeField] private float debugFilteredLockBearingRate;
+        [SerializeField] private float debugLockYawUrgency;
+        [SerializeField] private float debugCameraTargetDistance = 3.3f;
 #endif
 
         private Tween _switchTween;
@@ -70,6 +73,10 @@ namespace SoulsLike.Services.CameraService
         private bool _isPitchOrbiting;
         private bool _isZoomed;
         private int _lastLockYawTurnSign;
+        private float _previousLockBearingYaw;
+        private float _filteredLockBearingRate;
+        private float _lockYawUrgency;
+        private bool _hasPreviousLockBearingYaw;
 
         private void OnDestroy()
         {
@@ -354,8 +361,9 @@ namespace SoulsLike.Services.CameraService
                 if (TryGetLockTarget(out TargetingSnapshot snapshot))
                 {
                     UpdateStableLockDirection(snapshot);
+                    UpdateLockBearingRate(snapshot, Time.deltaTime);
                     UpdateLockBodyYaw(Time.deltaTime);
-                    UpdateLockBodyPitch(snapshot, Time.deltaTime);
+                    UpdateLockBodyPitch(Time.deltaTime);
                     UpdateLockLookAtTarget(snapshot, Time.deltaTime);
                 }
                 else
@@ -421,6 +429,28 @@ namespace SoulsLike.Services.CameraService
             }
         }
 
+        private void UpdateLockBearingRate(TargetingSnapshot snapshot, float deltaTime)
+        {
+            Vector3 toTargetRoot = snapshot.Position - _followTarget.position;
+            Vector3 planarDirection = Vector3.ProjectOnPlane(toTargetRoot, Vector3.up);
+
+            float rawBearingRate = 0f;
+            if (planarDirection.sqrMagnitude > DIRECTION_THRESHOLD_SQR)
+            {
+                float bearingYaw = Mathf.Atan2(planarDirection.x, planarDirection.z) * Mathf.Rad2Deg;
+                if (_hasPreviousLockBearingYaw)
+                {
+                    rawBearingRate = Mathf.DeltaAngle(_previousLockBearingYaw, bearingYaw) / Mathf.Max(deltaTime, 0.0001f);
+                }
+
+                _previousLockBearingYaw = bearingYaw;
+                _hasPreviousLockBearingYaw = true;
+            }
+
+            float rateBlend = 1f - Mathf.Exp(-deltaTime / Mathf.Max(_cameraData.LockYawRateFilterTime, 0.0001f));
+            _filteredLockBearingRate = Mathf.Lerp(_filteredLockBearingRate, rawBearingRate, rateBlend);
+        }
+
         private void UpdateLockBodyYaw(float deltaTime)
         {
             float targetYaw = Mathf.Atan2(_stableLockDirection.x, _stableLockDirection.z) * Mathf.Rad2Deg;
@@ -435,15 +465,47 @@ namespace SoulsLike.Services.CameraService
                 _lastLockYawTurnSign = yawDelta > 0f ? 1 : -1;
             }
 
-            float enterAngle = _cameraData.LockOrbitYawEnterAngle;
-            float releaseAngle = _cameraData.LockOrbitYawReleaseAngle;
+            float rateUrgency = Mathf.InverseLerp(
+                _cameraData.LockFastFollowStartRate,
+                _cameraData.LockFastFollowFullRate,
+                Mathf.Abs(_filteredLockBearingRate));
+
+            float errorUrgency = Mathf.InverseLerp(
+                _cameraData.LockFastFollowStartError,
+                _cameraData.LockFastFollowFullError,
+                Mathf.Abs(yawDelta));
+
+            float desiredUrgency = Mathf.Max(rateUrgency, errorUrgency);
+            float urgencyBlend = 1f - Mathf.Exp(-deltaTime / Mathf.Max(_cameraData.LockYawUrgencySmoothTime, 0.0001f));
+            _lockYawUrgency = Mathf.Lerp(_lockYawUrgency, desiredUrgency, urgencyBlend);
+
+            float smoothTime = Mathf.Lerp(
+                _cameraData.LockOrbitYawSmoothTime,
+                _cameraData.LockYawFastSmoothTime,
+                _lockYawUrgency);
+
+            float maxSpeed = Mathf.Lerp(
+                _cameraData.LockOrbitYawMaxSpeed,
+                _cameraData.LockYawFastMaxSpeed,
+                _lockYawUrgency);
+
+            float deadZone = Mathf.Lerp(
+                _cameraData.LockOrbitYawReleaseAngle,
+                _cameraData.LockYawFastDeadZoneDegrees,
+                _lockYawUrgency);
+
+            float enterAngle = Mathf.Lerp(
+                _cameraData.LockOrbitYawEnterAngle,
+                _cameraData.LockYawFastDeadZoneDegrees * 2f,
+                _lockYawUrgency);
+
             float absError = Mathf.Abs(yawDelta);
 
             if (!_isYawOrbiting && absError >= enterAngle)
             {
                 _isYawOrbiting = true;
             }
-            else if (_isYawOrbiting && absError <= releaseAngle)
+            else if (_isYawOrbiting && absError <= deadZone)
             {
                 _isYawOrbiting = false;
             }
@@ -451,56 +513,39 @@ namespace SoulsLike.Services.CameraService
             float targetAngle = _cinemachineTargetYaw;
             if (_isYawOrbiting)
             {
-                targetAngle = _cinemachineTargetYaw + (yawDelta - Mathf.Sign(yawDelta) * releaseAngle);
+                targetAngle = _cinemachineTargetYaw + (yawDelta - Mathf.Sign(yawDelta) * deadZone);
+            }
+
+            if (_cameraData.LockYawLeadTime > 0f)
+            {
+                float predictedLead = Mathf.Clamp(
+                    _filteredLockBearingRate * _cameraData.LockYawLeadTime,
+                    -_cameraData.LockYawMaxLeadDegrees,
+                    _cameraData.LockYawMaxLeadDegrees);
+
+                targetAngle += predictedLead * _lockYawUrgency;
             }
 
             _cinemachineTargetYaw = Mathf.SmoothDampAngle(
                 _cinemachineTargetYaw,
                 targetAngle,
                 ref _yawVelocity,
-                _cameraData.LockOrbitYawSmoothTime,
-                _cameraData.LockOrbitYawMaxSpeed,
+                smoothTime,
+                maxSpeed,
                 deltaTime);
         }
 
-        private void UpdateLockBodyPitch(TargetingSnapshot snapshot, float deltaTime)
+        private void UpdateLockBodyPitch(float deltaTime)
         {
-            Vector3 toTarget = snapshot.LockPoint - _followTarget.position;
-            float planarDistance = new Vector2(toTarget.x, toTarget.z).magnitude;
-            float targetElevation = Mathf.Atan2(toTarget.y, Mathf.Max(planarDistance, _cameraData.LockMinPitchDistance)) * Mathf.Rad2Deg;
-            float influence = Mathf.Lerp(
-                _cameraData.LockCloseVerticalInfluence,
-                _cameraData.LockFarVerticalInfluence,
-                Mathf.InverseLerp(_cameraData.LockVerticalCloseDistance, _cameraData.LockVerticalFarDistance, planarDistance));
-            float desiredPitch = _cameraData.LockBasePitch - targetElevation * influence;
-            float pitchError = desiredPitch - _cinemachineTargetPitch;
-            float absPitchError = Mathf.Abs(pitchError);
-
-            float pitchEnter = _cameraData.LockOrbitPitchEnterAngle;
-            float pitchRelease = _cameraData.LockOrbitPitchReleaseAngle;
-
-            if (!_isPitchOrbiting && absPitchError >= pitchEnter)
-            {
-                _isPitchOrbiting = true;
-            }
-            else if (_isPitchOrbiting && absPitchError <= pitchRelease)
-            {
-                _isPitchOrbiting = false;
-            }
-
-            float targetPitchAngle = _cinemachineTargetPitch;
-            if (_isPitchOrbiting)
-            {
-                targetPitchAngle = _cinemachineTargetPitch + (pitchError - Mathf.Sign(pitchError) * pitchRelease);
-            }
-
             _cinemachineTargetPitch = Mathf.SmoothDampAngle(
                 _cinemachineTargetPitch,
-                targetPitchAngle,
+                _cameraData.LockBasePitch,
                 ref _pitchVelocity,
                 _cameraData.LockOrbitPitchSmoothTime,
                 _cameraData.LockOrbitPitchMaxSpeed,
                 deltaTime);
+
+            _isPitchOrbiting = Mathf.Abs(_cinemachineTargetPitch - _cameraData.LockBasePitch) > 0.1f;
         }
 
         private void UpdateLockLookAtTarget(TargetingSnapshot snapshot, float deltaTime)
@@ -552,7 +597,8 @@ namespace SoulsLike.Services.CameraService
                 CameraSide = cinemachineThirdPersonFollow.CameraSide,
                 FieldOfView = cinemachineCamera.Lens.FieldOfView,
                 MinPitch = _cameraData.BottomClamp,
-                MaxPitch = _cameraData.TopClamp
+                MaxPitch = _cameraData.TopClamp,
+                Damping = cinemachineThirdPersonFollow.Damping
             };
         }
 
@@ -561,6 +607,8 @@ namespace SoulsLike.Services.CameraService
             _lockPointVelocity *= 0.5f;
             _holdingCloseHeading = false;
             _hasStableLockDirection = false;
+            _hasPreviousLockBearingYaw = false;
+            _filteredLockBearingRate = 0f;
         }
 
         private void ResetLockModeState()
@@ -574,6 +622,9 @@ namespace SoulsLike.Services.CameraService
             _isYawOrbiting = false;
             _isPitchOrbiting = false;
             _lastLockYawTurnSign = 0;
+            _hasPreviousLockBearingYaw = false;
+            _filteredLockBearingRate = 0f;
+            _lockYawUrgency = 0f;
         }
 
         private void ApplyRigBlend()
@@ -593,6 +644,10 @@ namespace SoulsLike.Services.CameraService
             cinemachineThirdPersonFollow.CameraSide = Mathf.Lerp(
                 _freeRigProfile.CameraSide,
                 _cameraData.HumanoidLockProfile.CameraSide,
+                _lockBlend);
+            cinemachineThirdPersonFollow.Damping = Vector3.Lerp(
+                _freeRigProfile.Damping,
+                _cameraData.HumanoidLockProfile.Damping,
                 _lockBlend);
 
             if (!_isZoomed)
@@ -651,6 +706,13 @@ namespace SoulsLike.Services.CameraService
             debugYawVelocity = _yawVelocity;
             debugLockBlend = _lockBlend;
             debugFilteredLockPoint = _filteredLockPoint;
+            debugFilteredLockBearingRate = _filteredLockBearingRate;
+            debugLockYawUrgency = _lockYawUrgency;
+            if (cinemachineCamera != null && cinemachineCamera.Follow != null && targetCamera != null)
+            {
+                Vector3 planarCameraToTarget = Vector3.ProjectOnPlane(cinemachineCamera.Follow.position - targetCamera.transform.position, Vector3.up);
+                debugCameraTargetDistance = planarCameraToTarget.magnitude;
+            }
         }
 #endif
     }

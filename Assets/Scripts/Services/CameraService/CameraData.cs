@@ -68,28 +68,42 @@ namespace SoulsLike.Services.CameraService
         [field: SerializeField, Min(0f)] public float LockHeadingHoldDistance { get; private set; } = 0.55f;
         [field: SerializeField, Min(0f)] public float LockHeadingReleaseDistance { get; private set; } = 0.90f;
 
+        [Header("Lock Orbit Fast Yaw")]
+        [field: SerializeField, Min(0.01f)] public float LockYawFastSmoothTime { get; private set; } = 0.05f;
+        [field: SerializeField, Min(0f)] public float LockYawFastMaxSpeed { get; private set; } = 360f;
+        [field: SerializeField, Min(0f)] public float LockYawFastDeadZoneDegrees { get; private set; } = 0.75f;
+        [field: SerializeField, Min(0f)] public float LockFastFollowStartRate { get; private set; } = 45f;
+        [field: SerializeField, Min(0f)] public float LockFastFollowFullRate { get; private set; } = 135f;
+        [field: SerializeField, Min(0f)] public float LockFastFollowStartError { get; private set; } = 5f;
+        [field: SerializeField, Min(0f)] public float LockFastFollowFullError { get; private set; } = 18f;
+        [field: SerializeField, Min(0.01f)] public float LockYawRateFilterTime { get; private set; } = 0.08f;
+        [field: SerializeField, Min(0.01f)] public float LockYawUrgencySmoothTime { get; private set; } = 0.08f;
+        [field: SerializeField, Min(0f)] public float LockYawLeadTime { get; private set; } = 0.045f;
+        [field: SerializeField, Min(0f)] public float LockYawMaxLeadDegrees { get; private set; } = 5f;
+
         [Header("Lock Orbit Pitch")]
-        [field: SerializeField] public float LockBasePitch { get; private set; } = 6f;
+        [field: SerializeField] public float LockBasePitch { get; private set; } = 1f;
         [field: SerializeField, Min(0f)] public float LockOrbitPitchEnterAngle { get; private set; } = 10f;
         [field: SerializeField, Min(0f)] public float LockOrbitPitchReleaseAngle { get; private set; } = 5f;
         [field: SerializeField, Min(0.01f)] public float LockOrbitPitchSmoothTime { get; private set; } = 0.35f;
         [field: SerializeField, Min(0f)] public float LockOrbitPitchMaxSpeed { get; private set; } = 60f;
-        [field: SerializeField, Min(0f)] public float LockMinPitchDistance { get; private set; } = 1.50f;
-        [field: SerializeField, Min(0f)] public float LockVerticalCloseDistance { get; private set; } = 1.25f;
-        [field: SerializeField, Min(0f)] public float LockVerticalFarDistance { get; private set; } = 4f;
-        [field: SerializeField, Range(0f, 1f)] public float LockCloseVerticalInfluence { get; private set; } = 0.25f;
-        [field: SerializeField, Range(0f, 1f)] public float LockFarVerticalInfluence { get; private set; } = 0.65f;
+        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockMinPitchDistance { get; private set; } = 1.50f;
+        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockVerticalCloseDistance { get; private set; } = 1.25f;
+        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockVerticalFarDistance { get; private set; } = 4f;
+        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockCloseVerticalInfluence { get; private set; } = 0.25f;
+        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockFarVerticalInfluence { get; private set; } = 0.65f;
 
         [Header("Lock Rig Profile")]
         [field: SerializeField] public CameraRigProfile HumanoidLockProfile { get; private set; } = new CameraRigProfile
         {
             ShoulderOffset = new Vector3(0f, 0.48f, 0f),
-            VerticalArmLength = 0f,
+            VerticalArmLength = -0.31f,
             CameraDistance = 3.30f,
             CameraSide = 0.5f,
             FieldOfView = 48f,
             MinPitch = -10f,
-            MaxPitch = 16f
+            MaxPitch = 16f,
+            Damping = new Vector3(0.08f, 0.10f, 0.18f)
         };
 
         [Serializable]
@@ -102,6 +116,7 @@ namespace SoulsLike.Services.CameraService
             public float FieldOfView;
             public float MinPitch;
             public float MaxPitch;
+            public Vector3 Damping;
         }
     }
 }

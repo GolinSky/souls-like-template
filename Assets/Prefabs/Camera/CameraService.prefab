@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8008682277993262683}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -44,30 +44,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4468dbe7a9a34623b996ce3506fc6c8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.CameraService.CameraService
-  switchAngleDuration: 0.4
-  switchAngleEase: 7
-  zoomFov: 30
-  normalFov: 60
-  zoomDuration: 0.3
-  zoomEase: 3
   targetCamera: {fileID: 0}
   cinemachineCamera: {fileID: 0}
   cinemachineThirdPersonFollow: {fileID: 0}
-  fallFollowThreshold: 1.25
-  groundedFollowDamping: 0.3
-  fallFollowDamping: 0.45
-  longFallFollowDistance: 4
-  topClamp: 70
-  bottomClamp: -30
-  cameraAngleOverride: 0
-  lockCameraPosition: 0
-  mouseSensitivityY: 5
-  mouseSensitivityX: 5
-  lockVerticalDeadZone: 0.08
-  lockTargetViewportY: 0.58
-  lockYawSpeed: 150
-  lockPitchSpeed: 90
-  lockVerticalArmLength: 0.65
-  lockCameraSide: 0.5
-  lockRigBlendDuration: 0.2
-  lockRigBlendEase: 3
+  debugIsYawOrbiting: 0
+  debugIsPitchOrbiting: 0
+  debugYawVelocity: 0
+  debugLockBlend: 0
+  debugFilteredLockPoint: {x: 0, y: 0, z: 0}
+  debugFilteredLockBearingRate: 0
+  debugLockYawUrgency: 0
+  debugCameraTargetDistance: 3.3

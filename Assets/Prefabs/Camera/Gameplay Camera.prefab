@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 1232993280757060568}
   - component: {fileID: 5358456880500731145}
   - component: {fileID: 636723050194953196}
-  - component: {fileID: 1761190817596540058}
   - component: {fileID: 1806576372158343502}
+  - component: {fileID: 1761190817596540058}
   m_Layer: 0
   m_Name: Gameplay Camera
   m_TagString: Untagged
@@ -104,23 +104,6 @@ MonoBehaviour:
     CameraRadius: 0.15
     DampingIntoCollision: 0
     DampingFromCollision: 1
---- !u!114 &1761190817596540058
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6761947348133965569}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBasicMultiChannelPerlin
-  NoiseProfile: {fileID: 11400000, guid: 46965f9cbaf525742a6da4c2172a99cd, type: 2}
-  PivotOffset: {x: 0, y: 0, z: 1}
-  AmplitudeGain: 0
-  FrequencyGain: 0.3
-  m_NoiseOffsets: {x: -451.37964, y: 684.7062, z: 648.0488}
 --- !u!114 &1806576372158343502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,3 +133,20 @@ MonoBehaviour:
     Time: 0
     Smoothing: 0
     IgnoreY: 0
+--- !u!114 &1761190817596540058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6761947348133965569}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBasicMultiChannelPerlin
+  NoiseProfile: {fileID: 11400000, guid: 46965f9cbaf525742a6da4c2172a99cd, type: 2}
+  PivotOffset: {x: 0, y: 0, z: 1}
+  AmplitudeGain: 0
+  FrequencyGain: 0.3
+  m_NoiseOffsets: {x: -451.37964, y: 684.7062, z: 648.0488}
