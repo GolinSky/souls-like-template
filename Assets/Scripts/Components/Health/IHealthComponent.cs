@@ -22,6 +22,7 @@ namespace SoulsLike.Entities.Character.Components.Health
         void ApplyAuthoritativeStats(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
         void SetInvulnerable(bool isInvulnerable);
+        void SetRecoveryInvulnerable(bool isInvulnerable);
         void SetCheatInvulnerable(bool isInvulnerable);
     }
 }

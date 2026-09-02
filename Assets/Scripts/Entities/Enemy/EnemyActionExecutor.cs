@@ -1,5 +1,6 @@
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.Character.Components.Equipment;
+using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Items;
 using UnityEngine;
@@ -12,11 +13,6 @@ namespace SoulsLike.Entities.Enemy
     {
         private const float ACTION_TRANSITION_SECONDS = 0.08f;
         private const float ACTION_ENTRY_TIMEOUT_SECONDS = 1f;
-        private const string CRITICAL_HIT_ONE_HAND_STATE = "CriticalHitOneHand";
-        private const string CRITICAL_HIT_ONE_HAND_DIE_STATE = "CriticalHitOneHandDie";
-        private const string CRITICAL_HIT_TWO_HAND_STATE = "CriticalHitTwoHand";
-        private const string CRITICAL_HIT_TWO_HAND_DIE_STATE = "CriticalHitTwoHandDie";
-        private const string LOCOMOTION_STATE = "Locomotion";
         private static readonly int SPEED = Animator.StringToHash("Speed");
         private static readonly int MOVE_X = Animator.StringToHash("MoveX");
         private static readonly int MOVE_Y = Animator.StringToHash("MoveY");
@@ -29,6 +25,11 @@ namespace SoulsLike.Entities.Enemy
         private static readonly int PARRIED_TRIGGER = Animator.StringToHash("Parried");
         private static readonly int POISE_STAGGERED_TRIGGER = Animator.StringToHash("PoiseStaggered");
         private static readonly int STANCE_BROKEN_TRIGGER = Animator.StringToHash("StanceBroken");
+        private static readonly int CRITICAL_HIT_ONE_HAND_TRIGGER = Animator.StringToHash("CriticalHitOneHand");
+        private static readonly int CRITICAL_HIT_ONE_HAND_DIE_TRIGGER = Animator.StringToHash("CriticalHitOneHandDie");
+        private static readonly int CRITICAL_HIT_TWO_HAND_TRIGGER = Animator.StringToHash("CriticalHitTwoHand");
+        private static readonly int CRITICAL_HIT_TWO_HAND_DIE_TRIGGER = Animator.StringToHash("CriticalHitTwoHandDie");
+        private static readonly int GET_UP_TRIGGER = Animator.StringToHash("GetUp");
 
         [SerializeField] private Animator animator;
         [SerializeField] private EnemyNavigationMotor motor;
@@ -39,12 +40,15 @@ namespace SoulsLike.Entities.Enemy
         private Entity _entity;
         private WeaponDatabase _weaponDatabase;
         private CombatDefenseComponent _defense;
+        private IHealthComponent _health;
         private EnemyMove _queuedMove;
         private CharacterActionDefinition _forcedAction;
         private bool _isInitialized;
         private bool _isMeleeHitboxOpen;
         private bool _currentMoveStarted;
         private float _pendingMoveEntryDeadline;
+        private bool _recoveryRequested;
+        private bool _criticalDeathCompleted;
 
         public EnemyMove CurrentMove { get; private set; }
         public bool CurrentMoveStarted => _currentMoveStarted;
@@ -60,6 +64,7 @@ namespace SoulsLike.Entities.Enemy
         public bool BlocksDecisions => Mode is EnemyExecutionMode.Action
             or EnemyExecutionMode.Reaction
             or EnemyExecutionMode.CriticalVictim
+            or EnemyExecutionMode.GetUp
             or EnemyExecutionMode.Death;
         public event System.Action<EnemyMove> ActionStarted;
         public event System.Action<EnemyMove> ActionCompleted;
@@ -78,12 +83,14 @@ namespace SoulsLike.Entities.Enemy
             IEntityLocator entityLocator,
             Entity entity,
             WeaponDatabase weaponDatabase,
-            CombatDefenseComponent defense)
+            CombatDefenseComponent defense,
+            IHealthComponent health)
         {
             _entityLocator = entityLocator;
             _entity = entity;
             _weaponDatabase = weaponDatabase;
             _defense = defense;
+            _health = health;
         }
 
         public void Initialize()
@@ -276,13 +283,14 @@ namespace SoulsLike.Entities.Enemy
             _defense.SetHitReaction(false);
             _defense.SetParryStunned(false);
             _defense.SetParryWindowActive(false);
-            _defense.SetCriticalState(false);
+            ClearTransientProtection();
             Phase = EnemyActionPhase.None;
             CurrentMove = null;
             _forcedAction = null;
             _currentMoveStarted = false;
             _pendingMoveEntryDeadline = 0f;
             IsCriticalVictimLethal = false;
+            _criticalDeathCompleted = false;
             Mode = EnemyExecutionMode.Locomotion;
             if (interruptedAction)
             {
@@ -343,9 +351,10 @@ namespace SoulsLike.Entities.Enemy
             motor.SetRootMotion(false);
             Mode = EnemyExecutionMode.CriticalVictim;
             IsCriticalVictimLethal = lethal;
-            animator.CrossFadeInFixedTime(
-                ResolveCriticalVictimState(handMode, lethal),
-                ACTION_TRANSITION_SECONDS);
+            _recoveryRequested = false;
+            _criticalDeathCompleted = false;
+            ResetCriticalTriggers();
+            animator.SetTrigger(ResolveCriticalVictimTrigger(handMode, lethal));
         }
 
         public void CompleteCriticalVictim()
@@ -355,17 +364,77 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
-            bool lethal = IsCriticalVictimLethal;
-            Interrupt(EnemyInterruptReason.CriticalComplete);
-            if (!lethal)
+            if (IsCriticalVictimLethal)
             {
-                animator.CrossFadeInFixedTime(LOCOMOTION_STATE, ACTION_TRANSITION_SECONDS);
+                _criticalDeathCompleted = true;
+                ClearTransientProtection();
+                Mode = EnemyExecutionMode.Death;
             }
+            else
+            {
+                _recoveryRequested = true;
+                animator.SetTrigger(GET_UP_TRIGGER);
+            }
+        }
+
+        public void ReportCriticalVictimEntered(bool lethal)
+        {
+            if (Mode != EnemyExecutionMode.CriticalVictim)
+            {
+                return;
+            }
+
+            _defense.SetCriticalState(true);
+            motor.Stop();
+            motor.SetRootMotion(false);
+        }
+
+        public void ReportCriticalVictimExited(bool lethal)
+        {
+            if (lethal)
+            {
+                _criticalDeathCompleted = true;
+                if (Mode == EnemyExecutionMode.CriticalVictim || Mode == EnemyExecutionMode.Death)
+                {
+                    ClearTransientProtection();
+                    Mode = EnemyExecutionMode.Death;
+                }
+            }
+        }
+
+        public void ReportGetUpEntered()
+        {
+            Mode = EnemyExecutionMode.GetUp;
+            _defense.SetCriticalState(false);
+            _health?.SetRecoveryInvulnerable(true);
+            motor.Stop();
+            motor.SetRootMotion(false);
+            CloseMeleeHitbox();
+            ComboWindowOpen = false;
+            TrackingOpen = false;
+            _defense.SetHyperArmor(false);
+        }
+
+        public void ReportGetUpExited()
+        {
+            if (Mode == EnemyExecutionMode.GetUp)
+            {
+                ClearTransientProtection();
+                Mode = EnemyExecutionMode.Locomotion;
+            }
+        }
+
+        private void ClearTransientProtection()
+        {
+            _health?.SetRecoveryInvulnerable(false);
+            _defense?.SetCriticalState(false);
+            _recoveryRequested = false;
+            ResetCriticalTriggers();
         }
 
         private void OnAnimatorMove()
         {
-            if (Mode == EnemyExecutionMode.CriticalVictim)
+            if (Mode is EnemyExecutionMode.CriticalVictim or EnemyExecutionMode.GetUp)
             {
                 return;
             }
@@ -484,18 +553,27 @@ namespace SoulsLike.Entities.Enemy
             Interrupt(EnemyInterruptReason.AnimatorMismatch);
         }
 
-        private static string ResolveCriticalVictimState(HandMode handMode, bool lethal)
+        private static int ResolveCriticalVictimTrigger(HandMode handMode, bool lethal)
         {
             return handMode switch
             {
                 HandMode.OneHanded => lethal
-                    ? CRITICAL_HIT_ONE_HAND_DIE_STATE
-                    : CRITICAL_HIT_ONE_HAND_STATE,
+                    ? CRITICAL_HIT_ONE_HAND_DIE_TRIGGER
+                    : CRITICAL_HIT_ONE_HAND_TRIGGER,
                 HandMode.TwoHanded => lethal
-                    ? CRITICAL_HIT_TWO_HAND_DIE_STATE
-                    : CRITICAL_HIT_TWO_HAND_STATE,
+                    ? CRITICAL_HIT_TWO_HAND_DIE_TRIGGER
+                    : CRITICAL_HIT_TWO_HAND_TRIGGER,
                 _ => throw new System.ArgumentOutOfRangeException(nameof(handMode), handMode, null)
             };
+        }
+
+        private void ResetCriticalTriggers()
+        {
+            animator.ResetTrigger(CRITICAL_HIT_ONE_HAND_TRIGGER);
+            animator.ResetTrigger(CRITICAL_HIT_ONE_HAND_DIE_TRIGGER);
+            animator.ResetTrigger(CRITICAL_HIT_TWO_HAND_TRIGGER);
+            animator.ResetTrigger(CRITICAL_HIT_TWO_HAND_DIE_TRIGGER);
+            animator.ResetTrigger(GET_UP_TRIGGER);
         }
 
         private void OnMeleeHitResolved(MeleeHitResult result)

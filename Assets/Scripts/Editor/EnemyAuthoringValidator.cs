@@ -44,6 +44,15 @@ namespace SoulsLike.Editor
             "CriticalHitTwoHandDie"
         };
 
+        private static readonly string[] CRITICAL_TRIGGER_NAMES =
+        {
+            "CriticalHitOneHand",
+            "CriticalHitOneHandDie",
+            "CriticalHitTwoHand",
+            "CriticalHitTwoHandDie",
+            "GetUp"
+        };
+
         [MenuItem(MENU_PATH)]
         public static void Validate()
         {
@@ -573,11 +582,44 @@ namespace SoulsLike.Editor
             string label,
             ValidationReport report)
         {
+            foreach (string triggerName in CRITICAL_TRIGGER_NAMES)
+            {
+                if (!HasTrigger(controller, triggerName))
+                {
+                    report.Error($"{label} is missing critical trigger '{triggerName}'.", controller);
+                }
+            }
+
             foreach (string stateName in CRITICAL_VICTIM_STATE_NAMES)
             {
-                if (GetState(controller, stateName) == null)
+                AnimatorState state = GetState(controller, stateName);
+                if (state == null)
                 {
                     report.Error($"{label} is missing critical victim state '{stateName}'.", controller);
+                    continue;
+                }
+
+                if (!state.behaviours.OfType<EnemyCriticalVictimStateBehaviour>().Any())
+                {
+                    report.Error($"{label} critical victim state '{stateName}' is missing {nameof(EnemyCriticalVictimStateBehaviour)}.", state);
+                }
+            }
+
+            AnimatorState getUpState = GetState(controller, "GetUp");
+            if (getUpState == null)
+            {
+                report.Error($"{label} is missing get up state 'GetUp'.", controller);
+            }
+            else
+            {
+                if (!getUpState.behaviours.OfType<EnemyGetUpStateBehaviour>().Any())
+                {
+                    report.Error($"{label} get up state 'GetUp' is missing {nameof(EnemyGetUpStateBehaviour)}.", getUpState);
+                }
+
+                if (!HasOutgoingTransition(getUpState))
+                {
+                    report.Error($"{label} get up state 'GetUp' has no exit transition.", getUpState);
                 }
             }
 

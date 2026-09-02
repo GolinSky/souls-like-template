@@ -6,6 +6,7 @@ namespace SoulsLike.Entities.Enemy
         Action,
         Reaction,
         CriticalVictim,
+        GetUp,
         Death
     }
 }

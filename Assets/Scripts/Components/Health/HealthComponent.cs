@@ -11,10 +11,11 @@ namespace SoulsLike.Entities.Character.Components.Health
         private float _staminaRecoveryDelayRemaining;
         private bool _staminaSpentSinceRecoveryTick;
         private bool _isGraceInvulnerable;
+        private bool _isRecoveryInvulnerable;
         private bool _isCheatInvulnerable;
 
         public HealthStats Stats => Model.Stats;
-        public bool IsInvulnerable => _isGraceInvulnerable || _isCheatInvulnerable;
+        public bool IsInvulnerable => _isGraceInvulnerable || _isRecoveryInvulnerable || _isCheatInvulnerable;
         public bool IsCheatInvulnerable => _isCheatInvulnerable;
 
         public void Initialize()
@@ -265,6 +266,11 @@ namespace SoulsLike.Entities.Character.Components.Health
         public void SetInvulnerable(bool isInvulnerable)
         {
             _isGraceInvulnerable = isInvulnerable;
+        }
+
+        public void SetRecoveryInvulnerable(bool isInvulnerable)
+        {
+            _isRecoveryInvulnerable = isInvulnerable;
         }
 
         public void SetCheatInvulnerable(bool isInvulnerable)

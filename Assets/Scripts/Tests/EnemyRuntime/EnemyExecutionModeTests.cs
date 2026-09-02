@@ -11,6 +11,7 @@ namespace SoulsLike.Tests.EnemyRuntime
         [TestCase("Action", true)]
         [TestCase("Reaction", true)]
         [TestCase("CriticalVictim", true)]
+        [TestCase("GetUp", true)]
         [TestCase("Death", true)]
         public void ExecutionModeControlsDecisionBlocking(string modeName, bool blocksDecisions)
         {
