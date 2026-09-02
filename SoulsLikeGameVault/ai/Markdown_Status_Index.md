@@ -13,9 +13,11 @@ This index classifies checked-in vault Markdown so drafts and historical artifac
 | `Architecture/SETTINGS_SYSTEM_ARCHITECTURE.md` | advisory | Settings system architecture, segregation model, and observer flow. |
 | `Artifact/elden_ring_inventory_equipment_architecture.md` | draft | Design artifact; not registered project context. |
 | `Artifact/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md` | draft | Settings system implementation plan artifact; not registered project context. |
+| `Artifact/Roll System & Interruption Bug.md` | draft | Roll interruption lockout and stamina investigation artifact; not registered project context. |
 | `features/Advanced Locomotion Architecture Prompt Specification.md` | draft | Imported prompt artifact; not implementation authority. |
 | `features/Current Jump and Roll System.md` | advisory | Implementation note that must be checked against live source. |
 | `features/Locomotion Architecture Technical Specification.md` | draft | Design specification; not implementation authority. |
+| `features/Enemy Combat & AI Systems.md` | advisory | Enemy combat and AI systems specification, lifecycles, and authoring contracts. |
 | `features/Movement Mechanics Explained.md` | advisory | Feature explanation; verify against live source before use. |
 | `features/System Specification - Souls-like Locomotion & Camera System.md` | draft | Proposed system specification. |
 | `features/Technical Specification - Roll & Backstep Vectoring Logic.md` | draft | Proposed vectoring specification. |
@@ -33,6 +35,7 @@ This index classifies checked-in vault Markdown so drafts and historical artifac
 | `ToDo/Project_Organization_Analysis_And_Fix_Plan.md` | advisory | Audit analysis of project structure against PROJECT_ORGANIZATION.md and phased remediation plan. |
 | `ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md` | advisory | Reference research and architectural survey of Elden Ring flask mechanics and SoulsLike codebase integration. |
 | `ToDo/LAYER_SERVICE_FIX_PLAN.md` | advisory | Remediation plan for layer service configuration, fail-fast rules, and query mask ownership. |
+| `ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md` | advisory | Architectural analysis, scalability audit, and modernization roadmap for enemy spawning and encounter systems. |
 | `animation/Animator_SubState_Machine_Architecture_Guide.md` | advisory | Authoritative animator controller sub-state machine rules, layout coordinates, and empty default state standards. |
 | `Welcome.md` | historical | Obsidian starter note; no policy value. |
 
