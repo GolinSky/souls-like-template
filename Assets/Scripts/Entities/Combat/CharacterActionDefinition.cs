@@ -19,6 +19,7 @@ namespace SoulsLike.Entities.Combat
         [SerializeField] private ImpactLevel impactLevel = ImpactLevel.Light;
         [SerializeField] private bool canBeBlocked = true;
         [SerializeField] private bool canBeParried = true;
+        [SerializeField] private CharacterActionHitDefinition[] hitDefinitions = { };
         [SerializeField] private CharacterActionDefinition[] followUps = { };
 
         public CharacterActionId ActionId => actionId;
@@ -34,6 +35,31 @@ namespace SoulsLike.Entities.Combat
         public ImpactLevel ImpactLevel => impactLevel;
         public bool CanBeBlocked => canBeBlocked;
         public bool CanBeParried => canBeParried;
+        public CharacterActionHitDefinition[] HitDefinitions => hitDefinitions;
         public CharacterActionDefinition[] FollowUps => followUps;
+
+        public CharacterActionHitDefinition GetHitDefinition(int hitIndex)
+        {
+            if (hitDefinitions != null && hitDefinitions.Length > 0)
+            {
+                if (hitIndex >= 0 && hitIndex < hitDefinitions.Length)
+                {
+                    return hitDefinitions[hitIndex];
+                }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                Debug.LogError($"Invalid hitIndex {hitIndex} for action {actionId}. Configured hit definitions count is {hitDefinitions.Length}.", this);
+#endif
+                return default;
+            }
+
+            return new CharacterActionHitDefinition(
+                damageMultiplier,
+                guardDamage,
+                poiseDamage,
+                stanceDamage,
+                impactLevel,
+                canBeBlocked,
+                canBeParried);
+        }
     }
 }

@@ -466,13 +466,20 @@ namespace SoulsLike.Editor
                 report.Error($"{label} action state '{action.ActionId}' has no motion.", state);
             }
 
+            bool hasSingleHit = state.behaviours.OfType<EnemyActionStateBehaviour>().Any();
+            bool hasMultiHit = state.behaviours.OfType<EnemyMultiHitActionStateBehaviour>().Any();
+            if (hasSingleHit && hasMultiHit)
+            {
+                report.Error($"{label} action state '{action.ActionId}' must not have both {nameof(EnemyActionStateBehaviour)} and {nameof(EnemyMultiHitActionStateBehaviour)}.", state);
+            }
+
             if (!HasActionBehaviour(state, action.ActionId))
             {
-                report.Error($"{label} action state '{action.ActionId}' is missing an {nameof(EnemyActionStateBehaviour)} with matching action ID.", state);
+                report.Error($"{label} action state '{action.ActionId}' is missing an action state behaviour with matching action ID.", state);
             }
             else
             {
-                ValidateTrackingTiming(state, action.ActionId, label, report);
+                ValidateTrackingTiming(state, action, label, report);
             }
 
             if (!HasOutgoingTransition(state))
@@ -506,10 +513,11 @@ namespace SoulsLike.Editor
 
         private static void ValidateTrackingTiming(
             AnimatorState state,
-            CharacterActionId actionId,
+            CharacterActionDefinition action,
             string label,
             ValidationReport report)
         {
+            CharacterActionId actionId = action.ActionId;
             foreach (EnemyActionStateBehaviour behaviour in state.behaviours
                          .OfType<EnemyActionStateBehaviour>())
             {
@@ -541,6 +549,70 @@ namespace SoulsLike.Editor
                     report.Error(
                         $"{label} action state '{actionId}' trackingEnd must not exceed recoveryStart.",
                         behaviour);
+                }
+            }
+
+            foreach (EnemyMultiHitActionStateBehaviour behaviour in state.behaviours
+                         .OfType<EnemyMultiHitActionStateBehaviour>())
+            {
+                var serialized = new SerializedObject(behaviour);
+                SerializedProperty behaviourActionId = serialized.FindProperty("actionId");
+                if (behaviourActionId == null || behaviourActionId.intValue != (int)actionId)
+                {
+                    continue;
+                }
+
+                SerializedProperty hitWindowsProp = serialized.FindProperty("hitWindows");
+                if (hitWindowsProp == null || hitWindowsProp.arraySize < 2)
+                {
+                    report.Error($"{label} multi-hit action state '{actionId}' requires at least 2 hit windows.", behaviour);
+                    continue;
+                }
+
+                float lastActiveEnd = -1f;
+                for (int i = 0; i < hitWindowsProp.arraySize; i++)
+                {
+                    SerializedProperty windowProp = hitWindowsProp.GetArrayElementAtIndex(i);
+                    SerializedProperty hitIndexProp = windowProp.FindPropertyRelative("hitIndex");
+                    SerializedProperty activeStartProp = windowProp.FindPropertyRelative("activeStart");
+                    SerializedProperty activeEndProp = windowProp.FindPropertyRelative("activeEnd");
+                    SerializedProperty hasTrackingProp = windowProp.FindPropertyRelative("hasTrackingWindow");
+                    SerializedProperty trackingStartProp = windowProp.FindPropertyRelative("trackingStart");
+                    SerializedProperty trackingEndProp = windowProp.FindPropertyRelative("trackingEnd");
+
+                    float activeStart = activeStartProp.floatValue;
+                    float activeEnd = activeEndProp.floatValue;
+
+                    if (activeStart < 0f || activeEnd > 1f || activeStart >= activeEnd)
+                    {
+                        report.Error($"{label} multi-hit action state '{actionId}' window {i} has invalid active timing ({activeStart}..{activeEnd}).", behaviour);
+                    }
+
+                    if (activeStart < lastActiveEnd)
+                    {
+                        report.Error($"{label} multi-hit action state '{actionId}' window {i} overlaps previous window.", behaviour);
+                    }
+
+                    lastActiveEnd = activeEnd;
+
+                    if (hasTrackingProp != null && hasTrackingProp.boolValue)
+                    {
+                        float trackingStart = trackingStartProp.floatValue;
+                        float trackingEnd = trackingEndProp.floatValue;
+                        if (trackingStart < 0f || trackingEnd > 1f || trackingStart >= trackingEnd)
+                        {
+                            report.Error($"{label} multi-hit action state '{actionId}' window {i} has invalid tracking timing ({trackingStart}..{trackingEnd}).", behaviour);
+                        }
+                    }
+
+                    if (action.HitDefinitions != null && action.HitDefinitions.Length > 0)
+                    {
+                        int hitIndex = hitIndexProp.intValue;
+                        if (hitIndex < 0 || hitIndex >= action.HitDefinitions.Length)
+                        {
+                            report.Error($"{label} multi-hit action state '{actionId}' window {i} references out-of-range hitIndex {hitIndex} (action has {action.HitDefinitions.Length} hit definitions).", behaviour);
+                        }
+                    }
                 }
             }
         }
@@ -964,6 +1036,17 @@ namespace SoulsLike.Editor
         {
             foreach (EnemyActionStateBehaviour behaviour in state.behaviours
                          .OfType<EnemyActionStateBehaviour>())
+            {
+                SerializedProperty actionIdProperty = new SerializedObject(behaviour)
+                    .FindProperty("actionId");
+                if (actionIdProperty != null && actionIdProperty.intValue == (int)actionId)
+                {
+                    return true;
+                }
+            }
+
+            foreach (EnemyMultiHitActionStateBehaviour behaviour in state.behaviours
+                         .OfType<EnemyMultiHitActionStateBehaviour>())
             {
                 SerializedProperty actionIdProperty = new SerializedObject(behaviour)
                     .FindProperty("actionId");

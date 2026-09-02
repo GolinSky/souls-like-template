@@ -179,9 +179,20 @@ namespace SoulsLike.Entities.Enemy
             }
         }
 
-        public void ReportActiveStarted(CharacterActionId actionId)
+        public void ReportActiveStarted(CharacterActionId actionId) =>
+            ReportActiveStarted(actionId, 0);
+
+        public void ReportActiveStarted(CharacterActionId actionId, int hitIndex)
         {
             if (!IsCurrentExecution(actionId))
+            {
+                return;
+            }
+
+            CharacterActionHitDefinition hitDefinition = CurrentAction.GetHitDefinition(hitIndex);
+            if (CurrentAction.HitDefinitions != null
+                && CurrentAction.HitDefinitions.Length > 0
+                && (hitIndex < 0 || hitIndex >= CurrentAction.HitDefinitions.Length))
             {
                 return;
             }
@@ -192,13 +203,13 @@ namespace SoulsLike.Entities.Enemy
             {
                 ActionId = actionId,
                 HealthDamage = weaponDefinition.Stats.PhysicalAttack
-                    * CurrentAction.DamageMultiplier,
-                GuardDamage = CurrentAction.GuardDamage,
-                PoiseDamage = CurrentAction.PoiseDamage,
-                StanceDamage = CurrentAction.StanceDamage,
-                ImpactLevel = CurrentAction.ImpactLevel,
-                CanBeBlocked = CurrentAction.CanBeBlocked,
-                CanBeParried = CurrentAction.CanBeParried
+                    * hitDefinition.DamageMultiplier,
+                GuardDamage = hitDefinition.GuardDamage,
+                PoiseDamage = hitDefinition.PoiseDamage,
+                StanceDamage = hitDefinition.StanceDamage,
+                ImpactLevel = hitDefinition.ImpactLevel,
+                CanBeBlocked = hitDefinition.CanBeBlocked,
+                CanBeParried = hitDefinition.CanBeParried
             });
             _isMeleeHitboxOpen = true;
         }

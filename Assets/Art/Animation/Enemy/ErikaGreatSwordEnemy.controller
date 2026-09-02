@@ -1599,7 +1599,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: 9198169309869296412}
   m_StateMachineBehaviours:
-  - {fileID: 8041404200208599779}
+  - {fileID: 4061139183844099907}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 0
@@ -1614,6 +1614,47 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &4061139183844099907
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3726048461c6094429adffcb8f7ca117, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyMultiHitActionStateBehaviour
+  actionId: 5
+  hitWindows:
+  - hitIndex: 0
+    activeStart: 0.15
+    activeEnd: 0.28
+    hasTrackingWindow: 1
+    trackingStart: 0
+    trackingEnd: 0.14
+  - hitIndex: 1
+    activeStart: 0.32
+    activeEnd: 0.44
+    hasTrackingWindow: 1
+    trackingStart: 0.28
+    trackingEnd: 0.31
+  - hitIndex: 2
+    activeStart: 0.48
+    activeEnd: 0.6
+    hasTrackingWindow: 1
+    trackingStart: 0.44
+    trackingEnd: 0.47
+  hasComboWindow: 0
+  comboStart: 0.7
+  comboEnd: 0.9
+  recoveryStart: 0.65
+  hasHyperArmorWindow: 0
+  hyperArmorStart: 0
+  hyperArmorEnd: 1
+  hyperArmorPoiseBonus: 0
+  canBeInterruptedDuringHyperArmor: 0
 --- !u!114 &4063158273912227590
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2122,33 +2163,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 0
---- !u!114 &8041404200208599779
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 813ad36c75590d2479a9d4540fdb6c1f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyActionStateBehaviour
-  actionId: 5
-  hasHitboxWindow: 1
-  activeStart: 0.15
-  activeEnd: 0.58
-  hasComboWindow: 0
-  comboStart: 0
-  comboEnd: 0
-  recoveryStart: 0.7
-  hasTrackingWindow: 1
-  trackingEnd: 0.7
-  hasHyperArmorWindow: 1
-  hyperArmorStart: 0.15
-  hyperArmorEnd: 0.62
-  hyperArmorPoiseBonus: 50
-  canBeInterruptedDuringHyperArmor: 1
 --- !u!1107 &8218188877774101638
 AnimatorStateMachine:
   serializedVersion: 6

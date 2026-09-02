@@ -25,4 +25,26 @@ MonoBehaviour:
   impactLevel: 2
   canBeBlocked: 1
   canBeParried: 1
+  hitDefinitions:
+  - damageMultiplier: 0.6
+    guardDamage: 15
+    poiseDamage: 15
+    stanceDamage: 10
+    impactLevel: 0
+    canBeBlocked: 1
+    canBeParried: 1
+  - damageMultiplier: 0.7
+    guardDamage: 18
+    poiseDamage: 18
+    stanceDamage: 12
+    impactLevel: 0
+    canBeBlocked: 1
+    canBeParried: 1
+  - damageMultiplier: 1.2
+    guardDamage: 35
+    poiseDamage: 40
+    stanceDamage: 25
+    impactLevel: 1
+    canBeBlocked: 1
+    canBeParried: 1
   followUps: []

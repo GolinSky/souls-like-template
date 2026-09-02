@@ -6473,6 +6473,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31b1bb4172f42144a7f887bb766dbc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyEncounterSystem
+--- !u!114 &923558706 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7651691237837284798, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+  m_PrefabInstance: {fileID: 1881587232}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42452bfa730fdb24db97e9cc077d89b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemySpawnPoint
 --- !u!1 &929283359
 GameObject:
   m_ObjectHideFlags: 0
@@ -9428,6 +9439,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9399a3475e560944d962dbe1d03e82e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Interactions.GraceView
+--- !u!114 &1213995500 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5491401896638966171, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+  m_PrefabInstance: {fileID: 1881587232}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42452bfa730fdb24db97e9cc077d89b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemySpawnPoint
 --- !u!1 &1240715809
 GameObject:
   m_ObjectHideFlags: 0
@@ -14171,8 +14193,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: spawnPoints.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+      propertyPath: 'spawnPoints.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1213995500}
+    - target: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+      propertyPath: 'spawnPoints.Array.data[2]'
+      value: 
+      objectReference: {fileID: 923558706}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
