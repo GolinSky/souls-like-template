@@ -1,6 +1,6 @@
-# graphify reference: commit hook and native CLAUDE.md integration
+# Graphify reference: commit hook and agent-policy integration
 
-Load this when the user asked to install the post-commit hook or wire graphify into a project's CLAUDE.md.
+Load this when the user asks to install the post-commit hook or add persistent Graphify routing to an agent-policy file.
 
 ## For git commit hook
 
@@ -18,15 +18,17 @@ If a post-commit hook already exists, graphify appends to it rather than replaci
 
 ---
 
-## For native CLAUDE.md integration
+## For agent-policy integration
 
-Run once per project to make graphify always-on in Claude Code sessions:
+In an `AGENTS.md`-first repository, add the routing policy directly to `AGENTS.md`: use an existing graph for broad codebase questions, verify important claims against live source, and rebuild only when an update is explicitly requested. Do not run a client-specific installer that creates a second policy authority.
+
+For a project that deliberately uses Claude Code and `CLAUDE.md`, Graphify also provides this compatibility command:
 
 ```bash
 graphify claude install
 ```
 
-This writes a `## graphify` section to the local `CLAUDE.md` that instructs Claude to check the graph before answering codebase questions and rebuild it after code changes. No manual `/graphify` needed in future sessions.
+This writes a `## graphify` section to the local `CLAUDE.md`. Treat that file as client compatibility guidance and keep the repository's declared authority order intact.
 
 ```bash
 graphify claude uninstall  # remove the section

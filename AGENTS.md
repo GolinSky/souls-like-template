@@ -17,6 +17,11 @@ Live source, serialized assets, and current tool output take precedence over gen
 - `.agents/skills/` owns reusable project workflows; do not duplicate them under `.codex/skills/`.
 - `graphify-out/` is generated local state and never authoritative documentation.
 
+## Obsidian Configuration Protection
+
+- Never edit, rotate, redact, regenerate, untrack, ignore, delete, or otherwise change Obsidian configuration, credentials, API keys, certificates, cryptographic material, ports, plugin state, or MCP authentication unless the user explicitly requests an Obsidian configuration change in the active request.
+- Audits, reviews, security scans, documentation cleanup, MCP work, and general optimization requests do not grant permission to change Obsidian configuration. Report findings only and wait for an explicit user request.
+
 
 ## Unity Tooling
 
@@ -29,6 +34,7 @@ Live source, serialized assets, and current tool output take precedence over gen
 - Serena MCP is configured only for this repository in `.codex/config.toml`. Never install or register Serena in user/global Codex configuration. If its tools are unavailable, verify the local entry and start a new Codex task from this repository; do not run a global `serena setup codex` or `codex mcp add serena`.
 - Use Graphify first for broad, cross-cutting questions about architecture, subsystem relationships, ownership, or multi-hop flows. When `graphify-out/graph.json` exists, query that graph instead of rebuilding it unless an update was explicitly requested.
 - The parent uses the Graphify skill/CLI. Its parent MCP entry stays disabled to reduce tool noise; `graph_explorer` enables the inherited, bounded Graphify MCP tool set for its own role.
+- Exclude `graphify-out/` from broad repository searches. Keep only the current graph/report/visualization, cost and manifest state, and the 20 most recent query-memory files; older generated snapshots are disposable and may be rebuilt.
 - Use Serena for live C# symbol work: symbol/file overviews, definitions, callers and references, implementations, diagnostics, symbol-aware renames, and surgical symbol-body edits. Prefer Serena over reading entire source files when the target can be identified semantically.
 - For architecture-driven changes, use Graphify to identify the relevant subsystem or path, then use Serena to confirm the current symbols and references before editing. Source and Serena's live language-server results take precedence when they disagree with Graphify's indexed snapshot.
 - Use built-in search/read/patch tools for non-code files, exact text searches, and small line-oriented edits. Use Unity tooling, not Serena, for scenes, prefabs, assets, Editor state, imports, serialization, and play/build operations.
