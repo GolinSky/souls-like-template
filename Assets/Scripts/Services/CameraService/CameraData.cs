@@ -1,4 +1,4 @@
-using System;
+using System; // Serializable
 using DG.Tweening;
 using UnityEngine;
 
@@ -83,15 +83,8 @@ namespace SoulsLike.Services.CameraService
 
         [Header("Lock Orbit Pitch")]
         [field: SerializeField] public float LockBasePitch { get; private set; } = 1f;
-        [field: SerializeField, Min(0f)] public float LockOrbitPitchEnterAngle { get; private set; } = 10f;
-        [field: SerializeField, Min(0f)] public float LockOrbitPitchReleaseAngle { get; private set; } = 5f;
         [field: SerializeField, Min(0.01f)] public float LockOrbitPitchSmoothTime { get; private set; } = 0.35f;
         [field: SerializeField, Min(0f)] public float LockOrbitPitchMaxSpeed { get; private set; } = 60f;
-        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockMinPitchDistance { get; private set; } = 1.50f;
-        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockVerticalCloseDistance { get; private set; } = 1.25f;
-        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockVerticalFarDistance { get; private set; } = 4f;
-        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockCloseVerticalInfluence { get; private set; } = 0.25f;
-        [field: SerializeField, Obsolete("Replaced by neutral body pitch in humanoid lock.")] public float LockFarVerticalInfluence { get; private set; } = 0.65f;
 
         [Header("Lock Rig Profile")]
         [field: SerializeField] public CameraRigProfile HumanoidLockProfile { get; private set; } = new CameraRigProfile

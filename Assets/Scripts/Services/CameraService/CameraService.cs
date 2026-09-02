@@ -16,10 +16,7 @@ namespace SoulsLike.Services.CameraService
         void UpdateFollowTarget(bool grounded, float verticalVelocity);
         void UpdateRotation(Vector2 look);
         float GetYaw();
-        float GetPitch();
         void SwitchAngle();
-        Ray GetRay();
-        void SetZoom(bool isZoomed);
         void SetLockOnTarget(long? targetEntityId);
         void ClearLockOnTarget();
         void RecenterCamera();
@@ -674,12 +671,6 @@ namespace SoulsLike.Services.CameraService
                     _cinemachineTargetPitch + _cameraData.CameraAngleOverride,
                     _cinemachineTargetYaw,
                     0f);
-            }
-
-            if (!_lockOnTargetEntityId.HasValue && _lockLookAtTarget != null && _followTarget != null)
-            {
-                Vector3 forward = Quaternion.Euler(_cinemachineTargetPitch, _cinemachineTargetYaw, 0f) * Vector3.forward;
-                _lockLookAtTarget.position = _followTarget.position + forward * _cameraData.LockInitialFocusMinDistance;
             }
         }
 
