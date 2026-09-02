@@ -43,10 +43,10 @@ MonoBehaviour:
   <LockAimMaxSpeed>k__BackingField: 40
   <LockMinFocusHeight>k__BackingField: -0.75
   <LockMaxFocusHeight>k__BackingField: 1.25
-  <LockOrbitYawEnterAngle>k__BackingField: 7
-  <LockOrbitYawReleaseAngle>k__BackingField: 3.5
-  <LockOrbitYawSmoothTime>k__BackingField: 0.32
-  <LockOrbitYawMaxSpeed>k__BackingField: 110
+  <LockOrbitYawEnterAngle>k__BackingField: 12
+  <LockOrbitYawReleaseAngle>k__BackingField: 6
+  <LockOrbitYawSmoothTime>k__BackingField: 0.42
+  <LockOrbitYawMaxSpeed>k__BackingField: 90
   <LockYawHalfTurnTolerance>k__BackingField: 2
   <LockHeadingHoldDistance>k__BackingField: 0.55
   <LockHeadingReleaseDistance>k__BackingField: 0.9
@@ -62,15 +62,8 @@ MonoBehaviour:
   <LockYawLeadTime>k__BackingField: 0.045
   <LockYawMaxLeadDegrees>k__BackingField: 5
   <LockBasePitch>k__BackingField: 1
-  <LockOrbitPitchEnterAngle>k__BackingField: 10
-  <LockOrbitPitchReleaseAngle>k__BackingField: 5
   <LockOrbitPitchSmoothTime>k__BackingField: 0.35
   <LockOrbitPitchMaxSpeed>k__BackingField: 60
-  <LockMinPitchDistance>k__BackingField: 1.5
-  <LockVerticalCloseDistance>k__BackingField: 1.25
-  <LockVerticalFarDistance>k__BackingField: 4
-  <LockCloseVerticalInfluence>k__BackingField: 0.25
-  <LockFarVerticalInfluence>k__BackingField: 0.65
   <HumanoidLockProfile>k__BackingField:
     ShoulderOffset: {x: 0, y: 0.48, z: 0}
     VerticalArmLength: -0.31
