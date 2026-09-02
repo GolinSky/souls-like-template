@@ -187,6 +187,7 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
+    "ToDo/ROLL_INVESTIGATION_REPORT.md",
     "Artifact/Roll System & Interruption Bug.md",
     "features/Enemy Combat & AI Systems.md",
     "ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
@@ -213,7 +214,6 @@
     "Architecture/PROJECT_ORGANIZATION.md",
     "Artifact/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md",
     "ToDo/Refactor_Pause_Navigation_Naming.md",
-    "ui/Grace_Route_Navigation_Architecture.md",
     "Architecture",
     "ai",
     "Artifact",

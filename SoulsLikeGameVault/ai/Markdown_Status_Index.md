@@ -36,6 +36,7 @@ This index classifies checked-in vault Markdown so drafts and historical artifac
 | `ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md` | advisory | Reference research and architectural survey of Elden Ring flask mechanics and SoulsLike codebase integration. |
 | `ToDo/LAYER_SERVICE_FIX_PLAN.md` | advisory | Remediation plan for layer service configuration, fail-fast rules, and query mask ownership. |
 | `ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md` | advisory | Architectural analysis, scalability audit, and modernization roadmap for enemy spawning and encounter systems. |
+| `ToDo/ROLL_INVESTIGATION_REPORT.md` | advisory | Character roll interruption bug investigation report, Mecanim desync root cause, and remediation plan. |
 | `animation/Animator_SubState_Machine_Architecture_Guide.md` | advisory | Authoritative animator controller sub-state machine rules, layout coordinates, and empty default state standards. |
 | `Welcome.md` | historical | Obsidian starter note; no policy value. |
 
