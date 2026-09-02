@@ -298,6 +298,10 @@ namespace SoulsLike.Entities.Enemy
             motor.Stop();
             motor.SetRootMotion(true);
             _defense.SetHitReaction(true);
+            if (result.Type == MeleeHitResultType.Parried)
+            {
+                _defense.SetParryStunned(true);
+            }
             animator.SetTrigger(GetHitTrigger(result));
         }
 
@@ -367,8 +371,9 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
-            if (Mode == EnemyExecutionMode.Reaction
-                || IsExecutingAction() && CurrentAction.UsesRootMotion)
+            if (!actor.BehaviourProfile.RemainsStationary
+                && (Mode == EnemyExecutionMode.Reaction
+                    || IsExecutingAction() && CurrentAction.UsesRootMotion))
             {
                 motor.ApplyRootMotion(animator.deltaPosition);
             }

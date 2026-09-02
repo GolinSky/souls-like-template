@@ -8,7 +8,7 @@ namespace SoulsLike.Ui.Cheats
         private const int WINDOW_ID = 175613;
         private const int PLAYER_TAB_INDEX = 0;
         private const float WINDOW_WIDTH = 300f;
-        private const float WINDOW_HEIGHT = 200f;
+        private const float WINDOW_HEIGHT = 230f;
         private const float CONTENT_MARGIN = 10f;
         private const float TAB_Y = 25f;
         private const float TAB_HEIGHT = 28f;
@@ -81,6 +81,14 @@ namespace SoulsLike.Ui.Cheats
             if (GUI.Button(CreateButtonRect(contentWidth, 2), "Reset Open Graces"))
             {
                 _presenter.ResetOpenGraces();
+            }
+
+            string invincibilityLabel = _presenter.IsPlayerInvincible
+                ? "Invincible: On"
+                : "Invincible: Off";
+            if (GUI.Button(CreateButtonRect(contentWidth, 3), invincibilityLabel))
+            {
+                _presenter.TogglePlayerInvincibility();
             }
         }
 

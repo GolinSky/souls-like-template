@@ -4,6 +4,7 @@ namespace SoulsLike.Entities.Character.Components.Health
     {
         HealthStats Stats { get; }
         bool IsInvulnerable { get; }
+        bool IsCheatInvulnerable { get; }
 
         HealthStats BuildDefaultStats();
         HealthStats ApplyStatUpdate(HealthStats currentStats, HealthStatUpdate update);
@@ -21,5 +22,6 @@ namespace SoulsLike.Entities.Character.Components.Health
         void ApplyAuthoritativeStats(HealthStats stats);
         void NotifyDamageApplied(DamageResult result);
         void SetInvulnerable(bool isInvulnerable);
+        void SetCheatInvulnerable(bool isInvulnerable);
     }
 }

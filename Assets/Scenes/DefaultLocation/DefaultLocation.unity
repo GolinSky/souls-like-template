@@ -5664,6 +5664,84 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1358261729}
   m_LocalEulerAnglesHint: {x: 34.655, y: -116.901, z: 1.341}
+--- !u!1001 &846277527
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 152581692203435649, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 152581692203435649, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 17.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 271.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -159
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4781684685654345843, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_Name
+      value: TrainingDummyEncounter
+      objectReference: {fileID: 0}
+    - target: {fileID: 7191592399981395796, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -8.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 7191592399981395796, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 20.072
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+--- !u!1 &846277528 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4781684685654345843, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+  m_PrefabInstance: {fileID: 846277527}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &860482424
 GameObject:
   m_ObjectHideFlags: 0
@@ -14091,6 +14169,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyEncounter
       objectReference: {fileID: 0}
+    - target: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+      propertyPath: spawnPoints.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -16223,7 +16305,8 @@ MonoBehaviour:
   parentReference:
     TypeName: SoulsLike.SharedSceneScope
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 846277528}
   cameraService: {fileID: 3018529732569510667}
   graceSystem: {fileID: 198951721}
   enemyEncounterSystem: {fileID: 922633214}
@@ -16527,3 +16610,4 @@ SceneRoots:
   - {fileID: 1881587232}
   - {fileID: 1599396926}
   - {fileID: 1932185006}
+  - {fileID: 846277527}

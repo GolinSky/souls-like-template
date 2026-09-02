@@ -75,7 +75,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -8423377919570141913, guid: d8eab296f07489049871d1938f029dc6, type: 3}
+  m_Motion: {fileID: 5345649772058451412, guid: 0fcc1ea31c4543c4f853b89656c52ab7, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -284,18 +284,18 @@ MonoBehaviour:
   actionId: 3
   hasHitboxWindow: 1
   activeStart: 0.15
-  activeEnd: 0.48
+  activeEnd: 0.58
   hasComboWindow: 1
-  comboStart: 0.42
-  comboEnd: 0.68
-  recoveryStart: 0.64
+  comboStart: 0.45
+  comboEnd: 0.7
+  recoveryStart: 0.7
   hasTrackingWindow: 1
-  trackingEnd: 0.64
-  hasHyperArmorWindow: 0
-  hyperArmorStart: 0
-  hyperArmorEnd: 1
-  hyperArmorPoiseBonus: 0
-  canBeInterruptedDuringHyperArmor: 0
+  trackingEnd: 0.7
+  hasHyperArmorWindow: 1
+  hyperArmorStart: 0.15
+  hyperArmorEnd: 0.62
+  hyperArmorPoiseBonus: 50
+  canBeInterruptedDuringHyperArmor: 1
 --- !u!114 &-5567842321252291638
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -311,18 +311,18 @@ MonoBehaviour:
   actionId: 4
   hasHitboxWindow: 1
   activeStart: 0.15
-  activeEnd: 0.47
+  activeEnd: 0.58
   hasComboWindow: 1
-  comboStart: 0.36
-  comboEnd: 0.69
-  recoveryStart: 0.62
+  comboStart: 0.45
+  comboEnd: 0.7
+  recoveryStart: 0.7
   hasTrackingWindow: 1
-  trackingEnd: 0.62
-  hasHyperArmorWindow: 0
-  hyperArmorStart: 0
-  hyperArmorEnd: 1
-  hyperArmorPoiseBonus: 0
-  canBeInterruptedDuringHyperArmor: 0
+  trackingEnd: 0.7
+  hasHyperArmorWindow: 1
+  hyperArmorStart: 0.15
+  hyperArmorEnd: 0.62
+  hyperArmorPoiseBonus: 50
+  canBeInterruptedDuringHyperArmor: 1
 --- !u!1101 &-5442469330512759066
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -494,13 +494,13 @@ MonoBehaviour:
   actionId: 1
   hasHitboxWindow: 1
   activeStart: 0.15
-  activeEnd: 0.5
+  activeEnd: 0.58
   hasComboWindow: 1
-  comboStart: 0.43
+  comboStart: 0.45
   comboEnd: 0.7
-  recoveryStart: 0.64
+  recoveryStart: 0.65
   hasTrackingWindow: 1
-  trackingEnd: 0.64
+  trackingEnd: 0.65
   hasHyperArmorWindow: 0
   hyperArmorStart: 0
   hyperArmorEnd: 1
@@ -583,13 +583,13 @@ MonoBehaviour:
   actionId: 2
   hasHitboxWindow: 1
   activeStart: 0.15
-  activeEnd: 0.54
+  activeEnd: 0.58
   hasComboWindow: 0
   comboStart: 0
   comboEnd: 0
-  recoveryStart: 0.66
+  recoveryStart: 0.65
   hasTrackingWindow: 1
-  trackingEnd: 0.66
+  trackingEnd: 0.65
   hasHyperArmorWindow: 0
   hyperArmorStart: 0
   hyperArmorEnd: 1
@@ -638,13 +638,13 @@ MonoBehaviour:
   actionId: 6
   hasHitboxWindow: 1
   activeStart: 0.15
-  activeEnd: 0.62
+  activeEnd: 0.58
   hasComboWindow: 0
   comboStart: 0
   comboEnd: 0
-  recoveryStart: 0.72
+  recoveryStart: 0.7
   hasTrackingWindow: 1
-  trackingEnd: 0.72
+  trackingEnd: 0.7
   hasHyperArmorWindow: 1
   hyperArmorStart: 0.15
   hyperArmorEnd: 0.62
@@ -748,7 +748,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 8341632802235832332, guid: 1eb801d77413f674b9416badfda16069, type: 3}
+  m_Motion: {fileID: 2746797882735882954, guid: 410d7be4a2655184ba55b823acaf3d8d, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -829,7 +829,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -8212020743256831976, guid: 8bac83b8b0ed63044b7daba9c6c58da6, type: 3}
+  m_Motion: {fileID: 1041423489802838319, guid: b8a8066aa412cd340a4329994f464ff7, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -863,7 +863,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ErikaLongSwordEnemy
+  m_Name: ErikaGreatSwordEnemy
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Speed
@@ -1237,7 +1237,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -6216590418886143166, guid: 037f19b2135dca54c9b38fd05a9af950, type: 3}
+  m_Motion: {fileID: 2153571824007746395, guid: 5c015e823d3cac6429098177afd749f6, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1389,7 +1389,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -3007473073996427847, guid: f014ed8b3a4d52f49b804b7b0e2843e6, type: 3}
+  m_Motion: {fileID: 7139934645174251864, guid: 44142c606745b5d41b5c9897d7bd5f3e, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1643,7 +1643,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -5734775621180991845, guid: 5c3652c290363404dba462c410f00e68, type: 3}
+  m_Motion: {fileID: 1041423489802838319, guid: b8a8066aa412cd340a4329994f464ff7, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1701,18 +1701,18 @@ MonoBehaviour:
   actionId: 5
   hasHitboxWindow: 1
   activeStart: 0.15
-  activeEnd: 0.54
+  activeEnd: 0.58
   hasComboWindow: 0
   comboStart: 0
   comboEnd: 0
-  recoveryStart: 0.66
+  recoveryStart: 0.7
   hasTrackingWindow: 1
-  trackingEnd: 0.66
-  hasHyperArmorWindow: 0
-  hyperArmorStart: 0
-  hyperArmorEnd: 1
-  hyperArmorPoiseBonus: 0
-  canBeInterruptedDuringHyperArmor: 0
+  trackingEnd: 0.7
+  hasHyperArmorWindow: 1
+  hyperArmorStart: 0.15
+  hyperArmorEnd: 0.62
+  hyperArmorPoiseBonus: 50
+  canBeInterruptedDuringHyperArmor: 1
 --- !u!1107 &8218188877774101638
 AnimatorStateMachine:
   serializedVersion: 6

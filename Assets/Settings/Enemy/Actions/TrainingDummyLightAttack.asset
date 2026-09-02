@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08541461bf9d9e247824b665788e9ace, type: 3}
+  m_Name: TrainingDummyLightAttack
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Combat.CharacterActionDefinition
+  actionId: 1
+  damageMultiplier: 1
+  staminaCost: 14
+  usesRootMotion: 0
+  windupTurnSpeed: 180
+  activeTurnSpeed: 20
+  recoveryTurnSpeed: 70
+  guardDamage: 20
+  poiseDamage: 20
+  stanceDamage: 15
+  impactLevel: 0
+  canBeBlocked: 1
+  canBeParried: 1
+  followUps: []

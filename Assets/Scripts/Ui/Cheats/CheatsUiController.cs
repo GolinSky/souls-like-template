@@ -32,6 +32,9 @@ namespace SoulsLike.Ui.Cheats
         private bool _cursorVisible;
         private bool _isOpen;
 
+        public bool IsPlayerInvincible => TryGetPlayer(out IEntity player, false)
+            && GetApplyDamageCommand(player).IsCheatInvulnerable;
+
         public CheatsUiController(
             IUiService uiService,
             IInputService inputService,
@@ -94,6 +97,17 @@ namespace SoulsLike.Ui.Cheats
             }
 
             ApplyDamage(player, player.Id, GetApplyDamageCommand(player).Stats.CurrentHealth);
+        }
+
+        public void TogglePlayerInvincibility()
+        {
+            if (!TryGetPlayer(out IEntity player))
+            {
+                return;
+            }
+
+            ApplyDamageCommand command = GetApplyDamageCommand(player);
+            command.SetCheatInvulnerable(!command.IsCheatInvulnerable);
         }
 
         public void ResetOpenGraces()
@@ -186,12 +200,16 @@ namespace SoulsLike.Ui.Cheats
             _isOpen = false;
         }
 
-        private bool TryGetPlayer(out IEntity player)
+        private bool TryGetPlayer(out IEntity player, bool logMissingPlayer = true)
         {
             _entityLocator.GetEntities(EntityType.Player, _entities);
             if (_entities.Count == 0)
             {
-                Debug.LogWarning("Cheats require an active player entity.");
+                if (logMissingPlayer)
+                {
+                    Debug.LogWarning("Cheats require an active player entity.");
+                }
+
                 player = null;
                 return false;
             }

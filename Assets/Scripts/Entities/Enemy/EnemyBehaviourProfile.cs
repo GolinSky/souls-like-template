@@ -47,6 +47,9 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField, Min(0f)] private float firstAttackHesitationMin;
         [SerializeField, Min(0f)] private float firstAttackHesitationMax;
         [SerializeField] private bool usesPressureSlot;
+        [SerializeField] private bool remainsStationary;
+        [SerializeField] private bool locksFacing;
+        [SerializeField, Min(0)] private int maximumAttackCount;
         [SerializeField] private int randomSeed = 1;
 
         public float PerceptionRange => perceptionRange;
@@ -86,6 +89,9 @@ namespace SoulsLike.Entities.Enemy
             firstAttackHesitationMin,
             firstAttackHesitationMax);
         public bool UsesPressureSlot => usesPressureSlot;
+        public bool RemainsStationary => remainsStationary;
+        public bool LocksFacing => locksFacing;
+        public int MaximumAttackCount => maximumAttackCount;
         public int RandomSeed => randomSeed;
     }
 }

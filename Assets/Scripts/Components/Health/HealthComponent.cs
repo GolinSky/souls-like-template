@@ -10,10 +10,12 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         private float _staminaRecoveryDelayRemaining;
         private bool _staminaSpentSinceRecoveryTick;
-        private bool _isInvulnerable;
+        private bool _isGraceInvulnerable;
+        private bool _isCheatInvulnerable;
 
         public HealthStats Stats => Model.Stats;
-        public bool IsInvulnerable => _isInvulnerable;
+        public bool IsInvulnerable => _isGraceInvulnerable || _isCheatInvulnerable;
+        public bool IsCheatInvulnerable => _isCheatInvulnerable;
 
         public void Initialize()
         {
@@ -87,7 +89,7 @@ namespace SoulsLike.Entities.Character.Components.Health
             HealthStats stats = NormalizeStats(currentStats);
             float incomingAmount = Mathf.Max(0f, request.Amount);
 
-            if (_isInvulnerable || !stats.IsAlive || incomingAmount <= 0f)
+            if (IsInvulnerable || !stats.IsAlive || incomingAmount <= 0f)
             {
                 return new DamageResult
                 {
@@ -124,7 +126,7 @@ namespace SoulsLike.Entities.Character.Components.Health
         public DamageResult ApplyDamage(in DamageRequest request)
         {
             DamageResult result = CalculateDamage(request, Stats);
-            if (_isInvulnerable)
+            if (IsInvulnerable)
             {
                 return result;
             }
@@ -262,7 +264,12 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         public void SetInvulnerable(bool isInvulnerable)
         {
-            _isInvulnerable = isInvulnerable;
+            _isGraceInvulnerable = isInvulnerable;
+        }
+
+        public void SetCheatInvulnerable(bool isInvulnerable)
+        {
+            _isCheatInvulnerable = isInvulnerable;
         }
 
         private HealthStats NormalizeStats(HealthStats stats)

@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0337204c84f8dc47bfd6c5f308f018c, type: 3}
+  m_Name: RiposteDummyBehaviour
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyBehaviourProfile
+  perceptionRange: 2.35
+  fieldOfView: 360
+  verticalFieldOfView: 180
+  closeAwarenessRange: 2.35
+  eyeHeight: 1.45
+  lineOfSightMask:
+    serializedVersion: 2
+    m_Bits: 119
+  sightConfirmationSeconds: 0
+  sightForgetSeconds: 0
+  soundForgetSeconds: 0
+  damageForgetSeconds: 0
+  allyForgetSeconds: 0
+  sharesAllyAlerts: 0
+  reactionDelayMin: 0
+  reactionDelayMax: 0
+  activationMode: 0
+  softLeashDistance: 50
+  hardLeashDistance: 50
+  returnHysteresis: 0
+  patrolWaitSeconds: 0
+  searchSeconds: 0
+  searchTurnSpeed: 0
+  searchPointCount: 0
+  searchPointRadius: 0
+  searchPauseSeconds: 0
+  arrivalDistance: 0
+  decisionInterval: 0.02
+  preferredRangeMin: 0
+  preferredRangeMax: 2.35
+  strafeDistance: 0
+  waitSeconds: 2
+  decisionJitterSeconds: 0
+  firstAttackHesitationMin: 1
+  firstAttackHesitationMax: 1
+  usesPressureSlot: 0
+  remainsStationary: 1
+  locksFacing: 0
+  maximumAttackCount: 0
+  randomSeed: 1741

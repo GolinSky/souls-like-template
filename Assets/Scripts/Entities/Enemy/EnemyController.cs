@@ -44,6 +44,7 @@ namespace SoulsLike.Entities.Enemy
         private int _searchPointIndex;
         private Vector3 _committedAttackPoint;
         private int _patrolIndex;
+        private int _startedAttackCount;
         private bool _waitingAtPatrolPoint;
         private bool _hasStartedAttack;
         private bool _deathAnimationStarted;
@@ -162,10 +163,14 @@ namespace SoulsLike.Entities.Enemy
             float deltaTime = Time.deltaTime;
             _defense.TickRecovery(deltaTime);
             float now = Time.time;
-            if (_defense.IsInCriticalState)
+            if (_defense.IsInCriticalState
+                || _defense.HasCriticalOpportunity
+                || _defense.IsParryStunned
+                || _defense.IsGuardBroken)
             {
                 _motor.Stop();
                 _executor.SetLocomotion(Vector3.zero);
+                _waitUntil = Mathf.Max(_waitUntil, now + _actor.BehaviourProfile.WaitSeconds);
                 return;
             }
 
@@ -193,6 +198,7 @@ namespace SoulsLike.Entities.Enemy
             {
                 _motor.Stop();
                 _executor.SetLocomotion(Vector3.zero);
+                _waitUntil = Mathf.Max(_waitUntil, now + _actor.BehaviourProfile.WaitSeconds);
                 return;
             }
 
@@ -258,7 +264,7 @@ namespace SoulsLike.Entities.Enemy
                 {
                     EnterGoal(EnemyGoal.Investigate);
                     _motor.Stop();
-                    _motor.Face(target.Position, 360f, Time.deltaTime);
+                    Face(target.Position, 360f, Time.deltaTime);
                     return;
                 }
 
@@ -288,7 +294,7 @@ namespace SoulsLike.Entities.Enemy
                     {
                         EnterGoal(EnemyGoal.Investigate);
                         _motor.Stop();
-                        _motor.Face(memory.LastKnownPosition, 360f, Time.deltaTime);
+                        Face(memory.LastKnownPosition, 360f, Time.deltaTime);
                         return;
                     }
 
@@ -401,7 +407,7 @@ namespace SoulsLike.Entities.Enemy
                     if (_executor.TryStart(move))
                     {
                         _committedAttackPoint = combatTarget;
-                        _motor.FaceImmediately(combatTarget);
+                        FaceImmediately(combatTarget);
                         return;
                     }
 
@@ -477,6 +483,26 @@ namespace SoulsLike.Entities.Enemy
 
         private bool CanStartAttack(float now)
         {
+            if (_actor.BehaviourProfile.MaximumAttackCount > 0
+                && _startedAttackCount >= _actor.BehaviourProfile.MaximumAttackCount)
+            {
+                return false;
+            }
+
+            if (_defense.HasCriticalOpportunity
+                || _defense.IsParryStunned
+                || _defense.IsInCriticalState
+                || _defense.IsInHitReaction
+                || _defense.IsGuardBroken)
+            {
+                return false;
+            }
+
+            if (now < _waitUntil)
+            {
+                return false;
+            }
+
             if (_hasStartedAttack)
             {
                 return true;
@@ -558,7 +584,7 @@ namespace SoulsLike.Entities.Enemy
                 float turnSpeed = _executor.CurrentTurnSpeed;
                 if (turnSpeed > 0f)
                 {
-                    _motor.Face(lockPoint, turnSpeed, deltaTime);
+                    Face(lockPoint, turnSpeed, deltaTime);
                 }
             }
             if (!_executor.ComboWindowOpen)
@@ -593,7 +619,7 @@ namespace SoulsLike.Entities.Enemy
                             now,
                             out EnemyMemory memory))
                     {
-                        _motor.Face(memory.LastKnownLockPoint, 360f, deltaTime);
+                        Face(memory.LastKnownLockPoint, 360f, deltaTime);
                     }
                     break;
                 case EnemyGoal.Investigate:
@@ -609,7 +635,7 @@ namespace SoulsLike.Entities.Enemy
                     }
                     else
                     {
-                        _motor.Face(memory.LastKnownPosition, 360f, deltaTime);
+                        Face(memory.LastKnownPosition, 360f, deltaTime);
                         MoveTo(memory.LastKnownPosition);
                     }
                     break;
@@ -719,7 +745,7 @@ namespace SoulsLike.Entities.Enemy
             if (_searchPointIndex >= _searchPoints.Length)
             {
                 _motor.Stop();
-                _motor.Rotate(_actor.BehaviourProfile.SearchTurnSpeed, deltaTime);
+                Rotate(_actor.BehaviourProfile.SearchTurnSpeed, deltaTime);
                 return;
             }
 
@@ -891,12 +917,48 @@ namespace SoulsLike.Entities.Enemy
 
         private void MoveTo(Vector3 position)
         {
+            if (_actor.BehaviourProfile.RemainsStationary)
+            {
+                _motor.Stop();
+                return;
+            }
+
             _motor.SetDestination(position);
         }
 
         private void Face(Vector3 position, float turnSpeed)
         {
-            _motor.Face(position, turnSpeed, Time.deltaTime);
+            Face(position, turnSpeed, Time.deltaTime);
+        }
+
+        private void Face(Vector3 position, float turnSpeed, float deltaTime)
+        {
+            if (_actor.BehaviourProfile.LocksFacing)
+            {
+                return;
+            }
+
+            _motor.Face(position, turnSpeed, deltaTime);
+        }
+
+        private void FaceImmediately(Vector3 position)
+        {
+            if (_actor.BehaviourProfile.LocksFacing)
+            {
+                return;
+            }
+
+            _motor.FaceImmediately(position);
+        }
+
+        private void Rotate(float degrees, float deltaTime)
+        {
+            if (_actor.BehaviourProfile.LocksFacing)
+            {
+                return;
+            }
+
+            _motor.Rotate(degrees, deltaTime);
         }
 
         private void WaitAt()
@@ -952,6 +1014,7 @@ namespace SoulsLike.Entities.Enemy
         {
             _actionSelector.CommitStarted(move, Time.time);
             _hasStartedAttack = true;
+            _startedAttackCount++;
         }
 
         private void OnActionCompleted(EnemyMove move)
@@ -960,6 +1023,7 @@ namespace SoulsLike.Entities.Enemy
             {
                 _committedAttackPoint = default;
                 _groupCoordinator.ReleasePressureSlot(_actor);
+                _waitUntil = Mathf.Max(_waitUntil, Time.time + _actor.BehaviourProfile.WaitSeconds);
             }
         }
 
@@ -967,6 +1031,7 @@ namespace SoulsLike.Entities.Enemy
         {
             _committedAttackPoint = default;
             _groupCoordinator.ReleasePressureSlot(_actor);
+            _waitUntil = Mathf.Max(_waitUntil, Time.time + _actor.BehaviourProfile.WaitSeconds);
         }
 
         public void ReceiveAllyAlert(Vector3 position, long sourceEntityId, float now)

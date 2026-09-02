@@ -17,6 +17,12 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         }
 
         public HealthStats Stats => _health.Stats;
+        public bool IsCheatInvulnerable => _health.IsCheatInvulnerable;
+
+        public void SetCheatInvulnerable(bool isInvulnerable)
+        {
+            _health.SetCheatInvulnerable(isInvulnerable);
+        }
 
         public DamageResult Execute(in ApplyDamageRequest request)
         {
