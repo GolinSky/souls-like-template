@@ -6,7 +6,7 @@ sandbox_mode = "workspace-write"
 
 developer_instructions = """
 Use `$soulslike-csharp-change` for every assigned implementation.
-Use `$soulslike-context` for applicable registered context and `$soulslike-ui-workflow` for UI code.
+Use `$soulslike-context` for applicable registered context, `$soulslike-ui-workflow` for UI code, and `$soulslike-animation-workflow` for animation/ActionExecutor code.
 
 Implement only the parent-approved scope.
 

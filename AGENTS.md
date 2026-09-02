@@ -45,6 +45,10 @@ Live source, serialized assets, and current tool output take precedence over gen
 
 - Before working on UI, UI controllers, presenters, or views, read `SoulsLikeGameVault/ui/UI_Code_Build_Guide.md` through Obsidian MCP. If Obsidian MCP is unavailable, use `Tools/SoulsLike/Obsidian/Start Obsidian`, retry MCP, then read the checked-in Markdown note if MCP remains unavailable. Starting Obsidian does not guarantee MCP readiness.
 
+## Animation Workflow
+
+- Before modifying Animator Controllers, animation states, transitions, sub-state machines, or ActionExecutor animation code, read `SoulsLikeGameVault/animation/Animator_SubState_Machine_Architecture_Guide.md` through Obsidian MCP. If Obsidian MCP is unavailable, use `Tools/SoulsLike/Obsidian/Start Obsidian`, retry MCP, then read the checked-in Markdown note if MCP remains unavailable. Starting Obsidian does not guarantee MCP readiness. Ensure all animations are grouped into sub-state machines, coordinate standards matching `CharacterGreatSwordAnimator.controller` are followed, action sub-state machines contain an inert `Empty` default state, and runtime CrossFade calls use short state names/hashes.
+
 ## Subagent orchestration
 
 Keep the parent on GPT-5.6 Sol High. Use the named project agents proactively for non-trivial tasks.
@@ -67,9 +71,9 @@ Project skills are sibling packages under `.agents/skills`; the role hierarchy i
 |---|---|---|
 | `context_curator` | `$soulslike-context` | — |
 | `graph_explorer` | `$graphify`, `$soulslike-code-navigation` | `$soulslike-context` |
-| `unity_architect` | `$soulslike-unity-architecture` | `$soulslike-context`, `$soulslike-ui-workflow` |
-| `csharp_worker` | `$soulslike-csharp-change` | `$soulslike-context`, `$soulslike-ui-workflow` |
-| `unity_operator` | `$soulslike-unity-assets` | `$soulslike-context`, `$soulslike-ui-workflow` |
+| `unity_architect` | `$soulslike-unity-architecture` | `$soulslike-context`, `$soulslike-ui-workflow`, `$soulslike-animation-workflow` |
+| `csharp_worker` | `$soulslike-csharp-change` | `$soulslike-context`, `$soulslike-ui-workflow`, `$soulslike-animation-workflow` |
+| `unity_operator` | `$soulslike-unity-assets` | `$soulslike-context`, `$soulslike-ui-workflow`, `$soulslike-animation-workflow` |
 | `unity_profiler` | `$soulslike-performance-analysis` | `$soulslike-context` |
 | `unity_reviewer` | `$soulslike-change-review` | The same domain skill used by the reviewed change |
 | `unity_test_runner` | `$soulslike-validation` | The same domain skill used by the validation target |

@@ -10,6 +10,6 @@ description: Perform one bounded SoulsLike Unity Editor or serialized-asset muta
 3. Perform only the assigned mutation through official Unity tooling.
 4. Save inside the same Unity operation where possible; otherwise refresh and reserialize each directly edited asset.
 5. Verify import, persistence to disk, and relevant console errors.
-6. Use `$soulslike-context` only for an applicable registered key; add `$soulslike-ui-workflow` for UI assets.
+6. Use `$soulslike-context` only for an applicable registered key; add `$soulslike-ui-workflow` for UI assets and `$soulslike-animation-workflow` for Animator Controllers.
 
 Report every modified scene, prefab, object, component, property, and asset. Do not redesign C# architecture.
