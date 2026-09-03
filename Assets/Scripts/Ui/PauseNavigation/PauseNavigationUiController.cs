@@ -16,7 +16,7 @@ namespace SoulsLike.Ui.PauseNavigation
         ITickable,
         IDisposable,
         IPauseNavigationPresenter,
-        IPauseNavigationRouteNavigation
+        IPauseMenuRouter
     {
         private readonly ICoreGameOrchestrator _gameOrchestrator;
         private readonly IInputService _inputService;

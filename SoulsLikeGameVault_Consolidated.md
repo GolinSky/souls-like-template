@@ -236,7 +236,7 @@ This index classifies checked-in vault Markdown so drafts and historical artifac
 | `ui/UI_Route_Navigation_Architecture.md` | advisory | Foundational UI route stack and navigation architecture guide. |
 | `ui/Pause_Navigation_Route_Architecture.md` | advisory | Pause navigation hub, sub-route flow, and hotkey architecture. |
 | `ui/Grace_Route_Navigation_Architecture.md` | advisory | Grace navigation hub, fade coordination, and travel architecture. |
-| `ToDo/Refactor_Pause_Navigation_Naming.md` | advisory | ToDo tracking for refactoring IPauseNavigationRouteNavigation naming. |
+| `ToDo/Refactor_Pause_Navigation_Naming.md` | advisory | ToDo tracking for refactoring IPauseNavigationRouteNavigation naming (Completed). |
 | `ToDo/Project_Organization_Analysis_And_Fix_Plan.md` | advisory | Audit analysis of project structure against PROJECT_ORGANIZATION.md and phased remediation plan. |
 | `Welcome.md` | historical | Obsidian starter note; no policy value. |
 
@@ -8421,7 +8421,7 @@ The Pause Navigation System is the central routing hub for character management 
 Assets/Scripts/Ui/PauseNavigation/
  ├── IPauseNavigationRoute.cs            (Domain base route interface extending IUiRoute)
  ├── IPauseNavigationPresenter.cs        (Presenter contract for the root Pause UI)
- ├── IPauseNavigationRouteNavigation.cs   (Router contract for opening Pause sub-routes)
+ ├── IPauseMenuRouter.cs                 (Router contract for opening Pause sub-routes)
  ├── PauseNavigationUi.cs               (BaseUi view with root navigation buttons)
  └── PauseNavigationUiController.cs     (Host router controller managing state and UiRouteStack)
 ```
@@ -8457,12 +8457,12 @@ namespace SoulsLike.Ui.PauseNavigation
 ```
 Exposes root menu button actions to the view (`PauseNavigationUi`).
 
-### C. Router Interface: `IPauseNavigationRouteNavigation`
-Defined in [`Assets/Scripts/Ui/PauseNavigation/IPauseNavigationRouteNavigation.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/IPauseNavigationRouteNavigation.cs):
+### C. Router Interface: `IPauseMenuRouter`
+Defined in [`Assets/Scripts/Ui/PauseNavigation/IPauseMenuRouter.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/IPauseMenuRouter.cs):
 ```csharp
 namespace SoulsLike.Ui.PauseNavigation
 {
-    public interface IPauseNavigationRouteNavigation
+    public interface IPauseMenuRouter
     {
         void OpenEquipment();
         void OpenInventory();
@@ -8471,10 +8471,6 @@ namespace SoulsLike.Ui.PauseNavigation
 }
 ```
 
-> [!WARNING]
-> **Naming Redundancy Warning & Planned Refactor**:
-> The interface name `IPauseNavigationRouteNavigation` suffers from redundant naming ("Navigation" repeated twice in the type and namespace). A refactoring task has been scheduled to rename this interface to `IPauseMenuRouter` (or `IPauseNavigationRouter`). See [Section 6](#6-todo-refactor-ipausenavigationroutenavigation-naming) and [`Refactor_Pause_Navigation_Naming.md`](../ToDo/Refactor_Pause_Navigation_Naming.md).
-
 ### D. View: `PauseNavigationUi`
 Defined in [`Assets/Scripts/Ui/PauseNavigation/PauseNavigationUi.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/PauseNavigationUi.cs):
 - Inherits from [`BaseUi`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/Base/BaseUi.cs).
@@ -8482,7 +8478,7 @@ Defined in [`Assets/Scripts/Ui/PauseNavigation/PauseNavigationUi.cs`](file:///f:
 
 ### E. Controller & Host Router: `PauseNavigationUiController`
 Defined in [`Assets/Scripts/Ui/PauseNavigation/PauseNavigationUiController.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/PauseNavigationUiController.cs):
-- Implements `IInitializable`, `ITickable`, `IDisposable`, `IPauseNavigationPresenter`, `IPauseNavigationRouteNavigation`.
+- Implements `IInitializable`, `ITickable`, `IDisposable`, `IPauseNavigationPresenter`, `IPauseMenuRouter`.
 - Injected dependencies:
   - `IUiService` — UI factory and view instantiation.
   - `ICoreGameOrchestrator` — Game state control (`PauseGame()`, `ResumeGame()`, `GameState`).
@@ -8615,22 +8611,16 @@ builder.Register<PauseNavigationUiController>(Lifetime.Singleton).AsSelf().AsImp
 
 ---
 
-## 6. TODO: Refactor `IPauseNavigationRouteNavigation` Naming
+## 6. Refactored `IPauseMenuRouter` Naming
 
-### Problem
-The interface name [`IPauseNavigationRouteNavigation`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/IPauseNavigationRouteNavigation.cs) has redundant "Navigation" words:
-- Namespace: `SoulsLike.Ui.PauseNavigation`
-- Interface: `IPauseNavigationRouteNavigation`
+The interface previously named `IPauseNavigationRouteNavigation` was refactored to **`IPauseMenuRouter`** to eliminate word stutter ("Navigation" repeated twice) and adhere to standard C# UI routing conventions.
 
-### Recommended Target Name
-Rename `IPauseNavigationRouteNavigation` to **`IPauseMenuRouter`** (or `IPauseNavigationRouter`).
-
-### Planned Action Items
-- [ ] Rename interface file to `IPauseMenuRouter.cs`.
-- [ ] Update definition: `public interface IPauseMenuRouter { void OpenEquipment(); void OpenInventory(); void OpenSystem(); }`.
-- [ ] Update [`PauseNavigationUiController.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/PauseNavigationUiController.cs) implementation list.
-- [ ] Update any DI bindings or consumers.
-- [ ] See full tracking note: [`Refactor_Pause_Navigation_Naming.md`](../ToDo/Refactor_Pause_Navigation_Naming.md).
+### Completed Action Items
+- [x] Rename interface file to [`IPauseMenuRouter.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/IPauseMenuRouter.cs).
+- [x] Update definition: `public interface IPauseMenuRouter { void OpenEquipment(); void OpenInventory(); void OpenSystem(); }`.
+- [x] Update [`PauseNavigationUiController.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/PauseNavigationUiController.cs) implementation list.
+- [x] Update DI bindings and consumers.
+- [x] Tracking note: [`Refactor_Pause_Navigation_Naming.md`](../ToDo/Refactor_Pause_Navigation_Naming.md).
 
 
 
@@ -9797,7 +9787,7 @@ graph TD
 
 # Refactor `IPauseNavigationRouteNavigation` Naming
 
-**Status**: Planned  
+**Status**: Completed  
 **Domain**: UI / Navigation Architecture  
 **Priority**: Low (Clean Code / Naming Consistency)  
 
@@ -9815,12 +9805,12 @@ Furthermore, the suffix `RouteNavigation` is awkward compared to established C# 
 
 ## 2. Current Implementation
 
-File: [`Assets/Scripts/Ui/PauseNavigation/IPauseNavigationRouteNavigation.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/IPauseNavigationRouteNavigation.cs)
+File: [`Assets/Scripts/Ui/PauseNavigation/IPauseMenuRouter.cs`](file:///f:/Private/SoulsLikeTemplate/Assets/Scripts/Ui/PauseNavigation/IPauseMenuRouter.cs)
 
 ```csharp
 namespace SoulsLike.Ui.PauseNavigation
 {
-    public interface IPauseNavigationRouteNavigation
+    public interface IPauseMenuRouter
     {
         void OpenEquipment();
         void OpenInventory();
@@ -9836,7 +9826,7 @@ public sealed class PauseNavigationUiController : UiController,
     ITickable,
     IDisposable,
     IPauseNavigationPresenter,
-    IPauseNavigationRouteNavigation
+    IPauseMenuRouter
 {
     // ...
 }
@@ -9883,9 +9873,9 @@ public sealed class PauseNavigationUiController : UiController,
 
 ## 5. Acceptance Criteria
 
-- [ ] File and interface renamed following the 1-type-per-file rule.
-- [ ] No compilation or DI binding errors.
-- [ ] Unity compiles and tests (when explicitly requested) pass.
+- [x] File and interface renamed following the 1-type-per-file rule (`IPauseMenuRouter.cs` / `IPauseMenuRouter`).
+- [x] No compilation or DI binding errors.
+- [x] Unity compiles and tests (when explicitly requested) pass.
 
 
 
