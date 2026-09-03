@@ -27,6 +27,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
         float GroundedRadius { get; }
         float GroundSnapDistance { get; }
         float TerminalVelocity { get; set; }
+        LayerMask GroundProbeMask { get; }
         LayerMask GroundLayers { get; }
         float RollCooldown { get; }
         float RollStaminaCost { get; }
@@ -137,8 +138,18 @@ namespace SoulsLike.Entities.Character.Components.Movement
         [field: SerializeField] public float TerminalVelocity { get; set; }
 
         [Tooltip("What layers the character uses as ground")]
-        [field: SerializeField]
-        public LayerMask GroundLayers { get; private set; }
+        [field: SerializeField, UnityEngine.Serialization.FormerlySerializedAs("GroundLayers"), UnityEngine.Serialization.FormerlySerializedAs("<GroundLayers>k__BackingField")]
+        public LayerMask GroundProbeMask { get; private set; }
+
+        public LayerMask GroundLayers => GroundProbeMask;
+
+        private void OnValidate()
+        {
+            if (GroundProbeMask.value == 0)
+            {
+                Debug.LogError($"[{nameof(MovementData)}] GroundProbeMask cannot be zero.", this);
+            }
+        }
 
         [Header("Rolling")]
         [Tooltip("Time required to pass before being able to roll again")]

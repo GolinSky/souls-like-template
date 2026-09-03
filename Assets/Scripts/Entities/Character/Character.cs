@@ -44,7 +44,6 @@ namespace SoulsLike.Entities.Character
 
         [Header("Aim Settings")]
         [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;
-        [SerializeField] private LayerMask aimLayerMask;
 
         private AttackComponent _attackComponent;
         private readonly CharacterActionStateMachine _actionStateMachine = new CharacterActionStateMachine();

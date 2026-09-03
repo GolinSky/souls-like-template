@@ -57,7 +57,7 @@ MonoBehaviour:
   <GroundedRadius>k__BackingField: 0.28
   <GroundSnapDistance>k__BackingField: 0.35
   <TerminalVelocity>k__BackingField: 0
-  <GroundLayers>k__BackingField:
+  <GroundProbeMask>k__BackingField:
     serializedVersion: 2
     m_Bits: 4294966783
   <RollCooldown>k__BackingField: 0.2
