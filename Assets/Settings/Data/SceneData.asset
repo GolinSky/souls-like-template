@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40057fcc6f47443e91057694846520b6, type: 3}
   m_Name: SceneData
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.Scenes.Data.SceneData
+  defaultScene: 3
   scenes:
     keyValue:
     - key: 0
@@ -32,8 +33,8 @@ MonoBehaviour:
     - key: 3
       value:
         sceneAsset: {fileID: 102900000, guid: 238720e6e7b816043a74ed1ac1259bdb, type: 3}
-        isDirty: 0
-        scenePath: Assets/Scenes/WorkShop/WorkShop.unity
+        isDirty: 1
+        scenePath: Assets/Sandbox/Scenes/WorkShop/WorkShop.unity
   dependencies:
     keyValue:
     - key: 2

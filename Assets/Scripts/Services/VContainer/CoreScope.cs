@@ -1,6 +1,7 @@
 using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
 using SoulsLike.Services.Navigation;
+using SoulsLike.Services.Spawn;
 using SoulsLike.Services.Targeting;
 using SoulsLike.Services.Travel;
 using SoulsLike.Entities.Character;
@@ -21,11 +22,14 @@ namespace SoulsLike
         [SerializeField] private CameraService cameraService;
         [SerializeField] private GraceSystem graceSystem;
         [SerializeField] private EnemyEncounterSystem enemyEncounterSystem;
+        [SerializeField] private PlayerSpawnPositionProvider playerSpawnPositionProvider;
+
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterComponent(cameraService).AsSelf().As<ICameraService>();
             builder.RegisterComponent(graceSystem).AsSelf().AsImplementedInterfaces();
             builder.RegisterComponent(enemyEncounterSystem).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponent(playerSpawnPositionProvider).AsSelf();
             builder.Register<TargetingService>(Lifetime.Singleton).As<ITargetingService>();
             builder.Register<EnemyHealthUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<CheatsUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

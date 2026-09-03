@@ -7,8 +7,8 @@ namespace SoulsLike.Services.Spawn
     public class CharacterSpawnData
     {
         public bool HasCurrentPosition { get; set; }
-        public SceneType CurrentScene { get; set; } = SceneType.DefaultLocation;
+        public SceneType CurrentScene { get; set; } = SceneType.Workshop;
         public Vector3 CurrentPosition { get; set; }
-        public GraceId LastGraceId { get; set; } = GraceId.DefaultLocationGrace01;
+        public GraceId LastGraceId { get; set; } = GraceId.WorkshopGrace01;
     }
 }

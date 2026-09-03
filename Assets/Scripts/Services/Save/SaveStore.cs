@@ -25,5 +25,6 @@ namespace SoulsLike.Services.Save
         public T LoadOrCreate() => _save.Load<T>(_key) ?? new T();
 
         public void Save(T data) => _save.Save(_key, data);
+        public void Delete() => _save.Delete(_key);
     }
 }

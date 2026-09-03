@@ -22,6 +22,7 @@ namespace SoulsLike.Services.Save
         void Save<T>(string fileName, T data);
         T Load<T>(string fileName);
         void Delete(string fileName);
+        void DeleteAll();
     }
 
     public class SaveService : ISaveService
@@ -146,6 +147,28 @@ namespace SoulsLike.Services.Save
             }
 
             TryCloudDelete(fileName);
+        }
+
+        public void DeleteAll()
+        {
+            try
+            {
+                if (Directory.Exists(_saveFolderPath))
+                {
+                    string[] files = Directory.GetFiles(_saveFolderPath, "*" + FILE_EXTENSION);
+                    foreach (string file in files)
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"[SaveService] Failed to delete all saves: {e.Message}");
+            }
+
+            PlayerPrefs.DeleteAll();
+            PlayerPrefs.Save();
         }
 
         private string GetFilePath(string fileName)

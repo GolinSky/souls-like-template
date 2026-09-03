@@ -15000,6 +15000,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1358261729}
   m_LocalEulerAnglesHint: {x: 36.031, y: -118.339, z: 4.078}
+--- !u!1 &2025814493
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2025814495}
+  - component: {fileID: 2025814494}
+  m_Layer: 0
+  m_Name: PlayerSpawnPositionProvider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2025814494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025814493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c145a7540ba94553aa118e6b5c68bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.Spawn.PlayerSpawnPositionProvider
+  spawnPoint: {fileID: 2025814495}
+--- !u!4 &2025814495
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025814493}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -18.954, y: 271.818, z: -135.62}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2058623001
 GameObject:
   m_ObjectHideFlags: 0
@@ -16340,6 +16385,7 @@ MonoBehaviour:
   cameraService: {fileID: 3018529732569510667}
   graceSystem: {fileID: 198951721}
   enemyEncounterSystem: {fileID: 922633214}
+  playerSpawnPositionProvider: {fileID: 2025814494}
 --- !u!114 &3018529732569510667 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7385200506573806041, guid: c41e5c3ac64d01e4c9e2eddbce0a3c16, type: 3}
@@ -16674,3 +16720,4 @@ SceneRoots:
   - {fileID: 1599396926}
   - {fileID: 1932185006}
   - {fileID: 846277527}
+  - {fileID: 2025814495}

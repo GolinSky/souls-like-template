@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using SoulsLike.Entities.Character;
@@ -30,6 +30,7 @@ namespace SoulsLike.Services
         private readonly CharacterFactory _characterFactory;
         private readonly CharacterSpawnService _characterSpawnService;
         private readonly IFadeService _fadeService;
+        private readonly PlayerSpawnPositionProvider _playerSpawnPositionProvider;
         private Character _character;
         private bool _startsOnGrace;
         private bool _isRespawning;
@@ -41,12 +42,14 @@ namespace SoulsLike.Services
             IGameOrchestrator gameOrchestrator,
             CharacterFactory characterFactory,
             CharacterSpawnService characterSpawnService,
-            IFadeService fadeService)
+            IFadeService fadeService,
+            PlayerSpawnPositionProvider playerSpawnPositionProvider)
         {
             _gameOrchestrator = gameOrchestrator;
             _characterFactory = characterFactory;
             _characterSpawnService = characterSpawnService;
             _fadeService = fadeService;
+            _playerSpawnPositionProvider = playerSpawnPositionProvider;
         }
         
         public void Initialize()
@@ -58,7 +61,7 @@ namespace SoulsLike.Services
                 return;
             }
 
-            _character = _characterFactory.CreateCharacter();
+            _character = _characterFactory.CreateCharacter(_playerSpawnPositionProvider.SpawnPosition);
         }
         
         public void Start()

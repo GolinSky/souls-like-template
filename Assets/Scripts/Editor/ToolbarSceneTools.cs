@@ -24,7 +24,7 @@ namespace SoulsLike.EditorTools
         private const string PLAY_BUTTON_PATH = "SoulsLike/Play Game";
         private const string FAST_PLAY_BUTTON_PATH = "SoulsLike/Fast Play Game";
         private const string SCENE_DROPDOWN_PATH = "SoulsLike/Scene Selector";
-        private const string SCENES_ROOT = "Assets/Scenes";
+        private static readonly string[] SCENE_SEARCH_FOLDERS = new[] { "Assets/Scenes", "Assets/Sandbox/Scenes" };
         private const string SCENE_DATA_PATH = "Assets/Settings/Data/SceneData.asset";
 
         private const string KEY_FAST_ACTIVE = "SoulsLike_IsFastPlayActive";
@@ -244,7 +244,7 @@ namespace SoulsLike.EditorTools
                 return;
             }
 
-            var scenePaths = AssetDatabase.FindAssets("t:Scene", new[] { SCENES_ROOT })
+            var scenePaths = AssetDatabase.FindAssets("t:Scene", SCENE_SEARCH_FOLDERS)
                 .Select(AssetDatabase.GUIDToAssetPath)
                 .Where(path => path.EndsWith(".unity", StringComparison.OrdinalIgnoreCase))
                 .Distinct()
@@ -253,7 +253,7 @@ namespace SoulsLike.EditorTools
 
             if (scenePaths.Length == 0)
             {
-                menu.AddDisabledItem(new GUIContent("No scenes found in Assets/Scenes"));
+                menu.AddDisabledItem(new GUIContent("No scenes found"));
             }
             else
             {
@@ -277,10 +277,13 @@ namespace SoulsLike.EditorTools
 
         private static string GetSceneLabel(string scenePath)
         {
-            if (scenePath.StartsWith(SCENES_ROOT + "/"))
+            foreach (string root in SCENE_SEARCH_FOLDERS)
             {
-                var relativePath = scenePath.Substring(SCENES_ROOT.Length + 1);
-                return Path.ChangeExtension(relativePath, null).Replace("/", " > ");
+                if (scenePath.StartsWith(root + "/", StringComparison.OrdinalIgnoreCase))
+                {
+                    var relativePath = scenePath.Substring(root.Length + 1);
+                    return Path.ChangeExtension(relativePath, null).Replace("/", " > ");
+                }
             }
             return Path.GetFileNameWithoutExtension(scenePath);
         }

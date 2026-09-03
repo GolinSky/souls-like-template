@@ -16,7 +16,7 @@ MonoBehaviour:
   m_GUID: 9560410cdafb71f45ad527e26d4d1f72
   m_SerializeEntries:
   - m_GUID: 238720e6e7b816043a74ed1ac1259bdb
-    m_Address: Assets/Scenes/WorkShop/WorkShop.unity
+    m_Address: Assets/Sandbox/Scenes/WorkShop/WorkShop.unity
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
