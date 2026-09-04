@@ -3,9 +3,7 @@
     "unity": {
       "command": "unity",
       "args": [
-        "mcp",
-        "--project-path",
-        "F:\\Private\\SoulsLikeTemplate"
+        "mcp"
       ]
     },
     "obsidian": {
