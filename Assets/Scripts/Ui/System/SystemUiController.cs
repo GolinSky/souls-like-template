@@ -11,6 +11,7 @@ namespace SoulsLike
 
         public event Action CloseRequested;
         public event Action ResumeRequested;
+        public event Action OptionsRequested;
 
         public SystemUiController(
             IUiService uiService,
@@ -33,6 +34,7 @@ namespace SoulsLike
 
         public void OpenOptions()
         {
+            OptionsRequested?.Invoke();
         }
 
         public void QuitGame()

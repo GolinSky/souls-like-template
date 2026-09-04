@@ -7,6 +7,7 @@ using SoulsLike.Services;
 using SoulsLike.Ui.Equipment;
 using SoulsLike.Ui.Inventory;
 using SoulsLike.Ui.Navigation;
+using SoulsLike.Ui.Settings;
 using VContainer.Unity;
 
 namespace SoulsLike.Ui.PauseNavigation
@@ -23,6 +24,7 @@ namespace SoulsLike.Ui.PauseNavigation
         private readonly IEquipmentRoute _equipmentRoute;
         private readonly IInventoryRoute _inventoryRoute;
         private readonly ISystemRoute _systemRoute;
+        private readonly ISettingsRoute _settingsRoute;
 
         private static readonly ItemType[] _leftHandItemTypes  =
         {
@@ -45,7 +47,8 @@ namespace SoulsLike.Ui.PauseNavigation
             IInputService inputService,
             IEquipmentRoute equipmentRoute,
             IInventoryRoute inventoryRoute,
-            ISystemRoute systemRoute)
+            ISystemRoute systemRoute,
+            ISettingsRoute settingsRoute)
             : base(uiService)
         {
             _gameOrchestrator = gameOrchestrator;
@@ -53,6 +56,7 @@ namespace SoulsLike.Ui.PauseNavigation
             _equipmentRoute = equipmentRoute;
             _inventoryRoute = inventoryRoute;
             _systemRoute = systemRoute;
+            _settingsRoute = settingsRoute;
         }
 
         public void Initialize()
@@ -67,6 +71,8 @@ namespace SoulsLike.Ui.PauseNavigation
             _inventoryRoute.CloseRequested += HandleInventoryCloseRequested;
             _systemRoute.CloseRequested += HandleSystemCloseRequested;
             _systemRoute.ResumeRequested += HandleSystemResumeRequested;
+            _systemRoute.OptionsRequested += HandleSystemOptionsRequested;
+            _settingsRoute.CloseRequested += HandleSettingsCloseRequested;
         }
 
         public void Dispose()
@@ -76,6 +82,8 @@ namespace SoulsLike.Ui.PauseNavigation
             _inventoryRoute.CloseRequested -= HandleInventoryCloseRequested;
             _systemRoute.CloseRequested -= HandleSystemCloseRequested;
             _systemRoute.ResumeRequested -= HandleSystemResumeRequested;
+            _systemRoute.OptionsRequested -= HandleSystemOptionsRequested;
+            _settingsRoute.CloseRequested -= HandleSettingsCloseRequested;
         }
 
         public void Tick()
@@ -152,6 +160,16 @@ namespace SoulsLike.Ui.PauseNavigation
             _routeStack.CloseAll();
             _view.Hide();
             _gameOrchestrator.ResumeGame();
+        }
+
+        private void HandleSystemOptionsRequested()
+        {
+            OpenRoute(_settingsRoute);
+        }
+
+        private void HandleSettingsCloseRequested()
+        {
+            CloseRoute();
         }
 
         private void HandleEquipmentInventoryRequested(EquipmentSlotId slotId)

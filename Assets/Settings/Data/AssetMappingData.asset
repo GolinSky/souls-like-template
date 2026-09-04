@@ -98,6 +98,13 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: SettingsDefaultsData
+      value:
+        m_AssetGUID: 42eded89bf25d461086c42be753abe7a
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
   uiMappings:
     keyValue:
     - key: MainMenuUi
@@ -194,6 +201,13 @@ MonoBehaviour:
     - key: CheatsUi
       value:
         m_AssetGUID: 34856f4f7a7e43847b48ab5d21151f22
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0
+    - key: SettingsUi
+      value:
+        m_AssetGUID: e6eac1261eb654f0ab40a1dad0398999
         m_SubObjectName: 
         m_SubObjectType: 
         m_SubObjectGUID: 
