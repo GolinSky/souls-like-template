@@ -26,6 +26,12 @@ namespace SoulsLike.Entities.Character.Components.Animations
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateUpdate(animator, stateInfo, layerIndex);
+
+            if (animator.IsInTransition(layerIndex))
+            {
+                return;
+            }
+
             ReportProgress(stateInfo, layerIndex);
             ReportQueueCheck(stateInfo, layerIndex);
         }
