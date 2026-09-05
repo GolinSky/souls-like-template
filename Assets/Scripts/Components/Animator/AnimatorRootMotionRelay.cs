@@ -15,6 +15,7 @@ namespace SoulsLike.Entities.Character.Components
         private MovementComponent _movementComponent;
         private bool _movementBlocked;
         private bool _usesRootMotion;
+        private bool _traversalBlocked;
         private bool _initialized;
 
         private void Awake()
@@ -43,6 +44,15 @@ namespace SoulsLike.Entities.Character.Components
             SynchronizeMovementContract(true, true);
         }
 
+        public void SetTraversalBlocked(bool blocked)
+        {
+            _traversalBlocked = blocked;
+            if (blocked)
+            {
+                SynchronizeMovementContract(true, false);
+            }
+        }
+
         private void OnAnimatorMove()
         {
             if (!_initialized)
@@ -53,6 +63,12 @@ namespace SoulsLike.Entities.Character.Components
             if (_animator == null)
             {
                 throw new InvalidOperationException($"{name} root motion relay is not initialized.");
+            }
+
+            if (_traversalBlocked)
+            {
+                SynchronizeMovementContract(true, false);
+                return;
             }
 
             bool usesRootMotion = HasActiveStateTag(ROOT_MOTION_TAG);

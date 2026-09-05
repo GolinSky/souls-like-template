@@ -16,6 +16,7 @@ using SoulsLike.Interactions;
 using SoulsLike.Ui.LockOn;
 using SoulsLike.Ui.PlayerHud;
 using SoulsLike.Items;
+using SoulsLike.Entities.Ladder;
 using SoulsLike.Services.IdGeneration;
 using SoulsLike.Ui.Inventory;
 using SoulsLike.Ui.Equipment;
@@ -79,6 +80,7 @@ namespace SoulsLike.Entities.Character
             InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
             HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
             CombatDefenseComponent combatDefense = GetRequiredComponent<CombatDefenseComponent>(instance);
+            LadderClimber ladderClimber = GetRequiredComponent<LadderClimber>(instance);
             animatorComponent.ConfigureCharacter(character, movementComponent);
             long entityId = RootScope.Container.Resolve<IUniqueIdGenerator>().GenerateUniqueId();
 
@@ -129,6 +131,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
                 builder.RegisterComponent(combatDefense).AsSelf().AsImplementedInterfaces();
+                builder.RegisterComponent(ladderClimber).AsSelf().AsImplementedInterfaces();
                 builder.Register<PlayerHudUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<InventoryUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

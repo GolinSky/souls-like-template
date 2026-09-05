@@ -4,5 +4,6 @@ namespace SoulsLike.Entities.BaseEntity
     {
         Player = 0,
         Enemy = 1,
+        Ladder = 2,
     }
 }

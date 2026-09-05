@@ -89,7 +89,7 @@ namespace SoulsLike.Entities.Character
         public void Tick()
         {
             if (!_healthComponent.Stats.IsAlive
-                || _character.IsInputBlocked
+                || (_character.IsInputBlocked && !_character.IsInLadderOperation)
                 || (_currentGameState != GameState.Idle && _currentGameState != GameState.Paused))
             {
                 _interactionController.ClearTarget();
@@ -99,12 +99,22 @@ namespace SoulsLike.Entities.Character
             if (_currentGameState == GameState.Paused)
             {
                 _interactionController.ClearTarget();
-                _character.Tick(_inputReader.ReadMovementOnly());
+                if (!_character.IsInLadderOperation)
+                {
+                    _character.Tick(_inputReader.ReadMovementOnly());
+                }
                 return;
             }
 
-            HandleLockOnInput();
-            _interactionController.Tick();
+            if (!_character.IsInLadderOperation)
+            {
+                HandleLockOnInput();
+                _interactionController.Tick();
+            }
+            else
+            {
+                _interactionController.ClearTarget();
+            }
             _character.Tick(_inputReader.Read(_character.CurrentActionState));
         }
 

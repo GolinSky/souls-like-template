@@ -57,6 +57,28 @@ namespace SoulsLike.Entities.Enemy
             WorldVelocity = Vector3.zero;
         }
 
+        public void SuspendForTraversal()
+        {
+            Stop();
+            agent.enabled = false;
+        }
+
+        public void ResumeAfterTraversal()
+        {
+            if (!agent.enabled)
+            {
+                agent.enabled = true;
+            }
+
+            if (agent.isOnNavMesh && !agent.Warp(transform.position))
+            {
+                throw new InvalidOperationException(
+                    $"Enemy '{name}' could not resume on the NavMesh after ladder traversal.");
+            }
+
+            Stop();
+        }
+
         public void SetRootMotion(bool active)
         {
             _rootMotionActive = active;

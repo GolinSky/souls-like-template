@@ -12,6 +12,7 @@ using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Entities.Combat;
+using SoulsLike.Entities.Ladder;
 using SoulsLike.Items;
 using SoulsLike.Services;
 using UnityEngine;
@@ -41,6 +42,7 @@ namespace SoulsLike.Entities.Character
         [SerializeField] private InventoryComponent inventoryComponent;
         [SerializeField] private EquipmentPresentation equipmentPresentation;
         [SerializeField] private Transform cameraTarget;
+        [SerializeField] private LadderClimber ladderClimber;
 
         [Header("Aim Settings")]
         [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;
@@ -73,6 +75,18 @@ namespace SoulsLike.Entities.Character
         public int HeldCurrency => _heldCurrency;
         public CharacterAttributeStats Attributes => _characterData.Attributes;
         public bool IsInputBlocked => _actionStateMachine.IsInputBlocked;
+        public bool IsInLadderOperation => ladderClimber.IsBusy;
+        public bool CanStartLadder => healthComponent.Stats.IsAlive
+            && IsGrounded
+            && !IsInputBlocked
+            && CurrentActionState == CharacterAction.State.Neutral
+            && !equipmentComponent.IsSwapInProgress
+            && !_isItemUseInProgress
+            && _gracePhase == GracePhase.None
+            && !_criticalAttackController.IsRunning
+            && !_combatDefense.IsInCriticalState
+            && !_combatDefense.IsInHitReaction
+            && !_combatDefense.IsParryStunned;
         public CharacterAction.State CurrentActionState => _actionStateMachine.CurrentState;
         public event Action OnDeathAnimationCompleted;
 
@@ -128,6 +142,14 @@ namespace SoulsLike.Entities.Character
             if (!input.StrongAttackHeld)
             {
                 animatorComponent.SetChargedAttackSpeed(NORMAL_ATTACK_SPEED);
+            }
+
+            if (ladderClimber.IsBusy)
+            {
+                ladderClimber.TickPlayer(input, Time.deltaTime);
+                _combatDefense.SetBlocking(false);
+                healthComponent.TickStaminaRecovery(Time.deltaTime, false);
+                return;
             }
 
             _actionStateMachine.Tick(input.SprintHeld, equipmentComponent.IsSwapInProgress);
@@ -195,6 +217,7 @@ namespace SoulsLike.Entities.Character
 
         public void PlayDeath()
         {
+            ladderClimber.ForceDetach(LadderDetachReason.Death);
             equipmentComponent.CancelSwap();
             _isDeathAnimationPlaying = true;
             SetInputBlocked(true);
@@ -624,6 +647,7 @@ namespace SoulsLike.Entities.Character
                 or MeleeHitResultType.StanceBroken
                 or MeleeHitResultType.GuardBroken)
             {
+                ladderClimber.ForceDetach(LadderDetachReason.KnockOff);
                 _combatDefense.SetHitReaction(true);
                 _meleeCombatRelay.Cancel();
             }
@@ -633,6 +657,54 @@ namespace SoulsLike.Entities.Character
 
         public void Heal(float amount) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateHeal(healthComponent.Stats, amount));
+
+        public void OnLadderAttached()
+        {
+            equipmentComponent.CancelSwap();
+            _meleeCombatRelay.Cancel();
+            _actionStateMachine.Clear();
+            _combatDefense.SetBlocking(false);
+            _combatDefense.SetHitReaction(false);
+            _combatDefense.SetParryStunned(false);
+            healthComponent.SetRecoveryInvulnerable(false);
+            SetMovementLock(MovementLockReason.Ladder, true);
+            movementComponent.SetMovementBlocked(true);
+            animatorComponent.SetLadderTraversalBlocked(true);
+            equipmentPresentation.SetArmamentVisible(EquipmentSlotGroup.RightHandArmament, false);
+            equipmentPresentation.SetArmamentVisible(EquipmentSlotGroup.LeftHandArmament, false);
+            SetLockOnTarget(false, null);
+        }
+
+        public void OnLadderDetached()
+        {
+            SetMovementLock(MovementLockReason.Ladder, false);
+            movementComponent.SetMovementBlocked(_movementLockReasons != MovementLockReason.None);
+            animatorComponent.SetLadderTraversalBlocked(false);
+            movementComponent.SetPosition(transform.position);
+            equipmentPresentation.SetArmamentVisible(EquipmentSlotGroup.RightHandArmament, true);
+            equipmentPresentation.SetArmamentVisible(EquipmentSlotGroup.LeftHandArmament, true);
+        }
+
+        public bool CanUseQuickItemOnLadder()
+        {
+            EquippedItemContext quickItem = equipmentComponent.BuildLoadout().ActiveQuickItem;
+            return quickItem != null
+                && quickItem.ItemId == ItemId.CrimsonFlask
+                && quickItem.Entry.Quantity > 0;
+        }
+
+        public void UseQuickItemOnLadder()
+        {
+            EquippedItemContext quickItem = equipmentComponent.BuildLoadout().ActiveQuickItem;
+            if (quickItem == null || quickItem.ItemId != ItemId.CrimsonFlask || quickItem.Entry.Quantity <= 0)
+            {
+                return;
+            }
+
+            ConsumableDefinition flask = _itemCatalog.GetConsumable(quickItem.ItemId);
+            inventoryComponent.Consume(quickItem.Entry.EntryId, 1);
+            Heal(flask.EffectAmount);
+        }
 
         public void GrantCurrency(int amount)
         {
@@ -924,6 +996,6 @@ namespace SoulsLike.Entities.Character
         }
 
         [Flags]
-        private enum MovementLockReason { None = 0, Manual = 1, Animation = 2, Spawn = 4, Parry = 8, Critical = 16 }
+        private enum MovementLockReason { None = 0, Manual = 1, Animation = 2, Spawn = 4, Parry = 8, Critical = 16, Ladder = 32 }
     }
 }
