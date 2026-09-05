@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace SoulsLike.Services.Layer
 {
@@ -6,6 +6,7 @@ namespace SoulsLike.Services.Layer
     {
         LayerMask GetLayerMask(LayerName name);
         int GetLayer(LayerName name);
+        LayerMask GetMask(LayerMaskName name);
         void SetLayer(GameObject gameObject, LayerName name, bool recursive = true);
     }
 }

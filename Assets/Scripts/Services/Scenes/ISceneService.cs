@@ -11,5 +11,6 @@ namespace SoulsLike.Services.Scenes
         UniTask LoadScene(SceneType sceneType);
         SceneType GetSceneType(string scenePathOrName);
         SceneType CurrentScene { get; }
+        SceneType DefaultScene { get; }
     }
 }

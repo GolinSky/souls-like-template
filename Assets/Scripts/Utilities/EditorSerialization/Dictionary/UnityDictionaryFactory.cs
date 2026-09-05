@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace SoulsLike
 {
@@ -7,6 +7,7 @@ namespace SoulsLike
         public static Dictionary<TKey, TValue> Build<TKey,TValue>(IEnumerable<IKeyValue<TKey, TValue>> enumerable)
         {
             Dictionary<TKey, TValue> dictionary = new Dictionary<TKey, TValue>();
+            if (enumerable == null) return dictionary;
             foreach (var keyValue in enumerable)
             {
                 if(dictionary.ContainsKey(keyValue.Key)) continue;

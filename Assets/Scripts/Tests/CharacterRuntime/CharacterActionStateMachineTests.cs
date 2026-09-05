@@ -117,6 +117,29 @@ namespace SoulsLike.Tests.CharacterRuntime
         }
 
         [Test]
+        public void MultipleChainedRollsIgnoreExitsUntilFinalRollCompletes()
+        {
+            var machine = new CharacterActionStateMachine();
+            CharacterAction roll = Roll();
+            Start(machine, roll, CharacterAction.State.Roll);
+
+            machine.HandleQueueCheck(CharacterAction.State.Roll);
+            machine.ReportExecution(roll, CharacterAction.Result.Executed, CharacterAction.State.Roll, 1f);
+
+            machine.HandleQueueCheck(CharacterAction.State.Roll);
+            machine.ReportExecution(roll, CharacterAction.Result.Executed, CharacterAction.State.Roll, 2f);
+
+            Assert.That(machine.HandleExited(CharacterAction.State.Roll), Is.True);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterAction.State.Roll));
+
+            Assert.That(machine.HandleExited(CharacterAction.State.Roll), Is.True);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterAction.State.Roll));
+
+            Assert.That(machine.HandleExited(CharacterAction.State.Roll), Is.True);
+            Assert.That(machine.CurrentState, Is.EqualTo(CharacterAction.State.Neutral));
+        }
+
+        [Test]
         public void SprintInterruptsRollOnlyWhenQueueCheckOpens()
         {
             var machine = new CharacterActionStateMachine();

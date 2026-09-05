@@ -99,5 +99,15 @@ namespace SoulsLike.Entities.Enemy
         public int MaximumAttackCount => maximumAttackCount;
         public int RandomSeed => randomSeed;
         public bool CanUseLadders => canUseLadders;
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (lineOfSightMask.value == 0)
+            {
+                Debug.LogError($"[{nameof(EnemyBehaviourProfile)}] LineOfSightMask cannot be zero.", this);
+            }
+        }
+#endif
     }
 }

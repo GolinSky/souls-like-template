@@ -46,7 +46,6 @@ namespace SoulsLike.Entities.Character
 
         [Header("Aim Settings")]
         [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;
-        [SerializeField] private LayerMask aimLayerMask;
 
         private AttackComponent _attackComponent;
         private readonly CharacterActionStateMachine _actionStateMachine = new CharacterActionStateMachine();
@@ -369,10 +368,13 @@ namespace SoulsLike.Entities.Character
 
         private CharacterAction.Result StartRoll(in CharacterAction action)
         {
-            bool canInterrupt = _actionStateMachine.CurrentState != CharacterAction.State.Neutral;
+            bool canInterrupt = _actionStateMachine.CurrentState is CharacterAction.State.Attack or CharacterAction.State.Roll
+                || IsMovementLocked(MovementLockReason.Animation);
             MovementModel movementModel = movementComponent.Model;
-            float staminaCost = movementModel.RollStaminaCost;
-            if (!healthComponent.CanConsumeStamina(
+            bool drainsStamina = _combatStateNotifier.CurrentCombatState == CombatState.Combat;
+            float staminaCost = drainsStamina ? movementModel.RollStaminaCost : 0f;
+
+            if (drainsStamina && !healthComponent.CanConsumeStamina(
                     staminaCost,
                     movementModel.RollStaminaStartThreshold))
             {
@@ -388,7 +390,11 @@ namespace SoulsLike.Entities.Character
                 return CharacterAction.Result.TemporarilyBlocked;
             }
 
-            healthComponent.ConsumeStamina(staminaCost);
+            if (drainsStamina && staminaCost > 0f)
+            {
+                healthComponent.ConsumeStamina(staminaCost);
+            }
+
             if (movementComponent.TryConsumeBackStepStarted()) animatorComponent.TriggerBackStep();
             else if (movementComponent.TryConsumeRollStarted(out Vector2 direction)) animatorComponent.TriggerRoll(direction);
             return CharacterAction.Result.Executed;

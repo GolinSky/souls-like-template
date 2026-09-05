@@ -1,6 +1,7 @@
 # Layer Service Remediation Plan
 
 **Repository:** `GolinSky/souls-like-template`  
+**Status:** Completed (Commit `9dcc0e9e`)  
 **Baseline:** current `main` branch reviewed together with `LAYER_SYSTEM_AUDIT_REPORT.md`  
 **Goal:** repair the broken layer configuration, make invalid configuration fail clearly, remove uncontrolled hardcoded masks, and keep feature-specific physics rules with the feature that owns them.
 

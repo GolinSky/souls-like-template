@@ -14,6 +14,7 @@ using SoulsLike.Services.Spawn;
 using SoulsLike.Services.Travel.Data;
 using SoulsLike.Services.Layer;
 using SoulsLike.Services.Layer.Data;
+using SoulsLike.Services.Settings;
 using SoulsLike.Ui.FpsCounter;
 using UnityEngine;
 using VContainer;
@@ -37,6 +38,9 @@ namespace SoulsLike
             builder.Register<SceneModel>(Lifetime.Singleton).AsSelf();
             builder.Register<SceneService>(Lifetime.Singleton).As<ISceneService>();
             builder.Register<SaveService>(Lifetime.Singleton).As<ISaveService>();
+            builder.RegisterScriptableObject<SettingsDefaultsData>();
+            builder.Register<GraphicsSettingsApplier>(Lifetime.Singleton).AsSelf().As<IGraphicsSettingsApplier>();
+            builder.RegisterEntryPoint<SettingsService>(Lifetime.Singleton).AsSelf().As<ISettingsService>();
             builder.Register<CharacterSpawnService>(Lifetime.Singleton);
             
             // layer system

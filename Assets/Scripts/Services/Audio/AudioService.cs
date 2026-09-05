@@ -48,12 +48,16 @@ namespace SoulsLike.Services.Audio
 
         public void UpdateSettings(IAudioSettingsData newSettings)
         {
-            if (newSettings == null) return;
             _settingsData.MasterVolume = newSettings.MasterVolume;
             _settingsData.MusicVolume = newSettings.MusicVolume;
             _settingsData.SfxVolume = newSettings.SfxVolume;
             _settingsData.MuteAll = newSettings.MuteAll;
             NotifyObservers();
+        }
+
+        public void ApplySettings(AudioSettingsData settings)
+        {
+            UpdateSettings(settings);
         }
 
         private void NotifyObservers()

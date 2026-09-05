@@ -6,6 +6,7 @@ using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Entities.Character;
 using SoulsLike.Services;
+using SoulsLike.Services.Layer;
 using UnityEngine;
 using VContainer.Unity;
 
@@ -25,6 +26,7 @@ namespace SoulsLike.Interactions
         private readonly IEntityLocator _entityLocator;
         private readonly ViewEntity _actorView;
         private readonly Character _character;
+        private readonly LayerMask _interactionMask;
 
         private CancellationTokenSource _lifetimeCancellation;
         private InteractionCommand _interactionCommand;
@@ -41,12 +43,14 @@ namespace SoulsLike.Interactions
             IInputService inputService,
             IEntityLocator entityLocator,
             ViewEntity actorView,
-            Character character)
+            Character character,
+            ILayerService layerService)
         {
             _inputService = inputService;
             _entityLocator = entityLocator;
             _actorView = actorView;
             _character = character;
+            _interactionMask = layerService.GetMask(LayerMaskName.InteractionProbe);
         }
 
         public void Initialize()
@@ -117,7 +121,7 @@ namespace SoulsLike.Interactions
                 actorTransform.position,
                 INTERACTION_RADIUS,
                 _colliderBuffer,
-                Physics.AllLayers,
+                _interactionMask,
                 QueryTriggerInteraction.Collide);
 
             for (int index = 0; index < colliderCount; index++)

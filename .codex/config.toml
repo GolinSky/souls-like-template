@@ -18,6 +18,7 @@ tool_timeout_sec = 120
 [mcp_servers.serena.env]
 SERENA_HOME = ".serena/home"
 PYTHONUTF8 = "1"
+DOTNET_ROOT = "/opt/homebrew/opt/dotnet/libexec"
 
 [mcp_servers.obsidian]
 url = "http://127.0.0.1:27123/mcp/"
@@ -25,8 +26,8 @@ http_headers = { Authorization = "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e1934
 
 [mcp_servers.graphify]
 command = "uvx"
-args = [ "--from", "graphifyy", "python", "-m", "graphify.serve", "graphify-out/graph.json" ]
-enabled = false
+args = [ "--from", "graphifyy[mcp]", "python", "-m", "graphify.serve", "graphify-out/graph.json" ]
+enabled = true
 enabled_tools = [ "query_graph", "get_node", "get_neighbors", "god_nodes", "graph_stats", "shortest_path" ]
 default_tools_approval_mode = "approve"
 startup_timeout_sec = 20

@@ -77733,6 +77733,51 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2017232389
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2017232391}
+  - component: {fileID: 2017232390}
+  m_Layer: 0
+  m_Name: PlayerSpawnPositionProvider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2017232390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017232389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c145a7540ba94553aa118e6b5c68bf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.Spawn.PlayerSpawnPositionProvider
+  spawnPoint: {fileID: 2017232391}
+--- !u!4 &2017232391
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017232389}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -30.954, y: 0.26, z: 14.68}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2017660912
 GameObject:
   m_ObjectHideFlags: 0
@@ -82187,6 +82232,7 @@ MonoBehaviour:
   cameraService: {fileID: 3018529732569510667}
   graceSystem: {fileID: 198951721}
   enemyEncounterSystem: {fileID: 848389965}
+  playerSpawnPositionProvider: {fileID: 2017232390}
 --- !u!33 &1726297631417279923
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -82284,6 +82330,14 @@ MonoBehaviour:
   targetCamera: {fileID: 1800770206}
   cinemachineCamera: {fileID: 1470855207966471111}
   cinemachineThirdPersonFollow: {fileID: 6260723787445959970}
+  debugIsYawOrbiting: 0
+  debugIsPitchOrbiting: 0
+  debugYawVelocity: 0
+  debugLockBlend: 0
+  debugFilteredLockPoint: {x: 0, y: 0, z: 0}
+  debugFilteredLockBearingRate: 0
+  debugLockYawUrgency: 0
+  debugCameraTargetDistance: 3.3
 --- !u!1 &3775211537696775834
 GameObject:
   m_ObjectHideFlags: 0
@@ -83183,3 +83237,4 @@ SceneRoots:
   - {fileID: 848389966}
   - {fileID: 819965373}
   - {fileID: 4945162219537986709}
+  - {fileID: 2017232391}

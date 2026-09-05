@@ -31,6 +31,8 @@ namespace SoulsLike.Services.Scenes
             }
         }
 
+        public SceneType DefaultScene => _sceneModel.DefaultScene;
+
         public SceneService(SceneModel sceneModel)
         {
             _sceneModel = sceneModel;

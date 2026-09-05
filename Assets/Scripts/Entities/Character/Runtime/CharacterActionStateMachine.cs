@@ -10,7 +10,7 @@ namespace SoulsLike.Entities.Character.Runtime
         private CharacterAction.State _currentState = CharacterAction.State.Neutral;
         private bool _inputBlocked;
         private bool _queueWindowOpen;
-        private bool _ignoreNextActionExit;
+        private int _pendingExitsToIgnore;
         private bool _sprintHeldDuringRoll;
         private bool _acceptEquipmentCompanion;
         private bool _rollSprintInterruptRequested;
@@ -193,28 +193,38 @@ namespace SoulsLike.Entities.Character.Runtime
         private bool HandleExit()
         {
             if (_currentState == CharacterAction.State.EquipmentSwap) return false;
+
+            if (_pendingExitsToIgnore > 0)
+            {
+                _pendingExitsToIgnore--;
+                return false;
+            }
+
             _queueWindowOpen = false;
-            if (!_ignoreNextActionExit) return true;
-            _ignoreNextActionExit = false;
-            return false;
+            return true;
         }
 
         private void Enter(CharacterAction.State state)
         {
             bool chained = _currentState == state && state != CharacterAction.State.Neutral;
             _currentState = state;
+            if (!chained)
+            {
+                _pendingExitsToIgnore = 0;
+            }
+
             switch (state)
             {
                 case CharacterAction.State.Attack:
                 case CharacterAction.State.ItemUse:
                 case CharacterAction.State.BlockHit:
                     _queueWindowOpen = false;
-                    _ignoreNextActionExit = chained;
+                    if (chained) _pendingExitsToIgnore++;
                     break;
                 case CharacterAction.State.Roll:
                     _queueWindowOpen = false;
                     _sprintHeldDuringRoll = false;
-                    _ignoreNextActionExit = chained;
+                    if (chained) _pendingExitsToIgnore++;
                     break;
                 case CharacterAction.State.EquipmentSwap:
                     _acceptEquipmentCompanion = true;
@@ -222,7 +232,6 @@ namespace SoulsLike.Entities.Character.Runtime
                 case CharacterAction.State.Critical:
                 case CharacterAction.State.Neutral:
                     _queueWindowOpen = false;
-                    _ignoreNextActionExit = false;
                     break;
             }
         }

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Architecture/PROJECT_ORGANIZATION.md",
+                "file": "ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "PROJECT_ORGANIZATION"
+              "title": "ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT"
             }
           }
         ]
@@ -83,7 +83,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 857.5
+    "width": 341.44921875
   },
   "right": {
     "id": "85f30760e5cc5301",
@@ -187,15 +187,24 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
+    "ToDo/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md",
     "ToDo/ROLL_INVESTIGATION_REPORT.md",
+    "Architecture/LAYER_SERVICE_SYSTEM_ARCHITECTURE.md",
+    "Done/LAYER_SERVICE_FIX_PLAN.md",
+    "Done",
+    "ToDo/Refactor_Pause_Navigation_Naming.md",
+    "ToDo/LAYER_SERVICE_FIX_PLAN.md",
+    "ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
+    "Architecture/SETTINGS_SYSTEM_ARCHITECTURE.md",
+    "Architecture/CHARACTER_SYSTEM_ARCHITECTURE.md",
+    "ToDo/Project_Organization_Analysis_And_Fix_Plan.md",
+    "ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md",
+    "Architecture/PROJECT_ORGANIZATION.md",
     "Artifact/Roll System & Interruption Bug.md",
     "features/Enemy Combat & AI Systems.md",
-    "ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
     "Architecture/ROLL_SYSTEM_INVESTIGATION_REPORT.md",
     "Architecture/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
-    "ToDo/LAYER_SERVICE_FIX_PLAN.md",
     "ai/GPT_PRO_REVIEW_PACKAGE.md",
-    "ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md",
     "Architecture/LAYER_SYSTEM_AUDIT_REPORT.md",
     "animation/Animator_SubState_Machine_Architecture_Guide.md",
     "Artifact/FLASK_HEALING_SYSTEM_RESEARCH.md",
@@ -206,14 +215,6 @@
     "features/Locomotion Architecture Technical Specification.md",
     "features/Current Jump and Roll System.md",
     "features/Advanced Locomotion Architecture Prompt Specification.md",
-    "ToDo/Project_Organization_Analysis_And_Fix_Plan.md",
-    "Artifact/Hitbox System.md",
-    "ToDo/Hitbox System.md",
-    "ToDo/First Steps.md",
-    "ui/Pause_Navigation_Route_Architecture.md",
-    "Architecture/PROJECT_ORGANIZATION.md",
-    "Artifact/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md",
-    "ToDo/Refactor_Pause_Navigation_Naming.md",
     "Architecture",
     "ai",
     "Artifact",

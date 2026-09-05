@@ -1,6 +1,6 @@
 # Refactor `IPauseNavigationRouteNavigation` Naming
 
-**Status**: Planned  
+**Status**: Completed  
 **Domain**: UI / Navigation Architecture  
 **Priority**: Low (Clean Code / Naming Consistency)  
 
@@ -86,6 +86,6 @@ public sealed class PauseNavigationUiController : UiController,
 
 ## 5. Acceptance Criteria
 
-- [ ] File and interface renamed following the 1-type-per-file rule.
-- [ ] No compilation or DI binding errors.
-- [ ] Unity compiles and tests (when explicitly requested) pass.
+- [x] File and interface renamed following the 1-type-per-file rule (`IPauseMenuRouter.cs` / `IPauseMenuRouter`).
+- [x] No compilation or DI binding errors.
+- [x] Unity compiles and tests (when explicitly requested) pass.

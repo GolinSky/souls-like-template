@@ -1,6 +1,6 @@
 namespace SoulsLike.Ui.PauseNavigation
 {
-    public interface IPauseNavigationRouteNavigation
+    public interface IPauseMenuRouter
     {
         void OpenEquipment();
         void OpenInventory();

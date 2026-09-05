@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,8 +7,11 @@ namespace SoulsLike.Services.Scenes.Data
     [CreateAssetMenu(fileName = "SceneData", menuName = "Data/SceneData")]
     public class SceneData : Model.Data
     {
+        [SerializeField] private SceneType defaultScene = SceneType.Workshop;
         [SerializeField] private SerializedDictionary<SceneType, SceneReference> scenes;
         [SerializeField] private SerializedDictionary<SceneType, SceneDependency> dependencies;
+
+        public SceneType DefaultScene => defaultScene;
 
         public bool TryGetDependencies(SceneType sceneType, out SceneReference[] scenesToLoad)
         {

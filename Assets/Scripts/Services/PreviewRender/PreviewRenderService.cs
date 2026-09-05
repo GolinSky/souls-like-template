@@ -1,5 +1,7 @@
-﻿using SoulsLike.Services.Layer;
+using SoulsLike.Entities.Character.Components;
+using SoulsLike.Services.Layer;
 using UnityEngine;
+using UnityEngine.UI;
 using VContainer;
 
 namespace SoulsLike.Services
@@ -42,7 +44,7 @@ namespace SoulsLike.Services
                 previewCamera.backgroundColor = new Color(0, 0, 0, 0);
                 previewCamera.nearClipPlane = 0.01f;
                 previewCamera.farClipPlane = 100f;
-                previewCamera.cullingMask = _layerService.GetLayerMask(LayerName.Preview);
+                previewCamera.cullingMask = _layerService.GetMask(LayerMaskName.PreviewCamera);
                 previewCamera.enabled = false;
             }
 
@@ -65,90 +67,91 @@ namespace SoulsLike.Services
             }
         }
 
-        // public void SetupPreview(RawImage targetImage, AnimatorComponent animatorComponent)
-        // {
-        //     if (previewCamera == null) InitializeComponents();
-        //     if (targetImage == null)
-        //     {
-        //         Debug.LogError("[PreviewRenderService] targetImage is null in SetupPreview!");
-        //         return;
-        //     }
-        //     if (animatorComponent == null)
-        //     {
-        //         Debug.LogError("[PreviewRenderService] animatorComponent is null in SetupPreview!");
-        //         return;
-        //     }
-        //
-        //     // Clear previous preview objects
-        //     ClearPreview();
-        //
-        //     // Create or resize RenderTexture if needed
-        //     Rect rect = targetImage.rectTransform.rect;
-        //     int width = Mathf.RoundToInt(rect.width);
-        //     int height = Mathf.RoundToInt(rect.height);
-        //     
-        //     // Ensure valid dimensions
-        //     if (width <= 0) width = 256;
-        //     if (height <= 0) height = 256;
-        //
-        //     if (_renderTexture == null || _renderTexture.width != width || _renderTexture.height != height)
-        //     {
-        //         if (_renderTexture != null)
-        //         {
-        //             _renderTexture.Release();
-        //             Destroy(_renderTexture);
-        //         }
-        //         _renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
-        //         _renderTexture.Create();
-        //     }
-        //
-        //     targetImage.texture = _renderTexture;
-        //     previewCamera.targetTexture = _renderTexture;
-        //     previewCamera.enabled = true;
-        //
-        //     AnimatorComponent animatorComponentInstance = Instantiate(animatorComponent, previewRoot);
-        //     _layerService.SetLayer(animatorComponentInstance.gameObject, LayerName.Preview);
-        //     
-        //     Transform previewTarget = animatorComponentInstance.transform;
-        //     animatorComponentInstance.SetGrounded(true);
-        //
-        //     Renderer[] renderers = previewTarget.GetComponentsInChildren<Renderer>();
-        //     if (renderers == null || renderers.Length == 0) return;
-        //
-        //     Bounds combinedBounds = new Bounds();
-        //     bool boundsInitialized = false;
-        //     System.Collections.Generic.List<GameObject> newObjects = new System.Collections.Generic.List<GameObject>();
-        //     newObjects.Add(animatorComponentInstance.gameObject);
-        //
-        //     foreach (Renderer renderer in renderers)
-        //     {
-        //         if (renderer == null || !renderer.enabled) continue;
-        //         
-        //         // Update bounds
-        //         if (!boundsInitialized)
-        //         {
-        //             combinedBounds = renderer.bounds;
-        //             boundsInitialized = true;
-        //         }
-        //         else
-        //         {
-        //             combinedBounds.Encapsulate(renderer.bounds);
-        //         }
-        //     }
-        //
-        //     if (boundsInitialized)
-        //     {
-        //         // Center the preview objects relative to previewRoot
-        //         Vector3 worldCenter = combinedBounds.center;
-        //         foreach (GameObject obj in newObjects)
-        //         {
-        //             // Calculate local offset from world center and apply it to preview root position
-        //             obj.transform.position = previewRoot.position + (obj.transform.position - worldCenter);
-        //         }
-        //         
-        //         FrameBounds(new Bounds(previewRoot.position, combinedBounds.size));
-        //     }
-        // }
+        public void SetupPreview(RawImage targetImage, AnimatorComponent animatorComponent)
+        {
+            if (previewCamera == null) InitializeComponents();
+            if (targetImage == null)
+            {
+                Debug.LogError("[PreviewRenderService] targetImage is null in SetupPreview!");
+                return;
+            }
+            if (animatorComponent == null)
+            {
+                Debug.LogError("[PreviewRenderService] animatorComponent is null in SetupPreview!");
+                return;
+            }
+
+            // Clear previous preview objects
+            ClearPreview();
+
+            // Create or resize RenderTexture if needed
+            Rect rect = targetImage.rectTransform.rect;
+            int width = Mathf.RoundToInt(rect.width);
+            int height = Mathf.RoundToInt(rect.height);
+            
+            // Ensure valid dimensions
+            if (width <= 0) width = 256;
+            if (height <= 0) height = 256;
+
+            if (_renderTexture == null || _renderTexture.width != width || _renderTexture.height != height)
+            {
+                if (_renderTexture != null)
+                {
+                    _renderTexture.Release();
+                    Destroy(_renderTexture);
+                }
+                _renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
+                _renderTexture.Create();
+            }
+
+            targetImage.texture = _renderTexture;
+            previewCamera.targetTexture = _renderTexture;
+
+            AnimatorComponent animatorComponentInstance = Instantiate(animatorComponent, previewRoot);
+            _layerService.SetLayer(animatorComponentInstance.gameObject, LayerName.Preview, recursive: true);
+            
+            previewCamera.enabled = true;
+
+            Transform previewTarget = animatorComponentInstance.transform;
+            animatorComponentInstance.SetGrounded(true);
+
+            Renderer[] renderers = previewTarget.GetComponentsInChildren<Renderer>();
+            if (renderers == null || renderers.Length == 0) return;
+
+            Bounds combinedBounds = new Bounds();
+            bool boundsInitialized = false;
+            System.Collections.Generic.List<GameObject> newObjects = new System.Collections.Generic.List<GameObject>();
+            newObjects.Add(animatorComponentInstance.gameObject);
+
+            foreach (Renderer renderer in renderers)
+            {
+                if (renderer == null || !renderer.enabled) continue;
+                
+                // Update bounds
+                if (!boundsInitialized)
+                {
+                    combinedBounds = renderer.bounds;
+                    boundsInitialized = true;
+                }
+                else
+                {
+                    combinedBounds.Encapsulate(renderer.bounds);
+                }
+            }
+
+            if (boundsInitialized)
+            {
+                // Center the preview objects relative to previewRoot
+                Vector3 worldCenter = combinedBounds.center;
+                foreach (GameObject obj in newObjects)
+                {
+                    // Calculate local offset from world center and apply it to preview root position
+                    obj.transform.position = previewRoot.position + (obj.transform.position - worldCenter);
+                }
+                
+                FrameBounds(new Bounds(previewRoot.position, combinedBounds.size));
+            }
+        }
 
         private void FrameBounds(Bounds bounds)
         {

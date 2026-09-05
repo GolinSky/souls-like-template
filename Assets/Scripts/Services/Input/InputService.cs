@@ -19,6 +19,9 @@ namespace SoulsLike.Services
         bool WasUiBackConsumedThisFrame { get; }
 
         void ConsumeUiBack();
+        string SaveBindingOverrides();
+        void LoadBindingOverrides(string bindingOverridesJson);
+        void ClearBindingOverrides();
     }
 
     public sealed class InputService : IInputService, IInitializable, IDisposable
@@ -98,6 +101,27 @@ namespace SoulsLike.Services
         public void ConsumeUiBack()
         {
             _uiBackConsumedFrame = Time.frameCount;
+        }
+
+        public string SaveBindingOverrides()
+        {
+            return _projectInputActions.asset.SaveBindingOverridesAsJson();
+        }
+
+        public void LoadBindingOverrides(string bindingOverridesJson)
+        {
+            if (string.IsNullOrEmpty(bindingOverridesJson))
+            {
+                ClearBindingOverrides();
+                return;
+            }
+
+            _projectInputActions.asset.LoadBindingOverridesFromJson(bindingOverridesJson);
+        }
+
+        public void ClearBindingOverrides()
+        {
+            _projectInputActions.asset.RemoveAllBindingOverrides();
         }
 
         private static InputAction CreateMenuAction(

@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Services;
+using SoulsLike.Services.Settings;
 using VContainer;
 
 namespace SoulsLike.Services.CameraService
@@ -21,6 +22,7 @@ namespace SoulsLike.Services.CameraService
         void ClearLockOnTarget();
         void RecenterCamera();
         Camera GetMainCamera();
+        void ApplySettings(CameraSettingsData settings);
     }
 
     public class CameraService : MonoBehaviour, ICameraService
@@ -49,6 +51,7 @@ namespace SoulsLike.Services.CameraService
         private long? _lockOnTargetEntityId;
         private IEntityLocator _entityLocator;
         private IInputService _inputService;
+        private ISettingsService _settingsService;
         private CameraData _cameraData;
         private Transform _sourceTarget;
         private Transform _followTarget;
@@ -74,20 +77,28 @@ namespace SoulsLike.Services.CameraService
         private float _filteredLockBearingRate;
         private float _lockYawUrgency;
         private bool _hasPreviousLockBearingYaw;
+        private CameraSettingsData _settings = new();
 
         private void OnDestroy()
         {
+            _settingsService?.UnregisterCameraService(this);
             _switchTween?.Kill();
             _zoomTween?.Kill();
             _rigTween?.Kill();
         }
 
         [Inject]
-        public void Construct(IEntityLocator entityLocator, IInputService inputService, CameraData cameraData)
+        public void Construct(
+            IEntityLocator entityLocator,
+            IInputService inputService,
+            CameraData cameraData,
+            ISettingsService settingsService)
         {
             _entityLocator = entityLocator;
             _inputService = inputService;
+            _settingsService = settingsService;
             _cameraData = cameraData;
+            settingsService.RegisterCameraService(this);
         }
 
         public void SetTarget(Transform target)
@@ -351,6 +362,11 @@ namespace SoulsLike.Services.CameraService
             return targetCamera != null ? targetCamera : Camera.main;
         }
 
+        public void ApplySettings(CameraSettingsData settings)
+        {
+            _settings = SettingsDataUtility.Copy(settings);
+        }
+
         public void UpdateRotation(Vector2 look)
         {
             if (_lockOnTargetEntityId.HasValue)
@@ -388,15 +404,23 @@ namespace SoulsLike.Services.CameraService
 
         private void ApplyFreeLook(Vector2 look)
         {
+            float sensitivityMultiplier = Mathf.Pow(2f, (_settings.Sensitivity - 0.5f) * 2f);
+            float horizontalMultiplier = _settings.InvertX ? -1f : 1f;
+            float verticalMultiplier = _settings.InvertY ? -1f : 1f;
+
             if (_inputService.CharacterActions.Look.activeControl.device is Pointer)
             {
-                _cinemachineTargetYaw += look.x * _cameraData.MouseYawDegreesPerPixel;
-                _cinemachineTargetPitch += look.y * _cameraData.MousePitchDegreesPerPixel;
+                _cinemachineTargetYaw += look.x * _cameraData.MouseYawDegreesPerPixel
+                    * sensitivityMultiplier * horizontalMultiplier;
+                _cinemachineTargetPitch += look.y * _cameraData.MousePitchDegreesPerPixel
+                    * sensitivityMultiplier * verticalMultiplier;
                 return;
             }
 
-            _cinemachineTargetYaw += look.x * _cameraData.StickYawDegreesPerSecond * Time.deltaTime;
-            _cinemachineTargetPitch += look.y * _cameraData.StickPitchDegreesPerSecond * Time.deltaTime;
+            _cinemachineTargetYaw += look.x * _cameraData.StickYawDegreesPerSecond * Time.deltaTime
+                * sensitivityMultiplier * horizontalMultiplier;
+            _cinemachineTargetPitch += look.y * _cameraData.StickPitchDegreesPerSecond * Time.deltaTime
+                * sensitivityMultiplier * verticalMultiplier;
         }
 
         private void UpdateStableLockDirection(TargetingSnapshot snapshot)

@@ -9,6 +9,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using SoulsLike.Services.Layer;
 using Object = UnityEngine.Object;
 
 namespace SoulsLike.Editor
@@ -27,7 +28,6 @@ namespace SoulsLike.Editor
             NAVIGATION_FOLDER + "/EnemyNavigation.asset";
         private const float LINK_MAX_DISTANCE = 8f;
         private const float LINK_WIDTH = 1f;
-        private const int NAVIGATION_LAYER_MASK = 55;
 
         private static readonly string[] _excludedSceneNames =
         {
@@ -45,6 +45,7 @@ namespace SoulsLike.Editor
         public static void BakeNavigation()
         {
             EnsureFolder(NAVIGATION_FOLDER);
+            LayerMask navigationLayerMask = LayerDataEditorProvider.GetMask(LayerMaskName.NavigationBake);
 
             string[] allScenePaths = GetDefaultLocationScenes();
             string[] navigationScenePaths = allScenePaths
@@ -81,7 +82,7 @@ namespace SoulsLike.Editor
                     continue;
                 }
 
-                NavMeshSurface surface = CreateSurface(scene);
+                NavMeshSurface surface = CreateSurface(scene, navigationLayerMask);
                 surface.BuildNavMesh();
                 PersistSurfaceData(surface, changedAssetPaths);
                 SaveScene(scene);
@@ -200,7 +201,7 @@ namespace SoulsLike.Editor
             return changed;
         }
 
-        private static NavMeshSurface CreateSurface(Scene scene)
+        private static NavMeshSurface CreateSurface(Scene scene, LayerMask layerMask)
         {
             GameObject navigation = new(NAVIGATION_ROOT_NAME);
             SceneManager.MoveGameObjectToScene(navigation, scene);
@@ -212,7 +213,7 @@ namespace SoulsLike.Editor
             NavMeshSurface surface = surfaceObject.AddComponent<NavMeshSurface>();
             surface.collectObjects = CollectObjects.All;
             surface.useGeometry = NavMeshCollectGeometry.PhysicsColliders;
-            surface.layerMask = NAVIGATION_LAYER_MASK;
+            surface.layerMask = layerMask;
             surface.ignoreNavMeshAgent = true;
             surface.ignoreNavMeshObstacle = true;
 

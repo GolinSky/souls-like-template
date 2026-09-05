@@ -12,17 +12,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e34afc313a5cb3743be542759fbac8ac, type: 3}
   m_Name: LayerData
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.Layer.Data.LayerData
-  layers:
+  singleLayers:
     keyValue:
     - key: 0
       value:
         serializedVersion: 2
-        m_Bits: 0
+        m_Bits: 1
+    - key: 1
+      value:
+        serializedVersion: 2
+        m_Bits: 16
+    - key: 2
+      value:
+        serializedVersion: 2
+        m_Bits: 32
+    - key: 3
+      value:
+        serializedVersion: 2
+        m_Bits: 64
+    - key: 4
+      value:
+        serializedVersion: 2
+        m_Bits: 128
+    - key: 5
+      value:
+        serializedVersion: 2
+        m_Bits: 256
+    - key: 6
+      value:
+        serializedVersion: 2
+        m_Bits: 512
     - key: 7
       value:
         serializedVersion: 2
-        m_Bits: 4294967295
+        m_Bits: 1024
     - key: 8
       value:
         serializedVersion: 2
-        m_Bits: 4294967295
+        m_Bits: 2048
+  sharedMasks:
+    keyValue:
+    - key: 0
+      value:
+        serializedVersion: 2
+        m_Bits: 1024
+    - key: 1
+      value:
+        serializedVersion: 2
+        m_Bits: 2049
+    - key: 2
+      value:
+        serializedVersion: 2
+        m_Bits: 769

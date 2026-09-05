@@ -11,8 +11,9 @@ This index classifies checked-in vault Markdown so drafts and historical artifac
 | `Architecture/HITBOX_SYSTEM_ARCHITECTURE.md` | advisory | Authoritative hitbox system architecture, hit resolution cascade, defense, and critical runtime guide. |
 | `Architecture/PROJECT_ORGANIZATION.md` | advisory | Asset organization guidance; live project structure wins on conflict. |
 | `Architecture/SETTINGS_SYSTEM_ARCHITECTURE.md` | advisory | Settings system architecture, segregation model, and observer flow. |
+| `Architecture/LAYER_SERVICE_SYSTEM_ARCHITECTURE.md` | advisory | Authoritative layer service architecture, layer identity vs query masks, and fail-fast rules. |
 | `Artifact/elden_ring_inventory_equipment_architecture.md` | draft | Design artifact; not registered project context. |
-| `Artifact/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md` | draft | Settings system implementation plan artifact; not registered project context. |
+| `ToDo/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md` | draft | Settings system implementation plan artifact; not registered project context. |
 | `Artifact/Roll System & Interruption Bug.md` | draft | Roll interruption lockout and stamina investigation artifact; not registered project context. |
 | `features/Advanced Locomotion Architecture Prompt Specification.md` | draft | Imported prompt artifact; not implementation authority. |
 | `features/Current Jump and Roll System.md` | advisory | Implementation note that must be checked against live source. |
@@ -31,10 +32,10 @@ This index classifies checked-in vault Markdown so drafts and historical artifac
 | `ui/UI_Route_Navigation_Architecture.md` | advisory | Foundational UI route stack and navigation architecture guide. |
 | `ui/Pause_Navigation_Route_Architecture.md` | advisory | Pause navigation hub, sub-route flow, and hotkey architecture. |
 | `ui/Grace_Route_Navigation_Architecture.md` | advisory | Grace navigation hub, fade coordination, and travel architecture. |
-| `ToDo/Refactor_Pause_Navigation_Naming.md` | advisory | ToDo tracking for refactoring IPauseNavigationRouteNavigation naming. |
+| `ToDo/Refactor_Pause_Navigation_Naming.md` | advisory | ToDo tracking for refactoring IPauseNavigationRouteNavigation naming (Completed). |
 | `ToDo/Project_Organization_Analysis_And_Fix_Plan.md` | advisory | Audit analysis of project structure against PROJECT_ORGANIZATION.md and phased remediation plan. |
 | `ToDo/FLASK_HEALING_SYSTEM_RESEARCH.md` | advisory | Reference research and architectural survey of Elden Ring flask mechanics and SoulsLike codebase integration. |
-| `ToDo/LAYER_SERVICE_FIX_PLAN.md` | advisory | Remediation plan for layer service configuration, fail-fast rules, and query mask ownership. |
+| `Done/LAYER_SERVICE_FIX_PLAN.md` | historical | Completed remediation plan for layer service configuration, fail-fast rules, and query mask ownership. |
 | `ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md` | advisory | Architectural analysis, scalability audit, and modernization roadmap for enemy spawning and encounter systems. |
 | `ToDo/ROLL_INVESTIGATION_REPORT.md` | advisory | Character roll interruption bug investigation report, Mecanim desync root cause, and remediation plan. |
 | `animation/Animator_SubState_Machine_Architecture_Guide.md` | advisory | Authoritative animator controller sub-state machine rules, layout coordinates, and empty default state standards. |

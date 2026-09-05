@@ -445,7 +445,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
                 Vector3.down,
                 _groundProbeHits,
                 castDistance,
-                Model.GroundLayers,
+                Model.GroundProbeMask,
                 QueryTriggerInteraction.Ignore);
 
             bool foundWalkableGround = false;

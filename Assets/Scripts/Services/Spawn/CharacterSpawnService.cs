@@ -42,7 +42,7 @@ namespace SoulsLike.Services.Spawn
             ClearPendingSpawn();
             if (!_store.Exists)
             {
-                return SceneType.DefaultLocation;
+                return _sceneService.DefaultScene;
             }
 
             CharacterSpawnData data = _store.LoadOrCreate();
@@ -158,6 +158,12 @@ namespace SoulsLike.Services.Spawn
             _pendingSpawnKind = PendingSpawnKind.None;
             _pendingGraceId = default;
             _pendingPosition = default;
+        }
+
+        public void WipeSave()
+        {
+            ClearPendingSpawn();
+            _store.Delete();
         }
     }
 }

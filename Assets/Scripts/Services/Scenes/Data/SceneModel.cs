@@ -1,4 +1,4 @@
-﻿using UnityEngine.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace SoulsLike.Services.Scenes.Data
 {
@@ -10,6 +10,8 @@ namespace SoulsLike.Services.Scenes.Data
         {
             _sceneData = sceneData;
         }
+
+        public SceneType DefaultScene => _sceneData.DefaultScene;
 
         public SceneReference GetScene(SceneType sceneType)
         {

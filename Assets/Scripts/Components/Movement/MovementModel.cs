@@ -26,7 +26,8 @@ namespace SoulsLike.Entities.Character.Components.Movement
         public float GroundedOffset { get; }
         public float GroundedRadius { get; }
         public float GroundSnapDistance { get; }
-        public LayerMask GroundLayers { get; }
+        public LayerMask GroundProbeMask { get; }
+        public LayerMask GroundLayers => GroundProbeMask;
         public float TerminalVelocity { get; set; }
         public float RollCooldown { get; }
         public float RollStaminaCost { get; }
@@ -67,7 +68,7 @@ namespace SoulsLike.Entities.Character.Components.Movement
             GroundedOffset = movementData.GroundedOffset;
             GroundedRadius = movementData.GroundedRadius;
             GroundSnapDistance = movementData.GroundSnapDistance;
-            GroundLayers = movementData.GroundLayers;
+            GroundProbeMask = movementData.GroundProbeMask;
             TerminalVelocity = movementData.TerminalVelocity;
             RollCooldown = movementData.RollCooldown;
             RollStaminaCost = Mathf.Max(0f, movementData.RollStaminaCost);
