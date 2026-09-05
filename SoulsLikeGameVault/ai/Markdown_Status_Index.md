@@ -12,6 +12,7 @@ This index classifies checked-in vault Markdown so drafts and historical artifac
 | `Architecture/PROJECT_ORGANIZATION.md` | advisory | Asset organization guidance; live project structure wins on conflict. |
 | `Architecture/SETTINGS_SYSTEM_ARCHITECTURE.md` | advisory | Settings system architecture, segregation model, and observer flow. |
 | `Architecture/LAYER_SERVICE_SYSTEM_ARCHITECTURE.md` | advisory | Authoritative layer service architecture, layer identity vs query masks, and fail-fast rules. |
+| `Architecture/INTERACTION_SYSTEM_ANALYSIS_REPORT.md` | advisory | Authoritative interaction system audit, IEntityLocator spatial discovery, and EntityCommand interactable architecture. |
 | `Artifact/elden_ring_inventory_equipment_architecture.md` | draft | Design artifact; not registered project context. |
 | `ToDo/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md` | draft | Settings system implementation plan artifact; not registered project context. |
 | `Artifact/Roll System & Interruption Bug.md` | draft | Roll interruption lockout and stamina investigation artifact; not registered project context. |

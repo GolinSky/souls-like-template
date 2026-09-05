@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
+                "file": "Architecture/INTERACTION_SYSTEM_ANALYSIS_REPORT.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT"
+              "title": "INTERACTION_SYSTEM_ANALYSIS_REPORT"
             }
           }
         ]
@@ -187,6 +187,8 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
+    "ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
+    "Architecture/INTERACTION_SYSTEM_ANALYSIS_REPORT.md",
     "ToDo/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md",
     "ToDo/ROLL_INVESTIGATION_REPORT.md",
     "Architecture/LAYER_SERVICE_SYSTEM_ARCHITECTURE.md",
@@ -194,7 +196,6 @@
     "Done",
     "ToDo/Refactor_Pause_Navigation_Naming.md",
     "ToDo/LAYER_SERVICE_FIX_PLAN.md",
-    "ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
     "Architecture/SETTINGS_SYSTEM_ARCHITECTURE.md",
     "Architecture/CHARACTER_SYSTEM_ARCHITECTURE.md",
     "ToDo/Project_Organization_Analysis_And_Fix_Plan.md",
@@ -214,7 +215,6 @@
     "features/Movement Mechanics Explained.md",
     "features/Locomotion Architecture Technical Specification.md",
     "features/Current Jump and Roll System.md",
-    "features/Advanced Locomotion Architecture Prompt Specification.md",
     "Architecture",
     "ai",
     "Artifact",
