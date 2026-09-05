@@ -26,6 +26,13 @@ namespace SoulsLike.Entities.Ladder
                 throw new System.InvalidOperationException(
                     $"{nameof(LadderEndpoint)} '{name}' requires a parent {nameof(LadderView)}.");
             }
+
+            _ladder.RegisterEndpoint(this);
+        }
+
+        private void OnEnable()
+        {
+            _ladder?.RegisterEndpoint(this);
         }
 
         public bool CanInteract(IEntity actor) => _ladder.CanInteract(actor, end);

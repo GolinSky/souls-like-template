@@ -68,6 +68,30 @@ namespace SoulsLike.Entities.Ladder
             _occupants.Clear();
         }
 
+        private readonly Dictionary<LadderEnd, LadderEndpoint> _endpoints = new();
+
+        public void RegisterEndpoint(LadderEndpoint endpoint)
+        {
+            _endpoints[endpoint.End] = endpoint;
+        }
+
+        public LadderEnd GetClosestEnd(Vector3 position)
+        {
+            float bottomDistSqr = (position - bottomMount.position).sqrMagnitude;
+            float topDistSqr = (position - topMount.position).sqrMagnitude;
+            return bottomDistSqr <= topDistSqr ? LadderEnd.Bottom : LadderEnd.Top;
+        }
+
+        public Transform GetInteractionAnchor(LadderEnd end)
+        {
+            if (_endpoints.TryGetValue(end, out LadderEndpoint endpoint) && endpoint.InteractionAnchor != null)
+            {
+                return endpoint.InteractionAnchor;
+            }
+
+            return end == LadderEnd.Top ? topMount : bottomMount;
+        }
+
         public void ApplyPersistedUnlock(bool isUnlocked)
         {
             _isUnlocked = isUnlocked;

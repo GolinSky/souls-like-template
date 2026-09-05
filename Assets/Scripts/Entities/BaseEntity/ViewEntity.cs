@@ -3,12 +3,6 @@ using VContainer;
 
 namespace SoulsLike.Entities.BaseEntity
 {
-    public interface IViewEntity
-    {
-        long Id { get; }
-        EntityType EntityType { get; }
-    }
-
     /// <summary>
     /// will be added dynamically via installer to every entity unit GO
     /// </summary>

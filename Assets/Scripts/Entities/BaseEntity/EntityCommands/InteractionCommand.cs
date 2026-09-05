@@ -14,17 +14,17 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
             _actor = actor;
         }
 
-        public bool CanInteract(IInteractable interactable) =>
+        public bool CanInteract(IInteractableCommand command) =>
             _actor.EntityType == EntityType.Player
-            && interactable.CanInteract(_actor);
+            && command.CanInteract(_actor);
 
-        public InteractionPrompt GetPrompt(IInteractable interactable) =>
-            interactable.GetPrompt(_actor);
+        public InteractionPrompt GetPrompt(IInteractableCommand command) =>
+            command.GetPrompt(_actor);
 
-        public InteractionPrompt GetFailurePrompt(IInteractable interactable) =>
-            interactable.GetFailurePrompt(_actor);
+        public InteractionPrompt GetFailurePrompt(IInteractableCommand command) =>
+            command.GetFailurePrompt(_actor);
 
-        public UniTask InteractAsync(IInteractable interactable, CancellationToken token) =>
-            interactable.InteractAsync(_actor, token);
+        public UniTask InteractAsync(IInteractableCommand command, CancellationToken token) =>
+            command.InteractAsync(_actor, token);
     }
 }

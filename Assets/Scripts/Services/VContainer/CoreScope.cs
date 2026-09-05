@@ -8,6 +8,7 @@ using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Enemy;
 using SoulsLike.Interactions;
 using SoulsLike.Entities.Ladder;
+using SoulsLike.Items;
 using SoulsLike.Ui.EnemyHealth;
 using SoulsLike.Ui.Cheats;
 using SoulsLike.Ui.Grace;
@@ -33,6 +34,7 @@ namespace SoulsLike
             builder.RegisterComponent(enemyEncounterSystem).AsSelf().AsImplementedInterfaces();
             builder.RegisterComponent(playerSpawnPositionProvider).AsSelf();
             builder.RegisterComponentOnNewGameObject<LadderSystem>(Lifetime.Singleton, nameof(LadderSystem)).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentOnNewGameObject<GroundItemSystem>(Lifetime.Singleton, nameof(GroundItemSystem)).AsSelf().AsImplementedInterfaces();
             builder.Register<TargetingService>(Lifetime.Singleton).As<ITargetingService>();
             builder.Register<EnemyHealthUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<CheatsUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

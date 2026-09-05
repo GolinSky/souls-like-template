@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity;
@@ -32,6 +33,8 @@ namespace SoulsLike.Items
         [SerializeField] private GroundItemVfx pickupVfx;
         [SerializeField] private int priority = 100;
 
+        private GroundItemSystem _system;
+
         public GroundItemRewardType RewardType => rewardType;
         public GroundItemState State { get; private set; }
         public ItemId ItemId => itemId;
@@ -40,6 +43,28 @@ namespace SoulsLike.Items
         public string SaveIdentifier => saveIdentifier;
         public Transform InteractionAnchor => interactionAnchor;
         public int Priority => priority;
+
+        public void AssignSystem(GroundItemSystem system) => _system = system;
+
+        private void OnDestroy()
+        {
+            _system?.Unregister(this);
+        }
+
+        public void SetState(GroundItemState state) => State = state;
+
+        public void DisableInteractionCollider()
+        {
+            if (interactionCollider != null)
+            {
+                interactionCollider.enabled = false;
+            }
+        }
+
+        public UniTask PlayPickupVfxAsync(CancellationToken token) =>
+            pickupVfx != null ? pickupVfx.PlayPickupAsync(token) : UniTask.CompletedTask;
+
+        public void DestroyItem() => Destroy(gameObject);
 
         public bool CanInteract(IEntity actor) => State == GroundItemState.Available;
 
@@ -68,19 +93,19 @@ namespace SoulsLike.Items
             }
 
             State = GroundItemState.Busy;
-            interactionCollider.enabled = false;
+            DisableInteractionCollider();
 
             if (!actor.TryGetComponent(out GroundItemCollectionCommand collectionCommand))
             {
-                throw new System.InvalidOperationException(
+                throw new InvalidOperationException(
                     $"{nameof(GroundItemCollectionCommand)} is not registered on entity {actor.Id}.");
             }
 
             collectionCommand.Collect(this);
             State = GroundItemState.Collected;
 
-            await pickupVfx.PlayPickupAsync(CancellationToken.None);
-            Destroy(gameObject);
+            await PlayPickupVfxAsync(CancellationToken.None);
+            DestroyItem();
         }
     }
 }

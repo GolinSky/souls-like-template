@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Services.IdGeneration;
 using SoulsLike.Services.Storage;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace SoulsLike.Entities.Ladder
     {
         private const string UNLOCKED_LADDERS_KEY = "UnlockedLadders";
 
-        private readonly Dictionary<LadderView, Entity> _entities = new();
+        private readonly Dictionary<LadderView, (Entity Entity, LadderInteractCommand Command)> _entities = new();
         private HashSet<string> _unlockedLadderIds;
         private IEntityLocator _entityLocator;
         private IUniqueIdGenerator _idGenerator;
@@ -95,25 +96,28 @@ namespace SoulsLike.Entities.Ladder
             long id = _idGenerator.GenerateUniqueId();
             viewEntity.Construct(id, EntityType.Ladder);
             Entity entity = new(id, _entityLocator, EntityType.Ladder);
+            LadderInteractCommand command = new(entity, ladder);
             ladder.AssignSystem(this);
             ladder.Construct(entity);
+            command.Initialize();
             entity.Initialize();
             ladder.ApplyPersistedUnlock(
                 ladder.StartsLocked && _unlockedLadderIds.Contains(ladder.SaveIdentifier));
-            _entities.Add(ladder, entity);
+            _entities.Add(ladder, (entity, command));
         }
 
         public void Unregister(LadderView ladder)
         {
-            if (!_entities.TryGetValue(ladder, out Entity entity))
+            if (!_entities.TryGetValue(ladder, out var tuple))
             {
                 return;
             }
 
             _entities.Remove(ladder);
 
+            tuple.Command.Dispose();
             ladder.DisposeEntity();
-            entity.Dispose();
+            tuple.Entity.Dispose();
         }
 
         public async UniTask UnlockAsync(LadderView ladder, CancellationToken token)

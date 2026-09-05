@@ -21,7 +21,7 @@ namespace SoulsLike.Interactions
 
         private readonly Collider[] _colliderBuffer = new Collider[MAX_CANDIDATE_COLLIDERS];
         private readonly List<InteractionCandidate> _candidates = new(MAX_CANDIDATE_COLLIDERS);
-        private readonly HashSet<IInteractable> _candidateInteractables = new();
+        private readonly HashSet<IEntity> _candidateEntities = new();
         private readonly IInputService _inputService;
         private readonly IEntityLocator _entityLocator;
         private readonly ViewEntity _actorView;
@@ -29,8 +29,9 @@ namespace SoulsLike.Interactions
         private readonly LayerMask _interactionMask;
 
         private CancellationTokenSource _lifetimeCancellation;
+        private IEntity _actorEntity;
         private InteractionCommand _interactionCommand;
-        private IInteractable _currentInteractable;
+        private IInteractableCommand _currentCommand;
         private bool _isInteracting;
         private bool _selectionCycled;
 
@@ -57,11 +58,11 @@ namespace SoulsLike.Interactions
         {
             _lifetimeCancellation = new CancellationTokenSource();
 
-            IEntity actor = _entityLocator.GetEntity(_actorView.Id);
-            if (!actor.TryGetComponent(out _interactionCommand))
+            _actorEntity = _entityLocator.GetEntity(_actorView.Id);
+            if (!_actorEntity.TryGetComponent(out _interactionCommand))
             {
                 throw new InvalidOperationException(
-                    $"{nameof(InteractionCommand)} is not registered on entity {actor.Id}.");
+                    $"{nameof(InteractionCommand)} is not registered on entity {_actorEntity.Id}.");
             }
         }
 
@@ -75,11 +76,11 @@ namespace SoulsLike.Interactions
 
             RefreshCandidates();
 
-            if (_currentInteractable != null
+            if (_currentCommand != null
                 && !_isInteracting
                 && _inputService.CharacterActions.Interact.WasPressedThisFrame())
             {
-                InteractAsync(_currentInteractable).Forget();
+                InteractAsync(_currentCommand).Forget();
             }
         }
 
@@ -91,18 +92,18 @@ namespace SoulsLike.Interactions
             }
 
             int currentIndex = _candidates.FindIndex(candidate =>
-                ReferenceEquals(candidate.Interactable, _currentInteractable));
+                ReferenceEquals(candidate.Command, _currentCommand));
             int nextIndex = (currentIndex + 1) % _candidates.Count;
             _selectionCycled = true;
-            SetCurrentInteractable(_candidates[nextIndex].Interactable);
+            SetCurrentTarget(_candidates[nextIndex].Command);
         }
 
         public void ClearTarget()
         {
             _candidates.Clear();
-            _candidateInteractables.Clear();
+            _candidateEntities.Clear();
             _selectionCycled = false;
-            SetCurrentInteractable(null);
+            SetCurrentTarget(null);
         }
 
         public void Dispose()
@@ -114,7 +115,7 @@ namespace SoulsLike.Interactions
         private void RefreshCandidates()
         {
             _candidates.Clear();
-            _candidateInteractables.Clear();
+            _candidateEntities.Clear();
 
             Transform actorTransform = _character.transform;
             int colliderCount = Physics.OverlapSphereNonAlloc(
@@ -127,15 +128,33 @@ namespace SoulsLike.Interactions
             for (int index = 0; index < colliderCount; index++)
             {
                 Collider collider = _colliderBuffer[index];
-                IInteractable interactable = collider.GetComponentInParent<IInteractable>();
-                if (interactable == null
-                    || !_candidateInteractables.Add(interactable)
-                    || interactable is Behaviour behaviour && !behaviour.isActiveAndEnabled)
+                if (!_entityLocator.TryGetEntity(collider, out IEntity targetEntity))
                 {
                     continue;
                 }
 
-                Vector3 offset = interactable.InteractionAnchor.position - actorTransform.position;
+                if (!_candidateEntities.Add(targetEntity))
+                {
+                    continue;
+                }
+
+                if (!targetEntity.TryGetComponent(out IInteractableCommand command))
+                {
+                    continue;
+                }
+
+                if (command is Behaviour behaviour && !behaviour.isActiveAndEnabled)
+                {
+                    continue;
+                }
+
+                Transform anchor = command.GetInteractionAnchor(_actorEntity);
+                if (anchor == null)
+                {
+                    continue;
+                }
+
+                Vector3 offset = anchor.position - actorTransform.position;
                 float distanceSqr = offset.sqrMagnitude;
                 if (distanceSqr > INTERACTION_RADIUS_SQR)
                 {
@@ -151,14 +170,14 @@ namespace SoulsLike.Interactions
                     continue;
                 }
 
-                _candidates.Add(new InteractionCandidate(interactable, alignment, distanceSqr));
+                _candidates.Add(new InteractionCandidate(targetEntity, command, alignment, distanceSqr));
             }
 
             _candidates.Sort(CompareCandidates);
-            SetCurrentInteractable(SelectStableInteractable());
+            SetCurrentTarget(SelectStableCandidate());
         }
 
-        private IInteractable SelectStableInteractable()
+        private IInteractableCommand SelectStableCandidate()
         {
             if (_candidates.Count == 0)
             {
@@ -166,15 +185,15 @@ namespace SoulsLike.Interactions
                 return null;
             }
 
-            IInteractable bestInteractable = _candidates[0].Interactable;
+            IInteractableCommand bestCommand = _candidates[0].Command;
             foreach (InteractionCandidate candidate in _candidates)
             {
-                if (ReferenceEquals(candidate.Interactable, _currentInteractable))
+                if (ReferenceEquals(candidate.Command, _currentCommand))
                 {
                     if (_selectionCycled
-                        || candidate.Interactable.Priority == bestInteractable.Priority)
+                        || candidate.Command.Priority == bestCommand.Priority)
                     {
-                        return _currentInteractable;
+                        return _currentCommand;
                     }
 
                     break;
@@ -182,15 +201,15 @@ namespace SoulsLike.Interactions
             }
 
             _selectionCycled = false;
-            return bestInteractable;
+            return bestCommand;
         }
 
-        private void SetCurrentInteractable(IInteractable interactable)
+        private void SetCurrentTarget(IInteractableCommand command)
         {
-            _currentInteractable = interactable;
-            InteractionPrompt prompt = interactable == null
+            _currentCommand = command;
+            InteractionPrompt prompt = command == null
                 ? default
-                : _interactionCommand.GetPrompt(interactable);
+                : _interactionCommand.GetPrompt(command);
             if (prompt.Equals(CurrentPrompt))
             {
                 return;
@@ -200,12 +219,12 @@ namespace SoulsLike.Interactions
             PromptChanged?.Invoke(prompt);
         }
 
-        private async UniTask InteractAsync(IInteractable interactable)
+        private async UniTask InteractAsync(IInteractableCommand command)
         {
-            if (!_interactionCommand.CanInteract(interactable))
+            if (!_interactionCommand.CanInteract(command))
             {
                 InteractionFailed?.Invoke(
-                    _interactionCommand.GetFailurePrompt(interactable));
+                    _interactionCommand.GetFailurePrompt(command));
                 return;
             }
 
@@ -213,7 +232,7 @@ namespace SoulsLike.Interactions
             try
             {
                 await _interactionCommand.InteractAsync(
-                        interactable,
+                        command,
                         _lifetimeCancellation.Token)
                     .SuppressCancellationThrow();
             }
@@ -227,8 +246,8 @@ namespace SoulsLike.Interactions
             InteractionCandidate first,
             InteractionCandidate second)
         {
-            int priorityComparison = second.Interactable.Priority.CompareTo(
-                first.Interactable.Priority);
+            int priorityComparison = second.Command.Priority.CompareTo(
+                first.Command.Priority);
             if (priorityComparison != 0)
             {
                 return priorityComparison;
@@ -242,16 +261,19 @@ namespace SoulsLike.Interactions
 
         private readonly struct InteractionCandidate
         {
-            public IInteractable Interactable { get; }
+            public IEntity Entity { get; }
+            public IInteractableCommand Command { get; }
             public float Alignment { get; }
             public float DistanceSqr { get; }
 
             public InteractionCandidate(
-                IInteractable interactable,
+                IEntity entity,
+                IInteractableCommand command,
                 float alignment,
                 float distanceSqr)
             {
-                Interactable = interactable;
+                Entity = entity;
+                Command = command;
                 Alignment = alignment;
                 DistanceSqr = distanceSqr;
             }

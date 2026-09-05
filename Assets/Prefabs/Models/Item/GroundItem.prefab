@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 977774412430378712}
   - component: {fileID: 7987009242207652695}
   - component: {fileID: 4043071842734270070}
+  - component: {fileID: 7057150930069569183}
   m_Layer: 0
   m_Name: GroundItem
   m_TagString: Untagged
@@ -77,6 +78,18 @@ MonoBehaviour:
   interactionAnchor: {fileID: 1263447682189673064}
   pickupVfx: {fileID: 2700331766936919721}
   priority: 100
+--- !u!114 &7057150930069569183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1226811572328492701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb3135a9c0183054f883889281f754fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.BaseEntity.ViewEntity
 --- !u!1 &1725855017622611967
 GameObject:
   m_ObjectHideFlags: 0
@@ -15276,7 +15289,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 979dcf168813b604e8804f4d7f68b813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.GroundItemVfx
-  visualRoot: {fileID: 6171276627657652283}
   ambientParticles:
   - {fileID: 3388434361062308293}
   - {fileID: 4242608598933625078}
@@ -15291,9 +15303,7 @@ MonoBehaviour:
   - {fileID: 8146643908126331453}
   - {fileID: 3597562996290812200}
   - {fileID: 2636635432210387168}
-  pullDuration: 0.22
   dissolveDuration: 0.45
-  targetHeight: 1.1
 --- !u!1 &6608656390233449169
 GameObject:
   m_ObjectHideFlags: 0

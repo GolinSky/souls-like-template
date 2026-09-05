@@ -1,8 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using SoulsLike.Entities.BaseEntity;
+using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Services;
+using SoulsLike.Services.IdGeneration;
 using SoulsLike.Services.Storage;
 using SoulsLike.Services.Spawn;
 using SoulsLike.Services.Travel.Data;
@@ -12,7 +16,7 @@ using VContainer.Unity;
 
 namespace SoulsLike.Interactions
 {
-    public sealed class GraceSystem : MonoBehaviour, IGracePresenter, IInitializable
+    public sealed class GraceSystem : MonoBehaviour, IGracePresenter, IInitializable, IDisposable
     {
         private const string OPEN_GRACES_KEY = "OpenGraces";
         private const string SIT_ON_GRACE_PROMPT = "Sit on grace";
@@ -21,10 +25,13 @@ namespace SoulsLike.Interactions
 
         [SerializeField] private GraceView[] graceViews;
 
+        private readonly Dictionary<GraceView, (Entity Entity, GraceInteractCommand Command)> _entities = new();
         private ICoreGameOrchestrator _coreGameOrchestrator;
         private IStorageRegistry _storageRegistry;
         private LocationData _locationData;
         private CharacterSpawnService _characterSpawnService;
+        private IEntityLocator _entityLocator;
+        private IUniqueIdGenerator _idGenerator;
         private HashSet<string> _openGraceIds;
 
         [Inject]
@@ -32,12 +39,16 @@ namespace SoulsLike.Interactions
             ICoreGameOrchestrator coreGameOrchestrator,
             IStorageRegistry storageRegistry,
             LocationData locationData,
-            CharacterSpawnService characterSpawnService)
+            CharacterSpawnService characterSpawnService,
+            IEntityLocator entityLocator,
+            IUniqueIdGenerator idGenerator)
         {
             _coreGameOrchestrator = coreGameOrchestrator;
             _storageRegistry = storageRegistry;
             _locationData = locationData;
             _characterSpawnService = characterSpawnService;
+            _entityLocator = entityLocator;
+            _idGenerator = idGenerator;
             _openGraceIds = storageRegistry.GetData(
                 OPEN_GRACES_KEY,
                 new HashSet<string>());
@@ -61,7 +72,31 @@ namespace SoulsLike.Interactions
             foreach (GraceView graceView in graceViews)
             {
                 graceView.AssignPresenter(this);
+
+                ViewEntity viewEntity = graceView.GetComponent<ViewEntity>();
+                if (viewEntity == null)
+                {
+                    viewEntity = graceView.gameObject.AddComponent<ViewEntity>();
+                }
+
+                long id = _idGenerator.GenerateUniqueId();
+                viewEntity.Construct(id, EntityType.Grace);
+                Entity entity = new(id, _entityLocator, EntityType.Grace);
+                GraceInteractCommand command = new(entity, graceView, this);
+                command.Initialize();
+                entity.Initialize();
+                _entities.Add(graceView, (entity, command));
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (var tuple in _entities.Values)
+            {
+                tuple.Command.Dispose();
+                tuple.Entity.Dispose();
+            }
+            _entities.Clear();
         }
 
         public bool CanInteract() => true;

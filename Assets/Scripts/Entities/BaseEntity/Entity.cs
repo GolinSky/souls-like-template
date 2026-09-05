@@ -5,13 +5,6 @@ using VContainer.Unity;
 
 namespace SoulsLike.Entities.BaseEntity
 {
-    public interface IEntity
-    {
-        long Id { get; }
-        bool TryGetComponent<TEntityComponent>(out TEntityComponent targetComponent) where TEntityComponent : IEntityComponent;
-        EntityType EntityType { get; }
-    }
-
     public class Entity : IEntity, IInitializable, IDisposable
     {
         private readonly List<IEntityComponent> _components = new();

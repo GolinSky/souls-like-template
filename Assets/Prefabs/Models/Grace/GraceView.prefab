@@ -210,6 +210,7 @@ GameObject:
   - component: {fileID: 8502681969599952936}
   - component: {fileID: 8400705435241530967}
   - component: {fileID: 3131387317111218066}
+  - component: {fileID: 100870605077237407}
   m_Layer: 0
   m_Name: GraceView
   m_TagString: Untagged
@@ -267,6 +268,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &100870605077237407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1748839116552682949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb3135a9c0183054f883889281f754fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.BaseEntity.ViewEntity
 --- !u!1 &2118127473169394286
 GameObject:
   m_ObjectHideFlags: 0

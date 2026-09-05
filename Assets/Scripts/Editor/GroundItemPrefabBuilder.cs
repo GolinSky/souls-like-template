@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Items;
 using SoulsLike.Ui.PlayerHud;
 using TMPro;
@@ -66,6 +67,7 @@ namespace SoulsLike.Editor
             collider.radius = 0.7f;
 
             GroundItem groundItem = root.AddComponent<GroundItem>();
+            root.AddComponent<ViewEntity>();
             Transform anchor = CreateChild(root.transform, "InteractionAnchor");
             anchor.localPosition = new Vector3(0f, 0.45f, 0f);
             Transform visualRoot = CreateChild(root.transform, "VFX");
