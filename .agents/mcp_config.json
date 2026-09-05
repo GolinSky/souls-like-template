@@ -1,10 +1,11 @@
 {
   "mcpServers": {
-    "obsidian": {
-      "url": "https://127.0.0.1:27124/mcp/",
-      "headers": {
-        "Authorization": "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e19342ae1cc0304271a68257e4cc43"
-      }
+    "soulslike-vault": {
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": [
+        "C:\\Users\\golin\\AppData\\Local\\AI-Tools\\mcpvault\\0.16.0\\node_modules\\@bitbonsai\\mcpvault\\dist\\server.js",
+        "F:\\Private\\SoulsLikeTemplate\\SoulsLikeGameVault"
+      ]
     },
     "unity": {
       "command": "unity",

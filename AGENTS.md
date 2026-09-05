@@ -43,11 +43,11 @@ Live source, serialized assets, and current tool output take precedence over gen
 
 ## UI Workflow
 
-- Before working on UI, UI controllers, presenters, or views, read `SoulsLikeGameVault/ui/UI_Code_Build_Guide.md` through Obsidian MCP. If Obsidian MCP is unavailable, use `Tools/SoulsLike/Obsidian/Start Obsidian`, retry MCP, then read the checked-in Markdown note if MCP remains unavailable. Starting Obsidian does not guarantee MCP readiness.
+- Before working on UI, UI controllers, presenters, or views, read `SoulsLikeGameVault/ui/UI_Code_Build_Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints.
 
 ## Animation Workflow
 
-- Before modifying Animator Controllers, animation states, transitions, sub-state machines, or ActionExecutor animation code, read `SoulsLikeGameVault/animation/Animator_SubState_Machine_Architecture_Guide.md` through Obsidian MCP. If Obsidian MCP is unavailable, use `Tools/SoulsLike/Obsidian/Start Obsidian`, retry MCP, then read the checked-in Markdown note if MCP remains unavailable. Starting Obsidian does not guarantee MCP readiness. Ensure all animations are grouped into sub-state machines, coordinate standards matching `CharacterGreatSwordAnimator.controller` are followed, action sub-state machines contain an inert `Empty` default state, and runtime CrossFade calls use short state names/hashes.
+- Before modifying Animator Controllers, animation states, transitions, sub-state machines, or ActionExecutor animation code, read `SoulsLikeGameVault/animation/Animator_SubState_Machine_Architecture_Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints. Ensure all animations are grouped into sub-state machines, coordinate standards matching `CharacterGreatSwordAnimator.controller` are followed, action sub-state machines contain an inert `Empty` default state, and runtime CrossFade calls use short state names/hashes.
 
 ## Subagent orchestration
 
