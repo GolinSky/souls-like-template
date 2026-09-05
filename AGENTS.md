@@ -108,8 +108,37 @@ Every parent handoff must name the required skill and only the conditional/domai
 
 ## Test Execution
 
-- Do not run tests or test suites unless the user directly and explicitly requests test execution.
-- Do not treat tests as an automatic verification step; report that they were not run when relevant.
+- Execute relevant tests to verify changes, strictly adhering to the Unity Test Safety protocol below.
+- Always run preflight checks (`assert_test_ready` / `list_open_scenes`) prior to starting any test run.
+- Run tests asynchronously (`async_tests=true`) and poll `test_status` until completion to prevent blocking and modal deadlocks.
+
+## Unity Test Safety
+
+Before calling any Unity test command:
+
+1. Run: `unity command list_open_scenes --json` (or `unity command assert_test_ready --json`).
+2. Inspect every open scene:
+   - If all scenes have `isDirty=false`, testing may continue.
+   - If a dirty scene has a non-empty asset path and the task explicitly permits scene saving, save it with `save_scene`, then inspect again.
+   - If a dirty scene has an empty path / is Untitled, stop with `BLOCKED_DIRTY_UNTITLED_SCENE`.
+   - Never start tests while any scene is dirty.
+3. Never call these while scene state is unknown:
+   - `run_tests`
+   - `open_scene`
+   - `save_all`
+   - Enter Play Mode
+   - Close or reload scenes
+4. Never invoke dialog-producing APIs in agent automation:
+   - `EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo`
+   - `EditorSceneManager.EnsureUntitledSceneHasBeenSaved`
+   - `EditorUtility.DisplayDialog` or `DisplayDialogComplex`
+5. Start tests with `async_tests=true`. Poll `test_status` until completed, failed, cancelled, or timed out.
+6. If a test command times out:
+   - Do not immediately retry it.
+   - Check Unity for a modal dialog.
+   - Inspect `test_status`, Editor status, Console, and Editor.log.
+   - Confirm that no previous test run remains active.
+7. Never use `open_scene` to escape a dirty-scene condition. It may discard unsaved scene changes.
 
 ## Unity Asset Persistence
 
