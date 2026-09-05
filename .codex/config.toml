@@ -20,17 +20,37 @@ SERENA_HOME = ".serena/home"
 PYTHONUTF8 = "1"
 DOTNET_ROOT = "/opt/homebrew/opt/dotnet/libexec"
 
+[mcp_servers.soulslike-vault]
+command = "C:\\Program Files\\nodejs\\node.exe"
+args = [
+  "C:\\Users\\golin\\AppData\\Local\\AI-Tools\\mcpvault\\0.16.0\\node_modules\\@bitbonsai\\mcpvault\\dist\\server.js",
+  "F:\\Private\\SoulsLikeTemplate\\SoulsLikeGameVault",
+]
+
+# Compatibility tombstone: retired REST bridge replaced by local stdio MCPVault (soulslike-vault).
 [mcp_servers.obsidian]
 url = "http://127.0.0.1:27123/mcp/"
 http_headers = { Authorization = "Bearer 247bf062f78ebaa671225b2f5c372e8aa5e19342ae1cc0304271a68257e4cc43" }
+enabled = false
+
 
 [mcp_servers.graphify]
 command = "uvx"
-args = [ "--from", "graphifyy[mcp]", "python", "-m", "graphify.serve", "graphify-out/graph.json" ]
-enabled = true
-enabled_tools = [ "query_graph", "get_node", "get_neighbors", "god_nodes", "graph_stats", "shortest_path" ]
+args = [
+  "--from", "graphifyy[mcp]==0.9.54",
+  "graphify-mcp", "graphify-out/graph.json",
+]
+enabled = false
+enabled_tools = [
+  "query_graph",
+  "get_node",
+  "get_neighbors",
+  "god_nodes",
+  "graph_stats",
+  "shortest_path",
+]
 default_tools_approval_mode = "approve"
-startup_timeout_sec = 20
+startup_timeout_sec = 45
 tool_timeout_sec = 60
 
 [mcp_servers.graphify.env]

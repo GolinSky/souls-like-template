@@ -252,7 +252,9 @@ Load files from `graphify-out/.graphify_uncached.txt`. Split into chunks of 20-2
 
 **Step B2 - Dispatch ALL subagents in a single message (Codex)**
 
-> **Codex platform:** Use `spawn_agent` instead of the Agent tool. Agent results arrive as `FINAL_ANSWER` messages; use `wait_agent` without an agent handle only when waiting for an update. Do not call `Task` or `close_agent` APIs.
+> **Codex platform:** Uses `spawn_agent` + `wait_agent` + `close_agent` instead of the Agent tool.
+> Requires `multi_agent = true` under `[features]` in `~/.codex/config.toml`.
+> If `spawn_agent` is unavailable, tell the user to add that config and restart Codex.
 
 Call `spawn_agent` once per chunk — ALL in the same response so they run in parallel. Build the message by wrapping the extraction prompt in task-delegation framing:
 
@@ -260,9 +262,9 @@ Call `spawn_agent` once per chunk — ALL in the same response so they run in pa
 spawn_agent(agent_type="worker", message="Your task is to perform the following. Follow the instructions below exactly.\n\n<agent-instructions>\n[extraction prompt, with FILE_LIST, CHUNK_NUM, TOTAL_CHUNKS, DEEP_MODE substituted]\n</agent-instructions>\n\nExecute this now. Output ONLY the structured JSON response.")
 ```
 
-After all agents are dispatched, collect each agent's `FINAL_ANSWER` JSON in memory. If an update has not arrived, wait without an agent handle:
+After all agents are dispatched, collect results sequentially in memory:
 ```
-wait_agent({ timeout_ms: 60000 })
+result = wait_agent(handle); close_agent(handle)   # repeat per handle
 ```
 
 Parse each result as JSON. Accumulate nodes/edges/hyperedges across all results and write to `graphify-out/.graphify_semantic_new.json`. Codex collects in memory, so there are no per-chunk files on disk; the disk-based success checks in Step B3 do not apply — a chunk that returns invalid JSON is the failure signal instead.
@@ -693,9 +695,9 @@ Neither is part of the default build. When the user runs `/graphify add <url>` t
 
 ---
 
-## For the commit hook and agent-policy integration
+## For the commit hook and native CLAUDE.md integration
 
-When the user asks to install the post-commit auto-rebuild hook or wire Graphify into a project's agent-policy file, see `references/hooks.md`.
+When the user asks to install the post-commit auto-rebuild hook or wire graphify into a project's CLAUDE.md, see `references/hooks.md`.
 
 ---
 

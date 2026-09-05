@@ -48,6 +48,12 @@ Return:
 5. Unknowns that require further inspection.
 6. A compact handoff for the architect or worker.
 
+Graphify cannot currently be trusted as the sole answer for member read/write queries.
+For C# types that share a name with a property or enum member, verify the target source file
+before reporting references. Common .NET method-name INFERRED edges are possible; do not
+use Add/Contains/Equals/ToString/Where/Select-style hubs as architectural evidence without
+source verification.
+
 Do not edit files or assets.
 Do not propose a broad redesign unless the parent explicitly requests alternatives.
 Do not scan unrelated project areas.
@@ -59,15 +65,43 @@ enabled = false
 
 [mcp_servers.graphify]
 command = "uvx"
-args = [ "--from", "graphifyy", "python", "-m", "graphify.serve", "graphify-out/graph.json" ]
+args = [
+  "--from", "graphifyy[mcp]==0.9.54",
+  "graphify-mcp", "graphify-out/graph.json",
+]
 enabled = true
-enabled_tools = [ "query_graph", "get_node", "get_neighbors", "god_nodes", "graph_stats", "shortest_path" ]
+enabled_tools = [
+  "query_graph",
+  "get_node",
+  "get_neighbors",
+  "god_nodes",
+  "graph_stats",
+  "shortest_path",
+]
 default_tools_approval_mode = "approve"
-startup_timeout_sec = 20
+startup_timeout_sec = 45
 tool_timeout_sec = 60
 
 [mcp_servers.graphify.env]
 GRAPHIFY_QUERY_LOG_DISABLE = "1"
+
+[mcp_servers.graphify.tools.query_graph]
+output_token_limit = 1600
+
+[mcp_servers.graphify.tools.get_neighbors]
+output_token_limit = 1400
+
+[mcp_servers.graphify.tools.god_nodes]
+output_token_limit = 1400
+
+[mcp_servers.graphify.tools.get_node]
+output_token_limit = 1000
+
+[mcp_servers.graphify.tools.shortest_path]
+output_token_limit = 1000
+
+[mcp_servers.graphify.tools.graph_stats]
+output_token_limit = 800
 
 [mcp_servers.unity]
 command = "unity"
@@ -91,6 +125,9 @@ enabled = false
 [mcp_servers.serena.env]
 SERENA_HOME = ".serena/home"
 PYTHONUTF8 = "1"
+
+[mcp_servers.soulslike-vault]
+enabled = false
 
 [mcp_servers.obsidian]
 url = "http://127.0.0.1:27123/mcp/"
