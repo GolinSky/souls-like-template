@@ -1,7 +1,11 @@
 using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
+using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Combat;
+using SoulsLike.Entities.Ladder;
 using SoulsLike.Services;
 using SoulsLike.Services.Navigation;
 using UnityEngine;
@@ -30,6 +34,10 @@ namespace SoulsLike.Entities.Enemy
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly ICombatStateNotifier _combatStateNotifier;
         private readonly INavMeshService _navMeshService;
+        private readonly LadderClimber _ladderClimber;
+        private readonly LadderSystem _ladderSystem;
+        private readonly IEntityLocator _entityLocator;
+
 
         private GameState _gameState;
         private float _nextDecisionTime;
@@ -63,7 +71,10 @@ namespace SoulsLike.Entities.Enemy
             CombatDefenseComponent defense,
             IGameStateNotifier gameStateNotifier,
             ICombatStateNotifier combatStateNotifier,
-            INavMeshService navMeshService)
+            INavMeshService navMeshService,
+            LadderClimber ladderClimber,
+            LadderSystem ladderSystem,
+            IEntityLocator entityLocator)
         {
             _actor = actor;
             _motor = motor;
@@ -77,6 +88,9 @@ namespace SoulsLike.Entities.Enemy
             _gameStateNotifier = gameStateNotifier;
             _combatStateNotifier = combatStateNotifier;
             _navMeshService = navMeshService;
+            _ladderClimber = ladderClimber;
+            _ladderSystem = ladderSystem;
+            _entityLocator = entityLocator;
         }
 
         public EnemyGoal Goal { get; private set; }
@@ -162,6 +176,25 @@ namespace SoulsLike.Entities.Enemy
             }
 
             float deltaTime = Time.deltaTime;
+            if (_ladderClimber.IsBusy)
+            {
+                if (_perception.TryGetRecentMemory(Time.time, out EnemyMemory ladderTarget)
+                    && ladderTarget.EntityId.HasValue
+                    && _entityLocator.TryGetEntity(ladderTarget.EntityId.Value, out IEntity targetEntity)
+                    && targetEntity.TryGetComponent(out TargetingCommand targeting))
+                {
+                    _ladderClimber.TickEnemy(targeting.Read().Position, deltaTime);
+                }
+                else if (_ladderClimber.IsAttached)
+                {
+                    _ladderClimber.ForceDetach(
+                        _ladderClimber.DistanceOnLadder >= _ladderClimber.CurrentLadder.Length * 0.5f
+                            ? LadderDetachReason.ExitTop
+                            : LadderDetachReason.ExitBottom);
+                }
+
+                return;
+            }
             _defense.TickRecovery(deltaTime);
             float now = Time.time;
             if (_defense.IsInCriticalState
@@ -368,6 +401,11 @@ namespace SoulsLike.Entities.Enemy
             switch (movement)
             {
                 case EnemyCombatMovement.Approach:
+                    if (TryStartLadderTraversal(targetPosition))
+                    {
+                        return;
+                    }
+
                     MoveTo(BiasCombatDestinationTowardHome(targetPosition));
                     return;
                 case EnemyCombatMovement.Retreat:
@@ -924,6 +962,66 @@ namespace SoulsLike.Entities.Enemy
             _motor.SetDestination(position);
         }
 
+        private bool TryStartLadderTraversal(Vector3 targetPosition)
+        {
+            if (!_actor.BehaviourProfile.CanUseLadders)
+            {
+                return false;
+            }
+
+            if (_reactionTargetEntityId.HasValue
+                && _entityLocator.TryGetEntity(_reactionTargetEntityId.Value, out IEntity targetEntity)
+                && targetEntity.TryGetComponent(out LadderClimber targetClimber)
+                && targetClimber.IsAttached)
+            {
+                LadderEnd targetEntry = targetClimber.DistanceOnLadder < targetClimber.CurrentLadder.Length * 0.5f
+                    ? LadderEnd.Bottom
+                    : LadderEnd.Top;
+                return TryReachLadderEntry(targetClimber.CurrentLadder, targetEntry);
+            }
+
+            if (!_ladderSystem.TryFindRoute(
+                    _actor.transform.position,
+                    targetPosition,
+                    new NavMeshQueryFilter
+                    {
+                        agentTypeID = _actor.NavMeshAgent.agentTypeID,
+                        areaMask = _actor.NavMeshAgent.areaMask
+                    },
+                    out LadderView ladder,
+                    out LadderEnd entryEnd))
+            {
+                return false;
+            }
+
+            return TryReachLadderEntry(ladder, entryEnd);
+        }
+
+        private bool TryReachLadderEntry(LadderView ladder, LadderEnd entryEnd)
+        {
+            Transform entry = ladder.GetExit(entryEnd);
+            NavMeshPath path = new();
+            NavMeshQueryFilter filter = new()
+            {
+                agentTypeID = _actor.NavMeshAgent.agentTypeID,
+                areaMask = _actor.NavMeshAgent.areaMask
+            };
+            if (!NavMesh.CalculatePath(_actor.transform.position, entry.position, filter, path)
+                || path.status != NavMeshPathStatus.PathComplete)
+            {
+                return false;
+            }
+
+            if (!_motor.IsWithin(entry.position, _actor.BehaviourProfile.ArrivalDistance))
+            {
+                MoveTo(entry.position);
+                return true;
+            }
+
+            _ladderClimber.AttachAsync(ladder, entryEnd, CancellationToken.None).Forget();
+            return true;
+        }
+
         private void Face(Vector3 position, float turnSpeed)
         {
             Face(position, turnSpeed, Time.deltaTime);
@@ -997,6 +1095,7 @@ namespace SoulsLike.Entities.Enemy
 
         private void OnDied(long sourceEntityId)
         {
+            _ladderClimber.ForceDetach(LadderDetachReason.Death);
             EnterGoal(EnemyGoal.Dead);
             _motor.Stop();
             if (_executor.IsCriticalVictimRunning && _executor.IsCriticalVictimLethal)

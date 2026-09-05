@@ -1,6 +1,7 @@
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
+using SoulsLike.Entities.Ladder;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Items;
 using UnityEngine;
@@ -41,6 +42,7 @@ namespace SoulsLike.Entities.Enemy
         private WeaponDatabase _weaponDatabase;
         private CombatDefenseComponent _defense;
         private IHealthComponent _health;
+        private LadderClimber _ladderClimber;
         private EnemyMove _queuedMove;
         private CharacterActionDefinition _forcedAction;
         private bool _isInitialized;
@@ -84,13 +86,15 @@ namespace SoulsLike.Entities.Enemy
             Entity entity,
             WeaponDatabase weaponDatabase,
             CombatDefenseComponent defense,
-            IHealthComponent health)
+            IHealthComponent health,
+            LadderClimber ladderClimber)
         {
             _entityLocator = entityLocator;
             _entity = entity;
             _weaponDatabase = weaponDatabase;
             _defense = defense;
             _health = health;
+            _ladderClimber = ladderClimber;
         }
 
         public void Initialize()
@@ -606,6 +610,12 @@ namespace SoulsLike.Entities.Enemy
                     return;
                 case DefenderReaction.Authored:
                 case DefenderReaction.Forced:
+                    if (result.Type is MeleeHitResultType.PoiseStaggered
+                        or MeleeHitResultType.StanceBroken
+                        or MeleeHitResultType.GuardBroken)
+                    {
+                        _ladderClimber.ForceDetach(LadderDetachReason.KnockOff);
+                    }
                     PlayHit(result);
                     return;
                 default:

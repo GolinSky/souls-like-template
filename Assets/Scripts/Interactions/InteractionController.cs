@@ -63,6 +63,12 @@ namespace SoulsLike.Interactions
 
         public void Tick()
         {
+            if (_character.IsInLadderOperation)
+            {
+                ClearTarget();
+                return;
+            }
+
             RefreshCandidates();
 
             if (_currentInteractable != null

@@ -837,6 +837,7 @@ GameObject:
   - component: {fileID: 3037876965645412385}
   - component: {fileID: 5262512520456380466}
   - component: {fileID: 7159643812481444141}
+  - component: {fileID: 231774200012311954}
   m_Layer: 6
   m_Name: Character
   m_TagString: Player
@@ -910,6 +911,7 @@ MonoBehaviour:
   inventoryComponent: {fileID: 1001450772407502477}
   equipmentPresentation: {fileID: 4953552906734793246}
   cameraTarget: {fileID: 1033412270112227245}
+  ladderClimber: {fileID: 231774200012311954}
   aimTargetDistance: 100
   aimLayerMask:
     serializedVersion: 2
@@ -1073,6 +1075,29 @@ MonoBehaviour:
   attackerLocalOffset: {x: 0, y: 0, z: -0.9}
   attackerYawOffsetDegrees: 0
   victimYawOffsetDegrees: 0
+--- !u!114 &231774200012311954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4657128601297372913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbf784a68c6f2944cb376291c1a5a099, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Ladder.LadderClimber
+  animator: {fileID: 6026135802237666264}
+  characterController: {fileID: 4657128601297372923}
+  climbSpeed: 2
+  fastClimbSpeed: 3.5
+  slideSpeed: 5
+  dropGravity: 20
+  punchStaminaCost: 16
+  kickStaminaCost: 20
+  punchDamage: 18
+  kickDamage: 24
+  attackRange: 2.1
 --- !u!1 &5237542798037926601
 GameObject:
   m_ObjectHideFlags: 0

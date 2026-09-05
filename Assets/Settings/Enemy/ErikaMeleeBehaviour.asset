@@ -52,3 +52,4 @@ MonoBehaviour:
   locksFacing: 0
   maximumAttackCount: 0
   randomSeed: 1741
+  canUseLadders: 1

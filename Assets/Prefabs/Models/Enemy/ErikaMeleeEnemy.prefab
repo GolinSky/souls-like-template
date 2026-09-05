@@ -64,6 +64,7 @@ GameObject:
   - component: {fileID: 5728496263157501801}
   - component: {fileID: 2228271053214878040}
   - component: {fileID: 3687523779650105343}
+  - component: {fileID: 2539587388031800494}
   m_Layer: 7
   m_Name: ErikaMeleeEnemy
   m_TagString: Untagged
@@ -232,6 +233,29 @@ MonoBehaviour:
   maxStance: 100
   stanceRecoveryPerSecond: 10
   criticalOpportunityDurationSeconds: 2
+--- !u!114 &2539587388031800494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8687018139822308439}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbf784a68c6f2944cb376291c1a5a099, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Ladder.LadderClimber
+  animator: {fileID: 2834942489604600573}
+  characterController: {fileID: 1744455828408514855}
+  climbSpeed: 2
+  fastClimbSpeed: 3.5
+  slideSpeed: 5
+  dropGravity: 20
+  punchStaminaCost: 16
+  kickStaminaCost: 20
+  punchDamage: 18
+  kickDamage: 24
+  attackRange: 2.1
 --- !u!1001 &2849579958771515057
 PrefabInstance:
   m_ObjectHideFlags: 0

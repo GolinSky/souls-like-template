@@ -53,6 +53,9 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField, Min(0)] private int maximumAttackCount;
         [SerializeField] private int randomSeed = 1;
 
+        [Header("Traversal")]
+        [SerializeField] private bool canUseLadders;
+
         public float PerceptionRange => perceptionRange;
         public float FieldOfView => fieldOfView;
         public float VerticalFieldOfView => verticalFieldOfView;
@@ -95,5 +98,6 @@ namespace SoulsLike.Entities.Enemy
         public bool LocksFacing => locksFacing;
         public int MaximumAttackCount => maximumAttackCount;
         public int RandomSeed => randomSeed;
+        public bool CanUseLadders => canUseLadders;
     }
 }

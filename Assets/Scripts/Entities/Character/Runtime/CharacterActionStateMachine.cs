@@ -156,6 +156,17 @@ namespace SoulsLike.Entities.Character.Runtime
             }
         }
 
+        public void Clear()
+        {
+            _bufferedAction = null;
+            _queueWindowOpen = false;
+            _rollSprintInterruptRequested = false;
+            if (_currentState != CharacterAction.State.Critical)
+            {
+                Enter(CharacterAction.State.Neutral);
+            }
+        }
+
         private void Buffer(in CharacterAction action, float now)
         {
             _bufferedAction = action;

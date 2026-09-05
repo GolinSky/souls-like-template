@@ -11,6 +11,7 @@ namespace SoulsLike.Entities.Enemy
         AnimatorMismatch,
         AnimatorEntryTimeout,
         Disabled,
-        Despawned
+        Despawned,
+        Traversal
     }
 }

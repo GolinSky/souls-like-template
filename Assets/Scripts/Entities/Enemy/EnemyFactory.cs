@@ -10,6 +10,7 @@ using SoulsLike.Factory;
 using SoulsLike.Items;
 using SoulsLike.Services.IdGeneration;
 using SoulsLike.Services.Navigation;
+using SoulsLike.Entities.Ladder;
 using UnityEngine;
 using UnityEngine.AI;
 using VContainer;
@@ -89,6 +90,7 @@ namespace SoulsLike.Entities.Enemy
                     GetRequiredComponent<EnemyHealthUiComponent>(actor.gameObject);
                 EnemyNavigationMotor motor = GetRequiredComponent<EnemyNavigationMotor>(
                     actor.gameObject);
+                LadderClimber ladderClimber = GetRequiredComponent<LadderClimber>(actor.gameObject);
                 EnemyActionExecutor actionExecutor =
                     GetRequiredComponentInChildren<EnemyActionExecutor>(actor.gameObject);
                 MeleeHitboxController meleeHitbox =
@@ -133,6 +135,7 @@ namespace SoulsLike.Entities.Enemy
                     builder.RegisterScriptableObject<WeaponDatabase>();
 
                     builder.RegisterComponent(motor).AsSelf().AsImplementedInterfaces();
+                    builder.RegisterComponent(ladderClimber).AsSelf().AsImplementedInterfaces();
                     builder.RegisterComponent(actionExecutor).AsSelf().AsImplementedInterfaces();
                     builder.RegisterComponent(meleeHitbox).AsSelf();
                     if (activationTrigger != null)
@@ -162,6 +165,7 @@ namespace SoulsLike.Entities.Enemy
                 {
                     lifetimeRoot.AddComponent<LifetimeScope>();
                     lifetimeRoot.SetActive(true);
+                    //todo: remove this shit
                 }
 
                 actor.transform.SetParent(lifetimeRoot.transform, true);

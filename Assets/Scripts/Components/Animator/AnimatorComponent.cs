@@ -124,6 +124,9 @@ namespace SoulsLike.Entities.Character.Components
             SetActionLayerWeights(animator.GetBool(AnimIdMoving));
         }
 
+        public void SetLadderTraversalBlocked(bool blocked) =>
+            rootMotionRelay.SetTraversalBlocked(blocked);
+
         private void OnDisable()
         {
             if (_groundedOverrideActive)
