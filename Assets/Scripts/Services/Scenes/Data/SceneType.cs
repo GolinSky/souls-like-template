@@ -7,5 +7,6 @@
         Loading = 1,
         DefaultLocation = 2,
         Workshop = 3,
+        Sandbox = 4,
     }
 }

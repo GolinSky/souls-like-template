@@ -13,6 +13,7 @@ using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Entities.Ladder;
+using SoulsLike.Entities.Elevator;
 using SoulsLike.Items;
 using SoulsLike.Services;
 using UnityEngine;
@@ -21,7 +22,7 @@ using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character
 {
-    public sealed class Character : MonoBehaviour, IInitializable, IDisposable
+    public sealed class Character : MonoBehaviour, IInitializable, IDisposable, IPlatformRiderMotor
     {
         private const float NORMAL_ATTACK_SPEED = 1.0f;
 
@@ -715,6 +716,16 @@ namespace SoulsLike.Entities.Character
             healthComponent.CalculateRevive(healthComponent.Stats, health));
 
         public void SetPosition(Vector3 position) => movementComponent.SetPosition(position);
+
+        public void ApplyPlatformDisplacement(Vector3 displacement) =>
+            movementComponent.ApplyPlatformDisplacement(displacement);
+
+        public bool IsSupportedBy(Collider supportCollider) =>
+            movementComponent.IsSupportedBy(supportCollider);
+
+        public void SynchronizeAfterPlatformRide()
+        {
+        }
 
         public void SetLockOnTarget(bool isLockedOn, long? lockOnTargetEntityId)
         {

@@ -4,5 +4,6 @@ namespace SoulsLike.Services.Travel.Data
     {
         DefaultLocationGrace01 = 0,
         WorkshopGrace01 = 1,
+        ElevatorDemoGrace01 = 2,
     }
 }

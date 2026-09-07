@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 469ab13b94f6de3419d946b36ae3a9f3
+    m_Address: Assets/Sandbox/Scenes/ElevatorDemo/ElevatorDemo.unity
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8e78d87b7d4f00549997b35045848a8c
     m_Address: Assets/Scenes/MainMenu/MainMenu.unity
     m_ReadOnly: 0

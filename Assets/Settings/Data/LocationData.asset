@@ -25,3 +25,9 @@ MonoBehaviour:
     - name: workshop_grace_01
       id: 1
       displayName: Workshop Grace
+  - id: 4
+    displayName: Sandbox
+    graces:
+    - name: elevator_demo_grace_01
+      id: 2
+      displayName: Elevator Demo

@@ -105,6 +105,40 @@ namespace SoulsLike.Entities.Character.Components.Movement
             SynchronizeGroundedState();
         }
 
+        public void ApplyPlatformDisplacement(Vector3 displacement)
+        {
+            controller.Move(displacement);
+        }
+
+        public bool IsSupportedBy(Collider supportCollider)
+        {
+            if (!controller.enabled || !controller.isGrounded || !Model.Grounded || _wasJumpInitiated)
+            {
+                return false;
+            }
+
+            float lowerSphereOffset = Mathf.Max(controller.height * 0.5f - controller.radius, 0f);
+            Vector3 castOrigin = transform.TransformPoint(controller.center)
+                - Vector3.up * lowerSphereOffset;
+            int hitCount = Physics.SphereCastNonAlloc(
+                castOrigin,
+                controller.radius * 0.9f,
+                Vector3.down,
+                _groundProbeHits,
+                controller.skinWidth + 0.05f,
+                ~0,
+                QueryTriggerInteraction.Ignore);
+            for (int index = 0; index < hitCount; index++)
+            {
+                if (_groundProbeHits[index].collider == supportCollider)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public void SetMovementBlocked(bool blocked)
         {
             _movementBlocked = blocked;

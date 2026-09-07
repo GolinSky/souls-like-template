@@ -7,5 +7,7 @@ namespace SoulsLike.Entities.BaseEntity
         Ladder = 2,
         GroundItem = 3,
         Grace = 4,
+        ElevatorLever = 5,
+        ElevatorPressurePlate = 6,
     }
 }

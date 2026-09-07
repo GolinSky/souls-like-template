@@ -35,6 +35,11 @@ MonoBehaviour:
         sceneAsset: {fileID: 102900000, guid: 238720e6e7b816043a74ed1ac1259bdb, type: 3}
         isDirty: 1
         scenePath: Assets/Sandbox/Scenes/WorkShop/WorkShop.unity
+    - key: 4
+      value:
+        sceneAsset: {fileID: 102900000, guid: 469ab13b94f6de3419d946b36ae3a9f3, type: 3}
+        isDirty: 0
+        scenePath: Assets/Sandbox/Scenes/ElevatorDemo/ElevatorDemo.unity
   dependencies:
     keyValue:
     - key: 2
