@@ -14,6 +14,7 @@ tags:
 
 Research notes are source-backed evidence packages. They may recommend changes, but they are not implementation policy and are not executable plans until reviewed.
 
+- [[Research/Architecture and Systems Audit 2026-09-07]] — 11 issue notes, static evidence, and validation gaps.
 - [[Enemy Encounter System Audit]]
 - [[Flask Healing System Research]]
 - [[Interaction System Audit]] — stale/partial against current interaction commands.

@@ -30,6 +30,20 @@ No plan is currently marked `ready` or `in-progress`.
 
 - [[Work/Issues/Roll Interruption Issue|Roll Interruption Issue]]
 
+Architecture audit: [[Research/Architecture and Systems Audit 2026-09-07]] — static evidence and validation gaps.
+
+- [[Work/Issues/Locked Roll State Is Cleared Before Root Motion]] — high; code defect
+- [[Work/Issues/Stance Recovery Is Gated By Poise Delay]] — medium; code and architecture mismatch
+- [[Work/Issues/Inventory Category Controls Are Not Connected]] — high; code and prefab defect
+- [[Work/Issues/Equipment Picker Compares Against The Wrong Slot]] — medium; code defect
+- [[Work/Issues/Scene Transitions Allow Concurrent Load Operations]] — medium; code defect
+- [[Work/Issues/Addressable Asset Loads Have No Release Owner]] — medium; resource lifetime defect
+- [[Work/Issues/Settings Apply Hides Persistence Failures]] — medium; error propagation defect
+- [[Work/Issues/Save Writes Can Replace The Last Valid File With Partial Data]] — medium; resilience gap
+- [[Work/Issues/Respawn Assumes The Last Grace Is In The Current Scene]] — medium; conditional code defect
+- [[Work/Issues/Equipment Picker Does Not Filter Exact Slot Compatibility]] — medium; conditional content integration defect
+- [[Work/Issues/Architecture And Roll Issue Notes Contain Superseded Evidence]] — medium; documentation defect
+
 ## Lifecycle
 
 `draft -> ready -> in-progress -> blocked or done`
