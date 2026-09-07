@@ -185,8 +185,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "1da76326f671a503",
+  "active": "7c78634e433e7e51",
   "lastOpenFiles": [
+    "ai/Serena_MCP_Setup_Windows_macOS.md",
     "ToDo/ENEMY_ENCOUNTER_SYSTEM_ANALYSIS_REPORT.md",
     "Architecture/INTERACTION_SYSTEM_ANALYSIS_REPORT.md",
     "ToDo/ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN.md",
@@ -214,7 +215,6 @@
     "features/System Specification - Souls-like Locomotion & Camera System.md",
     "features/Movement Mechanics Explained.md",
     "features/Locomotion Architecture Technical Specification.md",
-    "features/Current Jump and Roll System.md",
     "Architecture",
     "ai",
     "Artifact",

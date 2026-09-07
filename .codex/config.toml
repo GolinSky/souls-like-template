@@ -18,7 +18,6 @@ tool_timeout_sec = 120
 [mcp_servers.serena.env]
 SERENA_HOME = ".serena/home"
 PYTHONUTF8 = "1"
-DOTNET_ROOT = "/opt/homebrew/opt/dotnet/libexec"
 
 [mcp_servers.soulslike-vault]
 command = "C:\\Program Files\\nodejs\\node.exe"
