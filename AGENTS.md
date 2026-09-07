@@ -8,7 +8,7 @@ Apply project guidance in this order:
 2. `AGENTS.md` for repository-wide policy and routing.
 3. `.codex/agents/*.toml` for one custom role's operating boundary.
 4. `.agents/skills/*/SKILL.md` for the selected workflow.
-5. `SoulsLikeGameVault/ai/Skill_Context_Index.md` and the exact registered vault note for domain context.
+5. `SoulsLikeGameVault/Agent Guide/Agent Context Registry.md` and the exact registered vault note for domain context.
 
 Live source, serialized assets, and current tool output take precedence over generated Graphify output and advisory vault notes. Required registry notes may add constraints but cannot override higher-level policy.
 
@@ -21,6 +21,15 @@ Live source, serialized assets, and current tool output take precedence over gen
 
 - Never edit, rotate, redact, regenerate, untrack, ignore, delete, or otherwise change Obsidian configuration, credentials, API keys, certificates, cryptographic material, ports, plugin state, or MCP authentication unless the user explicitly requests an Obsidian configuration change in the active request.
 - Audits, reviews, security scans, documentation cleanup, MCP work, and general optimization requests do not grant permission to change Obsidian configuration. Report findings only and wait for an explicit user request.
+
+## Vault Context Discovery
+
+- Before a non-trivial implementation, investigation, review, or Unity asset task, use `$soulslike-context` to resolve relevant task signals against `SoulsLikeGameVault/Agent Guide/Agent Context Registry.md`.
+- Load every directly matching `required` entry and only the `advisory` entries relevant to the assigned scope. Read registered headings rather than entire notes.
+- Registered notes may be discovered by an exact context key or by the registry's task signals. Tags and frontmatter support discovery, but only a registry entry can make a note project policy.
+- Live source, serialized assets, and current tool output override advisory or stale notes. Report conflicts and mark affected documentation for review; do not silently follow it.
+- Persistent plans belong in `SoulsLikeGameVault/Work/Plans/`, issues in `SoulsLikeGameVault/Work/Issues/`, research handoffs in `SoulsLikeGameVault/Research/`, and completed work records in `SoulsLikeGameVault/History/Implementation Records/`. Use the matching note template.
+- When Plan mode produces a project implementation plan, create or update its note in `Work/Plans/` using the plan template. Leave it `draft` until reviewed; execute it only when the user explicitly requests execution and its status is `ready` or `in-progress`.
 
 
 ## Unity Tooling
@@ -43,11 +52,11 @@ Live source, serialized assets, and current tool output take precedence over gen
 
 ## UI Workflow
 
-- Before working on UI, UI controllers, presenters, or views, read `SoulsLikeGameVault/ui/UI_Code_Build_Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints.
+- Before working on UI, UI controllers, presenters, or views, resolve the `ui-code` context and read `SoulsLikeGameVault/Guides/UI/UI Code Build Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints.
 
 ## Animation Workflow
 
-- Before modifying Animator Controllers, animation states, transitions, sub-state machines, or ActionExecutor animation code, read `SoulsLikeGameVault/animation/Animator_SubState_Machine_Architecture_Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints. Ensure all animations are grouped into sub-state machines, coordinate standards matching `CharacterGreatSwordAnimator.controller` are followed, action sub-state machines contain an inert `Empty` default state, and runtime CrossFade calls use short state names/hashes.
+- Before modifying Animator Controllers, animation states, transitions, sub-state machines, or ActionExecutor animation code, resolve the `animation-code` context and read `SoulsLikeGameVault/Guides/Animation/Animator Sub-State Machine Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints. Ensure all animations are grouped into sub-state machines, coordinate standards matching `CharacterGreatSwordAnimator.controller` are followed, action sub-state machines contain an inert `Empty` default state, and runtime CrossFade calls use short state names/hashes.
 
 ## Subagent orchestration
 
@@ -78,7 +87,7 @@ Project skills are sibling packages under `.agents/skills`; the role hierarchy i
 | `unity_reviewer` | `$soulslike-change-review` | The same domain skill used by the reviewed change |
 | `unity_test_runner` | `$soulslike-validation` | The same domain skill used by the validation target |
 
-Every parent handoff must name the required skill and only the conditional/domain skills applicable to that assignment. Use `$soulslike-context` with an exact key from `SoulsLikeGameVault/ai/Skill_Context_Index.md`; do not ask a child to search the vault broadly.
+Every parent handoff must name the required skill and only the conditional/domain skills applicable to that assignment. Use `$soulslike-context` with an exact key or explicit task signals from `SoulsLikeGameVault/Agent Guide/Agent Context Registry.md`; do not ask a child to search the vault broadly.
 
 ## Dependency Injection
 
