@@ -127,6 +127,13 @@ SERENA_HOME = ".serena/home"
 PYTHONUTF8 = "1"
 
 [mcp_servers.soulslike-vault]
+# Role files validate transports before merging parent config, even when disabled.
+# Keep the stdio definition from .codex/config.toml; enabled=false alone is invalid.
+command = "C:\\Program Files\\nodejs\\node.exe"
+args = [
+  "C:\\Users\\golin\\AppData\\Local\\AI-Tools\\mcpvault\\0.16.0\\node_modules\\@bitbonsai\\mcpvault\\dist\\server.js",
+  "F:\\Private\\SoulsLikeTemplate\\SoulsLikeGameVault",
+]
 enabled = false
 
 [mcp_servers.obsidian]
