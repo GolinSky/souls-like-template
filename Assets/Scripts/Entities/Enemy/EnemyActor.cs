@@ -43,11 +43,14 @@ namespace SoulsLike.Entities.Enemy
             Moveset = moveset;
         }
 
+        [Inject]
         public void ConfigureSpawn(
             Vector3 homePosition,
+            Quaternion rotation,
             Vector3[] patrolPoints,
             int randomSeedOffset)
         {
+            transform.SetPositionAndRotation(homePosition, rotation);
             HomePosition = homePosition;
             _patrolPoints = patrolPoints;
             RandomSeedOffset = randomSeedOffset;

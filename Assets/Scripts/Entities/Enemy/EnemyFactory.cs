@@ -62,27 +62,15 @@ namespace SoulsLike.Entities.Enemy
                     + $"'{spawn.name}'.");
             }
 
-            EnemyActor actor = UnityEngine.Object.Instantiate(
-                prefab,
-                spawnHit.position,
-                spawn.transform.rotation);
-            actor.name = $"{prefab.name}_Instance";
-            actor.ConfigureSpawn(
-                spawnHit.position,
-                spawn.BuildPatrolPositions(),
-                spawn.RandomSeedOffset);
-
             EnemyActivationTrigger[] activationTriggers =
-                actor.GetComponentsInChildren<EnemyActivationTrigger>(true);
+                prefab.GetComponentsInChildren<EnemyActivationTrigger>(true);
             if (activationTriggers.Length > 1)
             {
                 throw new InvalidOperationException(
                     $"Enemy prefab '{prefab.name}' may contain only one {nameof(EnemyActivationTrigger)}.");
             }
 
-            EnemyActivationTrigger activationTrigger = activationTriggers.Length == 1
-                ? activationTriggers[0]
-                : null;
+            bool hasActivationTrigger = activationTriggers.Length == 1;
             long entityId = RootScope.Container
                 .Resolve<IUniqueIdGenerator>()
                 .GenerateUniqueId();
@@ -90,58 +78,66 @@ namespace SoulsLike.Entities.Enemy
             LifetimeScope scope = RootScope.CreateChild(builder =>
             {
                 builder.RegisterEntitySystemExt(EntityType.Enemy, entityId);
+                builder.RegisterComponentInNewPrefab(prefab, Lifetime.Scoped)
+                    .UnderTransform(resolver => resolver.Resolve<LifetimeScope>().transform)
+                    .WithParameter(spawnHit.position)
+                    .WithParameter(spawn.transform.rotation)
+                    .WithParameter(spawn.BuildPatrolPositions())
+                    .WithParameter(spawn.RandomSeedOffset)
+                    .AsSelf();
                 builder.RegisterComponentInHierarchy<ViewEntity>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<TargetLockNode>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf();
 
                 builder.RegisterInstance(spawn.HealthData).AsImplementedInterfaces().AsSelf();
                 builder.RegisterInstance(spawn.BehaviourProfile);
                 builder.RegisterInstance(spawn.Moveset);
                 builder.RegisterInstance(groupCoordinator);
-                builder.RegisterComponent(actor).AsSelf();
                     
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponentInHierarchy<HealthComponent>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<CombatDefenseComponent>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<VisibilityComponent>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<EnemyHealthUiComponent>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf()
                     .AsImplementedInterfaces();
 
                 builder.RegisterScriptableObject<WeaponDatabase>();
 
                 builder.RegisterComponentInHierarchy<EnemyNavigationMotor>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<LadderClimber>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<EnemyActionExecutor>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<MeleeHitboxController>()
-                    .UnderTransform(actor.transform)
+                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
                     .AsSelf();
-                if (activationTrigger != null)
+                if (hasActivationTrigger)
                 {
-                    builder.RegisterComponent(activationTrigger).AsSelf();
+                    builder.RegisterComponentInHierarchy<EnemyActivationTrigger>()
+                        .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                        .AsSelf();
                 }
 
                 builder.Register<ApplyDamageCommand>(Lifetime.Singleton)
@@ -164,7 +160,8 @@ namespace SoulsLike.Entities.Enemy
                     .AsImplementedInterfaces();
             }, $"{prefab.name}_LifetimeRoot");
 
-            actor.transform.SetParent(scope.transform, true);
+            EnemyActor actor = scope.Container.Resolve<EnemyActor>();
+            actor.name = $"{prefab.name}_Instance";
             actor.AttachLifetimeRoot(scope.gameObject);
             return actor;
         }
