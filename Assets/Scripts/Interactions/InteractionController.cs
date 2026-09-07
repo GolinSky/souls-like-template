@@ -185,23 +185,20 @@ namespace SoulsLike.Interactions
                 return null;
             }
 
-            IInteractableCommand bestCommand = _candidates[0].Command;
-            foreach (InteractionCandidate candidate in _candidates)
+            if (_selectionCycled)
             {
-                if (ReferenceEquals(candidate.Command, _currentCommand))
+                foreach (InteractionCandidate candidate in _candidates)
                 {
-                    if (_selectionCycled
-                        || candidate.Command.Priority == bestCommand.Priority)
+                    if (ReferenceEquals(candidate.Command, _currentCommand))
                     {
                         return _currentCommand;
                     }
-
-                    break;
                 }
+
+                _selectionCycled = false;
             }
 
-            _selectionCycled = false;
-            return bestCommand;
+            return _candidates[0].Command;
         }
 
         private void SetCurrentTarget(IInteractableCommand command)
@@ -246,17 +243,16 @@ namespace SoulsLike.Interactions
             InteractionCandidate first,
             InteractionCandidate second)
         {
-            int priorityComparison = second.Command.Priority.CompareTo(
-                first.Command.Priority);
-            if (priorityComparison != 0)
+            int alignmentComparison = second.Alignment.CompareTo(first.Alignment);
+            if (alignmentComparison != 0)
             {
-                return priorityComparison;
+                return alignmentComparison;
             }
 
-            int alignmentComparison = second.Alignment.CompareTo(first.Alignment);
-            return alignmentComparison != 0
-                ? alignmentComparison
-                : first.DistanceSqr.CompareTo(second.DistanceSqr);
+            int distanceComparison = first.DistanceSqr.CompareTo(second.DistanceSqr);
+            return distanceComparison != 0
+                ? distanceComparison
+                : second.Command.Priority.CompareTo(first.Command.Priority);
         }
 
         private readonly struct InteractionCandidate
