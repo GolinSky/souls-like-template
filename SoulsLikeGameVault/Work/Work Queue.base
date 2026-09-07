@@ -1,15 +1,15 @@
 filters:
   and:
     - file.inFolder("Work")
-    - 'type == "plan" || type == "issue"'
+    - type == "plan" || type == "issue"
 views:
   - type: table
     name: Active Work
     filters:
       and:
-        - 'status != "done"'
-        - 'status != "superseded"'
-        - 'status != "archived"'
+        - status != "done"
+        - status != "superseded"
+        - status != "archived"
     groupBy:
       property: status
       direction: ASC
@@ -24,8 +24,8 @@ views:
     name: Completed Work
     filters:
       or:
-        - 'status == "done"'
-        - 'status == "superseded"'
+        - status == "done"
+        - status == "superseded"
     order:
       - file.name
       - type

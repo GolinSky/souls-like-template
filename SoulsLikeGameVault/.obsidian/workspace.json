@@ -11,13 +11,14 @@
             "id": "1da76326f671a503",
             "type": "leaf",
             "state": {
-              "type": "bases",
+              "type": "markdown",
               "state": {
-                "file": "Work/Work Queue.base",
-                "viewName": "Active Work"
+                "file": "Agent Guide/Agent Context Registry.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-table",
-              "title": "Work Queue"
+              "icon": "lucide-file",
+              "title": "Agent Context Registry"
             }
           }
         ]
@@ -54,7 +55,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "entityloc",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -78,7 +79,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -186,6 +188,11 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
+    "History/Implementation Records/2026-09-07 Standard Elevator Implementation.md",
+    "Architecture/Systems/Entity Locator System.md",
+    "Architecture/Systems/Elevator System.md",
+    "Work/Work Queue.base",
+    "Game Design/Mechanics/ELDEN_RING_STYLE_ELEVATOR_FEATURE.md",
     "Work/Work Queue.md",
     "Work/Plans/Settings System Plan.md",
     "Work/Plans/Project Organization Remediation Plan.md",
@@ -208,13 +215,8 @@
     "Guides/UI/Inventory UI and UX Guide.md",
     "Guides/UI/Equipment UI and UX Guide.md",
     "Guides/Tooling/Serena MCP Setup - Windows and macOS.md",
-    "Guides/Animation/Animator Sub-State Machine Guide.md",
-    "Game Design/Game Design Document.md",
-    "Game Design/Systems/Locomotion and Camera.md",
-    "Game Design/Systems/Enemy Combat and AI.md",
     "Agent Guide/Knowledge Catalog.base",
     "Templates",
-    "Work/Work Queue.base",
     "Architecture/UI",
     "Guides/UI",
     "Work/Plans",

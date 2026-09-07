@@ -17,6 +17,7 @@ Architecture notes describe the implementation that exists now. Their frontmatte
 ## Systems
 
 - [[Architecture/Systems/Character System|Character System]] — partial verification.
+- [[Architecture/Systems/Entity Locator System|Entity Locator System]] — verified required boundary for cross-entity gameplay communication.
 - [[Architecture/Systems/Hitbox System|Hitbox System]] — mostly verified.
 - [[Architecture/Systems/Jump and Roll System|Jump and Roll System]] — current locomotion implementation candidate.
 - [[Architecture/Systems/Layer Service|Layer Service]] — mostly verified; serialized values still need Unity inspection.
