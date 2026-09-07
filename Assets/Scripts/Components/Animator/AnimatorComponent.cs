@@ -81,8 +81,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int LadderDrinkTrigger = Animator.StringToHash("LadderDrink");
         private static readonly int LadderUnlockTrigger = Animator.StringToHash("LadderUnlock");
         private static readonly int OneHandedFreeLocomotionState = Animator.StringToHash("OneHandedLayer.FreeLocomotion");
-        private static readonly int OneHandedGraceRestIdleState = Animator.StringToHash("OneHandedLayer.GraceRestIdle");
-        private static readonly int TwoHandedGraceRestIdleState = Animator.StringToHash("TwoHandedLayer.GraceRestIdle");
+        private static readonly int GraceRestIdleState = Animator.StringToHash("GraceRestIdle");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private const string UPPER_BODY_ACTIONS_LAYER = "UpperBodyActions";
@@ -343,10 +342,10 @@ namespace SoulsLike.Entities.Character.Components
 
         public void EnterGraceRestIdle()
         {
-            bool isTwoHanded = _targetHandMode == HandMode.TwoHanded;
+            animator.ResetTrigger(SpawnTrigger);
             animator.Play(
-                isTwoHanded ? TwoHandedGraceRestIdleState : OneHandedGraceRestIdleState,
-                GetRequiredLayerIndex(isTwoHanded ? TWO_HANDED_LAYER : ONE_HANDED_LAYER),
+                GraceRestIdleState,
+                GetRequiredLayerIndex(ONE_HANDED_LAYER),
                 0.0f);
         }
 

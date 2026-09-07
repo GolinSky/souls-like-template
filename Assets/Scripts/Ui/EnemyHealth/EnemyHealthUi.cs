@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using SoulsLike.Ui.Base;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace SoulsLike.Ui.EnemyHealth
 
         private readonly Stack<EnemyHealthBarUi> _availableBars = new();
 
+        public event Action TeardownStarted;
+
         protected override void Awake()
         {
             base.Awake();
@@ -22,6 +25,11 @@ namespace SoulsLike.Ui.EnemyHealth
             {
                 ReleaseBar(CreateBar());
             }
+        }
+
+        private void OnDisable()
+        {
+            TeardownStarted?.Invoke();
         }
 
         public EnemyHealthBarUi AcquireBar()

@@ -26,6 +26,7 @@ namespace SoulsLike.Ui.EnemyHealth
         public void Initialize()
         {
             _enemyHealthUi = CreateUi<EnemyHealthUi>();
+            _enemyHealthUi.TeardownStarted += HandleViewTeardown;
             UiService.MarkUiAsOverlay(_enemyHealthUi);
             _targetCamera = _cameraService.GetMainCamera();
             _enemyHealthUi.Show();
@@ -58,8 +59,13 @@ namespace SoulsLike.Ui.EnemyHealth
             float currentHealth,
             float maxHealth)
         {
-            TrackedEnemyData trackedEnemy = _trackedEnemies.Find(data => data.Source == source);
-            trackedEnemy.Bar.SetValue(currentHealth, maxHealth);
+            int index = _trackedEnemies.FindIndex(trackedEnemy => trackedEnemy.Source == source);
+            if (index < 0)
+            {
+                return;
+            }
+
+            _trackedEnemies[index].Bar.SetValue(currentHealth, maxHealth);
         }
 
         public void NotifyVisibilityChanged(IEnemyHealthUiSource source, bool isVisible)
@@ -98,6 +104,16 @@ namespace SoulsLike.Ui.EnemyHealth
         }
 
         public void Dispose()
+        {
+            if (!ReferenceEquals(_enemyHealthUi, null))
+            {
+                _enemyHealthUi.TeardownStarted -= HandleViewTeardown;
+            }
+
+            _trackedEnemies.Clear();
+        }
+
+        private void HandleViewTeardown()
         {
             _trackedEnemies.Clear();
         }

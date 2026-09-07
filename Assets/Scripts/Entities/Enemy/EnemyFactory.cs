@@ -11,6 +11,7 @@ using SoulsLike.Items;
 using SoulsLike.Services.IdGeneration;
 using SoulsLike.Services.Navigation;
 using SoulsLike.Entities.Ladder;
+using UnityEngine;
 using UnityEngine.AI;
 using VContainer;
 using VContainer.Unity;
@@ -77,6 +78,9 @@ namespace SoulsLike.Entities.Enemy
 
             LifetimeScope scope = RootScope.CreateChild(builder =>
             {
+                Func<IObjectResolver, Transform> actorTransform =
+                    resolver => resolver.Resolve<EnemyActor>().transform;
+
                 builder.RegisterEntitySystemExt(EntityType.Enemy, entityId);
                 builder.RegisterComponentInNewPrefab(prefab, Lifetime.Scoped)
                     .UnderTransform(resolver => resolver.Resolve<LifetimeScope>().transform)
@@ -86,11 +90,11 @@ namespace SoulsLike.Entities.Enemy
                     .WithParameter(spawn.RandomSeedOffset)
                     .AsSelf();
                 builder.RegisterComponentInHierarchy<ViewEntity>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<TargetLockNode>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf();
 
                 builder.RegisterInstance(spawn.HealthData).AsImplementedInterfaces().AsSelf();
@@ -100,43 +104,43 @@ namespace SoulsLike.Entities.Enemy
                     
                 builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponentInHierarchy<HealthComponent>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<CombatDefenseComponent>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<VisibilityComponent>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<EnemyHealthUiComponent>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
 
                 builder.RegisterScriptableObject<WeaponDatabase>();
 
                 builder.RegisterComponentInHierarchy<EnemyNavigationMotor>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<LadderClimber>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<EnemyActionExecutor>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
                 builder.RegisterComponentInHierarchy<MeleeHitboxController>()
-                    .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                    .UnderTransform(actorTransform)
                     .AsSelf();
                 if (hasActivationTrigger)
                 {
                     builder.RegisterComponentInHierarchy<EnemyActivationTrigger>()
-                        .UnderTransform(resolver => resolver.Resolve<EnemyActor>().transform)
+                        .UnderTransform(actorTransform)
                         .AsSelf();
                 }
 
