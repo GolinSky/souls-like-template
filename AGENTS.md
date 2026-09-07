@@ -120,6 +120,10 @@ Every parent handoff must name the required skill and only the conditional/domai
 - Execute relevant tests to verify changes, strictly adhering to the Unity Test Safety protocol below.
 - Always run preflight checks (`assert_test_ready` / `list_open_scenes`) prior to starting any test run.
 - Run tests asynchronously (`async_tests=true`) and poll `test_status` until completion to prevent blocking and modal deadlocks.
+- Skip all Play Mode tests during normal agent validation. This includes gameplay tests that require a character to move, attack, use equipment, interact with objects, enemies, UI, triggers, or other scene content.
+- Report skipped Play Mode coverage as a validation gap and move it into a separate follow-up validation phase assigned to `unity_test_runner` or another faster AI agent when that coverage is still required.
+- Time-box all remaining test runs. If a test exceeds its expected time budget, stop waiting and do not blindly retry it. Record the exact test, elapsed time, and last known status, then either skip it with the validation gap reported or move it into the follow-up validation phase.
+- Before moving on from a timed-out or deferred test, inspect `test_status` and the Editor state and confirm that no test run remains active.
 
 ## Unity Test Safety
 
