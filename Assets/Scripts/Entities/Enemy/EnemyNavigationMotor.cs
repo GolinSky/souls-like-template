@@ -1,21 +1,24 @@
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using SoulsLike.Entities.Elevator;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Enemy
 {
     [RequireComponent(typeof(NavMeshAgent), typeof(CharacterController))]
-    public sealed class EnemyNavigationMotor : MonoBehaviour, IInitializable
+    public sealed class EnemyNavigationMotor : MonoBehaviour, IInitializable, IPlatformRiderMotor
     {
         private const float VELOCITY_EPSILON = 0.0001f;
         private const float GROUNDING_SPEED = -2f;
+        private const int GROUND_PROBE_HIT_CAPACITY = 8;
 
         [SerializeField] private NavMeshAgent agent;
         [SerializeField] private CharacterController controller;
 
         private bool _rootMotionActive;
         private bool _hasDestination;
+        private readonly RaycastHit[] _groundProbeHits = new RaycastHit[GROUND_PROBE_HIT_CAPACITY];
 
         public Vector3 WorldVelocity { get; private set; }
         public Vector3 LocalVelocity => transform.InverseTransformDirection(WorldVelocity);
@@ -100,6 +103,60 @@ namespace SoulsLike.Entities.Enemy
             WorldVelocity = Time.deltaTime > 0f
                 ? (transform.position - before) / Time.deltaTime
                 : Vector3.zero;
+        }
+
+        public void ApplyPlatformDisplacement(Vector3 displacement)
+        {
+            controller.Move(displacement);
+            if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            {
+                agent.nextPosition = transform.position;
+            }
+        }
+
+        public bool IsSupportedBy(Collider supportCollider)
+        {
+            if (!controller.enabled || !controller.isGrounded)
+            {
+                return false;
+            }
+
+            float lowerSphereOffset = Mathf.Max(controller.height * 0.5f - controller.radius, 0f);
+            Vector3 castOrigin = transform.TransformPoint(controller.center)
+                - Vector3.up * lowerSphereOffset;
+            int hitCount = Physics.SphereCastNonAlloc(
+                castOrigin,
+                controller.radius * 0.9f,
+                Vector3.down,
+                _groundProbeHits,
+                controller.skinWidth + 0.05f,
+                ~0,
+                QueryTriggerInteraction.Ignore);
+            for (int index = 0; index < hitCount; index++)
+            {
+                if (_groundProbeHits[index].collider == supportCollider)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void SynchronizeAfterPlatformRide()
+        {
+            if (!agent.isActiveAndEnabled)
+            {
+                return;
+            }
+
+            if (!agent.Warp(transform.position))
+            {
+                throw new InvalidOperationException(
+                    $"Enemy '{name}' could not synchronize with the elevator NavMesh position.");
+            }
+
+            agent.nextPosition = transform.position;
         }
 
         public void Tick(float deltaTime, bool faceMovement)
