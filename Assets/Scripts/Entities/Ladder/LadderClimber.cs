@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
 using PlayerCharacter = SoulsLike.Entities.Character.Character;
+using SoulsLike.Entities.Character.Components;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Entities.Combat;
@@ -17,8 +18,6 @@ namespace SoulsLike.Entities.Ladder
 {
     public sealed class LadderClimber : MonoBehaviour, IEntityComponent, IInitializable, IDisposable
     {
-        private const string LADDER_LAYER = "Ladder";
-        private const float TRANSITION_SECONDS = 0.08f;
         private const float ENTER_BOTTOM_SECONDS = 1.167f;
         private const float ENTER_TOP_SECONDS = 2.5f;
         private const float EXIT_TOP_SECONDS = 1.667f;
@@ -28,19 +27,7 @@ namespace SoulsLike.Entities.Ladder
         private const float KICK_SECONDS = 2f;
         private const float DRINK_SECONDS = 3.333f;
 
-        private static readonly int _idle = Animator.StringToHash("LadderIdle");
-        private static readonly int _enterBottom = Animator.StringToHash("LadderEnterBottom");
-        private static readonly int _enterTop = Animator.StringToHash("LadderEnterTop");
-        private static readonly int _climbUp = Animator.StringToHash("LadderClimbUp");
-        private static readonly int _climbDown = Animator.StringToHash("LadderClimbDown");
-        private static readonly int _slide = Animator.StringToHash("LadderSlide");
-        private static readonly int _exitTop = Animator.StringToHash("LadderExitTop");
-        private static readonly int _exitBottom = Animator.StringToHash("LadderExitBottom");
-        private static readonly int _punch = Animator.StringToHash("LadderPunch");
-        private static readonly int _kick = Animator.StringToHash("LadderKick");
-        private static readonly int _drink = Animator.StringToHash("LadderDrink");
-        private static readonly int _unlock = Animator.StringToHash("LadderUnlock");
-
+        [SerializeField] private AnimatorComponent animatorComponent;
         [SerializeField] private Animator animator;
         [SerializeField] private CharacterController characterController;
         [SerializeField, Min(0.1f)] private float climbSpeed = 2f;
@@ -58,11 +45,10 @@ namespace SoulsLike.Entities.Ladder
         private LadderSystem _ladderSystem;
         private EnemyNavigationMotor _enemyMotor;
         private EnemyActionExecutor _enemyExecutor;
+        private ILadderAnimator _ladderAnimator;
         private CancellationTokenSource _operationCancellation;
         private int _operationGeneration;
         private int _rootMotionGeneration = -1;
-        private int _ladderLayer = -1;
-        private int _currentAnimation;
         private float _actionEndsAt;
         private float _impactAt;
         private float _dropVelocity;
@@ -93,9 +79,24 @@ namespace SoulsLike.Entities.Ladder
             _entity.RegisterComponent(this);
             _enemyMotor = GetComponent<EnemyNavigationMotor>();
             _enemyExecutor = GetComponentInChildren<EnemyActionExecutor>();
-            _ladderLayer = animator.GetLayerIndex(LADDER_LAYER);
-            if (_ladderLayer < 0) throw new InvalidOperationException(
-                $"Animator '{animator.name}' requires the '{LADDER_LAYER}' layer.");
+            if (animatorComponent != null)
+            {
+                _ladderAnimator = animatorComponent;
+            }
+            else if (TryGetComponent(out AnimatorComponent foundComponent))
+            {
+                animatorComponent = foundComponent;
+                _ladderAnimator = foundComponent;
+            }
+            else if (animator != null)
+            {
+                _ladderAnimator = new FallbackLadderAnimator(animator);
+            }
+
+            if (animator == null && animatorComponent != null)
+            {
+                animator = animatorComponent.GetComponent<Animator>();
+            }
         }
 
         public void Dispose()
@@ -124,7 +125,12 @@ namespace SoulsLike.Entities.Ladder
             _enemyMotor?.SuspendForTraversal();
             SuppressRootMotion(generation);
             NotifyCharacterAttached();
-            Play(end == LadderEnd.Bottom ? _enterBottom : _enterTop);
+            _ladderAnimator.SetOnLadder(true);
+            if (end == LadderEnd.Bottom)
+                _ladderAnimator.TriggerLadderEnterBottom();
+            else
+                _ladderAnimator.TriggerLadderEnterTop();
+
             try
             {
                 await AlignToPositionAsync(ladder.SamplePosition(DistanceOnLadder), ladder.SampleRotation(),
@@ -132,7 +138,7 @@ namespace SoulsLike.Entities.Ladder
                 if (IsCurrent(generation))
                 {
                     _isTransitioning = false;
-                    Play(_idle);
+                    _ladderAnimator.TriggerLadderIdle();
                 }
             }
             catch (OperationCanceledException) when (!IsCurrent(generation)) { }
@@ -150,7 +156,8 @@ namespace SoulsLike.Entities.Ladder
             _isTransitioning = true;
             SuppressRootMotion(generation);
             NotifyCharacterAttached();
-            Play(_unlock);
+            _ladderAnimator.SetOnLadder(true);
+            _ladderAnimator.TriggerLadderUnlock();
             try
             {
                 await AlignToPositionAsync(ladder.SamplePosition(ladder.Length), ladder.SampleRotation(),
@@ -204,8 +211,7 @@ namespace SoulsLike.Entities.Ladder
                 if (stopDrop) _isDropping = false;
                 if (!_isDropping)
                 {
-                    SetLayerWeight(0f);
-                    _currentAnimation = 0;
+                    _ladderAnimator?.SetOnLadder(false);
                     RestoreRootMotion(_rootMotionGeneration);
                     NotifyCharacterDetached();
                 }
@@ -239,17 +245,29 @@ namespace SoulsLike.Entities.Ladder
         private void TickTraversal(float input, bool sprintHeld, bool dropRequested, float deltaTime)
         {
             if (dropRequested) { ForceDetach(LadderDetachReason.Drop); return; }
-            if (input > 0.01f) MoveAlongLadder((sprintHeld ? fastClimbSpeed : climbSpeed) * deltaTime, _climbUp);
-            else if (input < -0.01f) MoveAlongLadder(-(sprintHeld ? slideSpeed : climbSpeed) * deltaTime,
-                sprintHeld ? _slide : _climbDown);
-            else Play(_idle);
+            if (input > 0.01f)
+            {
+                _ladderAnimator.SetLadderSlide(false);
+                _ladderAnimator.SetLadderClimbSpeed(sprintHeld ? fastClimbSpeed : climbSpeed);
+                MoveAlongLadder((sprintHeld ? fastClimbSpeed : climbSpeed) * deltaTime);
+            }
+            else if (input < -0.01f)
+            {
+                _ladderAnimator.SetLadderSlide(sprintHeld);
+                _ladderAnimator.SetLadderClimbSpeed(-(sprintHeld ? slideSpeed : climbSpeed));
+                MoveAlongLadder(-(sprintHeld ? slideSpeed : climbSpeed) * deltaTime);
+            }
+            else
+            {
+                _ladderAnimator.SetLadderSlide(false);
+                _ladderAnimator.SetLadderClimbSpeed(0f);
+            }
         }
 
-        private void MoveAlongLadder(float delta, int animation)
+        private void MoveAlongLadder(float delta)
         {
             float requested = DistanceOnLadder + delta;
             DistanceOnLadder = CurrentLadder.ClampDistance(this, requested);
-            Play(animation);
             SnapToLadder();
             if (requested >= CurrentLadder.Length && DistanceOnLadder >= CurrentLadder.Length)
                 ExitAsync(LadderDetachReason.ExitTop).Forget();
@@ -263,7 +281,11 @@ namespace SoulsLike.Entities.Ladder
             int generation = BeginOperation(CancellationToken.None, out CancellationToken operationToken, out CancellationTokenSource operationCancellation);
             _isExiting = true;
             _isTransitioning = true;
-            Play(reason == LadderDetachReason.ExitTop ? _exitTop : _exitBottom);
+            if (reason == LadderDetachReason.ExitTop)
+                _ladderAnimator.TriggerLadderExitTop();
+            else
+                _ladderAnimator.TriggerLadderExitBottom();
+
             try
             {
                 Transform exit = CurrentLadder.GetExit(reason == LadderDetachReason.ExitTop ? LadderEnd.Top : LadderEnd.Bottom);
@@ -287,7 +309,7 @@ namespace SoulsLike.Entities.Ladder
                 PlayerCharacter character = GetComponent<PlayerCharacter>();
                 if (character != null && character.CanUseQuickItemOnLadder())
                 {
-                    BeginAction(PendingAction.Drink, _drink, DRINK_SECONDS, 0.55f);
+                    BeginAction(PendingAction.Drink, DRINK_SECONDS, 0.55f);
                     return true;
                 }
             }
@@ -304,18 +326,29 @@ namespace SoulsLike.Entities.Ladder
         private bool BeginAttack(bool punchAbove)
         {
             if (!_health.TryConsumeStamina(punchAbove ? punchStaminaCost : kickStaminaCost)) return false;
-            BeginAction(punchAbove ? PendingAction.Punch : PendingAction.Kick, punchAbove ? _punch : _kick,
+            BeginAction(punchAbove ? PendingAction.Punch : PendingAction.Kick,
                 punchAbove ? PUNCH_SECONDS : KICK_SECONDS, 0.45f);
             return true;
         }
 
-        private void BeginAction(PendingAction action, int animation, float duration, float impactProgress)
+        private void BeginAction(PendingAction action, float duration, float impactProgress)
         {
             _pendingAction = action;
             _impactFired = false;
             _actionEndsAt = Time.time + duration;
             _impactAt = Time.time + duration * impactProgress;
-            Play(animation);
+            switch (action)
+            {
+                case PendingAction.Punch:
+                    _ladderAnimator.TriggerLadderPunch();
+                    break;
+                case PendingAction.Kick:
+                    _ladderAnimator.TriggerLadderKick();
+                    break;
+                case PendingAction.Drink:
+                    _ladderAnimator.TriggerLadderDrink();
+                    break;
+            }
         }
 
         private bool TickPendingAction()
@@ -324,7 +357,7 @@ namespace SoulsLike.Entities.Ladder
             if (!_impactFired && Time.time >= _impactAt) { _impactFired = true; ResolveActionImpact(); }
             if (Time.time < _actionEndsAt) return true;
             _pendingAction = PendingAction.None;
-            Play(_idle);
+            _ladderAnimator.TriggerLadderIdle();
             return false;
         }
 
@@ -413,22 +446,11 @@ namespace SoulsLike.Entities.Ladder
 
         private void SnapToLadder() => transform.SetPositionAndRotation(CurrentLadder.SamplePosition(DistanceOnLadder), CurrentLadder.SampleRotation());
 
-        private void Play(int stateHash)
-        {
-            SetLayerWeight(1f);
-            if (_currentAnimation == stateHash) return;
-            _currentAnimation = stateHash;
-            animator.CrossFadeInFixedTime(stateHash, TRANSITION_SECONDS, _ladderLayer);
-        }
-
         private void FinishTraversal()
         {
-            SetLayerWeight(0f);
-            _currentAnimation = 0;
+            _ladderAnimator?.SetOnLadder(false);
             RestoreRootMotion(_rootMotionGeneration);
         }
-
-        private void SetLayerWeight(float weight) => animator.SetLayerWeight(_ladderLayer, weight);
 
         private void SuppressRootMotion(int generation)
         {
@@ -463,5 +485,57 @@ namespace SoulsLike.Entities.Ladder
             && input.FirstAction.Value.ActionKind == CharacterAction.Kind.Roll;
 
         private enum PendingAction { None, Punch, Kick, Drink }
+
+        private sealed class FallbackLadderAnimator : ILadderAnimator
+        {
+            private static readonly int AnimIdIsOnLadder = Animator.StringToHash("IsOnLadder");
+            private static readonly int AnimIdLadderClimbSpeed = Animator.StringToHash("LadderClimbSpeed");
+            private static readonly int AnimIdLadderSlide = Animator.StringToHash("LadderSlide");
+            private static readonly int LadderIdleTrigger = Animator.StringToHash("LadderIdle");
+            private static readonly int LadderEnterBottomTrigger = Animator.StringToHash("LadderEnterBottom");
+            private static readonly int LadderEnterTopTrigger = Animator.StringToHash("LadderEnterTop");
+            private static readonly int LadderExitBottomTrigger = Animator.StringToHash("LadderExitBottom");
+            private static readonly int LadderExitTopTrigger = Animator.StringToHash("LadderExitTop");
+            private static readonly int LadderPunchTrigger = Animator.StringToHash("LadderPunch");
+            private static readonly int LadderKickTrigger = Animator.StringToHash("LadderKick");
+            private static readonly int LadderDrinkTrigger = Animator.StringToHash("LadderDrink");
+            private static readonly int LadderUnlockTrigger = Animator.StringToHash("LadderUnlock");
+            private const string LADDER_LAYER = "Ladder";
+
+            private readonly Animator _animator;
+            private readonly int _ladderLayer;
+
+            public FallbackLadderAnimator(Animator animator)
+            {
+                _animator = animator;
+                _ladderLayer = animator.GetLayerIndex(LADDER_LAYER);
+            }
+
+            public void SetOnLadder(bool isOnLadder)
+            {
+                if (_ladderLayer >= 0)
+                {
+                    _animator.SetLayerWeight(_ladderLayer, isOnLadder ? 1.0f : 0.0f);
+                }
+                _animator.SetBool(AnimIdIsOnLadder, isOnLadder);
+                if (!isOnLadder)
+                {
+                    _animator.SetFloat(AnimIdLadderClimbSpeed, 0f);
+                    _animator.SetBool(AnimIdLadderSlide, false);
+                }
+            }
+
+            public void SetLadderClimbSpeed(float speed) => _animator.SetFloat(AnimIdLadderClimbSpeed, speed);
+            public void SetLadderSlide(bool isSliding) => _animator.SetBool(AnimIdLadderSlide, isSliding);
+            public void TriggerLadderIdle() => _animator.SetTrigger(LadderIdleTrigger);
+            public void TriggerLadderEnterBottom() => _animator.SetTrigger(LadderEnterBottomTrigger);
+            public void TriggerLadderEnterTop() => _animator.SetTrigger(LadderEnterTopTrigger);
+            public void TriggerLadderExitBottom() => _animator.SetTrigger(LadderExitBottomTrigger);
+            public void TriggerLadderExitTop() => _animator.SetTrigger(LadderExitTopTrigger);
+            public void TriggerLadderPunch() => _animator.SetTrigger(LadderPunchTrigger);
+            public void TriggerLadderKick() => _animator.SetTrigger(LadderKickTrigger);
+            public void TriggerLadderDrink() => _animator.SetTrigger(LadderDrinkTrigger);
+            public void TriggerLadderUnlock() => _animator.SetTrigger(LadderUnlockTrigger);
+        }
     }
 }

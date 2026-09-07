@@ -913,9 +913,6 @@ MonoBehaviour:
   cameraTarget: {fileID: 1033412270112227245}
   ladderClimber: {fileID: 231774200012311954}
   aimTargetDistance: 100
-  aimLayerMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &5680682844388360234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1087,6 +1084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbf784a68c6f2944cb376291c1a5a099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Ladder.LadderClimber
+  animatorComponent: {fileID: 2205946695653247522}
   animator: {fileID: 6026135802237666264}
   characterController: {fileID: 4657128601297372923}
   climbSpeed: 2
