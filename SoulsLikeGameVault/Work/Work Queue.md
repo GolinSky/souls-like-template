@@ -18,6 +18,7 @@ Plans become executable only after review. Issues describe defects or open probl
 
 ## Draft Plans
 
+- [[Work/Plans/Architecture Lifecycle Remediation and Local Validation]] — `draft`; local Unity follow-up to the September 8 architecture comparison.
 - [[Work/Plans/Lighting Bake Plan|Lighting Bake Plan]] — `draft`
 - [[Work/Plans/Project Organization Remediation Plan|Project Organization Remediation Plan]] — `draft`
 - [[Work/Plans/Settings System Plan|Settings System Plan]] — `draft`
@@ -28,6 +29,13 @@ Plans become executable only after review. Issues describe defects or open probl
 - [[Work/Plans/DefaultLocation Memory Optimization|DefaultLocation Memory Optimization]] — `in-progress`
 
 ## Issues
+
+- [[Work/Issues/Character Lifecycle Can Stall When Animation Notifications Are Missing]] — high; missing-event lifecycle recovery.
+- [[Work/Issues/Animation Completion Is Not Correlated To The Owning Action]] — medium; stale/missing/duplicate completion ownership.
+- [[Work/Issues/Scene And Spawn Failures Have No Recovery Transaction]] — medium; transition failure and spawn commit ordering.
+- [[Work/Issues/Interrupted Fades Leave Lifecycle Awaiters Unsettled]] — medium; conditional interruption/cancellation gap.
+
+Current comparison: [[Research/Architecture and Systems Audit 2026-09-08]] — four additional architecture findings; Unity validation deferred to the dedicated local plan.
 
 - [[Work/Issues/Roll Interruption Issue|Roll Interruption Issue]]
 
