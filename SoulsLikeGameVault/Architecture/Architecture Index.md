@@ -32,5 +32,6 @@ Architecture notes describe the implementation that exists now. Their frontmatte
 ## Project Structure
 
 - [[Project Organization]] — advisory asset organization guidance.
+- [[Codebase Statistics]] — metrics on classes, types, lines of code, and module distributions.
 
 Interaction and enemy encounter documents currently live in [[../Research/Research Index|Research]] because they are audits or proposed migrations, not verified current architecture.
