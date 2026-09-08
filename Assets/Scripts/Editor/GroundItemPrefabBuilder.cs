@@ -272,7 +272,6 @@ namespace SoulsLike.Editor
             serialized.FindProperty("interactionCollider").objectReferenceValue = collider;
             serialized.FindProperty("interactionAnchor").objectReferenceValue = anchor;
             serialized.FindProperty("pickupVfx").objectReferenceValue = vfx;
-            serialized.FindProperty("priority").intValue = 100;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(groundItem);
         }

@@ -8,11 +8,8 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
 {
     public sealed class LadderInteractCommand : EntityCommand, IInteractableCommand
     {
-        private const int PRIORITY = 110;
-
         private readonly LadderView _ladderView;
 
-        public int Priority => PRIORITY;
         public Transform InteractionAnchor => _ladderView.transform;
 
         public LadderInteractCommand(Entity entity, LadderView ladderView)

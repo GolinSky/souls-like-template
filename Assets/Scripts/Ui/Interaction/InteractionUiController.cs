@@ -11,6 +11,7 @@ namespace SoulsLike.Ui.Interaction
         private InteractionUi _interactionUi;
 
         public bool IsInteractionAvailable => _interactionController.CurrentPrompt.IsVisible;
+        public string CurrentPrompt => _interactionController.CurrentPrompt.Text;
 
         public InteractionUiController(
             IUiService uiService,

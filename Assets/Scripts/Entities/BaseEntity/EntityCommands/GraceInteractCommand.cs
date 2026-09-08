@@ -10,7 +10,6 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         private readonly GraceView _graceView;
         private readonly IGracePresenter _presenter;
 
-        public int Priority => _graceView.Priority;
         public Transform InteractionAnchor => _graceView.InteractionAnchor;
 
         public GraceInteractCommand(

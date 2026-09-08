@@ -16,7 +16,6 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
             _endpoint = endpoint;
         }
 
-        public int Priority => _endpoint.Priority;
         public Transform InteractionAnchor => _endpoint.InteractionAnchor;
 
         public Transform GetInteractionAnchor(IEntity actor) => _endpoint.InteractionAnchor;

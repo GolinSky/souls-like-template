@@ -31,7 +31,6 @@ namespace SoulsLike.Items
         [SerializeField] private Collider interactionCollider;
         [SerializeField] private Transform interactionAnchor;
         [SerializeField] private GroundItemVfx pickupVfx;
-        [SerializeField] private int priority = 100;
 
         private GroundItemSystem _system;
 
@@ -42,7 +41,6 @@ namespace SoulsLike.Items
         public int CurrencyAmount => currencyAmount;
         public string SaveIdentifier => saveIdentifier;
         public Transform InteractionAnchor => interactionAnchor;
-        public int Priority => priority;
 
         public void AssignSystem(GroundItemSystem system) => _system = system;
 

@@ -12,6 +12,5 @@ namespace SoulsLike.Interactions
         InteractionPrompt GetFailurePrompt(IEntity actor);
         UniTask InteractAsync(IEntity actor, CancellationToken token);
         Transform InteractionAnchor { get; }
-        int Priority { get; }
     }
 }

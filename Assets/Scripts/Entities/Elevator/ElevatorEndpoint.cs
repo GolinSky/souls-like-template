@@ -14,7 +14,6 @@ namespace SoulsLike.Entities.Elevator
         [SerializeField] private ElevatorEndpointType endpointType;
         [SerializeField] private ElevatorFloor floor;
         [SerializeField] private Transform interactionAnchor;
-        [SerializeField] private int priority = 110;
         [SerializeField] private bool allowEnemyActivation;
         [SerializeField] private GameObject unavailableIndicator;
         [SerializeField] private Transform animatedTransform;
@@ -38,7 +37,6 @@ namespace SoulsLike.Entities.Elevator
         public ElevatorEndpointType EndpointType => endpointType;
         public ElevatorFloor Floor => floor;
         public Transform InteractionAnchor => interactionAnchor == null ? transform : interactionAnchor;
-        public int Priority => priority;
         public global::SoulsLike.Entities.BaseEntity.EntityType EntityType =>
             endpointType == ElevatorEndpointType.PressurePlate
                 ? global::SoulsLike.Entities.BaseEntity.EntityType.ElevatorPressurePlate

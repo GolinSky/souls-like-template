@@ -8,15 +8,12 @@ namespace SoulsLike.Interactions
 {
     public sealed class GraceView : MonoBehaviour, IInteractable
     {
-        private const int PRIORITY = 100;
-
         [SerializeField] private GraceId graceId;
 
         private IGracePresenter _presenter;
 
         public GraceId GraceId => graceId;
         public Transform InteractionAnchor => transform;
-        public int Priority => PRIORITY;
 
         public void AssignPresenter(IGracePresenter presenter) => _presenter = presenter;
 

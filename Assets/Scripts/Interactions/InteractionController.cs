@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity;
@@ -14,14 +13,15 @@ namespace SoulsLike.Interactions
 {
     public sealed class InteractionController : IInitializable, IDisposable
     {
-        private const int MAX_CANDIDATE_COLLIDERS = 64;
-        private const float INTERACTION_RADIUS = 3f;
-        private const float INTERACTION_RADIUS_SQR = INTERACTION_RADIUS * INTERACTION_RADIUS;
-        private const float MIN_FACING_DOT = 0.258819f;
+        private const int MAX_PROBE_COLLIDERS = 64;
+        private const float INTERACTION_RADIUS = 0.35f;
+        private const float INTERACTION_REACH = 1.5f;
+        private const float INTERACTION_REACH_SQR = INTERACTION_REACH * INTERACTION_REACH;
+        private const float PROBE_HEIGHT = 0.5f;
+        private const float PROBE_DISTANCE = INTERACTION_REACH - INTERACTION_RADIUS;
 
-        private readonly Collider[] _colliderBuffer = new Collider[MAX_CANDIDATE_COLLIDERS];
-        private readonly List<InteractionCandidate> _candidates = new(MAX_CANDIDATE_COLLIDERS);
-        private readonly HashSet<IEntity> _candidateEntities = new();
+        private readonly Collider[] _overlapBuffer = new Collider[MAX_PROBE_COLLIDERS];
+        private readonly RaycastHit[] _hitBuffer = new RaycastHit[MAX_PROBE_COLLIDERS];
         private readonly IInputService _inputService;
         private readonly IEntityLocator _entityLocator;
         private readonly ViewEntity _actorView;
@@ -33,7 +33,6 @@ namespace SoulsLike.Interactions
         private InteractionCommand _interactionCommand;
         private IInteractableCommand _currentCommand;
         private bool _isInteracting;
-        private bool _selectionCycled;
 
         public event Action<InteractionPrompt> PromptChanged;
         public event Action<InteractionPrompt> InteractionFailed;
@@ -74,7 +73,7 @@ namespace SoulsLike.Interactions
                 return;
             }
 
-            RefreshCandidates();
+            RefreshTarget();
 
             if (_currentCommand != null
                 && !_isInteracting
@@ -84,25 +83,8 @@ namespace SoulsLike.Interactions
             }
         }
 
-        public void CycleTarget()
-        {
-            if (_candidates.Count < 2)
-            {
-                return;
-            }
-
-            int currentIndex = _candidates.FindIndex(candidate =>
-                ReferenceEquals(candidate.Command, _currentCommand));
-            int nextIndex = (currentIndex + 1) % _candidates.Count;
-            _selectionCycled = true;
-            SetCurrentTarget(_candidates[nextIndex].Command);
-        }
-
         public void ClearTarget()
         {
-            _candidates.Clear();
-            _candidateEntities.Clear();
-            _selectionCycled = false;
             SetCurrentTarget(null);
         }
 
@@ -112,93 +94,117 @@ namespace SoulsLike.Interactions
             _lifetimeCancellation.Dispose();
         }
 
-        private void RefreshCandidates()
+        private void RefreshTarget()
         {
-            _candidates.Clear();
-            _candidateEntities.Clear();
-
             Transform actorTransform = _character.transform;
-            int colliderCount = Physics.OverlapSphereNonAlloc(
-                actorTransform.position,
+            Vector3 actorPosition = actorTransform.position;
+            Vector3 probeOrigin = actorPosition + Vector3.up * PROBE_HEIGHT;
+            Vector3 probeDirection = actorTransform.forward;
+            probeDirection.y = 0f;
+            probeDirection.Normalize();
+            Vector3 probeEnd = probeOrigin + probeDirection * PROBE_DISTANCE;
+            IInteractableCommand selectedCommand = null;
+            float selectedLateralDistanceSqr = float.PositiveInfinity;
+            float selectedAnchorDistanceSqr = float.PositiveInfinity;
+
+            int hitCount = Physics.SphereCastNonAlloc(
+                probeOrigin,
                 INTERACTION_RADIUS,
-                _colliderBuffer,
+                probeDirection,
+                _hitBuffer,
+                PROBE_DISTANCE,
                 _interactionMask,
                 QueryTriggerInteraction.Collide);
 
-            for (int index = 0; index < colliderCount; index++)
+            for (int index = 0; index < hitCount; index++)
             {
-                Collider collider = _colliderBuffer[index];
-                if (!_entityLocator.TryGetEntity(collider, out IEntity targetEntity))
-                {
-                    continue;
-                }
-
-                if (!_candidateEntities.Add(targetEntity))
-                {
-                    continue;
-                }
-
-                if (!targetEntity.TryGetComponent(out IInteractableCommand command))
-                {
-                    continue;
-                }
-
-                if (command is Behaviour behaviour && !behaviour.isActiveAndEnabled)
-                {
-                    continue;
-                }
-
-                Transform anchor = command.GetInteractionAnchor(_actorEntity);
-                if (anchor == null)
-                {
-                    continue;
-                }
-
-                Vector3 offset = anchor.position - actorTransform.position;
-                float distanceSqr = offset.sqrMagnitude;
-                if (distanceSqr > INTERACTION_RADIUS_SQR)
-                {
-                    continue;
-                }
-
-                offset.y = 0f;
-                float alignment = offset.sqrMagnitude <= Mathf.Epsilon
-                    ? 1f
-                    : Vector3.Dot(actorTransform.forward, offset.normalized);
-                if (alignment < MIN_FACING_DOT)
-                {
-                    continue;
-                }
-
-                _candidates.Add(new InteractionCandidate(targetEntity, command, alignment, distanceSqr));
+                SelectCandidate(
+                    _hitBuffer[index].collider,
+                    actorPosition,
+                    probeOrigin,
+                    probeEnd,
+                    probeDirection,
+                    ref selectedCommand,
+                    ref selectedLateralDistanceSqr,
+                    ref selectedAnchorDistanceSqr);
             }
 
-            _candidates.Sort(CompareCandidates);
-            SetCurrentTarget(SelectStableCandidate());
+            int overlapCount = Physics.OverlapSphereNonAlloc(
+                probeOrigin,
+                INTERACTION_RADIUS,
+                _overlapBuffer,
+                _interactionMask,
+                QueryTriggerInteraction.Collide);
+            for (int index = 0; index < overlapCount; index++)
+            {
+                SelectCandidate(
+                    _overlapBuffer[index],
+                    actorPosition,
+                    probeOrigin,
+                    probeEnd,
+                    probeDirection,
+                    ref selectedCommand,
+                    ref selectedLateralDistanceSqr,
+                    ref selectedAnchorDistanceSqr);
+            }
+
+            SetCurrentTarget(selectedCommand);
         }
 
-        private IInteractableCommand SelectStableCandidate()
+        private void SelectCandidate(
+            Collider collider,
+            Vector3 actorPosition,
+            Vector3 probeOrigin,
+            Vector3 probeEnd,
+            Vector3 probeDirection,
+            ref IInteractableCommand selectedCommand,
+            ref float selectedLateralDistanceSqr,
+            ref float selectedAnchorDistanceSqr)
         {
-            if (_candidates.Count == 0)
+            if (!_entityLocator.TryGetEntity(collider, out IEntity targetEntity)
+                || !targetEntity.TryGetComponent(out IInteractableCommand command)
+                || (command is Behaviour behaviour && !behaviour.isActiveAndEnabled))
             {
-                _selectionCycled = false;
-                return null;
+                return;
             }
 
-            if (_selectionCycled)
+            Transform anchor = command.GetInteractionAnchor(_actorEntity);
+            if (anchor == null
+                || (anchor.position - actorPosition).sqrMagnitude
+                > INTERACTION_REACH_SQR)
             {
-                foreach (InteractionCandidate candidate in _candidates)
-                {
-                    if (ReferenceEquals(candidate.Command, _currentCommand))
-                    {
-                        return _currentCommand;
-                    }
-                }
-
-                _selectionCycled = false;
+                return;
             }
 
-            return _candidates[0].Command;
+            Vector3 closestPoint = collider.ClosestPoint(probeEnd);
+            Vector3 offset = closestPoint - probeOrigin;
+            offset.y = 0f;
+            float forwardDistance = Vector3.Dot(offset, probeDirection);
+            if (forwardDistance <= 0f)
+            {
+                return;
+            }
+
+            Vector3 interactionAnchorOffset = command.InteractionAnchor.position - actorPosition;
+            interactionAnchorOffset.y = 0f;
+            float anchorDistanceSqr = interactionAnchorOffset.sqrMagnitude;
+            if (anchorDistanceSqr > INTERACTION_REACH_SQR
+                || Vector3.Dot(interactionAnchorOffset, probeDirection) < 0f)
+            {
+                return;
+            }
+
+            float lateralDistanceSqr =
+                (interactionAnchorOffset
+                - probeDirection * Vector3.Dot(interactionAnchorOffset, probeDirection)).sqrMagnitude;
+            if (lateralDistanceSqr < selectedLateralDistanceSqr
+                || Mathf.Approximately(lateralDistanceSqr, selectedLateralDistanceSqr)
+                && anchorDistanceSqr < selectedAnchorDistanceSqr)
+            {
+                selectedCommand = command;
+                selectedLateralDistanceSqr = lateralDistanceSqr;
+                selectedAnchorDistanceSqr = anchorDistanceSqr;
+            }
         }
 
         private void SetCurrentTarget(IInteractableCommand command)
@@ -236,42 +242,6 @@ namespace SoulsLike.Interactions
             finally
             {
                 _isInteracting = false;
-            }
-        }
-
-        private static int CompareCandidates(
-            InteractionCandidate first,
-            InteractionCandidate second)
-        {
-            int alignmentComparison = second.Alignment.CompareTo(first.Alignment);
-            if (alignmentComparison != 0)
-            {
-                return alignmentComparison;
-            }
-
-            int distanceComparison = first.DistanceSqr.CompareTo(second.DistanceSqr);
-            return distanceComparison != 0
-                ? distanceComparison
-                : second.Command.Priority.CompareTo(first.Command.Priority);
-        }
-
-        private readonly struct InteractionCandidate
-        {
-            public IEntity Entity { get; }
-            public IInteractableCommand Command { get; }
-            public float Alignment { get; }
-            public float DistanceSqr { get; }
-
-            public InteractionCandidate(
-                IEntity entity,
-                IInteractableCommand command,
-                float alignment,
-                float distanceSqr)
-            {
-                Entity = entity;
-                Command = command;
-                Alignment = alignment;
-                DistanceSqr = distanceSqr;
             }
         }
     }

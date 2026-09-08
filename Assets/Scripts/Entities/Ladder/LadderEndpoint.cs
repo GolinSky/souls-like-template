@@ -10,13 +10,11 @@ namespace SoulsLike.Entities.Ladder
     {
         [SerializeField] private LadderEnd end;
         [SerializeField] private Transform interactionAnchor;
-        [SerializeField] private int priority = 110;
 
         private LadderView _ladder;
 
         public LadderEnd End => end;
         public Transform InteractionAnchor => interactionAnchor;
-        public int Priority => priority;
 
         private void Awake()
         {

@@ -11,7 +11,6 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
     {
         private readonly GroundItem _groundItem;
 
-        public int Priority => _groundItem.Priority;
         public Transform InteractionAnchor => _groundItem.InteractionAnchor;
 
         public GroundItemInteractCommand(Entity entity, GroundItem groundItem)
