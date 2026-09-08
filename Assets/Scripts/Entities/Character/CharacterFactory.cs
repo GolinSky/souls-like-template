@@ -30,12 +30,14 @@ namespace SoulsLike.Entities.Character
 {
     public class CharacterFactory : BaseFactory, IDisposable
     {
-        private const string CHARACTER_PREFAB_KEY = nameof(Character);
+        private const string CHARACTER_PREFAB_KEY = nameof(Character);//todo: if character class will be renamed - const value will be changed too and prefab load will be fucked up 
+        private readonly IUniqueIdGenerator _uniqueIdGenerator;
 
         private LifetimeScope _characterScope;
 
-        public CharacterFactory(IObjectResolver resolver) : base(resolver)
+        public CharacterFactory(IObjectResolver resolver, IUniqueIdGenerator uniqueIdGenerator) : base(resolver)
         {
+            _uniqueIdGenerator = uniqueIdGenerator;
         }
 
         public Character CreateCharacter(Vector3? spawnPosition = null)
@@ -82,7 +84,7 @@ namespace SoulsLike.Entities.Character
             CombatDefenseComponent combatDefense = GetRequiredComponent<CombatDefenseComponent>(instance);
             LadderClimber ladderClimber = GetRequiredComponent<LadderClimber>(instance);
             animatorComponent.ConfigureCharacter(character, movementComponent);
-            long entityId = RootScope.Container.Resolve<IUniqueIdGenerator>().GenerateUniqueId();
+            long entityId = _uniqueIdGenerator.GenerateUniqueId();
 
             _characterScope = RootScope.CreateChild(builder =>
             {
