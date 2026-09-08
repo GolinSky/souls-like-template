@@ -8,6 +8,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
     public sealed class WeaponRuntime : MonoBehaviour
     {
         [SerializeField] private MeleeHitboxController meleeHitbox;
+        [SerializeField] private SupportHandGrip supportHandGrip = new();
 
         private float _temporaryLightningDamage;
         private float _infusionRemainingSeconds;
@@ -15,6 +16,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
         public InventoryEntryId EntryId { get; private set; }
         public ItemId ItemId { get; private set; }
         public MeleeHitboxController MeleeHitbox => meleeHitbox;
+        public SupportHandGrip SupportHandGrip => supportHandGrip;
         public float TemporaryLightningDamage => _temporaryLightningDamage;
         public bool HasTemporaryInfusion => _infusionRemainingSeconds > 0f;
 
