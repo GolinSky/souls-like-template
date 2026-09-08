@@ -1,0 +1,345 @@
+{
+  "schemaVersion": 1,
+  "specId": "combat-traversal-graybox",
+  "materials": [
+    {
+      "role": "gray",
+      "path": "Assets/ThirdParty/Jorjouto/ACS/Sample/SampleCharacter/Materials/Mat_Gray_HDRP.mat"
+    }
+  ],
+  "entryId": "spawn-placeholder",
+  "exitId": "exit-placeholder",
+  "connections": [
+    {
+      "from": "spawn-placeholder",
+      "to": "arena"
+    },
+    {
+      "from": "arena",
+      "to": "doorway"
+    },
+    {
+      "from": "doorway",
+      "to": "corridor"
+    },
+    {
+      "from": "corridor",
+      "to": "stairs"
+    },
+    {
+      "from": "stairs",
+      "to": "upper-platform"
+    },
+    {
+      "from": "upper-platform",
+      "to": "return-ramp"
+    },
+    {
+      "from": "return-ramp",
+      "to": "return-path"
+    },
+    {
+      "from": "return-path",
+      "to": "arena-return"
+    },
+    {
+      "from": "arena-return",
+      "to": "exit-placeholder"
+    },
+    {
+      "from": "exit-placeholder",
+      "to": "arena"
+    }
+  ],
+  "elements": [
+    {
+      "elementId": "arena",
+      "kind": "floor",
+      "position": {
+        "x": 0,
+        "y": -0.25,
+        "z": 0
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 12,
+        "y": 0.25,
+        "z": 12
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "arena-west",
+      "kind": "wall",
+      "position": {
+        "x": -6,
+        "y": 0,
+        "z": 0
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 0.3,
+        "y": 3,
+        "z": 12
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "arena-south",
+      "kind": "wall",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": -6
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 12,
+        "y": 3,
+        "z": 0.3
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "arena-north-west",
+      "kind": "wall",
+      "position": {
+        "x": -4.5,
+        "y": 0,
+        "z": 6
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 3,
+        "y": 3,
+        "z": 0.35
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "arena-north-east",
+      "kind": "wall",
+      "position": {
+        "x": 4.5,
+        "y": 0,
+        "z": 6
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 3,
+        "y": 3,
+        "z": 0.35
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "arena-east-north",
+      "kind": "wall",
+      "position": {
+        "x": 6,
+        "y": 0,
+        "z": 3.6
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 0.3,
+        "y": 3,
+        "z": 4.8
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "arena-east-south",
+      "kind": "wall",
+      "position": {
+        "x": 6,
+        "y": 0,
+        "z": -3.6
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 0.3,
+        "y": 3,
+        "z": 4.8
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "doorway",
+      "kind": "doorway",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 6
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 6,
+        "y": 3,
+        "z": 0.35
+      },
+      "materialRole": "gray",
+      "openingWidth": 2.4,
+      "openingHeight": 2.4
+    },
+    {
+      "elementId": "corridor",
+      "kind": "floor",
+      "position": {
+        "x": 0,
+        "y": -0.25,
+        "z": 9
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 2.4,
+        "y": 0.25,
+        "z": 6
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "corridor-west",
+      "kind": "wall",
+      "position": {
+        "x": -1.35,
+        "y": 0,
+        "z": 9
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 0.3,
+        "y": 3,
+        "z": 6
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "corridor-east",
+      "kind": "wall",
+      "position": {
+        "x": 1.35,
+        "y": 0,
+        "z": 9
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 0.3,
+        "y": 3,
+        "z": 6
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "stairs",
+      "kind": "stairs",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 14.4
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 2.4,
+        "y": 1.5,
+        "z": 4.8
+      },
+      "materialRole": "gray",
+      "stepCount": 6
+    },
+    {
+      "elementId": "upper-platform",
+      "kind": "platform",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 18
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 6,
+        "y": 1.5,
+        "z": 2.4
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "return-ramp",
+      "kind": "ramp",
+      "position": {
+        "x": 4.2,
+        "y": 0,
+        "z": 18
+      },
+      "yawDegrees": -90,
+      "dimensions": {
+        "x": 2.4,
+        "y": 1.5,
+        "z": 6
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "return-path",
+      "kind": "floor",
+      "position": {
+        "x": 8.4,
+        "y": -0.25,
+        "z": 9
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 2.4,
+        "y": 0.25,
+        "z": 18
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "arena-return",
+      "kind": "floor",
+      "position": {
+        "x": 6,
+        "y": -0.25,
+        "z": 0
+      },
+      "yawDegrees": 0,
+      "dimensions": {
+        "x": 7.2,
+        "y": 0.25,
+        "z": 2.4
+      },
+      "materialRole": "gray"
+    },
+    {
+      "elementId": "spawn-placeholder",
+      "kind": "marker",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": -2
+      },
+      "yawDegrees": 0
+    },
+    {
+      "elementId": "camera-placeholder",
+      "kind": "marker",
+      "position": {
+        "x": 1,
+        "y": 1.545,
+        "z": -5
+      },
+      "yawDegrees": 0
+    },
+    {
+      "elementId": "exit-placeholder",
+      "kind": "marker",
+      "position": {
+        "x": 4,
+        "y": 0,
+        "z": 0
+      },
+      "yawDegrees": 0
+    }
+  ]
+}

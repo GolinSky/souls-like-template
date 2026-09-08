@@ -24,6 +24,7 @@ Plans become executable only after review. Issues describe defects or open probl
 
 ## Executable Plans
 
+- [[Work/Plans/ProBuilder Integration and Agent Skills|ProBuilder Integration and Agent Skills]] — `in-progress`; dedicated branch, tests skipped by user request.
 - [[Work/Plans/DefaultLocation Memory Optimization|DefaultLocation Memory Optimization]] — `in-progress`
 
 ## Issues

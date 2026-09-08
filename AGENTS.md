@@ -74,6 +74,13 @@ Use 2–4 children only when work is genuinely independent. Give every child a n
 
 ### Project skill routing
 
+For ProBuilder or graybox geometry work, compose `soulslike-probuilder` with
+`unity_operator`'s required asset skill, `csharp_worker`'s required C# skill for
+Editor builder changes, and the review/validation roles' existing required
+skills when their assigned scope includes this integration. The canonical
+workflow is `.agents/skills/soulslike-probuilder/SKILL.md`; use the existing
+official Unity CLI/Pipeline bridge and do not install another MCP server.
+
 Project skills are sibling packages under `.agents/skills`; the role hierarchy is explicit composition, not nested discovery or inheritance.
 
 | Agent | Required skills | Conditional/domain skills |
