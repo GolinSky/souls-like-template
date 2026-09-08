@@ -7,7 +7,7 @@ domains:
 status: open
 authority: evidence
 priority: medium
-updated: 2026-09-07
+updated: 2026-09-08
 source_commit: 3925ea83e7cd80b111331a6105835c3e84eeb2b6
 verification: code defect
 aliases: []
@@ -21,6 +21,8 @@ tags:
 ## Issue Contract
 
 ### Observed Behavior
+
+**2026-09-08 partial remediation:** [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]] adds a single in-flight gate in `SceneService.LoadScene` and rollback of partial destination loads. Executable tests against the original source reproduced two overlapping Loading requests; the changed source rejects the second call and allows a later retry after cleanup. These are fake-backend control-flow tests, not a Unity runtime reproduction. This issue remains **open** because menu/travel callers still invoke `PrepareResume`/`PrepareGraceSpawn` before service admission, allowing a rejected request to overwrite the accepted transition's pending spawn intent. The following description records the original audit state.
 
 Each Play invocation starts a new asynchronous scene transition. The UI and orchestrators provide no in-flight guard, and SceneService starts a fresh Single-mode Loading scene before awaiting completion. Two invocations before the first load completes can overlap transitions and compete over active scene, loading-scene lifetime, and shared pending spawn state.
 
@@ -57,7 +59,7 @@ Overlap is statically reachable; duplicate scenes, exceptions, or loading-screen
 
 ### Approved Fix Scope
 
-The current request authorizes audit and issue documentation only. Proposed remediation scope: Give scene transitions a single owner and define repeated-request behavior across all callers; align pending-spawn changes with the accepted transition.
+Phase 6 execution authorized the bounded SceneService loading/cleanup experiment and service-level transition gate. That portion is implemented and isolated tests pass. Remaining remediation scope: align pending-spawn changes with accepted transition ownership across menu/travel callers, then validate native scene operations, retry behavior, and spawn intent. The broader cross-caller issue is not closed by the service gate alone.
 
 ### Acceptance Criteria
 
@@ -65,11 +67,10 @@ Two requests issued before completion produce one accepted transition, or a dete
 
 ### Validation
 
-Static call-path and source inspection completed. No implementation, test run, save fault injection, Play Mode session, or performance measurement was performed. Use focused Edit Mode/unit fixtures where practical. Any required gameplay reproduction belongs in a separate `unity_test_runner` follow-up under Unity Test Safety; memory measurements belong to `unity_profiler`. Do not treat this note as a passing runtime test.
+Original audit: static call-path/source inspection only. Phase 6: two executable baseline reproductions and ten candidate source-linked control-flow checks passed; live C# diagnostics were clear. The harness substitutes .NET Task and fake Unity/Addressables operations, so native lifetime, gameplay/spawn behavior, and memory acceptance remain unverified. No Unity test run, Play Mode session, or build was started under the 1.9% commit-headroom blocker. Required gameplay reproduction belongs in a separate `unity_test_runner` follow-up under Unity Test Safety; memory measurements belong to `unity_profiler`.
 
 When resolved, set `status: done`, link the implementation record, and update affected architecture notes.
 
 Audit: [[Research/Architecture and Systems Audit 2026-09-07]].
 
 Related: [[Work/Issues/DefaultLocation Memory and Rendering Issues#I-03 — All location dependencies load concurrently and stay resident]]. That performance audit also notes the missing transition guard; this note supplies the UI trigger and bounded acceptance criteria. Intentional parallel dependency loading within one transition is a separate concern.
-

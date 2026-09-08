@@ -129,9 +129,14 @@ Unity's current HDRP guidance favors SRP Batcher/GPU Resident Drawer and warns t
 
 ### Phase 6 — Bound loading and then consider spatial streaming
 
+Execution started on 2026-09-08. **Measurement gate blocked:** the read-only preflight found 64.59/65.81 GiB system commit, only 1.23 GiB (1.9%) headroom, with a clean ElevatorDemo scene open. No live loading comparison, test run, Play Mode session, or build was started. The bounded source experiment is tracked in [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]]; it is not an accepted memory optimization until the controlled comparison passes.
+
 - [ ] First compare the existing nine-way concurrent dependency load with sequential loading or a small concurrency limit. This targets the peak; all ten scenes will still be resident at completion.
-- [ ] Add explicit failure cleanup for successfully loaded dependencies and a single in-flight level transition if reproduction confirms the need. Define cancellation/retry ownership rather than hiding failed operations.
+- [x] Implemented a sequential dependency-loading **source experiment**, preserving all-ten-scene residency and dependency-plus-target progress. The controlled memory comparison above is still required before accepting it as a memory optimization.
+- [x] Added explicit reverse-order failure cleanup and a single in-flight service transition after executable baseline reproduction confirmed overlapping Loading requests and unreleased partial loads. The service owns completion/cleanup; overlapping requests fault; there is no cancellation or automatic retry. A successful Loading scene remains for recovery. Ten isolated source-linked control-flow checks pass; actual Unity handle/recovery behavior is still unverified. The broader pending-spawn mutation before service admission remains open in [[Work/Issues/Scene Transitions Allow Concurrent Load Operations]].
 - [ ] Inspect a current Addressables build layout for shared material/mesh/texture duplication. The scene group uses Pack Separately; that alone does not prove duplication. Existing August build reports predate the current zoning and are not validation.
+
+  Freshness inspection completed: all available local build products/layouts are from August 19 and contain none of the current location scene group/scenes. The current ten-scene group/schema dates from August 31. Building a current layout is deferred until memory headroom permits; legacy duplicate records cannot answer this item.
 - [ ] If steady-state residency still exceeds budget, design real zone streaming with bounds, neighbor prefetch, unload hysteresis, and a global scene for shared services. Include Rocks in the residency decision.
 - [ ] Before streaming, inspect cross-scene references, entity/service lifetime, enemies, save state, physics and NavMesh links, lighting, and occlusion data. Do not replace the loader with distance-based unloading without that architecture work.
 
@@ -139,18 +144,20 @@ Exact entry points: `Assets/Scripts/Services/Scenes/SceneService.cs`, `Assets/Sc
 
 Verify: peak and settled memory, transition completion, released handles, failure recovery, and repeated travel. Spatial streaming requires a separate reviewed design.
 
+Spatial streaming remains conditional and unimplemented. The current safety sample does not measure DefaultLocation steady-state residency. Recover headroom, perform a matched bounded comparison and three travel cycles, and establish the Player budget before deciding whether a streaming design is required. That design must cover Rocks and every lifetime/reference concern listed above.
+
 ## Risks and Rollback
 
 Keep each experiment in a separate small change. Preserve original asset GUIDs/references and record importer overrides. Revert only the experiment, reimport/save through Unity, and remeasure the baseline. Lower texture detail, shadow coverage, AO/fog, collider geometry, and LODs can affect appearance or gameplay. Profile changes can affect other scenes sharing the vendor profile. Static batching can improve CPU time while worsening memory. A larger pagefile is not evidence that content has been optimized.
 
 ## Validation
 
-No automated Play Mode tests or builds were run. Phase 5 did use a bounded, runtime-only Play-mode rendering experiment; it left no scene changes. Future tests require `unity command list_open_scenes --json` or `assert_test_ready`, every scene clean, asynchronous execution, a fixed time budget, and final confirmation that no test remains active. A dirty Untitled scene blocks testing.
+No automated Play Mode tests or builds were run. Phase 6 passed two isolated executable baseline reproductions and ten candidate control-flow checks using the real SceneService source with .NET Task and fake Unity/Addressables operations; these do not validate native handle lifetime, runtime travel, or memory improvement. Phase 5 did use a bounded, runtime-only Play-mode rendering experiment; it left no scene changes. Future Unity tests require `unity command list_open_scenes --json` or `assert_test_ready`, every scene clean, asynchronous execution, a fixed time budget, and final confirmation that no test remains active. A dirty Untitled scene blocks testing.
 
 Assign gameplay/Play Mode coverage to a separate `unity_test_runner` phase under project policy. Run targeted load/handle Edit Mode coverage only where it can safely model the behavior. Do not take large snapshots until adequate memory headroom exists.
 
 ## Execution Handoff
 
-Status is **in-progress** after explicit execution of Phases 1–3, Phase 4 texture Batch 1, and Phase 5 rendering-path selection. Use `unity_profiler` for controlled comparisons; use `csharp_worker` only after the loader change is bounded, and `unity_architect` for the later streaming design.
+Status is **in-progress** after explicit execution of Phases 1–3, Phase 4 texture Batch 1, Phase 5 rendering-path selection, and the Phase 6 bounded source experiment. Phase 6 memory comparison, native handle/failure recovery, repeated travel, and fresh build-layout validation remain blocked by system memory pressure. Use `unity_profiler` for controlled comparisons; use `csharp_worker` only after the loader change is bounded, and `unity_architect` for any later streaming design.
 
 Required context keys: `vault-usage`, `plan-workflow`, `issue-workflow`; resolve additional domain keys only when the implementation touches their systems. Future serialized mutations must be imported, specifically reserialized if edited on disk, saved through Unity, and checked for errors. Remaining decisions are target Player hardware/budget and acceptable authoring visual reductions.

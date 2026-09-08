@@ -75,6 +75,8 @@ This proves current pressure, not the exact OS/VRAM state at the saved crash. Fr
 
 #### I-03 — All location dependencies load concurrently and stay resident
 
+**2026-09-08 update:** The original concurrent loader below is historical evidence. [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]] changes dependency loads to sequential execution, adds reverse failure cleanup and failed-handle release, and rejects overlapping service transitions. Two executable baseline reproductions and ten candidate checks validate isolated control flow. Real memory, Addressables handle recovery, and travel remain unverified because preflight commit headroom was only 1.23 GiB (1.9%). All ten destination scenes still remain resident after success; this issue is not resolved.
+
 Sources: `Assets/Settings/Data/SceneData.asset:28`; `Assets/Scripts/Services/Scenes/SceneService.cs:61`; `Assets/Scripts/Orchestrators/Game/GameOrchestrator.cs:30`.
 
 The loader opens Loading in Single mode, starts nine additive dependency loads concurrently, awaits them, loads DefaultLocation additively, activates it, and unloads only Loading. Zone partitioning currently provides no spatial residency reduction.
@@ -254,4 +256,4 @@ Unity counters at that sample were approximately 2.920 GB allocated / 7.312 GB r
 
 ## Resolution Handoff
 
-No resolution or approved fix scope is recorded. This remains an **open issue**. The separate draft plan contains proposed work. Validation in this note is limited to repository/serialized inspection, existing crash logs, read-only Editor state, and a bounded loaded-object census.
+This remains an **open issue**. [[Work/Plans/DefaultLocation Memory Optimization]] is in progress after explicit execution requests. Phase 6 adds a bounded loader source experiment with isolated control-flow validation; it does not establish a measured memory improvement or native handle recovery. Current Addressables layouts are obsolete and a new build is deferred under memory pressure. See [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]] for completed source work, exact safety evidence, and remaining acceptance gates. The original audit evidence below its dated updates remains historical, not a description of every current setting.

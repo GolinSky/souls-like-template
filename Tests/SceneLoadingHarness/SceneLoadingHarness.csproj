@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <SceneServiceSource Condition="'$(SceneServiceSource)' == ''">../../Assets/Scripts/Services/Scenes/SceneService.cs</SceneServiceSource>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(SceneServiceSource)" Link="SceneService.cs" />
+    <Compile Include="../../Assets/Scripts/Services/Scenes/ISceneService.cs" Link="ISceneService.cs" />
+  </ItemGroup>
+</Project>

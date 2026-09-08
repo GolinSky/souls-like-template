@@ -14,6 +14,7 @@ tags:
 
 Small implementation records explain what changed, why, how it was validated, and which architecture or design notes were updated.
 
+- [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading|DefaultLocation Phase 6 Bounded Loading]] — source experiment validated in isolation; live memory/travel acceptance remains pending.
 - [[History/Implementation Records/Layer Service Remediation|Layer Service Remediation]]
 - [[History/Implementation Records/Obsidian MCP Vault Setup|Obsidian MCP Vault Setup]]
 - [[History/Implementation Records/Pause Navigation Naming Refactor|Pause Navigation Naming Refactor]]
