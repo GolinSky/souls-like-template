@@ -12146,6 +12146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1659021301}
   - component: {fileID: 1659021300}
+  - component: {fileID: 1659021302}
   m_Layer: 0
   m_Name: Sky and Fog Global Volume
   m_TagString: Untagged
@@ -12169,7 +12170,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: ca118582f33e005488b56b197f84a905, type: 2}
+  sharedProfile: {fileID: 11400000, guid: 3b38e9e7de4089c4389985202228020f, type: 2}
 --- !u!4 &1659021301
 Transform:
   m_ObjectHideFlags: 0
@@ -12185,6 +12186,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1659021302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1659021299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3eae96a8ea497a468d6bd6aa5f61faa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Rendering.QualityVolumeProfileSelector
+  lowMemoryProfile: {fileID: 11400000, guid: 14e53b6b541fe57428e25dc0113c301d, type: 2}
 --- !u!1 &1693090708
 GameObject:
   m_ObjectHideFlags: 0

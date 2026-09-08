@@ -24,7 +24,7 @@ Plans become executable only after review. Issues describe defects or open probl
 
 ## Executable Plans
 
-No plan is currently marked `ready` or `in-progress`.
+- [[Work/Plans/DefaultLocation Memory Optimization|DefaultLocation Memory Optimization]] — `in-progress`
 
 ## Issues
 

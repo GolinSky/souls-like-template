@@ -5,13 +5,13 @@ domains:
   - performance
   - rendering
   - scenes
-status: draft
+status: in-progress
 authority: advisory
-updated: 2026-09-07
+updated: 2026-09-08
 source_commit: 3925ea83
 tags:
   - work/plan
-  - status/draft
+  - status/in-progress
 ---
 # DefaultLocation Memory Optimization
 
@@ -19,7 +19,7 @@ tags:
 
 ### Goal
 
-Make DefaultLocation safe to author and load on the audited 32 GB RAM / 12 GB VRAM workstation, and establish a separate, measured Player memory budget. Introduce a custom **Editor Low Memory** quality preset, then address asset residency and loading peaks. This is a proposed plan; no settings or assets have been changed.
+Make DefaultLocation safe to author and load on the audited 32 GB RAM / 12 GB VRAM workstation, and establish a separate, measured Player memory budget. Introduce a custom **Editor Low Memory** quality preset, then address asset residency and loading peaks. Phases 1–3 and the first bounded Phase 4 texture batch have been executed; the remaining Phase 4 work is still measurement-gated.
 
 ### Source Research and Decisions
 
@@ -51,17 +51,20 @@ Prioritize a safe baseline, mesh residency, and load concurrency. Texture/HDRP r
 
 ### Phase 1 — Establish a safe baseline
 
-- [ ] Preserve the first-failure crash evidence and capture the exact allocation stack/context. Record background process usage and pagefile/commit limit; distinguish low physical RAM from exhausted commit and GPU allocation failure.
-- [ ] Start the comparison from a clean Editor session with only the intended scenes. The current live sample also includes `Assets/Sandbox/Scenes/ElevatorDemo/ElevatorDemo.unity`; exclude it from the controlled baseline without discarding unsaved work.
-- [ ] Read open-scene state first. Do not close/reload unknown or dirty scenes, force GC, or take a large Memory Profiler snapshot while the machine has only a few GB of commit headroom.
-- [ ] Measure empty/bootstrap, main scene only, Rocks, each zone added in order, and all ten scenes; use small telemetry first, then snapshots once safe. Avoid rerunning the known concurrent crash just to obtain a baseline.
-- [ ] Run a separate Development Player capture after Editor safety is established. Record frame dimensions and camera because Editor view targets materially affect the current render-texture total.
+- [x] Preserve the first-failure crash evidence and capture the exact allocation stack/context. Record background process usage and pagefile/commit limit; distinguish low physical RAM from exhausted commit and GPU allocation failure.
+- [x] Start the comparison from a clean Editor session with only the intended scenes. The current live sample also includes `Assets/Sandbox/Scenes/ElevatorDemo/ElevatorDemo.unity`; exclude it from the controlled baseline without discarding unsaved work.
+- [x] Read open-scene state first. Do not close/reload unknown or dirty scenes, force GC, or take a large Memory Profiler snapshot while the machine has only a few GB of commit headroom.
+- [x] Measure empty/bootstrap, main scene only, Rocks, each zone added in order, and all ten scenes; use small telemetry first, then snapshots once safe. Avoid rerunning the known concurrent crash just to obtain a baseline.
+- [ ] Run a separate Development Player capture after Editor safety is established. Record frame dimensions and camera because Editor view targets materially affect the current render-texture total. Deferred: current build settings contain only Bootstrap and system commit pressure makes a new build unsafe in this session.
 
 Verify: a table identifies incremental and peak costs, with no claim that disk size equals runtime RAM.
 
 ### Phase 2 — Add Editor Low Memory
 
 Create a new quality level `Editor Low Memory` and `Assets/Settings/RenderPipelines/HDRP Editor Low Memory.asset`, starting from Performant. Select it before loading the location in the future validation session.
+
+- [x] Added the quality level and copied the Performant HDRP asset.
+- [x] Applied the initial mip, streaming, LOD, editor CPU-texture-loading, atlas, shadow, decal, and SSAO settings listed below.
 
 Proposed starting settings, subject to visual and memory measurement:
 
@@ -88,27 +91,27 @@ Non-streaming texture memory and minimum retained mips can prevent meeting the c
 
 ### Phase 3 — Make the location's Volume settings scale with quality
 
-- [ ] Use a project-owned low-quality Volume profile/selection rather than editing the vendor profile for every preset. Current scene reference: `Assets/ThirdParty/LeartesStudios/FantasyCastle/HDRP/Scene/FC_HDRP/Sky and Fog Settings Profile.asset`.
-- [ ] For the low preset, start with 100–150 units of shadow distance and two cascades; validate the castle's scale and important vistas. Current profile is 5,000 units/four cascades. Do not rely on the legacy Quality `shadowDistance: 15` value to control HDRP.
-- [ ] Lower/disable the Volume's high-quality AO and Bloom; disable volumetric fog in this profile when the low HDRP asset cannot support it.
-- [ ] Review the 2048 cubemap `T_HDRSKY.HDR` separately: trial a smaller project-owned/import variant, verify sky appearance and reflections.
-- [ ] Keep dynamic resolution optional. Current camera and HDRP asset disable it; an asset-only toggle is insufficient. Use smaller view dimensions first and measure actual render-target allocation.
-- [ ] Compare live frame settings and Volume overrides with serialized settings. Ignore obsolete serialized fields and migration remnants when deciding active behavior.
+- [x] Use a project-owned low-quality Volume profile/selection rather than editing the vendor profile for every preset. `DefaultLocation.unity` now keeps `Assets/Settings/RenderPipelines/DefaultLocation Volume Profile.asset` as its serialized normal source, with `Assets/Settings/RenderPipelines/DefaultLocation Volume Low Memory Profile.asset` selected through a scene-local quality selector.
+- [x] For the low preset, use 150 units of shadow distance and two cascades; the castle's scale and the main-vista camera were checked at 640×360. The normal profile retains the vendor values in the project-owned copy. The legacy Quality `shadowDistance: 15` value is not used to control HDRP.
+- [x] Disable the Volume's high-quality AO and Bloom and disable volumetric fog in the low profile because the low HDRP asset does not support volumetrics.
+- [x] Review the 2048 cubemap `T_HDRSKY.HDR` separately: a project-owned 1024 import trial rendered the castle black and was rejected; the accepted low profile keeps the known-good original HDR sky.
+- [x] Keep dynamic resolution optional. The current camera and both HDRP assets remain disabled; 640×360 view dimensions were used for measurement and screenshots.
+- [x] Compare live frame settings and Volume overrides with serialized settings. The quality switch was tested in both directions; the normal profile remained active for High Fidelity and the low clone for Editor Low Memory, without dirtying the loaded scenes.
 
 HDRP allocates resources according to supported asset features; frame settings and Volumes further determine rendering. [HDRP asset](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@17.3/manual/HDRP-Asset.html)
 
-Verify: same camera screenshots and GPU/RT counters at both presets, without missing required effects in the normal preset.
+Verify: same camera screenshots and GPU/RT counters at both presets, without missing required effects in the normal preset. Final captures: `Temp/DefaultLocation-Phase3-Final-High-Fidelity.png` and `Temp/DefaultLocation-Phase3-Final-Editor-Low-Memory.png`.
 
 ### Phase 4 — Reduce mesh and texture residency
 
-- [ ] Begin with the measured largest meshes: `SM_CastleSideBridge_02`, `SM_chandelier`, `SM_Castle_Gate_01`, `SM_Tower_Bot`, `SM_Castle_Gate_02`, and `SM_candle_holder` under `Assets/ThirdParty/LeartesStudios/FantasyCastle/HDRP/Art/Meshes/`.
-- [ ] Audit consumers before changing Read/Write: procedural mesh access, collider cooking, negative/nonuniform transforms, navigation baking, and static batching can constrain it. Change only eligible imports in small batches; Editor inspection may retain data that a Player does not.
+- [x] Audited the measured largest meshes: `SM_CastleSideBridge_02`, `SM_chandelier`, `SM_Castle_Gate_01`, `SM_Tower_Bot`, `SM_Castle_Gate_02`, and `SM_candle_holder` under `Assets/ThirdParty/LeartesStudios/FantasyCastle/HDRP/Art/Meshes/`. The six already-resident imported mesh resources totaled about 411.8 MiB in the Editor sample.
+- [x] Audited consumers before changing Read/Write. Every target's LOD0 is used by a MeshCollider; Bridge and Tower also have negative or nonuniformly scaled consumers, and all targets participate in static/navigation authoring. No Read/Write change was made without collider, navigation, and Player validation.
 - [ ] Measure topology and all imported LODs, not only LOD0. Reduce genuinely excessive geometry, author more effective lower LODs and simpler collider meshes, and check whether unused imported submeshes/LODs can be excluded. Do not use mesh compression as a promise of equivalent runtime memory reduction.
-- [ ] Rank repeated mesh/material pairs by instance count and vertex cost. Preserve shared mesh/material identity; check for instantiated mesh/material copies.
-- [ ] Apply importer mip streaming and resolution limits to eligible world textures. The targeted audit found zero streaming-enabled textures among 145 imports and 131 readable meshes among 133 imports; these are bounded dependency/importer counts, not a complete built-content inventory. Keep UI, data textures, normal-map formats, masks, alpha clipping, cubemaps, and non-mipped assets on explicitly reviewed rules.
-- [ ] Check effective Standalone overrides and imported GPU formats. JPEG/PNG/source size or Crunch/bundle compression is not the runtime GPU footprint.
+- [x] Ranked repeated mesh/material pairs by instance count and vertex cost. Tower (36 instances / 8.57M LOD0 vertex references) and Bridge (14 / 5.52M) lead the reviewed set. Shared mesh/material identity is preserved; no instantiated copies were found.
+- [ ] Apply importer mip streaming and resolution limits to eligible world textures. Batch 1 enabled mip streaming for `T_CandleHolder_BC`, `T_Column1_BC`, `T_Trim1_BC`, and `T_Trim2_BC`; no resolution, normal-map, mask, alpha, cubemap, or format changes were made. The broader eligible set and visual/memory measurement remain pending.
+- [x] Checked the 75 loaded texture dependencies of the reviewed meshes. They totaled about 269.0 MiB in the Editor sample, had no Standalone overrides, and imported as effective DXT1 defaults or DXT5 normals at 2048 maximum size.
 
-Verify: per-asset before/after memory, importer values, collision/navigation correctness, LOD silhouettes and visual texture quality. Avoid a project-wide reimport that recreates the peak.
+Verify: Unity readback and persisted metadata confirm only mip streaming changed for Batch 1, with no new import/serialization errors. Per-asset residency savings, collision/navigation correctness, LOD silhouettes, and visual texture quality remain pending under Editor Low Memory or a Development Player. Avoid a project-wide reimport that recreates the peak.
 
 ### Phase 5 — Select the rendering path by experiment
 
@@ -144,6 +147,6 @@ Assign gameplay/Play Mode coverage to a separate `unity_test_runner` phase under
 
 ## Execution Handoff
 
-Status remains **draft** until reviewed and explicitly selected for execution. Start with Phases 1–2; use `unity_profiler` for baseline comparisons and one `unity_operator` writer for settings/assets. Use `csharp_worker` only after the loader change is bounded, and `unity_architect` for the later streaming design.
+Status is **in-progress** after explicit execution of Phases 1–3 and Phase 4 texture Batch 1. Use `unity_profiler` for the controlled Editor Low Memory comparison; use `csharp_worker` only after the loader change is bounded, and `unity_architect` for the later streaming design.
 
 Required context keys: `vault-usage`, `plan-workflow`, `issue-workflow`; resolve additional domain keys only when the implementation touches their systems. Future serialized mutations must be imported, specifically reserialized if edited on disk, saved through Unity, and checked for errors. Remaining decisions are target Player hardware/budget and acceptable authoring visual reductions.
