@@ -117,11 +117,13 @@ Verify: Unity readback confirms all 64 reviewed textures stream and all five vis
 
 ### Phase 5 — Select the rendering path by experiment
 
-- [ ] Preserve SRP Batcher as the baseline. All existing HDRP presets enable it; GPU Resident Drawer is disabled.
-- [ ] Compare representative repeated objects using (a) existing SRP Batcher, (b) a bounded static-batching subset, and (c) HDRP 17.3 GPU Resident Drawer with compatible materials/meshes.
-- [ ] Do not mass-enable GPU Instancing and Batching Static together. The audit already finds instancing enabled on all 61,814 direct scene material slots, with 61,784 also Batching Static; the 30 exceptions are fog slots. Static batching can duplicate transformed geometry, and material instancing checkboxes are not proof of instanced draws.
-- [ ] If GPU Resident Drawer wins, satisfy its BRG shader-variant requirements and remove conflicting batching only in the reviewed scope; check shader/material compatibility, alpha-clipped vegetation, property blocks, LODs, and lightmaps. Record additional buffers/build cost.
-- [ ] Confirm the actual draw path in Frame Debugger, including Hybrid Batch Group for GPU Resident Drawer, and compare peak memory as well as frame time.
+- [x] Preserve SRP Batcher as the baseline. All existing HDRP presets enable it; GPU Resident Drawer remains disabled after the experiment.
+- [x] Compare representative repeated objects using (a) existing SRP Batcher, (b) a bounded static-batching subset, and (c) HDRP 17.3 GPU Resident Drawer with compatible materials/meshes.
+- [x] Do not mass-enable GPU Instancing and Batching Static together. The audit already finds instancing enabled on all 61,814 direct scene material slots, with 61,784 also Batching Static; the 30 exceptions are fog slots. Static batching can duplicate transformed geometry, and material instancing checkboxes are not proof of instanced draws. No project-wide batching flags were changed.
+- [x] GPU Resident Drawer compatibility was tested with BRG shader stripping temporarily set to Keep All. The bounded Editor sample did not show a sufficient win, so no BRG/material/LOD/lightmap changes were made and the original stripping setting was restored; this is not a Player-wide conclusion.
+- [ ] Confirm the actual draw path in a visible Player/Frame Debugger capture, including Hybrid Batch Group for GPU Resident Drawer. The available Scene-view capture confirmed SRP Batcher events and no Hybrid Batch Group event, while offscreen Game-view capture did not expose Frame Debugger events.
+
+Verify (Phase 5): Unity 6000.3.11f1, High Fidelity HDRP, `DefaultLocation` plus `Zone_02`, Main Camera fixed to the representative hall view, 640x360 capture path, and runtime-only experiments. The table records one post-settle measurement snapshot per condition, not a repeated-sample median or Player build. SRP baseline: 920 draw calls, 31 set-pass calls, 3.622 GB Unity allocated, 5.971 GB reserved, 4.290 ms CPU, 2.391 ms GPU; GPU Resident Drawer: 907 draw calls, 27 set-pass calls, 3.630 GB allocated, 5.971 GB reserved, 4.652 ms CPU, 2.303 ms GPU; bounded static subset (`StaticBatchingUtility.Combine` on four repeated-object LOD roots): 940 draw calls, 31 set-pass calls, 3.622 GB allocated, 5.971 GB reserved, 4.574 ms CPU, 2.250 ms GPU. The GPU Resident Drawer draw-call reduction was small and did not offset the higher CPU/allocated-memory sample; the static subset increased draw calls. Scene-view Frame Debugger reported 198 events containing `RenderLoop.DrawSRPBatcher` and no `Hybrid Batch Group`. Temporary runtime/static changes were discarded on exiting Play mode; `ProjectSettings/GraphicsSettings.asset` was restored to `m_BrgStripping: 0` and no HDRP asset, scene, prefab, or material was persisted.
 
 Unity's current HDRP guidance favors SRP Batcher/GPU Resident Drawer and warns that static batching conflicts with BRG; material instancing is not the default recommendation for HDRP. [Optimization methods](https://docs.unity3d.com/6000.3/Documentation/Manual/optimizing-draw-calls-choose-method.html), [HDRP GPU Resident Drawer](https://docs.unity3d.com/Packages/com.unity.render-pipelines.high-definition@17.3/manual/gpu-resident-drawer.html)
 
@@ -143,12 +145,12 @@ Keep each experiment in a separate small change. Preserve original asset GUIDs/r
 
 ## Validation
 
-No Play Mode tests, builds, scene changes, or crash reproduction were run for this documentation audit. Future tests require `unity command list_open_scenes --json` or `assert_test_ready`, every scene clean, asynchronous execution, a fixed time budget, and final confirmation that no test remains active. A dirty Untitled scene blocks testing.
+No automated Play Mode tests or builds were run. Phase 5 did use a bounded, runtime-only Play-mode rendering experiment; it left no scene changes. Future tests require `unity command list_open_scenes --json` or `assert_test_ready`, every scene clean, asynchronous execution, a fixed time budget, and final confirmation that no test remains active. A dirty Untitled scene blocks testing.
 
 Assign gameplay/Play Mode coverage to a separate `unity_test_runner` phase under project policy. Run targeted load/handle Edit Mode coverage only where it can safely model the behavior. Do not take large snapshots until adequate memory headroom exists.
 
 ## Execution Handoff
 
-Status is **in-progress** after explicit execution of Phases 1–3 and Phase 4 texture Batch 1. Use `unity_profiler` for the controlled Editor Low Memory comparison; use `csharp_worker` only after the loader change is bounded, and `unity_architect` for the later streaming design.
+Status is **in-progress** after explicit execution of Phases 1–3, Phase 4 texture Batch 1, and Phase 5 rendering-path selection. Use `unity_profiler` for controlled comparisons; use `csharp_worker` only after the loader change is bounded, and `unity_architect` for the later streaming design.
 
 Required context keys: `vault-usage`, `plan-workflow`, `issue-workflow`; resolve additional domain keys only when the implementation touches their systems. Future serialized mutations must be imported, specifically reserialized if edited on disk, saved through Unity, and checked for errors. Remaining decisions are target Player hardware/budget and acceptable authoring visual reductions.
