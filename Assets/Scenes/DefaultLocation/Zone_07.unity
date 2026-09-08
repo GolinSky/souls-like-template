@@ -171645,7 +171645,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000005347794980553743032, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 0a089534760b5f24baeba586fa9ab37e, type: 2}
 --- !u!1 &297264891
 GameObject:
   m_ObjectHideFlags: 0
@@ -202696,7 +202696,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 2ae8e16250fd7c4418b8918e40348981, type: 2}
 --- !u!1 &732853337
 GameObject:
   m_ObjectHideFlags: 0
@@ -214072,38 +214072,6 @@ LODGroup:
     - renderer: {fileID: 1779482446}
     - renderer: {fileID: 0}
   m_Enabled: 1
---- !u!1 &860100078
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 860100079}
-  m_Layer: 0
-  m_Name: Navigation
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 19
-  m_IsActive: 1
---- !u!4 &860100079
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 860100078}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 911432664}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &860429346
 GameObject:
   m_ObjectHideFlags: 0
@@ -218405,70 +218373,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.4190457, y: 1.4104234, z: 5.995179}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &911432663
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 911432664}
-  - component: {fileID: 911432665}
-  m_Layer: 0
-  m_Name: Zone_07_NavMeshSurface
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &911432664
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 911432663}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 860100079}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &911432665
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 911432663}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
-    serializedVersion: 2
-    m_Bits: 768
-  m_UseGeometry: 1
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 0
-  m_NavMeshData: {fileID: 23800000, guid: f1263c4ba71ddb14da7ee08927e1b5fc, type: 2}
-  m_BuildHeightMesh: 1
 --- !u!1 &914274317
 GameObject:
   m_ObjectHideFlags: 0
@@ -222448,6 +222352,38 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: abc00000000000062543798842441292, type: 3}
+--- !u!1 &956358494
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 956358495}
+  m_Layer: 0
+  m_Name: Navigation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &956358495
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956358494}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1387310916}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &958459785
 GameObject:
   m_ObjectHideFlags: 0
@@ -231592,7 +231528,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 2ae8e16250fd7c4418b8918e40348981, type: 2}
 --- !u!23 &1052780736
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -254087,7 +254023,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000005347794980553743032, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 0a089534760b5f24baeba586fa9ab37e, type: 2}
 --- !u!1 &1365442441
 GameObject:
   m_ObjectHideFlags: 0
@@ -254312,7 +254248,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000004070156009025155999, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 49d00b8673365c742a157994ea4c8297, type: 2}
 --- !u!1 &1371270232
 GameObject:
   m_ObjectHideFlags: 0
@@ -255978,6 +255914,70 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1387310915
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1387310916}
+  - component: {fileID: 1387310917}
+  m_Layer: 0
+  m_Name: Zone_07_NavMeshSurface
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1387310916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387310915}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 956358495}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1387310917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1387310915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 769
+  m_UseGeometry: 1
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: f5762f3cde536ec40b74c81b54db6942, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!33 &1388560253
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -261127,7 +261127,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 2ae8e16250fd7c4418b8918e40348981, type: 2}
 --- !u!33 &1451265288
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -268098,7 +268098,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000018312365036881156611, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 014c7bd7f116caf40824a302b8239761, type: 2}
 --- !u!1 &1565611777
 GameObject:
   m_ObjectHideFlags: 0
@@ -274749,7 +274749,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000004070156009025155999, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 49d00b8673365c742a157994ea4c8297, type: 2}
 --- !u!1 &1655947775
 GameObject:
   m_ObjectHideFlags: 0
@@ -281581,7 +281581,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 2ae8e16250fd7c4418b8918e40348981, type: 2}
 --- !u!1 &1742582002
 GameObject:
   m_ObjectHideFlags: 0
@@ -308481,7 +308481,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000003915185315483141541, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 2ae8e16250fd7c4418b8918e40348981, type: 2}
 --- !u!1 &2117651947
 GameObject:
   m_ObjectHideFlags: 0
@@ -309036,7 +309036,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000004070156009025155999, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 49d00b8673365c742a157994ea4c8297, type: 2}
 --- !u!1 &2133935685
 GameObject:
   m_ObjectHideFlags: 0
@@ -309466,7 +309466,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000004070156009025155999, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 49d00b8673365c742a157994ea4c8297, type: 2}
 --- !u!1 &2139487131
 GameObject:
   m_ObjectHideFlags: 0
@@ -609895,7 +609895,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000004070156009025155999, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 49d00b8673365c742a157994ea4c8297, type: 2}
 --- !u!1 &5345018829872731380
 GameObject:
   m_ObjectHideFlags: 0
@@ -626742,7 +626742,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000004070156009025155999, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 49d00b8673365c742a157994ea4c8297, type: 2}
 --- !u!1 &5345018831953465008
 GameObject:
   m_ObjectHideFlags: 0
@@ -631899,7 +631899,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: abc00000000004070156009025155999, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 49d00b8673365c742a157994ea4c8297, type: 2}
 --- !u!4 &5345018832001981376
 Transform:
   m_ObjectHideFlags: 0
@@ -782326,4 +782326,4 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 604754132}
-  - {fileID: 860100079}
+  - {fileID: 956358495}

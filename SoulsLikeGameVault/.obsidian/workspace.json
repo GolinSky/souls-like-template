@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Agent Guide/Agent Context Registry.md",
+                "file": "Work/Plans/DefaultLocation Memory Optimization.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Agent Context Registry"
+              "title": "DefaultLocation Memory Optimization"
             }
           }
         ]
@@ -55,7 +55,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:status/draft",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -186,8 +186,15 @@
       "bases:Create new base": false
     }
   },
-  "active": "0165393451fcc3ce",
+  "active": "1da76326f671a503",
   "lastOpenFiles": [
+    "History/Implementation Records/DefaultLocation Memory Optimization Phase 4 Asset Residency.md",
+    "History/Implementation Records/DefaultLocation Memory Optimization Phase 4 Texture Streaming Batch 1.md",
+    "History/Implementation Records/DefaultLocation Memory Optimization Phase 3 Volume Quality Scaling.md",
+    "History/Implementation Records/DefaultLocation Memory Optimization Phase 2 Editor Low Memory.md",
+    "History/Implementation Records/DefaultLocation Memory Optimization Phase 1 Baseline.md",
+    "Home.md",
+    "Agent Guide/Agent Context Registry.md",
     "Research/Architecture and Systems Audit 2026-09-07.md",
     "Work/Issues/Architecture And Roll Issue Notes Contain Superseded Evidence.md",
     "Work/Issues/Equipment Picker Does Not Filter Exact Slot Compatibility.md",
@@ -208,13 +215,6 @@
     "Work/Work Queue.base",
     "Game Design/Mechanics/ELDEN_RING_STYLE_ELEVATOR_FEATURE.md",
     "Work/Work Queue.md",
-    "Work/Plans/Settings System Plan.md",
-    "Work/Plans/Project Organization Remediation Plan.md",
-    "Work/Plans/Lighting Bake Plan.md",
-    "Work/Issues/Roll Interruption Issue.md",
-    "Templates/Research Package Template.md",
-    "Templates/Plan Template.md",
-    "Templates/Issue Template.md",
     "Agent Guide/Knowledge Catalog.base",
     "Templates",
     "Architecture/UI",
