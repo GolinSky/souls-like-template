@@ -1,6 +1,6 @@
 using UnityEngine.SceneManagement;
 namespace SoulsLike.Services.Scenes.Data;
-public sealed class SceneModel
+public sealed class SceneData
 {
     public SceneType DefaultScene => SceneType.DefaultLocation;
     public SceneReference GetScene(SceneType type) => new(type.ToString());

@@ -129,6 +129,8 @@ Unity's current HDRP guidance favors SRP Batcher/GPU Resident Drawer and warns t
 
 ### Phase 6 — Bound loading and then consider spatial streaming
 
+**Latest user decision (2026-09-08):** supersedes the sequential/rollback experiment below. Runtime loading state belongs in `SceneModel`; dependencies load concurrently and the main scene starts only after all succeed. Failure cleanup is explicitly removed: throw on the first observed failure and fix the defect, with no recovery guarantee for outstanding native operations. This choice preserves final residency but does not bound temporary dependency-loading peaks. Historical comparison/rollback checklist results below describe `a57cd2e2`; they are not current behavior. See [[History/Implementation Records/Scene Loading Model State and Fail Fast Policy]]. Live memory/build-layout validation remains outstanding.
+
 Execution started on 2026-09-08. **Measurement gate blocked:** the read-only preflight found 64.59/65.81 GiB system commit, only 1.23 GiB (1.9%) headroom, with a clean ElevatorDemo scene open. No live loading comparison, test run, Play Mode session, or build was started. The bounded source experiment is tracked in [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]]; it is not an accepted memory optimization until the controlled comparison passes.
 
 - [ ] First compare the existing nine-way concurrent dependency load with sequential loading or a small concurrency limit. This targets the peak; all ten scenes will still be resident at completion.

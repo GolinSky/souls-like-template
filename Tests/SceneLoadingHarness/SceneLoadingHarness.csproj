@@ -9,5 +9,7 @@
   <ItemGroup>
     <Compile Include="$(SceneServiceSource)" Link="SceneService.cs" />
     <Compile Include="../../Assets/Scripts/Services/Scenes/ISceneService.cs" Link="ISceneService.cs" />
+    <Compile Include="../../Assets/Scripts/Services/Scenes/Data/SceneModel.cs" Link="SceneModel.cs" />
+    <Compile Include="../../Assets/Scripts/Model/Model.cs" Link="Model.cs" />
   </ItemGroup>
 </Project>

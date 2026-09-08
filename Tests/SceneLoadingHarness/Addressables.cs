@@ -16,13 +16,13 @@ public static class Addressables
 
     public static readonly List<Operation<SceneInstance>> Operations = [];
     public static readonly List<string> Loads = [], Unloads = [], Releases = [];
-    public static readonly HashSet<string> Loaded = [], FailLoads = [], ThrowLoads = [], FailUnloads = [];
+    public static readonly HashSet<string> Loaded = [], FailLoads = [], ThrowLoads = [], FailUnloads = [], HoldLoads = [];
     public static int MaxPendingAdditive;
 
     public static void Reset()
     {
         Operations.Clear(); Loads.Clear(); Unloads.Clear(); Releases.Clear(); Loaded.Clear();
-        FailLoads.Clear(); ThrowLoads.Clear(); FailUnloads.Clear(); MaxPendingAdditive = 0;
+        FailLoads.Clear(); ThrowLoads.Clear(); FailUnloads.Clear(); HoldLoads.Clear(); MaxPendingAdditive = 0;
         SceneManager.Active = default; SceneManager.FailActivation = false; UnityEngine.Debug.Errors.Clear();
     }
 
@@ -80,6 +80,6 @@ public static class Addressables
 
     public static void CompletePending()
     {
-        foreach (var op in Operations.Where(x => !x.Done).ToArray()) op.Complete();
+        foreach (var op in Operations.Where(x => !x.Done && (x.Unload || !HoldLoads.Contains(x.Path))).ToArray()) op.Complete();
     }
 }

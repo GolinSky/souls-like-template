@@ -5,6 +5,7 @@ namespace SoulsLike.Services.Scenes.Data
     public class SceneModel: Model.Model
     {
         private readonly SceneData _sceneData;
+        public bool IsLoadingScene { get; set; }
 
         public SceneModel(SceneData sceneData)
         {
