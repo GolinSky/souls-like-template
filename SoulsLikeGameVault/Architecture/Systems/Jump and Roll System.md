@@ -146,6 +146,8 @@ In [`PlayerInputReader.cs`](../../../Assets/Scripts/Entities/Character/Input/Pla
    - **Locked-On Mode**: Character faces the lock-on target. `QuantizeLockedRollDirection` clamps input to 4 cardinal bins (`Left`, `Right`, `Forward`, `Backward`).
    - **Neutral Input**: If $\|\vec{I}\| \le 0.01$, triggers **Backstep** (`rollDirection = Vector2.down`).
 3. **Motion Application**:
+   - `TriggerRoll` and `TriggerBackStep` synchronously begin the root-motion contract before the next `Character.Tick` movement-lock synchronization, so that synchronization retains the active roll metadata.
+   - `SetMovementBlocked` clears active roll target/direction only on a blocked-to-unblocked transition. Repeated unblocked synchronization preserves metadata; repeated blocked synchronization still zeros grounded horizontal velocity. See [[History/Implementation Records/Roll Movement Lock Cleanup]].
    - Rolling animations use root motion tagged `"RootMotion"`.
    - `AnimatorRootMotionRelay` captures root delta. Planar motion is extracted (`planarDelta = Vector3(dx, 0, dz)`).
    - In Locked-On lateral rolls, `CalculateLockedRollDelta` converts linear root displacement into a circular orbit around the target:

@@ -141,9 +141,10 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         public void SetMovementBlocked(bool blocked)
         {
+            bool wasMovementBlocked = _movementBlocked;
             _movementBlocked = blocked;
 
-            if (!blocked)
+            if (wasMovementBlocked && !blocked)
             {
                 _activeRollTarget = null;
                 _activeRollDirection = Vector2.zero;
