@@ -6,6 +6,7 @@ namespace SoulsLike.Services.Spawn
 {
     public class CharacterSpawnData
     {
+        public bool ResumesAtGrace { get; set; }
         public bool HasCurrentPosition { get; set; }
         public SceneType CurrentScene { get; set; } = SceneType.Workshop;
         public Vector3 CurrentPosition { get; set; }

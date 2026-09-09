@@ -75,6 +75,8 @@ This proves current pressure, not the exact OS/VRAM state at the saved crash. Fr
 
 #### I-03 — All location dependencies load concurrently and stay resident
 
+**Latest user-directed revision (2026-09-08):** concurrent dependencies are restored; only the main scene waits for all dependencies to succeed. The model owns transition state, and failures propagate without rollback. The sequential source experiment in the following update is superseded. Final residency remains unchanged, while temporary peak memory remains unmeasured. See [[History/Implementation Records/Scene Loading Model State and Fail Fast Policy]].
+
 **2026-09-08 update:** The original concurrent loader below is historical evidence. [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]] changes dependency loads to sequential execution, adds reverse failure cleanup and failed-handle release, and rejects overlapping service transitions. Two executable baseline reproductions and ten candidate checks validate isolated control flow. Real memory, Addressables handle recovery, and travel remain unverified because preflight commit headroom was only 1.23 GiB (1.9%). All ten destination scenes still remain resident after success; this issue is not resolved.
 
 Sources: `Assets/Settings/Data/SceneData.asset:28`; `Assets/Scripts/Services/Scenes/SceneService.cs:61`; `Assets/Scripts/Orchestrators/Game/GameOrchestrator.cs:30`.

@@ -13,6 +13,8 @@ tags:
 
 # DefaultLocation Memory Optimization Phase 6 Bounded Loading
 
+> Superseded by explicit user direction on 2026-09-08: [[History/Implementation Records/Scene Loading Model State and Fail Fast Policy]]. The sequential-loading and rollback behavior below describes commit `a57cd2e2`, not the current loader.
+
 ## Implementation Record Contract
 
 ### Outcome

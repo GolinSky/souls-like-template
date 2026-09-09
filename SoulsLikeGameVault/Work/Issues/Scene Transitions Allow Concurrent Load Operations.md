@@ -22,6 +22,8 @@ tags:
 
 ### Observed Behavior
 
+**Latest user-directed revision (2026-09-08):** the transition flag now belongs to `SceneModel`; dependency loads are concurrent, with target-last ordering. Failure cleanup was intentionally removed in favor of immediate exception propagation. The service flag is reset when the call ends, even if failed-attempt native operations remain pending; recovery after a main-system failure is not promised. Earlier rollback/retry evidence below is historical. Pending-spawn ownership remains open. See [[History/Implementation Records/Scene Loading Model State and Fail Fast Policy]].
+
 **2026-09-08 partial remediation:** [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]] adds a single in-flight gate in `SceneService.LoadScene` and rollback of partial destination loads. Executable tests against the original source reproduced two overlapping Loading requests; the changed source rejects the second call and allows a later retry after cleanup. These are fake-backend control-flow tests, not a Unity runtime reproduction. This issue remains **open** because menu/travel callers still invoke `PrepareResume`/`PrepareGraceSpawn` before service admission, allowing a rejected request to overwrite the accepted transition's pending spawn intent. The following description records the original audit state.
 
 Each Play invocation starts a new asynchronous scene transition. The UI and orchestrators provide no in-flight guard, and SceneService starts a fresh Single-mode Loading scene before awaiting completion. Two invocations before the first load completes can overlap transitions and compete over active scene, loading-scene lifetime, and shared pending spawn state.

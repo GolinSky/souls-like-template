@@ -342,7 +342,6 @@ namespace SoulsLike.Entities.Character.Components
 
         public void EnterGraceRestIdle()
         {
-            animator.ResetTrigger(SpawnTrigger);
             animator.Play(
                 GraceRestIdleState,
                 GetRequiredLayerIndex(ONE_HANDED_LAYER),

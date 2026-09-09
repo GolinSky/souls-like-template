@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Services.Scenes.Data;
-using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
@@ -17,17 +16,11 @@ namespace SoulsLike.Services.Scenes
         public event Action<SceneType> OnSceneChanged;
         
         private readonly SceneModel _sceneModel;
-        private bool _isLoadingScene;
         public SceneType TargetScene { get; private set; }
         public SceneType CurrentScene
         {
             get
             {
-                if (_sceneModel == null)
-                {
-                    UnityEngine.Debug.LogError("[SceneService] _sceneModel is null when getting CurrentScene!");
-                    return SceneType.Undefined;
-                }
                 return _sceneModel.GetSceneById(SceneManager.GetActiveScene());
             }
         }
@@ -37,103 +30,82 @@ namespace SoulsLike.Services.Scenes
         public SceneService(SceneModel sceneModel)
         {
             _sceneModel = sceneModel;
-            if (_sceneModel == null)
-            {
-                UnityEngine.Debug.LogError("[SceneService] SceneModel dependency injected is null!");
-            }
         }
 
         public async UniTask LoadScene(SceneType sceneType)
         {
-            if (_isLoadingScene)
+            if (_sceneModel.IsLoadingScene)
             {
                 throw new InvalidOperationException("A scene transition is already in progress.");
             }
 
-            _isLoadingScene = true;
+            _sceneModel.IsLoadingScene = true;
             try
             {
-                await LoadSceneAsync(sceneType);
+                SceneReference loadingScene = _sceneModel.GetScene(SceneType.Loading);
+                var loadingSceneOperation = await LoadLoadingScene(loadingScene);
+
+                TargetScene = sceneType;
+                SceneReference targetScene = _sceneModel.GetScene(sceneType);
+                var targetSceneOperation = await LoadSceneWithDependencies(sceneType, targetScene);
+
+                OnProgressUpdated?.Invoke(1f);
+                ActivateScene(targetSceneOperation, targetScene);
+                await UnloadSceneAsync(loadingSceneOperation, loadingScene.ScenePath);
+                OnSceneChanged?.Invoke(sceneType);
             }
             finally
             {
-                _isLoadingScene = false;
+                _sceneModel.IsLoadingScene = false;
             }
         }
 
 
         public SceneType GetSceneType(string scenePathOrName)
         {
-            if (_sceneModel == null)
-            {
-                UnityEngine.Debug.LogError("[SceneService] _sceneModel is null in GetSceneType!");
-                return SceneType.Undefined;
-            }
             return _sceneModel.GetSceneByPath(scenePathOrName);
         }
 
-        private async UniTask LoadSceneAsync(SceneType sceneType)
+        private async UniTask<AsyncOperationHandle<SceneInstance>> LoadLoadingScene(SceneReference loadingScene)
         {
-            if (_sceneModel == null)
-            {
-                UnityEngine.Debug.LogError("[SceneService] _sceneModel is null in LoadSceneAsync!");
-                return;
-            }
+            var operation = StartSceneLoad(loadingScene, LoadSceneMode.Single);
+            await WaitForSceneLoads(new[] { operation }, 1);
+            return operation;
+        }
 
-            SceneReference loadingScene = _sceneModel.GetScene(SceneType.Loading);
-            AsyncOperationHandle<SceneInstance> loadingSceneLoadOperation = default;
+        private async UniTask<AsyncOperationHandle<SceneInstance>> LoadSceneWithDependencies(SceneType sceneType, SceneReference targetScene)
+        {
             var sceneLoadOperations = new List<AsyncOperationHandle<SceneInstance>>();
 
-            try
+            if (_sceneModel.TryGetDependencies(sceneType, out SceneReference[] dependencies))
             {
-                loadingSceneLoadOperation = StartSceneLoad(loadingScene, LoadSceneMode.Single);
-                await WaitForSceneLoads(new[] { loadingSceneLoadOperation }, 1);
-                EnsureSucceeded(loadingSceneLoadOperation, loadingScene);
-
-                TargetScene = sceneType;
-                SceneReference targetScene = _sceneModel.GetScene(sceneType);
-
-                int totalSceneCount = 1;
-                if (_sceneModel.TryGetDependencies(sceneType, out SceneReference[] dependencies))
+                foreach (SceneReference dependency in dependencies)
                 {
-                    totalSceneCount = dependencies.Length + 1;
-                    foreach (SceneReference dependency in dependencies)
-                    {
-                        AsyncOperationHandle<SceneInstance> dependencyLoadOperation = StartSceneLoad(dependency, LoadSceneMode.Additive);
-                        sceneLoadOperations.Add(dependencyLoadOperation);
-                        await WaitForSceneLoads(sceneLoadOperations, totalSceneCount);
-                        EnsureSucceeded(dependencyLoadOperation, dependency);
-                    }
+                    sceneLoadOperations.Add(StartSceneLoad(dependency, LoadSceneMode.Additive));
                 }
-
-                AsyncOperationHandle<SceneInstance> targetSceneLoadOperation = StartSceneLoad(targetScene, LoadSceneMode.Additive);
-                sceneLoadOperations.Add(targetSceneLoadOperation);
-                await WaitForSceneLoads(sceneLoadOperations, totalSceneCount);
-                EnsureSucceeded(targetSceneLoadOperation, targetScene);
-
-                OnProgressUpdated?.Invoke(1f);
-
-                Scene loadedTargetScene = targetSceneLoadOperation.Result.Scene;
-                if (!loadedTargetScene.IsValid() || !loadedTargetScene.isLoaded)
-                {
-                    throw new InvalidOperationException($"Scene '{targetScene.ScenePath}' did not finish loading.");
-                }
-
-                if (!SceneManager.SetActiveScene(loadedTargetScene))
-                {
-                    throw new InvalidOperationException($"Failed to activate scene '{targetScene.ScenePath}'.");
-                }
-
-                await UnloadSceneAsync(loadingSceneLoadOperation, loadingScene.ScenePath);
-            }
-            catch
-            {
-                await CleanupFailedSceneLoads(sceneLoadOperations);
-                await ReleaseFailedLoadingSceneLoad(loadingSceneLoadOperation);
-                throw;
             }
 
-            OnSceneChanged?.Invoke(sceneType);
+            int totalSceneCount = sceneLoadOperations.Count + 1;
+            await WaitForSceneLoads(sceneLoadOperations, totalSceneCount);
+
+            var targetSceneOperation = StartSceneLoad(targetScene, LoadSceneMode.Additive);
+            sceneLoadOperations.Add(targetSceneOperation);
+            await WaitForSceneLoads(sceneLoadOperations, totalSceneCount);
+            return targetSceneOperation;
+        }
+
+        private static void ActivateScene(AsyncOperationHandle<SceneInstance> sceneLoadOperation, SceneReference targetScene)
+        {
+            Scene loadedTargetScene = sceneLoadOperation.Result.Scene;
+            if (!loadedTargetScene.IsValid() || !loadedTargetScene.isLoaded)
+            {
+                throw new InvalidOperationException($"Scene '{targetScene.ScenePath}' did not finish loading.");
+            }
+
+            if (!SceneManager.SetActiveScene(loadedTargetScene))
+            {
+                throw new InvalidOperationException($"Failed to activate scene '{targetScene.ScenePath}'.");
+            }
         }
 
         private async UniTask WaitForSceneLoads(IReadOnlyList<AsyncOperationHandle<SceneInstance>> sceneLoadOperations, int totalSceneCount)
@@ -147,6 +119,10 @@ namespace SoulsLike.Services.Scenes
                 foreach (AsyncOperationHandle<SceneInstance> operation in sceneLoadOperations)
                 {
                     totalProgress += operation.PercentComplete;
+                    if (operation.Status == AsyncOperationStatus.Failed)
+                    {
+                        throw new InvalidOperationException("A scene failed to load.", operation.OperationException);
+                    }
                     allScenesLoaded &= operation.IsDone;
                 }
 
@@ -180,72 +156,6 @@ namespace SoulsLike.Services.Scenes
             if (unloadStatus != AsyncOperationStatus.Succeeded)
             {
                 throw new InvalidOperationException($"Failed to unload scene '{scenePath}'.", unloadException);
-            }
-        }
-
-        private static void EnsureSucceeded(AsyncOperationHandle<SceneInstance> operation, SceneReference scene)
-        {
-            if (operation.Status != AsyncOperationStatus.Succeeded)
-            {
-                throw new InvalidOperationException($"Scene '{scene.ScenePath}' failed to load.", operation.OperationException);
-            }
-        }
-
-        private static async UniTask CleanupFailedSceneLoads(IReadOnlyList<AsyncOperationHandle<SceneInstance>> sceneLoadOperations)
-        {
-            for (int operationIndex = sceneLoadOperations.Count - 1; operationIndex >= 0; operationIndex--)
-            {
-                AsyncOperationHandle<SceneInstance> sceneLoadOperation = sceneLoadOperations[operationIndex];
-                try
-                {
-                    while (!sceneLoadOperation.IsDone)
-                    {
-                        await UniTask.Yield();
-                    }
-
-                    if (!sceneLoadOperation.IsValid())
-                    {
-                        continue;
-                    }
-
-                    if (sceneLoadOperation.Status == AsyncOperationStatus.Succeeded)
-                    {
-                        await UnloadSceneAsync(sceneLoadOperation, "destination scene");
-                    }
-                    else
-                    {
-                        Addressables.Release(sceneLoadOperation);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    UnityEngine.Debug.LogException(exception);
-                }
-            }
-        }
-
-        private static async UniTask ReleaseFailedLoadingSceneLoad(AsyncOperationHandle<SceneInstance> loadingSceneLoadOperation)
-        {
-            try
-            {
-                if (!loadingSceneLoadOperation.IsValid())
-                {
-                    return;
-                }
-
-                while (!loadingSceneLoadOperation.IsDone)
-                {
-                    await UniTask.Yield();
-                }
-
-                if (loadingSceneLoadOperation.Status != AsyncOperationStatus.Succeeded)
-                {
-                    Addressables.Release(loadingSceneLoadOperation);
-                }
-            }
-            catch (Exception exception)
-            {
-                UnityEngine.Debug.LogException(exception);
             }
         }
 

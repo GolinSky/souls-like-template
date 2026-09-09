@@ -15,12 +15,9 @@ namespace SoulsLike.Editor.Tests.Animation
         private static readonly int GraceRestEndState = Animator.StringToHash("GraceRestEnd");
         private static readonly int FreeLocomotionState = Animator.StringToHash("FreeLocomotion");
 
-        [TestCase(false, HandMode.OneHanded, ONE_HANDED_LAYER)]
-        [TestCase(false, HandMode.TwoHanded, TWO_HANDED_LAYER)]
-        [TestCase(true, HandMode.OneHanded, ONE_HANDED_LAYER)]
-        [TestCase(true, HandMode.TwoHanded, TWO_HANDED_LAYER)]
-        public void AnimatorComponent_GraceRest_EntersIdleThenReturnsToLocomotion(
-            bool hasPendingSpawnTrigger,
+        [TestCase(HandMode.OneHanded, ONE_HANDED_LAYER)]
+        [TestCase(HandMode.TwoHanded, TWO_HANDED_LAYER)]
+        public void AnimatorComponent_GraceRest_DirectlyEntersIdleThenReturnsToLocomotion(
             HandMode handMode,
             string layerName)
         {
@@ -30,11 +27,6 @@ namespace SoulsLike.Editor.Tests.Animation
             {
                 int layerIndex = animator.GetLayerIndex(layerName);
                 component.SetHandMode(handMode);
-                if (hasPendingSpawnTrigger)
-                {
-                    component.TriggerSpawn();
-                }
-
                 component.EnterGraceRestIdle();
                 animator.Update(0.0f);
 

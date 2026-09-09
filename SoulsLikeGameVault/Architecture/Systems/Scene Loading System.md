@@ -14,11 +14,11 @@ tags:
 
 # Scene Loading System
 
-`SceneService.LoadScene` owns one asynchronous scene transition at a time. It rejects a second call before starting another Loading scene and holds ownership until success or failure cleanup finishes. There is no cancellation or automatic retry; the caller observes the result and can explicitly retry afterward.
+`SceneModel` holds runtime loading state (`IsLoadingScene`) alongside its source `SceneData` ScriptableObject. `SceneService.LoadScene` checks and sets that model state before its first await, rejects overlapping requests, and clears the state in `finally` when the call succeeds or throws. Services sharing the model share this guard.
 
-The service loads Loading in Single mode, then loads each configured dependency additively in order, waiting for completion before starting the next. It loads the destination last, activates it, and unloads Loading. Successful transitions retain the destination and all dependencies. DefaultLocation still retains its main scene, eight zones, and Rocks; this is bounded loading, not spatial streaming.
+The service loads Loading in Single mode, then starts all configured additive dependencies together. It starts the destination only after every dependency succeeds, activates it, and unloads Loading. Successful transitions retain the destination and all dependencies. DefaultLocation still retains its main scene, eight zones, and Rocks. Concurrent loading can reduce waiting time but may increase temporary loading peaks; final residency is unchanged and no timing/memory benefit has been measured.
 
-On failure, the service waits for its outstanding operation, unloads successful destination scenes in reverse order, and releases valid failed load handles. A successful Loading scene remains as the recovery owner. Cleanup errors are logged individually while the original failure propagates. Failed cleanup can retain scene resources; real retry/unload behavior must be verified through Unity. A later Single-mode Loading operation replaces the previous scene set.
+Failures propagate immediately when observed, including when another dependency remains pending. By explicit user decision, there is no rollback, failure-handle cleanup, catch-and-log recovery, cancellation, or automatic retry. Already-started operations may continue and loaded scenes remain after an error. Clearing the model's call-state flag does not mean those native operations stopped. Treat a main-system failure as a defect to fix; the service provides no recovery/retry guarantee. Mandatory injected model references are used directly, without log-and-return fallbacks.
 
 Addressables releases a successful scene-load handle when its scene unload completes; the service releases the returned unload-operation handle explicitly. Successful destination load handles are retained for scene lifetime and follow Addressables' scene-unloaded release path. `OnSceneChanged` runs after commit, so subscriber exceptions propagate without rolling back a loaded destination. `TargetScene` describes the requested destination, including after a failure; `CurrentScene` resolves the active scene. Existing progress reports cover load progress and do not guarantee activation/unload completion at 100%.
 
@@ -26,4 +26,4 @@ Addressables releases a successful scene-load handle when its scene unload compl
 
 Source: `Assets/Scripts/Services/Scenes/SceneService.cs`, `Assets/Scripts/Orchestrators/Game/GameOrchestrator.cs`, and `Assets/Settings/Data/SceneData.asset`.
 
-Evidence and limitations: [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]]. This is a source-verified description of an unmeasured loading experiment, not a memory-budget acceptance result.
+The original sequential/rollback experiment is historical: [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]]. The user superseded it with model-owned state, concurrent dependencies, and fail-fast propagation in [[History/Implementation Records/Scene Loading Model State and Fail Fast Policy]]. This is not a memory-budget acceptance result.
