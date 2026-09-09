@@ -46,7 +46,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
             }
 
             _isProgressFired = true;
-            animatorStateMachineReceiver?.OnProgress(stateInfo,
+            animatorStateMachineReceiver.OnProgress(stateInfo,
                 layerIndex, stateMachineName);
         }
 
@@ -58,7 +58,7 @@ namespace SoulsLike.Entities.Character.Components.Animations
             }
 
             _isQueueCheckFired = true;
-            animatorStateMachineReceiver?.OnQueueCheck(stateInfo, layerIndex, stateMachineName);
+            animatorStateMachineReceiver.OnQueueCheck(stateInfo, layerIndex, stateMachineName);
         }
 
        
@@ -66,13 +66,13 @@ namespace SoulsLike.Entities.Character.Components.Animations
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateExit(animator, stateInfo, layerIndex);
-            animatorStateMachineReceiver?.OnExit(stateInfo, layerIndex, stateMachineName);
+            animatorStateMachineReceiver.OnExit(stateInfo, layerIndex, stateMachineName);
         }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
-            animatorStateMachineReceiver?.OnEnter(stateInfo, layerIndex, stateMachineName);
+            animatorStateMachineReceiver.OnEnter(stateInfo, layerIndex, stateMachineName);
             ResetValues();
         }
 

@@ -13,4 +13,3 @@ MonoBehaviour:
   m_Name: StraightSwordAnimationProfile
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Items.AnimationProfile
   <Controller>k__BackingField: {fileID: 9100000, guid: 583776710670a444bafe6982b11b45c9, type: 2}
-  <LeftHandController>k__BackingField: {fileID: 9100000, guid: 006fe97f228a8b14389be20ea1c364cd, type: 2}

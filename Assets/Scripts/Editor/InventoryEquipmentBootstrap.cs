@@ -39,8 +39,6 @@ namespace SoulsLike.Editor
         private const string RUNE_ICON_PATH = "Assets/Art/Textures/ItemIcons/GoldenRuneSmallIcon.png";
         private const string NO_WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterNoWeaponAnimator.overrideController";
         private const string WEAPON_CONTROLLER_PATH = "Assets/Art/Animation/CharacterGreatSwordAnimator.controller";
-        private const string LEFT_WEAPON_CONTROLLER_PATH =
-            "Assets/Art/Animation/CharacterGreatSwordLeftHandAnimator.controller";
         private const string ADDRESSABLE_PACKED_BUILD_PATH =
             "Assets/AddressableAssetsData/DataBuilders/BuildScriptPackedMode.asset";
 
@@ -123,15 +121,8 @@ namespace SoulsLike.Editor
                 ITEM_FOLDER + "/StraightSwordAnimationProfile.asset");
             RuntimeAnimatorController controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(
                 WEAPON_CONTROLLER_PATH);
-            RuntimeAnimatorController leftController =
-                AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(LEFT_WEAPON_CONTROLLER_PATH);
             RequireAsset(controller, WEAPON_CONTROLLER_PATH);
-            RequireAsset(leftController, LEFT_WEAPON_CONTROLLER_PATH);
             SetObject(new SerializedObject(profile), "<Controller>k__BackingField", controller);
-            SetObject(
-                new SerializedObject(profile),
-                "<LeftHandController>k__BackingField",
-                leftController);
             return profile;
         }
 

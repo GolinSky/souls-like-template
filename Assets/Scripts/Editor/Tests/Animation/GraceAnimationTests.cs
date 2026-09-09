@@ -1,14 +1,14 @@
 using NUnit.Framework;
 using SoulsLike.Entities.Character.Components;
+using SoulsLike.Entities.Character.Components.Animations;
 using SoulsLike.Entities.Character.Components.Equipment;
-using UnityEditor;
 using UnityEngine;
 
 namespace SoulsLike.Editor.Tests.Animation
 {
     public sealed class GraceAnimationTests
     {
-        private const string CONTROLLER_PATH = "Assets/Art/Animation/CharacterGreatSwordAnimator.controller";
+        private const string CHARACTER_PREFAB_PATH = "Assets/Prefabs/Models/Character/Character.prefab";
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
         private static readonly int GraceRestIdleState = Animator.StringToHash("GraceRestIdle");
@@ -68,17 +68,18 @@ namespace SoulsLike.Editor.Tests.Animation
             out GameObject gameObject,
             out Animator animator)
         {
-            RuntimeAnimatorController controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(CONTROLLER_PATH);
-            Assert.That(controller, Is.Not.Null);
+            GameObject prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(
+                CHARACTER_PREFAB_PATH);
 
-            gameObject = new GameObject("Grace Animation Test");
-            animator = gameObject.AddComponent<Animator>();
-            animator.runtimeAnimatorController = controller;
-
-            AnimatorComponent component = gameObject.AddComponent<AnimatorComponent>();
-            var serializedComponent = new SerializedObject(component);
-            serializedComponent.FindProperty("animator").objectReferenceValue = animator;
-            serializedComponent.ApplyModifiedPropertiesWithoutUndo();
+            Assert.That(prefab, Is.Not.Null, $"Missing character prefab at {CHARACTER_PREFAB_PATH}.");
+            gameObject = Object.Instantiate(prefab);
+            AnimatorComponent component = gameObject.GetComponent<AnimatorComponent>();
+            animator = gameObject.GetComponentInChildren<Animator>(true);
+            AnimatorStateMachineReceiver receiver = gameObject.GetComponentInChildren<AnimatorStateMachineReceiver>(true);
+            Assert.That(component, Is.Not.Null);
+            Assert.That(animator, Is.Not.Null);
+            Assert.That(receiver, Is.Not.Null);
+            receiver.InitializeStateMachines();
             return component;
         }
     }

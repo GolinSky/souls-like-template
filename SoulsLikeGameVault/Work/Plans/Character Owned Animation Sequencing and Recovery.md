@@ -5,7 +5,7 @@ domains: [character, animation, movement, lifecycle]
 status: done
 authority: advisory
 updated: 2026-09-09
-source_commit: 7e7b1ebe4894c36df12c22666f00b7e7b8c93fc5
+source_commit: 2385b53122a52196675acb7e73b3c6a7f99d3468
 aliases: []
 tags: [work/plan, status/done]
 ---
@@ -16,7 +16,7 @@ tags: [work/plan, status/done]
 
 ### Goal
 
-Make Character choose exactly one presentation for character arrival without changing save, resume, or travel rules. Remove the current Spawn-versus-Grace command conflict at its source instead of resetting one animation command from another.
+Phase 1 made Character choose exactly one presentation for character arrival without changing save, resume, or travel rules. The remaining work validates the Animator callback contract and changes runtime routing only when valid controller behavior proves a defect.
 
 Keep the existing Animator state-machine event transport, action state machine, movement locks, progress thresholds, and domain owners. Do not introduce a generic animation workflow, playback token hierarchy, or runtime timeout system without a reproduced defect that requires one.
 
@@ -26,14 +26,28 @@ Keep the existing Animator state-machine event transport, action state machine, 
 2. A saved grace arrival or travel to any grace enters GraceRestIdle directly. Spawn is never requested. Grace protection remains until the existing grace-exit flow completes.
 3. Core owns GameState and resolves the saved arrival intent. Character owns the animation command and its existing input/movement protection.
 4. Grace, spawning, and enemy-system reload do not pause the game clock or time scale.
+5. Primary weapons can be equipped only in the right hand. A left-hand-only primary-weapon loadout is unsupported; left-hand slots remain for supported off-hand item types such as shields.
 
-### Verified Current Conflict
+### Verified Phase 1 Conflict — Resolved
 
-1. `Character.Initialize` currently blocks gameplay and always calls `AnimatorComponent.TriggerSpawn`.
-2. `CoreGameOrchestrator.Start` separately checks `_startsOnGrace` and calls `Character.EnterGraceRestIdle`.
-3. `AnimatorComponent.EnterGraceRestIdle` resets the pending Spawn trigger and plays GraceRestIdle. This suppresses the symptom after both lifecycle paths have already issued competing commands.
-4. The current Animator test proves direct state playback for the representative controller and both hand modes. It does not prove Character lock ownership or the complete arrival decision.
+1. Before Phase 1, `Character.Initialize` blocked gameplay and always called `AnimatorComponent.TriggerSpawn`.
+2. `CoreGameOrchestrator.Start` then separately checked `_startsOnGrace` and called `Character.EnterGraceRestIdle`.
+3. `AnimatorComponent.EnterGraceRestIdle` reset the pending Spawn trigger and played GraceRestIdle. That suppressed the symptom after both lifecycle paths had already issued competing commands.
+4. Phase 1 replaced those competing commands with `Character.BeginArrival`, removed the Spawn reset, and added Character lock/arrival coverage.
 5. `TwoHandedLayer` is synchronized to `OneHandedLayer` in `CharacterGreatSwordAnimator.controller`. The current source-layer playback is controller-specific but verified for that controller; do not replace it speculatively.
+
+### Verified Later-Phase Comparison
+
+1. `AnimatorStateMachine.OnStateUpdate` skips Progress and QueueCheck while its layer is transitioning. Required marker timing is therefore an Animator content contract, not something runtime should synthesize.
+2. `AnimatorStateMachine` currently uses null-conditional receiver calls. An initialization failure can silently discard Enter, Progress, QueueCheck, or Exit instead of exposing the broken setup.
+3. `CharacterActionStateMachine` uses `_pendingExitsToIgnore` for chained actions in the same broad category. It is correct for the currently tested callback order, but a missing older Exit can cause the current Exit to be ignored.
+4. `AnimatorStateMachineDto` already carries `StateInfo` and `LayerIndex`. A playback identity/token abstraction is not justified by current evidence.
+5. `AnimatorRootMotionRelay` checks current and next tags on every layer, including zero-weight layers. This is a static risk; no gameplay failure has been reproduced.
+6. The receiver DTO is a struct delivered synchronously to one production observer. Its reuse is not a demonstrated defect.
+7. Existing movement-lock bit ownership is already unified. Do not replace it as part of animation sequencing.
+8. The default Character prefab uses `CharacterNoWeaponAnimator.overrideController`, whose base is `CharacterGreatSwordAnimator.controller`. The right-hand straight-sword profile also uses that controller.
+9. `StraightSwordAnimationProfile.LeftHandController` points to missing GUID `006fe97f228a8b14389be20ea1c364cd`, and `InventoryEquipmentBootstrap` expects the absent `CharacterGreatSwordLeftHandAnimator.controller`. These are stale remnants of an unsupported left-hand-primary route, not a controller that should be restored.
+10. `PauseNavigationUiController` still includes `ItemType.Weapon` for left-hand slots, while `EquipmentSlotCatalog` reduces both hand groups to broad `EquipmentGroup.Armament`. The current code therefore does not fully enforce the approved right-hand-only primary-weapon rule.
 
 ### Non-Goals
 
@@ -75,17 +89,43 @@ Owned production scope: `Character.Initialize`, one small Character arrival entr
 
 Verify: saved/default position -> Spawn -> Active; saved grace/travel -> direct GraceRestIdle -> OnGraceSit; no competing trigger; no premature unlock; existing grace exit restores normal control.
 
-### Deferred — Action Exit Correlation
+### Phase 2 — Callback and Controller Contracts
 
-`CharacterActionStateMachine` currently counts exits to ignore when broad action categories chain. If an old Exit is missing, a newer Exit can consume that count. This is separate from Phase 1.
+This phase is unconditional and produces evidence before any later production change.
 
-When a failing gameplay case is established, prefer matching the concrete expected animation state/hash for different-state chains. Do not change identical-state replay timing, duplicate authored states, or add playback generations without evidence that the existing content requires them.
+- [x] Resolve the left-hand-only straight-sword decision: primary weapons are right-hand-only. Do not restore or substitute a left-hand primary controller.
+- [x] Remove the stale left-hand-primary animation-profile/bootstrap route and verify that equipment assignment rejects primary weapons in left-hand slots before Animator profile selection. Keep this enforcement surgical and reuse the existing equipment compatibility path.
+- [x] Validate the supported player controller routes: the Character default override, its `CharacterGreatSwordAnimator.controller` base, and right-hand controllers referenced by `AnimationProfile` assets.
+- [x] Validate the required StateMachineName, Enter, Exit, QueueCheck, Progress flag/threshold, and authored transition path for lifecycle, attack, roll, equipment swap, item use, block-hit, parry, and critical states that drive gameplay.
+- [x] Add one focused sequence fixture that records `(StateMachineName, event, shortNameHash, LayerIndex)` for different-state chaining, identical-state replay, hand-mode blends, and action-layer blends.
+- [x] Make callback delivery fail visibly when an `AnimatorStateMachine` was not initialized. Use the required receiver directly instead of silently discarding callbacks through null-conditional calls.
+- [x] Record whether valid controller execution actually emits duplicate, stale, wrong-layer, or inactive-layer callbacks/tags. No gameplay-impacting duplicate, stale, wrong-layer, or inactive-layer defect was reproduced; synchronized and action-source layer callbacks were confirmed as intentional controller contracts.
 
-### Deferred — Layer and Root-Motion Filtering
+Verify: every supported controller route satisfies its gameplay callback contract; invalid setup fails clearly; the trace states whether later runtime correlation or filtering is necessary.
 
-`AnimatorRootMotionRelay` currently observes tags on every current/next layer, including layers whose weight may be zero. This is not part of the arrival defect.
+### Phase 3 — Repair Proven Content Defects
 
-First validate active controllers and synchronized layers. If an inactive-layer defect is reproduced, apply the smallest active-layer/weight filter that preserves valid hand-mode, reaction, traversal, and blend behavior. Do not add an operation-token layer system speculatively.
+This phase is conditional on Phase 2 findings.
+
+- [x] Fix only controller/profile defects reported by the contract validation. Four directional hit states were migrated from stale enum value 21 to `HitReaction` value 22; the obsolete left-hand-controller profile field was removed.
+- [x] If a required Progress or QueueCheck marker is unreachable before an authored transition, correct that state's marker or transition without changing the intended gameplay timing. Validation proved the authored markers reachable, so no timing change was made.
+- [x] Persist controller/profile changes through Unity, re-run import/serialization checks, and re-run the focused contract and sequence fixtures.
+- [x] Do not manufacture Progress, QueueCheck, Enter, or Exit in runtime code.
+
+Verify: supported assets satisfy the same contract without runtime fallback behavior.
+
+### Phase 4 — Narrow Runtime Correlation or Filtering
+
+This phase executes only when Phase 2 shows a defect with otherwise valid controller content. If the trace is correct, close this phase with no production change.
+
+- [x] Keep the current same-state replay contract: each chained entry adds one older Exit to ignore, the broad action state remains active, and the final authored Exit completes it. The trace confirmed `Enter -> QueueCheck -> old Exit -> Enter -> QueueCheck -> final Exit`.
+- [x] For legitimate stale or out-of-order different-state exits, match the current action to the concrete state hash already present in `AnimatorStateMachineDto.StateInfo`. No legitimate stale or out-of-order Exit was reproduced, so no production change was made.
+- [x] Preserve current identical-state replay timing and its authored callback order. Identical hashes do not justify generations, delays, or duplicate Animator states.
+- [x] If synchronized/action layers duplicate gameplay callbacks, filter once at the existing Animator-to-Character routing boundary using the authoritative layer proven by the fixture. No duplicate callback was reproduced, so no filter was added.
+- [x] If zero-weight tagged layers actually interfere with movement/root motion, ignore only those inactive layers in `AnimatorRootMotionRelay` while preserving hand-mode blends and traversal. No root-motion interference was reproduced, so the relay was unchanged.
+- [x] Add focused regression coverage for each reproduced defect and no broader cases. No Phase 4 runtime defect was reproduced; the Phase 2 trace is the regression coverage for the retained contract.
+
+Verify: the reproduced valid-content defect is removed; current chaining, same-state replay, progress timing, hand modes, root motion, and traversal remain unchanged.
 
 ### Animator Callback Failure Policy
 
@@ -95,7 +135,13 @@ Missing Enter, Progress, QueueCheck, or Exit callbacks are authoring or architec
 - Fail clearly when invalid setup can be detected.
 - Use existing cancellation for explicit caller cancellation or teardown and clean only the cancelling operation's existing state.
 - Never synthesize Progress/Exit, silently unlock, grant an effect, or report animation success.
-- Add runtime recovery only for a separately reproduced failure whose correct domain outcome is defined.
+- Fix the missing callback at its Animator setup or routing source; do not recover by completing gameplay at a different boundary.
+
+For this plan, no missing-callback gameplay recovery is defined. A missing required callback remains a visible setup/architecture failure until its source is fixed.
+
+### Separate Work
+
+`Locked Roll State Is Cleared Before Root Motion` is a real locomotion defect in the current source, but it is not an animation callback sequencing phase. Keep its validation and repair in a separate task. Fade cancellation and scene/spawn transaction issues are also outside this plan.
 
 ## Risks and Rollback
 
@@ -112,10 +158,10 @@ Missing Enter, Progress, QueueCheck, or Exit callbacks are authoring or architec
 - Focused Animator contract validation for required states/layers/behaviours and callback paths.
 - Unity Test Safety preflight before asynchronous Edit Mode tests. No Play Mode tests during normal validation.
 
-Completed evidence: `assert_test_ready` returned `TEST_READY` with `ElevatorDemo` clean. The four focused Edit Mode fixtures completed asynchronously with 8 passed, 0 failed, 0 skipped. Both runtime and Editor C# assemblies built with 0 errors. Independent review found no material runtime defects; full Play Mode travel remains intentionally outside normal validation.
+Completed Phase 1 evidence: `assert_test_ready` returned `TEST_READY` with `ElevatorDemo` clean. The four focused Edit Mode fixtures completed asynchronously with 8 passed, 0 failed, 0 skipped. Both runtime and Editor C# assemblies built with 0 errors. Independent review found no material runtime defects; full Play Mode travel remains intentionally outside normal validation.
+
+Phases 2–4 evidence: Unity `assert_test_ready` returned `TEST_READY` with `ElevatorDemo` clean. The focused callback trace passed 1/1, the broad Edit Mode Animation suite passed 43/43, and `CharacterActionStateMachineTests` passed 14/14. The trace covered authored lifecycle, action chaining/replay, hand-mode, and action-layer routes and reproduced no duplicate, stale, wrong-layer, or gameplay-impacting inactive-layer callback defect. Controller/profile assets were saved and force-reserialized through Unity with no import or serialization errors. Play Mode remained outside normal validation.
 
 ## Execution Handoff
 
-One `csharp_worker` owns all overlapping production and test changes in Character, CoreGameOrchestrator, AnimatorComponent, and focused arrival/Animator tests using `$soulslike-csharp-change`, `$soulslike-context` keys `animation-code` and `character-architecture`, and `$soulslike-animation-workflow`.
-
-After implementation, `unity_reviewer` and `unity_test_runner` independently review and validate the same bounded arrival slice. Animator assets are changed only if the tests prove a content defect; any asset mutation requires Unity persistence and serialization verification.
+Phases 1–4 are complete. See [[../../History/Implementation Records/Character Owned Animation Sequencing and Recovery Phases 2-4|the implementation record]] for the executed later-phase scope and validation evidence.

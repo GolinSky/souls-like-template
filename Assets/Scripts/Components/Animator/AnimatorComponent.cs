@@ -186,13 +186,10 @@ namespace SoulsLike.Entities.Character.Components
 
         public void ApplyAnimationProfile(
             AnimationProfile animationProfile,
-            bool hasRightWeapon,
-            bool hasLeftWeapon)
+            bool hasRightWeapon)
         {
-            RuntimeAnimatorController targetController = animationProfile.GetController(
-                hasRightWeapon,
-                hasLeftWeapon);
-            _supportsLeftHandAttacks = hasLeftWeapon;
+            RuntimeAnimatorController targetController = animationProfile.GetController(hasRightWeapon);
+            _supportsLeftHandAttacks = false;
 
             if (animator.runtimeAnimatorController == targetController)
             {
