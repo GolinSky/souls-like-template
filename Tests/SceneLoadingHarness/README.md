@@ -6,9 +6,11 @@ Run from the repository root with the .NET 10 SDK:
 dotnet run --project Tests/SceneLoadingHarness/SceneLoadingHarness.csproj -p:UseSharedCompilation=false
 ```
 
-This executable source-links the real SceneService, ISceneService, SceneModel,
+This executable compiles the real SceneService, ISceneService, SceneModel,
 and Model base. SceneData and Unity/Addressables operations are test doubles.
 UniTask is aliased to .NET Task with a deterministic synchronization context.
+The build copies SceneService into its intermediate directory and maps generic
+UniTask results to Task results, leaving the production source unchanged.
 No Unity Editor or external packages are required. Each asynchronous check is
 limited to 1,000 scheduler ticks.
 

@@ -7,9 +7,17 @@
     <SceneServiceSource Condition="'$(SceneServiceSource)' == ''">../../Assets/Scripts/Services/Scenes/SceneService.cs</SceneServiceSource>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(SceneServiceSource)" Link="SceneService.cs" />
     <Compile Include="../../Assets/Scripts/Services/Scenes/ISceneService.cs" Link="ISceneService.cs" />
     <Compile Include="../../Assets/Scripts/Services/Scenes/Data/SceneModel.cs" Link="SceneModel.cs" />
     <Compile Include="../../Assets/Scripts/Model/Model.cs" Link="Model.cs" />
   </ItemGroup>
+  <Target Name="PrepareSceneServiceSource" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <SceneServiceTestSource>$([System.IO.File]::ReadAllText('$(SceneServiceSource)').Replace('UniTask&lt;', 'System.Threading.Tasks.Task&lt;'))</SceneServiceTestSource>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(IntermediateOutputPath)SceneService.cs" Lines="$(SceneServiceTestSource)" Overwrite="true" />
+    <ItemGroup>
+      <Compile Include="$(IntermediateOutputPath)SceneService.cs" />
+    </ItemGroup>
+  </Target>
 </Project>

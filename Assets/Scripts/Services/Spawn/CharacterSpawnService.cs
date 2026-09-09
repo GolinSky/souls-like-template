@@ -46,6 +46,11 @@ namespace SoulsLike.Services.Spawn
             }
 
             CharacterSpawnData data = _store.LoadOrCreate();
+            if (data.ResumesAtGrace)
+            {
+                return PrepareGraceSpawn(data.LastGraceId);
+            }
+
             if (data.HasCurrentPosition)
             {
                 _pendingSpawnKind = PendingSpawnKind.SavedPosition;
@@ -83,6 +88,7 @@ namespace SoulsLike.Services.Spawn
             }
 
             CharacterSpawnData data = _store.LoadOrCreate();
+            data.ResumesAtGrace = true;
             data.HasCurrentPosition = true;
             data.CurrentScene = _locationData.GetLocation(_pendingGraceId).Id;
             data.CurrentPosition = position;
@@ -116,6 +122,7 @@ namespace SoulsLike.Services.Spawn
         public void SaveCurrentPosition(Vector3 position)
         {
             CharacterSpawnData data = _store.LoadOrCreate();
+            data.ResumesAtGrace = false;
             data.HasCurrentPosition = true;
             data.CurrentScene = _sceneService.CurrentScene;
             data.CurrentPosition = position;
@@ -125,6 +132,7 @@ namespace SoulsLike.Services.Spawn
         public void SaveLastGrace(GraceId graceId)
         {
             CharacterSpawnData data = _store.LoadOrCreate();
+            data.ResumesAtGrace = true;
             data.LastGraceId = graceId;
             _store.Save(data);
         }

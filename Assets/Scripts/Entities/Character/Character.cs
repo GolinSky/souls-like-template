@@ -126,7 +126,21 @@ namespace SoulsLike.Entities.Character
             ApplyMovementPresentation();
             Cursor.lockState = CursorLockMode.Locked;
             SetInputBlocked(true);
-            animatorComponent.TriggerSpawn();
+        }
+
+        public void BeginArrival(CharacterArrival arrival)
+        {
+            switch (arrival)
+            {
+                case CharacterArrival.WorldPosition:
+                    animatorComponent.TriggerSpawn();
+                    break;
+                case CharacterArrival.GraceRest:
+                    EnterGraceRestIdle();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(arrival), arrival, null);
+            }
         }
 
         public void Dispose()

@@ -66,9 +66,12 @@ namespace SoulsLike.Services
         
         public void Start()
         {
+            _character.BeginArrival(_startsOnGrace
+                ? CharacterArrival.GraceRest
+                : CharacterArrival.WorldPosition);
+
             if (_startsOnGrace)
             {
-                _character.EnterGraceRestIdle();
                 SetGameState(GameState.OnGraceSit);
                 return;
             }
@@ -182,7 +185,11 @@ namespace SoulsLike.Services
 
         public void QuitGame()
         {
-            _characterSpawnService.SaveCurrentPosition(_character.transform.position);
+            if (CurrentGameState != GameState.OnGraceSit)
+            {
+                _characterSpawnService.SaveCurrentPosition(_character.transform.position);
+            }
+
             _gameOrchestrator.LoadMenu().Forget();
         }
 
