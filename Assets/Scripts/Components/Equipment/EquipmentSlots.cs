@@ -164,6 +164,13 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             };
         }
 
+        public static bool IsCompatible(ItemDefinition definition, EquipmentSlotId slotId)
+        {
+            return definition.CanEquipIn(GetCompatibilityGroup(slotId))
+                && !(slotId is >= EquipmentSlotId.LeftHand1 and <= EquipmentSlotId.LeftHand3
+                    && definition.ItemType == ItemType.Weapon);
+        }
+
         public static bool IsCyclable(EquipmentSlotGroup group)
         {
             return group is EquipmentSlotGroup.RightHandArmament

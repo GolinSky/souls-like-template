@@ -22,7 +22,7 @@ namespace SoulsLike.Editor.Tests.Animation
 
             Assert.That(controller, Is.Not.Null, $"Missing animator controller at {CONTROLLER_PATH}.");
             Assert.That(controller.parameters.Any(parameter => parameter.name == "Spawn"
-                && parameter.type == AnimatorControllerParameterType.Trigger), Is.True,
+                && parameter.type == UnityEngine.AnimatorControllerParameterType.Trigger), Is.True,
                 "The arrival contract requires a Spawn trigger.");
 
             int oneHandedLayerIndex = Array.FindIndex(
@@ -46,18 +46,19 @@ namespace SoulsLike.Editor.Tests.Animation
                 StateMachineName.Spawn);
             Assert.That(spawnState, Is.Not.Null,
                 "The arrival contract requires a state that reports Spawn callbacks.");
-            AssertAuthoredTransitionOut(spawnState);
+            AssertAuthoredContinuation(spawnState);
 
             Assert.That(FindState(oneHandedLayer.stateMachine, "GraceRestIdle"), Is.Not.Null,
                 "The direct grace arrival route requires a GraceRestIdle state.");
         }
 
-        private static void AssertAuthoredTransitionOut(AnimatorState state)
+        private static void AssertAuthoredContinuation(AnimatorState state)
         {
             Assert.That(state.transitions.Any(transition => transition.isExit
                 || transition.destinationState != null
                 || transition.destinationStateMachine != null), Is.True,
-                $"State '{state.name}' must have an authored transition out.");
+                $"State '{state.name}' must have an authored continuation. "
+                + "Runtime trace coverage validates its Exit callback.");
         }
 
         private static bool HasStateMachineName(

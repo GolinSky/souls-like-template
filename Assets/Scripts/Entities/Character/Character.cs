@@ -759,27 +759,21 @@ namespace SoulsLike.Entities.Character
         {
             equipmentPresentation.ApplyLoadout(loadout);
             ItemId? rightWeaponId = ResolveAttackWeaponId(loadout, false);
-            ItemId? leftWeaponId = ResolveAttackWeaponId(loadout, true);
             bool hasRightEquippedWeapon = rightWeaponId.HasValue
                 && rightWeaponId != ItemId.Fist;
-            bool hasLeftEquippedWeapon = leftWeaponId.HasValue
-                && leftWeaponId != ItemId.Fist;
             AnimationProfile profile = hasRightEquippedWeapon
                 ? _itemCatalog.GetWeapon(rightWeaponId.Value).AnimationProfile
-                : hasLeftEquippedWeapon
-                    ? _itemCatalog.GetWeapon(leftWeaponId.Value).AnimationProfile
-                    : null;
+                : null;
             if (profile == null) animatorComponent.ResetAnimationProfile();
             else animatorComponent.ApplyAnimationProfile(
                 profile,
-                hasRightEquippedWeapon,
-                hasLeftEquippedWeapon);
+                hasRightEquippedWeapon);
 
             animatorComponent.TransitionHandMode(loadout.HandMode);
             _attackComponent.SetActiveWeapons(
                 rightWeaponId,
                 equipmentPresentation.ActiveRightWeaponRuntime,
-                leftWeaponId,
+                ResolveAttackWeaponId(loadout, true),
                 equipmentPresentation.ActiveLeftWeaponRuntime,
                 loadout.HandMode);
         }

@@ -26,11 +26,7 @@ namespace SoulsLike.Ui.PauseNavigation
         private readonly ISystemRoute _systemRoute;
         private readonly ISettingsRoute _settingsRoute;
 
-        private static readonly ItemType[] _leftHandItemTypes  =
-        {
-            ItemType.Weapon,
-            ItemType.Shield
-        };
+        private static readonly ItemType[] _leftHandItemTypes = { ItemType.Shield };
 
         private static readonly ItemType[] _rightHandItemTypes = { ItemType.Weapon };
         private static readonly ItemType[] _ammunitionItemTypes = { ItemType.Ammunition };

@@ -50,8 +50,7 @@ namespace SoulsLike.Entities.Character.Components.Equipment
         {
             InventoryEntry entry = _inventory.GetRequiredEntry(entryId);
             ItemDefinition definition = _itemCatalog.GetItem(entry.ItemId);
-            EquipmentGroup requiredGroup = EquipmentSlotCatalog.GetCompatibilityGroup(slotId);
-            if (!definition.CanEquipIn(requiredGroup))
+            if (!EquipmentSlotCatalog.IsCompatible(definition, slotId))
             {
                 throw new InvalidOperationException(
                     $"Item '{definition.DisplayName}' cannot be assigned to '{slotId}'.");
@@ -219,11 +218,10 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         public IReadOnlyList<InventoryEntry> GetCompatibleEntries(EquipmentSlotId slotId)
         {
-            EquipmentGroup group = EquipmentSlotCatalog.GetCompatibilityGroup(slotId);
             var result = new List<InventoryEntry>();
             foreach (InventoryEntry entry in _inventory.Entries)
             {
-                if (_itemCatalog.GetItem(entry.ItemId).CanEquipIn(group))
+                if (EquipmentSlotCatalog.IsCompatible(_itemCatalog.GetItem(entry.ItemId), slotId))
                 {
                     result.Add(entry);
                 }
