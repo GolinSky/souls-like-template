@@ -3,16 +3,16 @@ title: Stance Recovery Is Gated By Poise Delay
 type: issue
 domains:
   - combat
-status: open
+status: done
 authority: evidence
 priority: medium
-updated: 2026-09-07
+updated: 2026-09-09
 source_commit: 3925ea83e7cd80b111331a6105835c3e84eeb2b6
-verification: code and architecture mismatch
+verification: focused Edit Mode tests passed
 aliases: []
 tags:
   - work/issue
-  - status/open
+  - status/done
   - audit/architecture
 ---
 # Stance Recovery Is Gated By Poise Delay
@@ -62,7 +62,11 @@ With positive poise delay and no critical opportunity, stance increases by its c
 
 ### Validation
 
-Static call-path and source inspection completed. No implementation, test run, save fault injection, Play Mode session, or performance measurement was performed. Use focused Edit Mode/unit fixtures where practical. Any required gameplay reproduction belongs in a separate `unity_test_runner` follow-up under Unity Test Safety; memory measurements belong to `unity_profiler`. Do not treat this note as a passing runtime test.
+Resolved on 2026-09-09 by moving stance recovery ahead of the poise-delay return in `CombatDefenseComponent.TickRecovery`. Poise remains delay-gated; stance now recovers independently unless `HasCriticalOpportunity` is active.
+
+Focused Edit Mode validation passed 3/3 tests covering stance recovery during poise delay, critical-opportunity suppression, and poise recovery after delay expiry. Play Mode was intentionally not run under the approved validation scope.
+
+Implementation: [[History/Implementation Records/Stance Recovery Independence]].
 
 When resolved, set `status: done`, link the implementation record, and update affected architecture notes.
 

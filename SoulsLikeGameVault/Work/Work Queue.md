@@ -42,7 +42,7 @@ Current comparison: [[Research/Architecture and Systems Audit 2026-09-08]] — f
 Architecture audit: [[Research/Architecture and Systems Audit 2026-09-07]] — static evidence and validation gaps.
 
 - [[Work/Issues/Locked Roll State Is Cleared Before Root Motion]] — done; original trace corrected, minimal cleanup verified in Edit Mode; see [[History/Implementation Records/Roll Movement Lock Cleanup]].
-- [[Work/Issues/Stance Recovery Is Gated By Poise Delay]] — medium; code and architecture mismatch
+- [[Work/Issues/Stance Recovery Is Gated By Poise Delay]] — done; independent stance recovery verified in Edit Mode; see [[History/Implementation Records/Stance Recovery Independence]].
 - [[Work/Issues/Inventory Category Controls Are Not Connected]] — high; code and prefab defect
 - [[Work/Issues/Equipment Picker Compares Against The Wrong Slot]] — medium; code defect
 - [[Work/Issues/Scene Transitions Allow Concurrent Load Operations]] — medium; code defect

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Work/Issues/Locked Roll State Is Cleared Before Root Motion.md",
+                "file": "Work/Issues/Stance Recovery Is Gated By Poise Delay.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Locked Roll State Is Cleared Before Root Motion"
+              "title": "Stance Recovery Is Gated By Poise Delay"
             }
           }
         ],
@@ -202,14 +202,16 @@
   },
   "active": "2b0db04f96603185",
   "lastOpenFiles": [
-    "History/Implementation Records/Roll Movement Lock Cleanup.md",
+    "History/Implementation Records/Stance Recovery Independence.md",
     "Research/Architecture and Systems Audit 2026-09-08.md",
-    "Work/Work Queue.md",
-    "History/Implementation Records/Character Owned Animation Sequencing and Recovery Phases 2-4.md",
-    "History/Implementation Records/Character Owned Arrival Selection.md",
-    "Work/Plans/Character Owned Animation Sequencing and Recovery.md",
+    "Work/Issues/Locked Roll State Is Cleared Before Root Motion.md",
     "Work/Plans/Penpot Unity UI Flow Proof of Concept.md",
+    "Work/Plans/Character Owned Animation Sequencing and Recovery.md",
     "Research/Texture Audio and Mesh RAM Audit 2026-09-09.md",
+    "History/Implementation Records/Roll Movement Lock Cleanup.md",
+    "History/Implementation Records/Character Owned Arrival Selection.md",
+    "History/Implementation Records/Character Owned Animation Sequencing and Recovery Phases 2-4.md",
+    "Work/Work Queue.md",
     "Work/Issues/DefaultLocation Memory and Rendering Issues.md",
     "Work/Issues/Animation Completion Is Not Correlated To The Owning Action.md",
     "Research/Architecture and Systems Audit 2026-09-07.md",
@@ -226,8 +228,6 @@
     "Work/Plans/ProBuilder Integration and Agent Skills.md",
     "History/Implementation Records/Animation Rigging Authoring Foundation.md",
     "History/Implementation Records/DefaultLocation Memory Optimization Phase 4 Asset Residency.md",
-    "History/Implementation Records/DefaultLocation Memory Optimization Phase 4 Texture Streaming Batch 1.md",
-    "History/Implementation Records/DefaultLocation Memory Optimization Phase 3 Volume Quality Scaling.md",
     "Work/Work Queue.base",
     "Agent Guide/Knowledge Catalog.base",
     "Templates",

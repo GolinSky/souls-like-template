@@ -220,6 +220,13 @@ namespace SoulsLike.Entities.Combat
                 }
             }
 
+            if (stanceRecoveryPerSecond > 0f && !HasCriticalOpportunity)
+            {
+                _currentStance = Mathf.Min(
+                    maxStance,
+                    _currentStance + stanceRecoveryPerSecond * deltaTime);
+            }
+
             if (_poiseRecoveryDelayRemaining > 0f)
             {
                 _poiseRecoveryDelayRemaining = Mathf.Max(
@@ -233,13 +240,6 @@ namespace SoulsLike.Entities.Combat
                 _currentPoise = Mathf.Min(
                     maxPoise,
                     _currentPoise + poiseRecoveryPerSecond * deltaTime);
-            }
-
-            if (stanceRecoveryPerSecond > 0f && !HasCriticalOpportunity)
-            {
-                _currentStance = Mathf.Min(
-                    maxStance,
-                    _currentStance + stanceRecoveryPerSecond * deltaTime);
             }
         }
 

@@ -250,6 +250,7 @@ All defensive meters and runtime combat states are centralized in `CombatDefense
   - Depleted by `StanceDamage`.
   - Does not suffer a delay timer; recovers linearly at `stanceRecoveryPerSecond` (10/s) when not in critical opportunity.
   - Reaching 0 triggers `StanceBroken` and starts the 2.0s `criticalOpportunityRemaining` window.
+  - Implementation verified on 2026-09-09 with focused Edit Mode coverage for independent recovery and critical-opportunity suppression.
 - **Critical Opportunity**:
   - Opened by: **Parry Success** (on attacker), **Guard Break** (on defender), or **Stance Break** (on defender).
   - Lasts for `criticalOpportunityDurationSeconds` (2.0s).
