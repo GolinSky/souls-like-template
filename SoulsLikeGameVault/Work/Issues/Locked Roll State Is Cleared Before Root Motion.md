@@ -4,19 +4,29 @@ type: issue
 domains:
   - movement
   - combat
-status: open
+status: done
 authority: evidence
 priority: high
-updated: 2026-09-07
+updated: 2026-09-09
 source_commit: 3925ea83e7cd80b111331a6105835c3e84eeb2b6
-verification: code defect
+verification: original causal trace superseded by synchronous root-motion contract
 aliases: []
 tags:
   - work/issue
-  - status/open
+  - status/done
   - audit/architecture
 ---
 # Locked Roll State Is Cleared Before Root Motion
+
+## Recheck — 2026-09-09
+
+The original causal trace below is superseded. Current source at `4ff9e2c8902a415e55236a7c6bbc19b8ea70d88e` shows that `Character.StartRoll` calls `AnimatorComponent.TriggerRoll` / `TriggerBackStep`, which synchronously calls `BeginRootMotionAction` and `AnimatorRootMotionRelay.BeginRootMotionContract`. The relay sets the animation movement lock before the later `Character.Tick` synchronization. That synchronization therefore passes `true`, preserving roll metadata. The user also reports rolling works as intended in-game; the originally claimed gameplay defect has not been reproduced.
+
+The user authorized a minimal cleanup: clear roll metadata only when movement transitions from blocked to unblocked, while preserving repeated blocked calls' grounded-velocity reset. Current completion/interruption paths end the root-motion contract; chained rolls overwrite metadata under the active contract. No current caller was found to depend on repeated `false` calls for cleanup.
+
+Resolution: the original defect claim is superseded, and the authorized cleanup is implemented. Four focused Edit Mode tests passed after the change; before it, three passed and the repeated-unblocked preservation test failed as expected. Compilation succeeded. Actual Animator timing, movement appearance, and gameplay interruption/chaining remain outside this test coverage; no Play Mode validation was run. Implementation: [[History/Implementation Records/Roll Movement Lock Cleanup]].
+
+The September 7 evidence below is retained as historical audit context, not the current diagnosis.
 
 ## Issue Contract
 
