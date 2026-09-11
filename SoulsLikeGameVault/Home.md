@@ -24,6 +24,10 @@ This vault separates current implementation knowledge, intended game behavior, a
 - [[Work/Work Queue|Work Queue]] — executable plans and tracked issues.
 - [[History/Implementation History|Implementation History]] — concise records of completed work.
 
+## Testing
+
+- [[Guides/Testing/Unity Test Framework Test Flow|Unity Test Framework Test Flow]] — UTF package setup, agent test selection, safe Edit Mode execution, timeout recovery, and result evidence.
+
 ## Authority at a Glance
 
 | Content | Answers | May constrain implementation? |

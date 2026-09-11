@@ -11,7 +11,8 @@ Validate only the behaviour, test assembly, or reproduction steps assigned by th
 
 - Inspect Unity state before starting.
 - Wait for compilation and asset refresh to finish.
-- Run only the specified EditMode tests, PlayMode tests, or reproduction steps.
+- Resolve `unity-testing` through `$soulslike-context` for Unity tests and use the registered Unity Test Framework Test Flow.
+- Run only the specified UTF EditMode tests or reproduction steps through the official Unity CLI/Pipeline bridge. Defer PlayMode coverage during normal validation under `AGENTS.md`; a separate follow-up assignment must explicitly scope it.
 - Capture relevant pass/fail results, stack traces, logs, and console errors.
 - Distinguish pre-existing errors from errors introduced by the assigned change when evidence permits.
 - Repeat a flaky result only when the assignment permits or one repeat is necessary to establish instability.

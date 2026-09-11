@@ -14,6 +14,8 @@ tags:
 
 Small implementation records explain what changed, why, how it was validated, and which architecture or design notes were updated.
 
+- [[History/Implementation Records/Unity Test Framework Integration|Unity Test Framework Integration]] — UTF 1.6.0 explicit dependency, agent test rules, registered test flow, and passing Edit Mode integration check.
+
 - [[History/Implementation Records/Scene Loading Model State and Fail Fast Policy|Scene Loading Model State and Fail Fast Policy]] — user-directed replacement of sequential loading and rollback.
 - [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading|DefaultLocation Phase 6 Bounded Loading]] — source experiment validated in isolation; live memory/travel acceptance remains pending.
 - [[History/Implementation Records/Layer Service Remediation|Layer Service Remediation]]

@@ -124,6 +124,10 @@ Every parent handoff must name the required skill and only the conditional/domai
 
 ## Test Execution
 
+- Use the Unity Test Framework (UTF), package `com.unity.test-framework`, for Unity C# behavior and regression tests whenever the behavior can be tested meaningfully. Reuse relevant existing tests; add focused coverage for changed behavior when needed. Documentation-only or other low-impact changes do not need artificial tests.
+- Before authoring, selecting, running, or reviewing Unity tests, resolve `unity-testing` with `$soulslike-context` and read the registered headings in `SoulsLikeGameVault/Guides/Testing/Unity Test Framework Test Flow.md`.
+- Run UTF through the official Unity CLI/Pipeline bridge. Discover the live schema, use `list_tests --mode editor` to confirm the intended fixture or assembly, and explicitly pass `--mode editor`, a bounded filter, `--async_tests true`, and a timeout to `run_tests`. Never rely on its defaults (`all` modes and synchronous execution). The current Pipeline async runner does not enforce `--timeout`; enforce a caller-side wall-clock budget and use `test_status` / `cancel_tests` for timeout recovery.
+- Validate the nested test result, executed count, failures, and cancellation state. A successful CLI request, an empty selection, or compilation alone is not a passing test run. Report an unavailable Editor or blocked UTF run as a validation gap; static checks do not replace execution evidence.
 - Execute relevant tests to verify changes, strictly adhering to the Unity Test Safety protocol below.
 - Always run preflight checks (`assert_test_ready` / `list_open_scenes`) prior to starting any test run.
 - Run tests asynchronously (`async_tests=true`) and poll `test_status` until completion to prevent blocking and modal deadlocks.
