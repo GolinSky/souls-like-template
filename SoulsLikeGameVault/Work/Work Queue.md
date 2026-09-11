@@ -43,7 +43,7 @@ Architecture audit: [[Research/Architecture and Systems Audit 2026-09-07]] — s
 
 - [[Work/Issues/Locked Roll State Is Cleared Before Root Motion]] — done; original trace corrected, minimal cleanup verified in Edit Mode; see [[History/Implementation Records/Roll Movement Lock Cleanup]].
 - [[Work/Issues/Stance Recovery Is Gated By Poise Delay]] — done; independent stance recovery verified in Edit Mode; see [[History/Implementation Records/Stance Recovery Independence]].
-- [[Work/Issues/Inventory Category Controls Are Not Connected]] — high; code and prefab defect
+- [[Work/Issues/Inventory Category Controls Are Not Connected]] — done; category controls and focus wiring persisted in Unity; see [[History/Implementation Records/Inventory Category Controls Wiring]].
 - [[Work/Issues/Equipment Picker Compares Against The Wrong Slot]] — medium; code defect
 - [[Work/Issues/Scene Transitions Allow Concurrent Load Operations]] — medium; code defect
 - [[Work/Issues/Addressable Asset Loads Have No Release Owner]] — medium; resource lifetime defect

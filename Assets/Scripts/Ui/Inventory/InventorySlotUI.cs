@@ -32,6 +32,7 @@ namespace SoulsLike.Ui.Inventory
         private InventorySlotUI _down;
         private InventorySlotUI _left;
         private InventorySlotUI _right;
+        private Selectable _upCategoryTarget;
 
         public InventoryItemViewData CurrentItem { get; private set; }
 
@@ -78,12 +79,14 @@ namespace SoulsLike.Ui.Inventory
             InventorySlotUI up,
             InventorySlotUI down,
             InventorySlotUI left,
-            InventorySlotUI right)
+            InventorySlotUI right,
+            Selectable upCategoryTarget = null)
         {
             _up = up;
             _down = down;
             _left = left;
             _right = right;
+            _upCategoryTarget = upCategoryTarget;
         }
 
         public void Select()
@@ -124,6 +127,13 @@ namespace SoulsLike.Ui.Inventory
 
         public void OnMove(AxisEventData eventData)
         {
+            if (eventData.moveDir == MoveDirection.Up && _upCategoryTarget != null)
+            {
+                _upCategoryTarget.Select();
+                eventData.Use();
+                return;
+            }
+
             InventorySlotUI target = eventData.moveDir switch
             {
                 MoveDirection.Up => _up,

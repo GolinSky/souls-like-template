@@ -142,6 +142,7 @@ namespace SoulsLike.Ui.Inventory
             _isSelectionMode = false;
             _routeItemTypes.Clear();
             _itemSelected = null;
+            _view.SetCategoryControlsVisible(true);
             Refresh();
             _view.Show();
         }
@@ -158,6 +159,7 @@ namespace SoulsLike.Ui.Inventory
             }
 
             _itemSelected = itemSelected;
+            _view.SetCategoryControlsVisible(false);
             Refresh();
             _view.Show();
         }

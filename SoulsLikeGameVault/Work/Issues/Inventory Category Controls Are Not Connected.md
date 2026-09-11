@@ -4,16 +4,16 @@ type: issue
 domains:
   - ui
   - inventory
-status: open
+status: done
 authority: evidence
 priority: high
-updated: 2026-09-07
+updated: 2026-09-09
 source_commit: 3925ea83e7cd80b111331a6105835c3e84eeb2b6
-verification: code and prefab defect
+verification: Unity compile and prefab validation passed
 aliases: []
 tags:
   - work/issue
-  - status/open
+  - status/done
   - audit/architecture
 ---
 # Inventory Category Controls Are Not Connected
@@ -65,7 +65,11 @@ Each primary category and subcategory is reachable by the supported input method
 
 ### Validation
 
-Static call-path and source inspection completed. No implementation, test run, save fault injection, Play Mode session, or performance measurement was performed. Use focused Edit Mode/unit fixtures where practical. Any required gameplay reproduction belongs in a separate `unity_test_runner` follow-up under Unity Test Safety; memory measurements belong to `unity_profiler`. Do not treat this note as a passing runtime test.
+Resolved on 2026-09-09. `InventoryUi` now binds primary and subcategory toggles to the existing presenter API, maintains toggle state and category-specific visibility, and connects top-row grid navigation to the category controls. Standalone inventory shows the controls; equipment-picker mode hides them and retains its separate item-type filter.
+
+The `InventoryUi` prefab now contains distinct primary and subcategory containers with 5 and 11 serialized toggles in enum order. Unity compilation, prefab persistence/serialization inspection, clean-scene preflight, and console checks passed. Independent review found no remaining material issue. No matching Edit Mode tests exist; Play Mode mouse, keyboard, and gamepad verification was intentionally deferred under Unity Test Safety.
+
+Implementation: [[History/Implementation Records/Inventory Category Controls Wiring]].
 
 When resolved, set `status: done`, link the implementation record, and update affected architecture notes.
 
