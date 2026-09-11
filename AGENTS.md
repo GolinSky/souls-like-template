@@ -289,3 +289,15 @@ If a Unity Pipeline error contains a malformed resolved path such as:
 `Assets/controller=Assets/...`
 
 STOP and correct the CLI argument serialization. Do not search for another asset, rename the asset, reimport it, or modify the Unity project.
+
+<!-- penpot-ai-kit:begin -->
+# Penpot AI Kit — project operating rules
+Penpot skills are installed as native, self-contained Codex skills in this project's .agents/skills directory.
+
+Before ANY Penpot design work:
+1. Read C:\Users\golin\.penpot-ai-kit/AGENTS.md and follow it.
+2. Your FIRST Penpot tool call each session is `high_level_overview` (no arguments).
+3. Let the request trigger the matching penpot-* skill; use penpot-router when it spans several skills.
+
+The MCP configuration remains in the user's global Codex config so secrets never land in this project.
+<!-- penpot-ai-kit:end -->
