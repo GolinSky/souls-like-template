@@ -52,7 +52,8 @@ Live source, serialized assets, and current tool output take precedence over gen
 
 ## UI Workflow
 
-- Before working on UI, UI controllers, presenters, or views, resolve the `ui-code` context and read `SoulsLikeGameVault/Guides/UI/UI Code Build Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints.
+- Before any UI work—including Penpot design, mockups, UI art, generated UI assets, asset import, layout, UI rendering, or UI interaction—resolve the required `ui-style` and `ui-asset-layout` contexts. Read each note's `Project Application Rules` and `Task-Conditional Reading Map`, then load only the map-selected detailed headings through vault MCP (`soulslike-vault`) or the checked-in Markdown fallback. Do not start Obsidian or check REST endpoints.
+- Before working on UI controllers, presenters, views, UI prefabs, or Addressables, also resolve the `ui-code` context and read `SoulsLikeGameVault/Guides/UI/UI Code Build Guide.md`. The architecture route remains required alongside the style and asset-layout rules.
 
 ## Animation Workflow
 
@@ -289,3 +290,15 @@ If a Unity Pipeline error contains a malformed resolved path such as:
 `Assets/controller=Assets/...`
 
 STOP and correct the CLI argument serialization. Do not search for another asset, rename the asset, reimport it, or modify the Unity project.
+
+<!-- penpot-ai-kit:begin -->
+# Penpot AI Kit — project operating rules
+Penpot skills are installed as native, self-contained Codex skills in this project's .agents/skills directory.
+
+Before ANY Penpot design work:
+1. Read C:\Users\golin\.penpot-ai-kit/AGENTS.md and follow it.
+2. Your FIRST Penpot tool call each session is `high_level_overview` (no arguments).
+3. Let the request trigger the matching penpot-* skill; use penpot-router when it spans several skills.
+
+The MCP configuration remains in the user's global Codex config so secrets never land in this project.
+<!-- penpot-ai-kit:end -->
