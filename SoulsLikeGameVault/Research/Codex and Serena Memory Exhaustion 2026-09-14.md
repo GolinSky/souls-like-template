@@ -14,7 +14,7 @@ tags:
 
 # Codex and Serena Memory Exhaustion 2026-09-14
 
-> **Applied follow-up, September 14:** The user approved remediation after this investigation. D: is now configured for system-managed paging; the shared HTTP Serena service, role overrides, guarded C# adapter patch, and sign-in launcher are installed. Two-client live validation passed, and eight old idle stdio backends were retired. A Windows restart is still required. See [[Serena Shared Backend and Pagefile Headroom]] for the applied changes and evidence. Earlier observations and proposed changes below are retained as the investigation record.
+> **Applied follow-up, September 14:** The user approved remediation after this investigation. D: is now configured for system-managed paging; the shared HTTP Serena service, role overrides, guarded C# adapter patch, and sign-in launcher are installed. Two-client live validation passed, and eight old idle stdio backends were retired. A Windows restart is still required. See [[History/Records/Serena Shared Backend and Pagefile Headroom]] for the applied changes and evidence. Earlier observations and proposed changes below are retained as the investigation record.
 
 ## Required Package
 
@@ -226,7 +226,7 @@ Proceed with containment first, then choose controlled activation or one backend
 
 Observe Task Manager's **Performance → Memory → Committed**, plus process count and private bytes, during the comparison. Use a conservative stop threshold before approaching the commit ceiling; do not deliberately reproduce 99% exhaustion.
 
-Evidence files: [[Codex and Serena Memory Exhaustion 2026-09-14/Log and Configuration Evidence.json]] and [[Codex and Serena Memory Exhaustion 2026-09-14/Windows Resource Exhaustion Event 111437.xml]]. The JSON preserves startup lines, counts, source log locations, configuration summaries, and Serena log hashes. It contains local diagnostics and has not been published externally.
+Evidence files: [[Research/Codex and Serena Memory Exhaustion 2026-09-14/Log and Configuration Evidence.json]] and [[Research/Codex and Serena Memory Exhaustion 2026-09-14/Windows Resource Exhaustion Event 111437.xml]]. The JSON preserves startup lines, counts, source log locations, configuration summaries, and Serena log hashes. It contains local diagnostics and has not been published externally.
 
 ### Follow-up: pagefile action, subagent proof, and specific Serena fixes
 
@@ -329,7 +329,7 @@ This is a supported architecture change, not a claim that it has already been de
 
 Acceptance: one Serena service and one Roslyn language server for this checkout across several clients; MSBuild worker count allowed to fluctuate but remain bounded; no second 203-project startup batch when another client connects; representative symbol lookup/reference tools succeed; client disconnect does not remove the shared backend. Measure system commit before/after, and do not reproduce exhaustion to validate the fix.
 
-New evidence: [[Codex and Serena Memory Exhaustion 2026-09-14/Subagent Runtime Evidence.json]] and [[Codex and Serena Memory Exhaustion 2026-09-14/Adapter Discovery Proof.json]]. Configuration migration and the adapter correction remain recommendations; the only requested system change attempted was the pagefile update, which remains pending administrator elevation.
+New evidence: [[Research/Codex and Serena Memory Exhaustion 2026-09-14/Subagent Runtime Evidence.json]] and [[Research/Codex and Serena Memory Exhaustion 2026-09-14/Adapter Discovery Proof.json]]. Configuration migration and the adapter correction remain recommendations; the only requested system change attempted was the pagefile update, which remains pending administrator elevation.
 
 ## Evidence Rules
 

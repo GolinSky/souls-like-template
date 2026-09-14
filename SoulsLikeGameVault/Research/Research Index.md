@@ -8,17 +8,13 @@ authority: evidence
 verified: 2026-09-07
 tags:
   - vault/index
+updated: 2026-09-14
 ---
 
 # Research Index
 
-Research notes are source-backed evidence packages. They may recommend changes, but they are not implementation policy and are not executable plans until reviewed.
+Research provides evidence and options; it does not authorize implementation. The catalog includes dated investigations and supporting package notes without requiring a second manual list.
 
-- [[Research/Architecture and Systems Audit 2026-09-07]] — 11 issue notes, static evidence, and validation gaps.
-- [[Enemy Encounter System Audit]]
-- [[Flask Healing System Research]]
-- [[Interaction System Audit]] — stale/partial against current interaction commands.
-- [[Inventory and Equipment Architecture Research]]
-- [[Layer System Audit]]
+![[Meta/Knowledge Catalog.base#Research]]
 
-Start new work from [[../Templates/Research Package Template|Research Package Template]]. A review-approved result moves into [[../Work/Work Queue|Work]] as a plan or issue while the research remains unchanged as evidence.
+Use [[Meta/Templates/Research Package Template]]. Keep source captures with their package. A reviewed proposal becomes a plan or issue in [[Work/Work Queue]]; superseded evidence belongs in [[History/Implementation History]].

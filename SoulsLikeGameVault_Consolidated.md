@@ -1,5 +1,8 @@
 # SoulsLikeGameVault — Consolidated Documentation & Architecture Reference
 
+> [!warning] Historical export
+> This 28-document snapshot predates the maintained vault and its 2026-09-14 migration. Paths and architecture claims below are historical. Start with [Home](SoulsLikeGameVault/Home.md) and the [current registry](<SoulsLikeGameVault/Meta/Agent Context Registry.md>). Do not use this export to reopen completed issues or execute old proposals.
+
 > **Single Consolidated Vault Export for AI Agent Review & System Analysis**
 >
 > - **Source Vault Directory:** `SoulsLikeGameVault/`

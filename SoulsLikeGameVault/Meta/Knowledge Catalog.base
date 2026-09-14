@@ -1,0 +1,88 @@
+filters:
+  and:
+    - file.ext == "md"
+    - '!file.inFolder("Meta/Templates")'
+views:
+  - type: table
+    name: Needs Review
+    filters:
+      and:
+        - file.inFolder("Knowledge")
+        - status == "needs-review" || status == "draft" || status == "proposed"
+    groupBy:
+      property: type
+      direction: ASC
+    order:
+      - file.name
+      - type
+      - domains
+      - status
+      - authority
+      - verified
+  - type: table
+    name: Current Knowledge
+    filters:
+      and:
+        - file.inFolder("Knowledge") || file.inFolder("Meta")
+        - status == "current" || status == "ready"
+    groupBy:
+      property: type
+      direction: ASC
+    order:
+      - file.name
+      - type
+      - domains
+      - authority
+      - verified
+  - type: table
+    name: Research
+    filters:
+      and:
+        - file.inFolder("Research")
+    order:
+      - file.name
+      - type
+      - domains
+      - status
+      - updated
+  - type: table
+    name: Implementation Records
+    filters:
+      and:
+        - file.inFolder("History/Records")
+    order:
+      - file.name
+      - domains
+      - status
+      - updated
+  - type: table
+    name: Closed Issues
+    filters:
+      and:
+        - file.inFolder("History/Closed Issues")
+    order:
+      - file.name
+      - domains
+      - status
+      - closed
+      - updated
+  - type: table
+    name: Completed Plans
+    filters:
+      and:
+        - file.inFolder("History/Completed Plans")
+    order:
+      - file.name
+      - domains
+      - status
+      - updated
+  - type: table
+    name: Superseded Evidence
+    filters:
+      and:
+        - file.inFolder("History/Superseded")
+    order:
+      - file.name
+      - type
+      - status
+      - updated

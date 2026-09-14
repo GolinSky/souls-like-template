@@ -18,6 +18,9 @@ tags:
 ---
 # Architecture and Systems Audit 2026-09-07
 
+> [!info] Historical status snapshot
+> Findings and status descriptions below belong to the original audit date. The 2026-09-14 issue closures and current work queue supersede them. Use [[Work/Work Queue]] for active work and [[History/Records/Vault Simplification and Issue Closure 2026-09-14]] for the closure decisions. Links to closed issues preserve evidence and do not reopen them.
+
 ## Required Package
 
 ### Question and Desired Decision
@@ -61,21 +64,21 @@ Each issue contains the observed source behavior, expected behavior, a reproduct
 
 | # | Issue | Priority | Evidence classification |
 |---|---|---|---|
-| 1 | [[Work/Issues/Locked Roll State Is Cleared Before Root Motion|Locked Roll State Is Cleared Before Root Motion]] | high | code defect |
-| 2 | [[Work/Issues/Stance Recovery Is Gated By Poise Delay|Stance Recovery Is Gated By Poise Delay]] | medium | code and architecture mismatch |
-| 3 | [[Work/Issues/Inventory Category Controls Are Not Connected|Inventory Category Controls Are Not Connected]] | high | code and prefab defect |
+| 1 | [[History/Closed Issues/Locked Roll State Is Cleared Before Root Motion|Locked Roll State Is Cleared Before Root Motion]] | high | code defect |
+| 2 | [[History/Closed Issues/Stance Recovery Is Gated By Poise Delay|Stance Recovery Is Gated By Poise Delay]] | medium | code and architecture mismatch |
+| 3 | [[History/Closed Issues/Inventory Category Controls Are Not Connected|Inventory Category Controls Are Not Connected]] | high | code and prefab defect |
 | 4 | [[Work/Issues/Equipment Picker Compares Against The Wrong Slot|Equipment Picker Compares Against The Wrong Slot]] | medium | code defect |
-| 5 | [[Work/Issues/Scene Transitions Allow Concurrent Load Operations|Scene Transitions Allow Concurrent Load Operations]] | medium | code defect |
+| 5 | [[Work/Issues/Rejected Scene Transition Can Overwrite Pending Spawn Intent|Scene Transitions Allow Concurrent Load Operations]] | medium | code defect |
 | 6 | [[Work/Issues/Addressable Asset Loads Have No Release Owner|Addressable Asset Loads Have No Release Owner]] | medium | resource lifetime defect |
 | 7 | [[Work/Issues/Settings Apply Hides Persistence Failures|Settings Apply Hides Persistence Failures]] | medium | error propagation defect |
 | 8 | [[Work/Issues/Save Writes Can Replace The Last Valid File With Partial Data|Save Writes Can Replace The Last Valid File With Partial Data]] | medium | resilience gap |
 | 9 | [[Work/Issues/Respawn Assumes The Last Grace Is In The Current Scene|Respawn Assumes The Last Grace Is In The Current Scene]] | medium | conditional code defect |
 | 10 | [[Work/Issues/Equipment Picker Does Not Filter Exact Slot Compatibility|Equipment Picker Does Not Filter Exact Slot Compatibility]] | medium | conditional content integration defect |
-| 11 | [[Work/Issues/Architecture And Roll Issue Notes Contain Superseded Evidence|Architecture And Roll Issue Notes Contain Superseded Evidence]] | medium | documentation defect |
+| 11 | [[History/Closed Issues/Architecture And Roll Issue Notes Contain Superseded Evidence|Architecture And Roll Issue Notes Contain Superseded Evidence]] | medium | documentation defect |
 
-Related performance evidence is recorded separately in [[Work/Issues/DefaultLocation Memory and Rendering Issues]]. Its measurements were not repeated here. Loading all configured dependencies within one transition is distinct from overlapping multiple top-level transition requests, and deliberate scene residency is not itself an asset-reference leak.
+Related performance evidence is recorded separately in [[History/Closed Issues/DefaultLocation Memory and Rendering Issues]]. Its measurements were not repeated here. Loading all configured dependencies within one transition is distinct from overlapping multiple top-level transition requests, and deliberate scene residency is not itself an asset-reference leak.
 
-Existing issue: [[Work/Issues/Roll Interruption Issue]]. It was not duplicated or marked resolved. The new roll issue concerns metadata cleared at startup; the existing report concerns chained interruption and contains some already-implemented recommendations.
+Existing issue: [[History/Closed Issues/Roll Interruption Issue]]. It was not duplicated or marked resolved. The new roll issue concerns metadata cleared at startup; the existing report concerns chained interruption and contains some already-implemented recommendations.
 
 ### Options and Tradeoffs
 
@@ -120,6 +123,6 @@ The issue list is also linked from [[Work/Work Queue]].
 
 - Live code, inspected serialized content, and the current source commit outrank generated Graphify output and stale notes.
 - Graphify's existing 4,704-node graph was used for navigation; it was not rebuilt. Initial query vocabulary: character, combat, inventory, settings, scene, orchestrator, entity, interaction. Findings were verified against source rather than inferred graph edges.
-- Context was resolved through [[Agent Guide/Agent Context Registry]] and the registered headings of [[Agent Guide/Vault Guide]], [[Architecture/Systems/Character System]], [[Architecture/Systems/Hitbox System]], [[Architecture/Systems/Jump and Roll System]], [[Architecture/Systems/Entity Locator System]], [[Architecture/Systems/Layer Service]], [[Guides/Animation/Animator Sub-State Machine Guide]], [[Guides/UI/UI Code Build Guide]], [[Architecture/UI/Pause Navigation]], [[Architecture/UI/UI Route Navigation]], and [[Architecture/UI/Grace Navigation]] as applicable.
-- [[Architecture/Systems/Settings System]] and [[Research/Interaction System Audit]] were treated as evidence with their registry staleness limitations. Proposed future features were not treated as mandatory current behavior.
+- Context was resolved through [[Meta/Agent Context Registry]] and the registered headings of [[Meta/Vault Guide]], [[Knowledge/Architecture/Systems/Character System]], [[Knowledge/Architecture/Systems/Hitbox System]], [[Knowledge/Architecture/Systems/Jump and Roll System]], [[Knowledge/Architecture/Systems/Entity Locator System]], [[Knowledge/Architecture/Systems/Layer Service]], [[Knowledge/Guides/Animation/Animator Sub-State Machine Guide]], [[Knowledge/Guides/UI/UI Code Build Guide]], [[Knowledge/Architecture/UI/Pause Navigation]], [[Knowledge/Architecture/UI/UI Route Navigation]], and [[Knowledge/Architecture/UI/Grace Navigation]] as applicable.
+- [[Knowledge/Architecture/Systems/Settings System]] and [[Research/Interaction System Audit]] were treated as evidence with their registry staleness limitations. Proposed future features were not treated as mandatory current behavior.
 - Addressables ownership was checked against Context7 and the installed package's `Documentation~/memory-assets.md`, which requires balancing loads and releases. No external recommendation was used to infer a measured performance problem.

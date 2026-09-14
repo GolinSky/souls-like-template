@@ -8,35 +8,30 @@ authority: advisory
 verified: 2026-09-07
 tags:
   - vault/home
+updated: 2026-09-14
 ---
 
 # SoulsLike Game Vault
 
-This vault separates current implementation knowledge, intended game behavior, active work, research evidence, and historical records so neither people nor agents mistake one for another.
-
 ## Start Here
 
-- [[Agent Guide/Vault Guide|Vault Guide]] — naming, metadata, lifecycle, agent lookup, and diagram rules.
-- [[Agent Guide/Agent Context Registry|Agent Context Registry]] — the only notes agents may treat as task-specific policy.
-- [[Architecture/Architecture Index|Architecture]] — current module ownership, dependencies, and runtime flows.
-- [[Game Design/Game Design Document|Game Design Document]] — intended player experience and feature decisions.
-- [[Research/Research Index|Research]] — source-backed investigations and review packages.
-- [[Work/Work Queue|Work Queue]] — executable plans and tracked issues.
-- [[History/Implementation History|Implementation History]] — concise records of completed work.
+- [[Work/Work Queue]] — active issues and plans, grouped automatically by status.
+- [[Knowledge/Architecture/Architecture Index]] — current system ownership and execution paths.
+- [[Knowledge/Game Design/Game Design Document]] — intended gameplay and design decisions.
+- [[Meta/Vault Status Index]] — current knowledge and notes needing review.
+- [[Research/Research Index]] — investigations and evidence packages.
+- [[History/Implementation History]] — implementation records, closed issues, completed plans, and superseded material.
+- [[Meta/Vault Guide]] — folder lifecycle and note conventions.
+- [[Meta/Agent Context Registry]] — the allow-list for task-specific agent policy.
 
-## Testing
+## Folder Map
 
-- [[Guides/Testing/Unity Test Framework Test Flow|Unity Test Framework Test Flow]] — UTF package setup, agent test selection, safe Edit Mode execution, timeout recovery, and result evidence.
+| Folder | Purpose |
+|---|---|
+| `Work/` | Active issues and plans. |
+| `Knowledge/` | Architecture, game design, and reusable guides. |
+| `Research/` | Investigations and their supporting evidence. |
+| `History/` | Records, closed issues, completed plans, and superseded documents. |
+| `Meta/` | Registry, vault guide, catalogs, and templates. |
 
-## Authority at a Glance
-
-| Content | Answers | May constrain implementation? |
-|---|---|---|
-| Required guide | What rules must be followed? | Yes, when registered. |
-| Architecture | How does the current system work? | Only after verification against live source/assets. |
-| Game design | What should the player experience? | Advisory until accepted and registered. |
-| Research | What evidence and options were found? | No; it informs a later plan. |
-| Plan / issue | What work is approved or unresolved? | It scopes work, but does not override project policy. |
-| Implementation record | What changed and how was it validated? | No; it is historical evidence. |
-
-Live source, serialized assets, and current tool output take precedence over stale documentation.
+Status lives in note properties; catalogs derive their lists from those properties. Required guidance constrains work only when registered. Live source and current tool evidence outrank stale architecture or research.

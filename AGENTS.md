@@ -8,7 +8,7 @@ Apply project guidance in this order:
 2. `AGENTS.md` for repository-wide policy and routing.
 3. `.codex/agents/*.toml` for one custom role's operating boundary.
 4. `.agents/skills/*/SKILL.md` for the selected workflow.
-5. `SoulsLikeGameVault/Agent Guide/Agent Context Registry.md` and the exact registered vault note for domain context.
+5. `SoulsLikeGameVault/Meta/Agent Context Registry.md` and the exact registered vault note for domain context.
 
 Live source, serialized assets, and current tool output take precedence over generated Graphify output and advisory vault notes. Required registry notes may add constraints but cannot override higher-level policy.
 
@@ -24,11 +24,11 @@ Live source, serialized assets, and current tool output take precedence over gen
 
 ## Vault Context Discovery
 
-- Before a non-trivial implementation, investigation, review, or Unity asset task, use `$soulslike-context` to resolve relevant task signals against `SoulsLikeGameVault/Agent Guide/Agent Context Registry.md`.
+- Before a non-trivial implementation, investigation, review, or Unity asset task, use `$soulslike-context` to resolve relevant task signals against `SoulsLikeGameVault/Meta/Agent Context Registry.md`.
 - Load every directly matching `required` entry and only the `advisory` entries relevant to the assigned scope. Read registered headings rather than entire notes.
 - Registered notes may be discovered by an exact context key or by the registry's task signals. Tags and frontmatter support discovery, but only a registry entry can make a note project policy.
 - Live source, serialized assets, and current tool output override advisory or stale notes. Report conflicts and mark affected documentation for review; do not silently follow it.
-- Persistent plans belong in `SoulsLikeGameVault/Work/Plans/`, issues in `SoulsLikeGameVault/Work/Issues/`, research handoffs in `SoulsLikeGameVault/Research/`, and completed work records in `SoulsLikeGameVault/History/Implementation Records/`. Use the matching note template.
+- Active plans belong in `SoulsLikeGameVault/Work/Plans/`, active issues in `SoulsLikeGameVault/Work/Issues/`, research handoffs in `SoulsLikeGameVault/Research/`, and completed work records in `SoulsLikeGameVault/History/Records/`. Completed issues move to `SoulsLikeGameVault/History/Closed Issues/`, completed plans to `SoulsLikeGameVault/History/Completed Plans/`, and superseded evidence to `SoulsLikeGameVault/History/Superseded/`. Preserve the recorded closure basis and validation limits; historical audits do not reopen closed work. Use templates in `SoulsLikeGameVault/Meta/Templates/`.
 - When Plan mode produces a project implementation plan, create or update its note in `Work/Plans/` using the plan template. Leave it `draft` until reviewed; execute it only when the user explicitly requests execution and its status is `ready` or `in-progress`.
 
 
@@ -53,11 +53,11 @@ Live source, serialized assets, and current tool output take precedence over gen
 ## UI Workflow
 
 - Before any UI work—including Penpot design, mockups, UI art, generated UI assets, asset import, layout, UI rendering, or UI interaction—resolve the required `ui-style` and `ui-asset-layout` contexts. Read each note's `Project Application Rules` and `Task-Conditional Reading Map`, then load only the map-selected detailed headings through vault MCP (`soulslike-vault`) or the checked-in Markdown fallback. Do not start Obsidian or check REST endpoints.
-- Before working on UI controllers, presenters, views, UI prefabs, or Addressables, also resolve the `ui-code` context and read `SoulsLikeGameVault/Guides/UI/UI Code Build Guide.md`. The architecture route remains required alongside the style and asset-layout rules.
+- Before working on UI controllers, presenters, views, UI prefabs, or Addressables, also resolve the `ui-code` context and read `SoulsLikeGameVault/Knowledge/Guides/UI/UI Code Build Guide.md`. The architecture route remains required alongside the style and asset-layout rules.
 
 ## Animation Workflow
 
-- Before modifying Animator Controllers, animation states, transitions, sub-state machines, or ActionExecutor animation code, resolve the `animation-code` context and read `SoulsLikeGameVault/Guides/Animation/Animator Sub-State Machine Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints. Ensure all animations are grouped into sub-state machines, coordinate standards matching `CharacterGreatSwordAnimator.controller` are followed, action sub-state machines contain an inert `Empty` default state, and runtime CrossFade calls use short state names/hashes.
+- Before modifying Animator Controllers, animation states, transitions, sub-state machines, or ActionExecutor animation code, resolve the `animation-code` context and read `SoulsLikeGameVault/Knowledge/Guides/Animation/Animator Sub-State Machine Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints. Ensure all animations are grouped into sub-state machines, coordinate standards matching `CharacterGreatSwordAnimator.controller` are followed, action sub-state machines contain an inert `Empty` default state, and runtime CrossFade calls use short state names/hashes.
 
 ## Subagent orchestration
 
@@ -95,7 +95,7 @@ Project skills are sibling packages under `.agents/skills`; the role hierarchy i
 | `unity_reviewer` | `$soulslike-change-review` | The same domain skill used by the reviewed change |
 | `unity_test_runner` | `$soulslike-validation` | The same domain skill used by the validation target |
 
-Every parent handoff must name the required skill and only the conditional/domain skills applicable to that assignment. Use `$soulslike-context` with an exact key or explicit task signals from `SoulsLikeGameVault/Agent Guide/Agent Context Registry.md`; do not ask a child to search the vault broadly.
+Every parent handoff must name the required skill and only the conditional/domain skills applicable to that assignment. Use `$soulslike-context` with an exact key or explicit task signals from `SoulsLikeGameVault/Meta/Agent Context Registry.md`; do not ask a child to search the vault broadly.
 
 ## Dependency Injection
 
@@ -127,7 +127,7 @@ Every parent handoff must name the required skill and only the conditional/domai
 ## Test Execution
 
 - Use the Unity Test Framework (UTF), package `com.unity.test-framework`, for Unity C# behavior and regression tests whenever the behavior can be tested meaningfully. Reuse relevant existing tests; add focused coverage for changed behavior when needed. Documentation-only or other low-impact changes do not need artificial tests.
-- Before authoring, selecting, running, or reviewing Unity tests, resolve `unity-testing` with `$soulslike-context` and read the registered headings in `SoulsLikeGameVault/Guides/Testing/Unity Test Framework Test Flow.md`.
+- Before authoring, selecting, running, or reviewing Unity tests, resolve `unity-testing` with `$soulslike-context` and read the registered headings in `SoulsLikeGameVault/Knowledge/Guides/Testing/Unity Test Framework Test Flow.md`.
 - Run UTF through the official Unity CLI/Pipeline bridge. Discover the live schema, use `list_tests --mode editor` to confirm the intended fixture or assembly, and explicitly pass `--mode editor`, a bounded filter, `--async_tests true`, and a timeout to `run_tests`. Never rely on its defaults (`all` modes and synchronous execution). The current Pipeline async runner does not enforce `--timeout`; enforce a caller-side wall-clock budget and use `test_status` / `cancel_tests` for timeout recovery.
 - Validate the nested test result, executed count, failures, and cancellation state. A successful CLI request, an empty selection, or compilation alone is not a passing test run. Report an unavailable Editor or blocked UTF run as a validation gap; static checks do not replace execution evidence.
 - Execute relevant tests to verify changes, strictly adhering to the Unity Test Safety protocol below.

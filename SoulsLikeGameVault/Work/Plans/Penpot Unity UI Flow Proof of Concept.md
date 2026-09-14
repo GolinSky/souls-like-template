@@ -6,7 +6,7 @@ domains:
   - tooling
 status: in-progress
 authority: advisory
-updated: "2026-09-09"
+updated: 2026-09-14
 aliases:
   - PENPOT_CODEX_UNITY_UI_FLOW_SETUP_PLAN
 tags:
@@ -15,6 +15,10 @@ tags:
 ---
 
 # Penpot Unity UI Flow Proof of Concept
+
+## Current Scope — 2026-09-14
+
+Later approved production integrations demonstrate the Penpot-to-Unity path: [[History/Records/2026-09-12 Approved Inventory UI Integration]] and [[History/Records/2026-09-14 Equipment UI Integration]]. The setup and approval statements below describe the original experiment, not current missing prerequisites. Do not request credentials, repeat installation, or rebuild integrated UI from this old checklist. The experiment remains `in-progress` until its external plan-specific final report and remaining acceptance criteria are reconciled; those have not been verified by this documentation change.
 
 ## Plan Contract
 
@@ -68,4 +72,4 @@ Execute the user-approved external plan at `C:\Users\golin\Documents\PENPOT_CODE
 
 - Required context keys: `ui-code`, `plan-workflow`, `work-routing`.
 - Likely new scope: `docs/ui-ai/`, `Assets/Scripts/Ui/PenpotFlow/`, `Assets/Prefabs/Ui/PenpotFlow/`, and optionally an isolated test scene.
-- Remaining user decisions: supply the private Penpot MCP key during setup and select one of the three generated designs.
+- Remaining reconciliation: map the completed approved integrations to the external experiment's acceptance criteria and final report. The original setup/key and design-selection prerequisites are historical, not new user actions.

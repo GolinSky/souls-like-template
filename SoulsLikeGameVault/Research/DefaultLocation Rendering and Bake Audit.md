@@ -45,7 +45,7 @@ Evidence is a read-only, imported Editor inventory with resolved prefab instance
 - `Assets/Settings/Data/SceneData.asset:15`: configured default; dependency list later in the same asset.
 - `Assets/Scripts/Editor/LocationBakeTool.cs`: existing multi-scene lighting/occlusion bake tooling.
 - Material and model assets primarily under `Assets/ThirdParty/LeartesStudios/FantasyCastle/HDRP/Art/`.
-- Current issue owner: [[Work/Issues/DefaultLocation Memory and Rendering Issues]]. Earlier comparison: [[Research/Texture Audio and Mesh RAM Audit 2026-09-09]].
+- Current issue owner: [[History/Closed Issues/DefaultLocation Memory and Rendering Issues]]. Earlier comparison: [[Research/Texture Audio and Mesh RAM Audit 2026-09-09]].
 
 ### Evidence and Findings
 
@@ -186,7 +186,7 @@ No production assets, scripts, import settings or Obsidian configuration were ch
 
 ### Handoff
 
-Confirmed bake issues and updated optimization evidence are recorded in [[Work/Issues/DefaultLocation Memory and Rendering Issues]]. This audit does not authorize or execute the existing draft bake plan.
+Confirmed bake issues and updated optimization evidence are recorded in [[History/Closed Issues/DefaultLocation Memory and Rendering Issues]]. This audit does not authorize or execute the existing draft bake plan.
 
 ## Evidence Rules
 

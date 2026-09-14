@@ -8,19 +8,27 @@ authority: historical
 verified: 2026-09-07
 tags:
   - vault/index
+updated: 2026-09-14
 ---
 
 # Implementation History
 
-Small implementation records explain what changed, why, how it was validated, and which architecture or design notes were updated.
+Records explain what changed, why, and what was validated. Closed work preserves its resolution and evidence; superseded material preserves earlier decisions without creating current tasks.
 
-- [[History/Implementation Records/Unity Test Framework Integration|Unity Test Framework Integration]] — UTF 1.6.0 explicit dependency, agent test rules, registered test flow, and passing Edit Mode integration check.
+## Implementation Records
 
-- [[History/Implementation Records/Scene Loading Model State and Fail Fast Policy|Scene Loading Model State and Fail Fast Policy]] — user-directed replacement of sequential loading and rollback.
-- [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading|DefaultLocation Phase 6 Bounded Loading]] — source experiment validated in isolation; live memory/travel acceptance remains pending.
-- [[History/Implementation Records/Layer Service Remediation|Layer Service Remediation]]
-- [[History/Implementation Records/Obsidian MCP Vault Setup|Obsidian MCP Vault Setup]]
-- [[History/Implementation Records/Pause Navigation Naming Refactor|Pause Navigation Naming Refactor]]
-- [[History/Implementation Records/Vault Structure Refactor|Vault Structure Refactor]]
+![[Meta/Knowledge Catalog.base#Implementation Records]]
 
-Use [[../Templates/Implementation Record Template|Implementation Record Template]] after meaningful feature work, refactors, and bug fixes. Git remains the detailed line-by-line history; these notes preserve decisions and validation evidence.
+## Closed Issues
+
+![[Meta/Knowledge Catalog.base#Closed Issues]]
+
+## Completed Plans
+
+![[Meta/Knowledge Catalog.base#Completed Plans]]
+
+## Superseded Evidence
+
+![[Meta/Knowledge Catalog.base#Superseded Evidence]]
+
+Use [[Meta/Templates/Implementation Record Template]] for new records. Return to [[Home]] or [[Work/Work Queue]].
