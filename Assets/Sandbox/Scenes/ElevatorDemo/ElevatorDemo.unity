@@ -667,6 +667,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00188879ea32991498345d4ef1a4d466, type: 3}
+--- !u!114 &636654860 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2500185561900836306, guid: 00188879ea32991498345d4ef1a4d466, type: 3}
+  m_PrefabInstance: {fileID: 636654859}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95c22af40ad320a4eb696b9b022423de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Elevator.ElevatorView
 --- !u!1 &636924190
 GameObject:
   m_ObjectHideFlags: 0
@@ -4850,6 +4861,8 @@ MonoBehaviour:
   graceSystem: {fileID: 198951721}
   enemyEncounterSystem: {fileID: 922633214}
   playerSpawnPositionProvider: {fileID: 2025814494}
+  elevatorViews:
+  - {fileID: 636654860}
 --- !u!114 &3018529732569510667 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7385200506573806041, guid: c41e5c3ac64d01e4c9e2eddbce0a3c16, type: 3}

@@ -11,20 +11,6 @@ using VContainer;
 
 namespace SoulsLike.Services.CameraService
 {
-    public interface ICameraService
-    {
-        void SetTarget(Transform target);
-        void UpdateFollowTarget(bool grounded, float verticalVelocity);
-        void UpdateRotation(Vector2 look);
-        float GetYaw();
-        void SwitchAngle();
-        void SetLockOnTarget(long? targetEntityId);
-        void ClearLockOnTarget();
-        void RecenterCamera();
-        Camera GetMainCamera();
-        void ApplySettings(CameraSettingsData settings);
-    }
-
     public class CameraService : MonoBehaviour, ICameraService
     {
         private const float DIRECTION_THRESHOLD_SQR = 0.0001f;
@@ -32,6 +18,16 @@ namespace SoulsLike.Services.CameraService
         [SerializeField] private Camera targetCamera;
         [SerializeField] private CinemachineCamera cinemachineCamera;
         [SerializeField] private CinemachineThirdPersonFollow cinemachineThirdPersonFollow;
+        [SerializeField] private CinemachineImpulseDefinition impulseDefinition = new()
+        {
+            ImpulseChannel = 1,
+            ImpulseShape = CinemachineImpulseDefinition.ImpulseShapes.Bump,
+            ImpulseDuration = 0.2f,
+            ImpulseType = CinemachineImpulseDefinition.ImpulseTypes.Dissipating,
+            DissipationRate = 0.25f,
+            DissipationDistance = 12f,
+            AmplitudeGain = 2f
+        };
 
 #if UNITY_EDITOR
         [Header("Debug / Diagnostics (Editor Only)")]
@@ -129,6 +125,9 @@ namespace SoulsLike.Services.CameraService
             cinemachineCamera.LookAt = null;
             cinemachineCamera.PreviousStateIsValid = false;
         }
+
+        public void GenerateImpulse(Vector3 position, Vector3 velocity) =>
+            impulseDefinition.CreateEvent(position, velocity);
 
         public void UpdateFollowTarget(bool grounded, float verticalVelocity)
         {

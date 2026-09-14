@@ -21,16 +21,16 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         public Transform GetInteractionAnchor(IEntity actor) => _endpoint.InteractionAnchor;
 
         public bool CanInteract(IEntity actor) =>
-            _endpoint.IsActorAllowed(actor) && _endpoint.System.CanInteract(_endpoint, actor);
+            _endpoint.Presenter.CanInteract(_endpoint, actor);
 
         public InteractionPrompt GetPrompt(IEntity actor) => CanInteract(actor)
-            ? new InteractionPrompt(_endpoint.System.GetPrompt())
+            ? new InteractionPrompt(_endpoint.Presenter.GetPrompt())
             : GetFailurePrompt(actor);
 
         public InteractionPrompt GetFailurePrompt(IEntity actor) =>
-            new(_endpoint.System.GetFailurePrompt(_endpoint, actor));
+            new(_endpoint.Presenter.GetFailurePrompt(_endpoint, actor));
 
         public UniTask InteractAsync(IEntity actor, CancellationToken token) =>
-            _endpoint.System.InteractAsync(_endpoint, actor, token);
+            _endpoint.Presenter.InteractAsync(_endpoint, actor, token);
     }
 }

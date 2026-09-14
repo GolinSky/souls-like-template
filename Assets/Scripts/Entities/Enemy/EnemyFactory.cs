@@ -156,6 +156,9 @@ namespace SoulsLike.Entities.Enemy
                 builder.Register<TargetingCommand>(Lifetime.Singleton)
                     .AsSelf()
                     .AsImplementedInterfaces();
+                builder.Register<PlatformRideCommand>(Lifetime.Singleton)
+                    .AsSelf()
+                    .AsImplementedInterfaces();
                 builder.Register<EnemyPerception>(Lifetime.Singleton).AsSelf();
                 builder.Register<EnemyRandomStreams>(Lifetime.Singleton).AsSelf();
                 builder.Register<EnemyActionSelector>(Lifetime.Singleton).AsSelf();

@@ -13,6 +13,7 @@ namespace SoulsLike.Entities.Elevator
     {
         [SerializeField] private ElevatorEndpointType endpointType;
         [SerializeField] private ElevatorFloor floor;
+        [SerializeField] private ViewEntity viewEntity;
         [SerializeField] private Transform interactionAnchor;
         [SerializeField] private bool allowEnemyActivation;
         [SerializeField] private GameObject unavailableIndicator;
@@ -25,7 +26,8 @@ namespace SoulsLike.Entities.Elevator
         [SerializeField, Min(0f)] private float leverReturnDelay = 0.15f;
 
         private readonly Dictionary<int, Collider> _actorColliders = new();
-        private ElevatorSystem _system;
+        private IElevatorPresenter _presenter;
+        private ElevatorView _elevator;
         private IEntityLocator _entityLocator;
         private Entity _entity;
         private ViewEntity _viewEntity;
@@ -41,16 +43,19 @@ namespace SoulsLike.Entities.Elevator
             endpointType == ElevatorEndpointType.PressurePlate
                 ? global::SoulsLike.Entities.BaseEntity.EntityType.ElevatorPressurePlate
                 : global::SoulsLike.Entities.BaseEntity.EntityType.ElevatorLever;
-        public ElevatorSystem System => _system;
-        public ElevatorView Elevator => _system.GetElevator(this);
+        public ViewEntity ViewEntity => viewEntity;
+        public IElevatorPresenter Presenter => _presenter;
+        public ElevatorView Elevator => _elevator;
 
         public void Construct(
-            ElevatorSystem system,
+            IElevatorPresenter presenter,
+            ElevatorView elevator,
             IEntityLocator entityLocator,
             Entity entity,
             ViewEntity viewEntity)
         {
-            _system = system;
+            _presenter = presenter;
+            _elevator = elevator;
             _entityLocator = entityLocator;
             _entity = entity;
             _viewEntity = viewEntity;
@@ -68,7 +73,8 @@ namespace SoulsLike.Entities.Elevator
             _isActivatedVisual = false;
             _entity = null;
             _viewEntity = null;
-            _system = null;
+            _presenter = null;
+            _elevator = null;
             _entityLocator = null;
         }
 

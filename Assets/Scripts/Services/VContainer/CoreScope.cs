@@ -1,3 +1,4 @@
+using System;
 using SoulsLike.Services;
 using SoulsLike.Services.CameraService;
 using SoulsLike.Services.Navigation;
@@ -27,6 +28,7 @@ namespace SoulsLike
         [SerializeField] private GraceSystem graceSystem;
         [SerializeField] private EnemyEncounterSystem enemyEncounterSystem;
         [SerializeField] private PlayerSpawnPositionProvider playerSpawnPositionProvider;
+        [SerializeField] private ElevatorView[] elevatorViews = Array.Empty<ElevatorView>();
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -36,6 +38,14 @@ namespace SoulsLike
             builder.RegisterComponent(playerSpawnPositionProvider).AsSelf();
             builder.RegisterComponentOnNewGameObject<LadderSystem>(Lifetime.Singleton, nameof(LadderSystem)).AsSelf().AsImplementedInterfaces();
             builder.RegisterComponentOnNewGameObject<ElevatorSystem>(Lifetime.Singleton, nameof(ElevatorSystem)).AsSelf().AsImplementedInterfaces();
+            builder.RegisterBuildCallback(resolver =>
+            {
+                IElevatorPresenter presenter = resolver.Resolve<IElevatorPresenter>();
+                foreach (ElevatorView elevator in elevatorViews)
+                {
+                    presenter.Register(elevator);
+                }
+            });
             builder.RegisterComponentOnNewGameObject<GroundItemSystem>(Lifetime.Singleton, nameof(GroundItemSystem)).AsSelf().AsImplementedInterfaces();
             builder.Register<TargetingService>(Lifetime.Singleton).As<ITargetingService>();
             builder.Register<EnemyHealthUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

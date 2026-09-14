@@ -9,5 +9,6 @@ namespace SoulsLike.Entities.BaseEntity
         Grace = 4,
         ElevatorLever = 5,
         ElevatorPressurePlate = 6,
+        Elevator = 7,
     }
 }

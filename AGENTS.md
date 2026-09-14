@@ -108,6 +108,7 @@ Every parent handoff must name the required skill and only the conditional/domai
 
 ## Code Simplicity
 
+- `UnityEvent` is forbidden in project-authored gameplay and presentation code. Use typed interfaces or C# events; route cross-system behavior through the owning service. Views call presenter interfaces, and camera effects are requested by gameplay logic through the camera service.
 - Keep one source of truth for identifiers. Do not pass duplicate string names alongside typed, hashed, or otherwise canonical identifiers solely for validation or error messages.
 - Do not wrap direct framework calls in helpers that only pre-check state and throw. Call the framework API directly and let required-state failures surface naturally.
 - Add conditions and validation only when they change required behavior or are explicitly requested; do not add routine defensive checks around straightforward code.
