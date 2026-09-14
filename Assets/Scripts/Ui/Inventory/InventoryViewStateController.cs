@@ -6,7 +6,7 @@ namespace SoulsLike.Ui.Inventory
     public enum InventoryViewState
     {
         DualPanel = 0,   // State 1: Grid + Item Specs + Character Stats
-        LoreView = 1,    // State 2: Grid + Full Lore Text Card (Stats hidden)
+        LoreView = 1,    // State 2: Grid + Full Lore Text Card + Character Stats
         SimpleView = 2   // State 3: Grid only (Details & Stats hidden for model inspection)
     }
 
@@ -51,7 +51,7 @@ namespace SoulsLike.Ui.Inventory
                     gridColumnGroup.SetActive(true);
                     detailsColumnGroup.SetActive(false);
                     loreCardGroup.SetActive(true);
-                    statsColumnGroup.SetActive(false);
+                    statsColumnGroup.SetActive(true);
                     break;
 
                 case InventoryViewState.SimpleView:

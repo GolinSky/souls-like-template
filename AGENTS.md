@@ -52,7 +52,8 @@ Live source, serialized assets, and current tool output take precedence over gen
 
 ## UI Workflow
 
-- Before working on UI, UI controllers, presenters, or views, resolve the `ui-code` context and read `SoulsLikeGameVault/Guides/UI/UI Code Build Guide.md` through vault MCP (`soulslike-vault`). If vault MCP is unavailable, read the checked-in Markdown note directly. Do not start Obsidian or check REST endpoints.
+- Before any UI work—including Penpot design, mockups, UI art, generated UI assets, asset import, layout, UI rendering, or UI interaction—resolve the required `ui-style` and `ui-asset-layout` contexts. Read each note's `Project Application Rules` and `Task-Conditional Reading Map`, then load only the map-selected detailed headings through vault MCP (`soulslike-vault`) or the checked-in Markdown fallback. Do not start Obsidian or check REST endpoints.
+- Before working on UI controllers, presenters, views, UI prefabs, or Addressables, also resolve the `ui-code` context and read `SoulsLikeGameVault/Guides/UI/UI Code Build Guide.md`. The architecture route remains required alongside the style and asset-layout rules.
 
 ## Animation Workflow
 

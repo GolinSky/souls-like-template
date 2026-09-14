@@ -62,7 +62,6 @@ namespace SoulsLike.Entities.Elevator
 
         public void Initialize(bool unlocked)
         {
-            ValidateReferences();
             _isUnlocked = unlocked;
             _currentFloor = startingFloor;
             SetPlatformPosition(GetDockPosition(_currentFloor));
@@ -194,32 +193,7 @@ namespace SoulsLike.Entities.Elevator
         private void OnDisable() => _system?.Unregister(this);
 
         private void OnDestroy() => _system?.Unregister(this);
-
-        private void ValidateReferences()
-        {
-            if (platform == null
-                || riderDetectionVolume == null
-                || platformSupportCollider == null
-                || bottomDock == null
-                || topDock == null)
-            {
-                throw new InvalidOperationException(
-                    $"Elevator '{name}' requires {nameof(platform)}, {nameof(riderDetectionVolume)}, "
-                    + $"{nameof(platformSupportCollider)}, {nameof(bottomDock)}, and {nameof(topDock)}.");
-            }
-
-            if (platformSupportCollider.isTrigger)
-            {
-                throw new InvalidOperationException(
-                    $"Elevator '{name}' requires a non-trigger {nameof(platformSupportCollider)}.");
-            }
-
-            if (endpoints == null || endpoints.Length == 0)
-            {
-                throw new InvalidOperationException(
-                    $"Elevator '{name}' requires at least one {nameof(ElevatorEndpoint)}.");
-            }
-        }
+        
 
         private Vector3 GetDockPosition(ElevatorFloor floor) =>
             floor == ElevatorFloor.Bottom ? bottomDock.position : topDock.position;

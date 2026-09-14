@@ -90,6 +90,7 @@ namespace SoulsLike.Entities.Character
             && !_combatDefense.IsParryStunned;
         public CharacterAction.State CurrentActionState => _actionStateMachine.CurrentState;
         public event Action OnDeathAnimationCompleted;
+        public event Action<int> CurrencyChanged;
 
         [Inject]
         public void Configure(
@@ -724,6 +725,7 @@ namespace SoulsLike.Entities.Character
         public void GrantCurrency(int amount)
         {
             _heldCurrency = checked(_heldCurrency + amount);
+            CurrencyChanged?.Invoke(_heldCurrency);
         }
 
         public void Revive(float health) => healthComponent.ApplyAuthoritativeStats(

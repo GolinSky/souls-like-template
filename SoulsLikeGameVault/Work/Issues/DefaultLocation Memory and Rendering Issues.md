@@ -8,13 +8,16 @@ domains:
 status: open
 authority: evidence
 priority: high
-updated: 2026-09-07
+updated: 2026-09-12
 source_commit: 3925ea83
 tags:
   - work/issue
   - status/open
+latest_audit_commit: aca3fd60ff59f2bb28515ec10115b4b9f2a62b8f
 ---
 # DefaultLocation Memory and Rendering Issues
+
+**Latest audit, 2026-09-12:** [[Research/DefaultLocation Rendering and Bake Audit]] confirms incompatible occlusion bake references across the additive scene set and missing persisted lighting output despite 60 active baked-only point lights. It also verifies current instancing/static flags, classic LODGroups, and effective texture/model import settings. See the dated updates in I-04, I-05, I-06 and I-11; older undated measurements remain historical. No remediation was performed by this audit.
 
 ## Issue Contract
 
@@ -89,6 +92,8 @@ There is no in-flight level-load guard in this path. Overlapping requests are a 
 
 #### I-04 — Large readable environment meshes dominate the sampled asset objects
 
+**2026-09-12 imported-dependency update:** the ten-scene AssetDatabase closure contains 160 ModelImporters (632 Mesh subassets): 126 Read/Write enabled and 34 disabled, all Mesh Compression Off. Five separate derived collider meshes remain readable. Vertex compression mask 4054 is enabled for Normal, Tangent, UV0 and UV2–7; effective Player buffers are unmeasured. There is no identified project runtime CPU vertex-buffer consumer, but collider cooking/transform and third-party consumers still require per-model review. This is a narrower dependency scope than the September 9 whole-project model count. Do not mass-enable Mesh Compression: it targets disk size, can add loading cost, and prevents vertex compression on the same mesh. Current evidence and references: [[Research/DefaultLocation Rendering and Bake Audit#Mesh compression: Off is not automatically a defect]].
+
 Bounded live census: `Resources.FindObjectsOfTypeAll` and `Profiler.GetRuntimeMemorySizeLong` on already loaded objects; no new assets loaded.
 
 | Object category | Count | Reported runtime-object bytes |
@@ -118,6 +123,8 @@ No loaded Mesh name contained “combined.” That does not conclusively exclude
 
 #### I-05 — No existing quality preset reduces texture/LOD residency settings
 
+**2026-09-12 correction to the historical title/table below:** an Editor Low Memory preset now exists and enables streaming, while High Fidelity, Balanced and Performant still disable it. The live preset is High Fidelity. All 156 project texture dependencies inspected are already GPU-compressed, mipmapped and non-readable. The 143 textures assigned through actual mesh-material shader properties comprise 70 DXT1 and 73 DXT5; 64 enable per-texture streaming and 79 do not. This is a residency/quality-policy gap, not an uncompressed-world-texture defect. See [[Research/DefaultLocation Rendering and Bake Audit#Texture compression: already configured; streaming remains partial]].
+
 Source: `ProjectSettings/QualitySettings.asset`.
 
 | Setting | High Fidelity | Balanced | Performant |
@@ -134,6 +141,10 @@ The current quality index is 0, High Fidelity, confirmed by the live Editor. Sta
 `ProjectSettings/EditorSettings.asset:22` enables streaming in Edit and Play modes, but the Quality streaming switch is off. `m_EnableEditorAsyncCPUTextureLoading: 0` at line 24 means CPU texture loading on demand is disabled. Both Editor and Quality switches are relevant to streaming. [Unity Editor settings](https://docs.unity3d.com/6000.3/Documentation/Manual/class-EditorManager.html)
 
 #### I-06 — Material/static flags do not establish the active batching path
+
+**2026-09-12 resolved-instance update:** DefaultLocation plus nine dependencies contain 26,926 MeshRenderers, of which 26,879 are Batching Static. Of 74 distinct actually assigned material assets, 70 enable GPU instancing. 61,811 of 61,858 material slots have both flags. The current SRP Batcher is on and GPU Resident Drawer is off. These imported-instance counts differ in scope from the earlier direct-YAML table below and still do not prove an actual GPU-instanced or static-batched draw.
+
+**LOD0 concern resolved for the current configuration:** 7,247 classic LODGroups are populated with multiple levels, no empty levels/shared cross-level renderer references, and fade mode None. All inspected renderer meshes report Mesh LOD count 1; all 160 model importers disable generated Mesh LOD. Unity's documented static-batching/conventional-instancing restriction to LOD0 applies to the newer **Mesh LOD feature**, which this content does not use. It does not establish that these classic LODGroups are locked to LOD0. Actual near/far Player draw submission remains unverified. [Unity Mesh LOD limitations](https://docs.unity3d.com/6000.3/Documentation/Manual/lod/mesh-lod-introduction.html). Full distinction and scene table: [[Research/DefaultLocation Rendering and Bake Audit]].
 
 `ProjectSettings/ProjectSettings.asset:490`: Standalone static batching is enabled; dynamic batching is disabled.
 
@@ -226,6 +237,14 @@ The fallback's `reflectionProbeTexCacheSize: 1073750016` decodes to **16384 × 8
 This is a latent configuration discrepancy; the live Editor is using High Fidelity, so the fallback is not attributed as its current crash cause.
 
 #### I-11 — Existing bake/build evidence does not validate the current configuration
+
+**2026-09-12 confirmed occlusion configuration defect — high priority:** the nine dependency scenes each reference a different, nonempty occlusion asset, each containing only its own scene GUID. DefaultLocation has no occlusion asset or valid occlusion scene GUID. SceneService loads all dependencies additively and then activates DefaultLocation. Unity supports one runtime occlusion asset and requires scenes used together to share a joint bake. The current data therefore cannot establish correct combined cross-zone occlusion, even though the main camera enables occlusion culling. Exact references and current bake evidence are in [[Research/DefaultLocation Rendering and Bake Audit#Confirmed issue: occlusion bakes are incompatible with additive loading]]. [Unity multiple-scene occlusion](https://docs.unity3d.com/6000.3/Documentation/Manual/occlusion-culling-scene-loading.html)
+
+**2026-09-12 confirmed lighting-output gap — medium priority:** all ten scenes have null LightingDataAsset and no inspected MeshRenderer has a usable lightmap index. DefaultLocation has 60 enabled, active Baked point lights and one Mixed directional light; zones have ten additional active Mixed lights. The main APV scene component has a null baking-set reference, and Rocks Baking Set has empty baked data. No ReflectionProbe components were found. The authored baked contribution has no persisted output; this is not a claim that the whole scene renders black. See [[Research/DefaultLocation Rendering and Bake Audit#Confirmed issue: lighting is configured for baking, but bake output is absent]].
+
+**Resolution handoff for these bake findings:** review/reuse the existing location bake tooling; persist a shared occlusion bake across the intended scene set and validate the actual dependency-first load sequence. Generate and verify the intended lighting/APV output, or explicitly revise the lighting design. Acceptance requires linked nonempty data, correct occlusion across zone boundaries and visible baked-light contribution in the Player. This investigation changed no scene, importer or bake data; existing draft bake plans were not executed.
+
+Historical observations:
 
 - All ten location scenes serialize a null `m_LightingDataAsset`. The main scene's ProbeVolumePerSceneData has a null `serializedBakingSet`; the location Baking Set has empty shared-data GUIDs. This does not establish a large baked-lighting payload as the cause.
 - Nine scenes have occlusion-data references; the main scene has none. Presence alone does not establish correct cross-zone culling. The stored `occlusion_report.txt` dates to August 12 and names the old 23-scene layout, before the zone split.

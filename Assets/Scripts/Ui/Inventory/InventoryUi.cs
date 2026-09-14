@@ -28,6 +28,12 @@ namespace SoulsLike.Ui.Inventory
         [SerializeField] private Transform gridContentParent;
         [SerializeField] private ScrollRect gridScrollRect;
         [SerializeField] private InventorySlotUI slotPrefab;
+        [SerializeField] private RectTransform[] emptySlotBackgrounds;
+
+        [Header("Grid Header")]
+        [SerializeField] private TMP_Text currentPrimaryCategoryText;
+        [SerializeField] private TMP_Text selectedItemNameText;
+        [SerializeField] private TMP_Text itemSelectionPositionText;
 
         [Header("Column 2: Item Details")]
         [SerializeField] private ItemDetailsUi itemDetailsUi;
@@ -37,6 +43,7 @@ namespace SoulsLike.Ui.Inventory
 
         [Header("Column 3: Character Stats")]
         [SerializeField] private CharacterStatsUi characterStatsUi;
+        [SerializeField] private TextMeshProUGUI runesHeldText;
 
         [Header("Footer Legend")]
         [SerializeField] private TMP_Text legendSelectText;
@@ -86,6 +93,7 @@ namespace SoulsLike.Ui.Inventory
                 _spawnedSlots.Add(slot);
             }
 
+            UpdateEmptySlots(items.Count);
             ConfigureGridNavigation();
             if (IsActive)
             {
@@ -95,6 +103,37 @@ namespace SoulsLike.Ui.Inventory
 
         public void ToggleLoreView() => viewStateController.ToggleLoreView();
         public void ToggleSimpleView() => viewStateController.ToggleSimpleView();
+
+        public void DisplayHeldCurrency(int heldCurrency)
+        {
+            runesHeldText.text = heldCurrency.ToString("N0");
+        }
+
+        public void DisplayGridHeader(
+            InventoryPrimaryCategory primaryCategory,
+            int itemCount)
+        {
+            currentPrimaryCategoryText.text = primaryCategory switch
+            {
+                InventoryPrimaryCategory.KeyItems => "Key Items",
+                _ => primaryCategory.ToString()
+            };
+
+            if (itemCount == 0)
+            {
+                selectedItemNameText.text = "No items";
+                itemSelectionPositionText.text = "00/00";
+            }
+        }
+
+        public void DisplaySelectedItem(
+            InventoryItemViewData item,
+            int selectedPosition,
+            int itemCount)
+        {
+            selectedItemNameText.text = item.DisplayName;
+            itemSelectionPositionText.text = $"{selectedPosition:D2}/{itemCount:D2}";
+        }
 
         public void SetCategoryControlsVisible(bool isVisible)
         {
@@ -108,35 +147,18 @@ namespace SoulsLike.Ui.Inventory
             {
                 slot.SlotSelected -= HandleSlotSelected;
                 slot.SlotSubmitted -= HandleSlotSubmitted;
+                slot.gameObject.SetActive(false);
                 Destroy(slot.gameObject);
             }
 
             _spawnedSlots.Clear();
+            UpdateEmptySlots(0);
         }
 
         protected override void Awake()
         {
             base.Awake();
-            if (viewStateController == null
-                || screenTitleText == null
-                || primaryCategoryTabContainer == null
-                || subCategoryIconContainer == null
-                || primaryCategoryToggles == null
-                || primaryCategoryToggles.Length != Enum.GetValues(typeof(InventoryPrimaryCategory)).Length
-                || subCategoryToggles == null
-                || subCategoryToggles.Length != Enum.GetValues(typeof(InventorySubCategory)).Length
-                || gridContentParent == null
-                || gridScrollRect == null
-                || slotPrefab == null
-                || itemDetailsUi == null
-                || loreCardUi == null
-                || characterStatsUi == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(InventoryUi)} '{name}' has missing structural references.");
-            }
-
-            screenTitleText.text = "INVENTORY";
+            screenTitleText.text = "INVENTORY";// todo: use const
             InitializeCategoryControls();
         }
 
@@ -161,7 +183,12 @@ namespace SoulsLike.Ui.Inventory
                 }
 
                 InventoryPrimaryCategory category = (InventoryPrimaryCategory)index;
-                toggle.SetText(category.ToString());
+                toggle.SetText(category switch
+                {
+                    InventoryPrimaryCategory.KeyItems => "Key items",
+                    InventoryPrimaryCategory.Talisman => "Talismans",
+                    _ => category.ToString()
+                });
                 toggle.isOn = category == InventoryPrimaryCategory.Weapons;
                 _primaryCategoryListeners[index] = isOn => HandlePrimaryCategoryValueChanged(category, isOn);
                 toggle.onValueChanged.AddListener(_primaryCategoryListeners[index]);
@@ -177,7 +204,22 @@ namespace SoulsLike.Ui.Inventory
                 }
 
                 InventorySubCategory category = (InventorySubCategory)index;
-                toggle.SetText(category.ToString());
+                // todo: create mapping in data or model
+                toggle.SetText(category switch
+                {
+                    InventorySubCategory.MeleeWeapon => "Melee",
+                    InventorySubCategory.RangedWeapon => "Ranged",
+                    InventorySubCategory.Shield => "Shields",
+                    InventorySubCategory.HeadArmor => "Head",
+                    InventorySubCategory.ChestArmor => "Chest",
+                    InventorySubCategory.ArmArmor => "Arms",
+                    InventorySubCategory.LegArmor => "Legs",
+                    InventorySubCategory.Talisman => "Talismans",
+                    InventorySubCategory.CraftingMaterial => "Materials",
+                    InventorySubCategory.ConsumableItem => "Consumables",
+                    InventorySubCategory.KeyItem => "Key items",
+                    _ => throw new ArgumentOutOfRangeException(nameof(category), category, null)
+                });
                 toggle.SetIsOnWithoutNotify(false);
                 _subCategoryListeners[index] = isOn => HandleSubCategoryValueChanged(category, isOn);
                 toggle.onValueChanged.AddListener(_subCategoryListeners[index]);
@@ -351,6 +393,10 @@ namespace SoulsLike.Ui.Inventory
 
         private void HandleSlotSelected(InventorySlotUI slot)
         {
+            DisplaySelectedItem(
+                slot.CurrentItem,
+                _spawnedSlots.IndexOf(slot) + 1,
+                _spawnedSlots.Count);
             RequirePresenter().OnItemFocused(slot.CurrentItem.EntryId);
         }
 
@@ -383,6 +429,24 @@ namespace SoulsLike.Ui.Inventory
                     left,
                     right,
                     index < GRID_COLUMN_COUNT ? upCategoryTarget : null);
+            }
+        }
+
+        private void UpdateEmptySlots(int itemCount)
+        {
+            int requiredCellCount = Mathf.Max(
+                emptySlotBackgrounds.Length,
+                Mathf.CeilToInt(itemCount / (float)GRID_COLUMN_COUNT) * GRID_COLUMN_COUNT);
+            int requiredEmptySlotCount = requiredCellCount - itemCount;
+
+            for (int index = 0; index < emptySlotBackgrounds.Length; index++)
+            {
+                bool isRequired = index < requiredEmptySlotCount;
+                emptySlotBackgrounds[index].gameObject.SetActive(isRequired);
+                if (isRequired)
+                {
+                    emptySlotBackgrounds[index].SetAsLastSibling();
+                }
             }
         }
 

@@ -55,6 +55,7 @@ namespace SoulsLike.Ui.Inventory
             _view.AssignPresenter(this);
             _inventory.Model.Changed += HandleInventoryChanged;
             _equipment.SlotChanged += HandleEquipmentChanged;
+            _character.CurrencyChanged += HandleCurrencyChanged;
             Refresh();
             _view.Hide();
         }
@@ -63,6 +64,7 @@ namespace SoulsLike.Ui.Inventory
         {
             _inventory.Model.Changed -= HandleInventoryChanged;
             _equipment.SlotChanged -= HandleEquipmentChanged;
+            _character.CurrencyChanged -= HandleCurrencyChanged;
         }
 
         public void Tick()
@@ -199,6 +201,7 @@ namespace SoulsLike.Ui.Inventory
             }
 
             _view.PopulateGrid(items);
+            _view.DisplayGridHeader(_primaryCategory, items.Count);
             EquipmentLoadout loadout = _equipment.BuildLoadout();
             float equipWeight = CalculateEquipmentWeight();
             float maxEquipWeight = 45f + _character.Attributes.Endurance * 1.5f;
@@ -214,8 +217,10 @@ namespace SoulsLike.Ui.Inventory
                 maxEquipWeight,
                 rightAttack,
                 leftAttack);
+            _view.DisplayHeldCurrency(_character.HeldCurrency);
             if (items.Count > 0)
             {
+                _view.DisplaySelectedItem(items[0], 1, items.Count);
                 OnItemFocused(items[0].EntryId);
             }
         }
@@ -281,6 +286,11 @@ namespace SoulsLike.Ui.Inventory
         private void HandleEquipmentChanged(EquipmentSlotChange change)
         {
             Refresh();
+        }
+
+        private void HandleCurrencyChanged(int heldCurrency)
+        {
+            _view.DisplayHeldCurrency(heldCurrency);
         }
     }
 }
