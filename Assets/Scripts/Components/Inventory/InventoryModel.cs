@@ -18,7 +18,7 @@ namespace SoulsLike.Entities.Character.Components.Inventory
 
         public InventoryChange(InventoryChangeType type, InventoryEntry entry)
         {
-            Entry = entry ?? throw new ArgumentNullException(nameof(entry));
+            Entry = entry;
             Type = type;
         }
     }
@@ -34,11 +34,6 @@ namespace SoulsLike.Entities.Character.Components.Inventory
 
         internal void AddEntry(InventoryEntry entry)
         {
-            if (entry == null)
-            {
-                throw new ArgumentNullException(nameof(entry));
-            }
-
             if (!_entriesById.TryAdd(entry.EntryId, entry))
             {
                 throw new InvalidOperationException($"Inventory already contains entry '{entry.EntryId}'.");
@@ -70,21 +65,11 @@ namespace SoulsLike.Entities.Character.Components.Inventory
 
         public InventoryEntry GetRequiredEntry(InventoryEntryId entryId)
         {
-            if (!_entriesById.TryGetValue(entryId, out InventoryEntry entry))
-            {
-                throw new KeyNotFoundException($"Inventory entry '{entryId}' does not exist.");
-            }
-
-            return entry;
+            return _entriesById[entryId];
         }
 
         private void RequireOwnedEntry(InventoryEntry entry)
         {
-            if (entry == null)
-            {
-                throw new ArgumentNullException(nameof(entry));
-            }
-
             if (!_entriesById.TryGetValue(entry.EntryId, out InventoryEntry ownedEntry)
                 || !ReferenceEquals(ownedEntry, entry))
             {

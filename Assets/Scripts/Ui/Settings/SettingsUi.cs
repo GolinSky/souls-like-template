@@ -67,27 +67,6 @@ namespace SoulsLike.Ui.Settings
         protected override void Awake()
         {
             base.Awake();
-            if (options == null
-                || audioTabButton == null
-                || cameraTabButton == null
-                || graphicsTabButton == null
-                || controlsTabButton == null
-                || applyButton == null
-                || defaultsButton == null
-                || backButton == null
-                || displayConfirmationPanel == null
-                || displayConfirmationText == null
-                || keepDisplayButton == null
-                || revertDisplayButton == null
-                || unsavedChangesPanel == null
-                || applyUnsavedButton == null
-                || discardUnsavedButton == null
-                || continueEditingButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(SettingsUi)} '{name}' has missing structural references.");
-            }
-
             for (int index = 0; index < options.Length; index++)
             {
                 SettingsOptionUi option = options[index];

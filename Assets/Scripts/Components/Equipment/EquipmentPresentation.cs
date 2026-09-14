@@ -32,14 +32,6 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         private void Awake()
         {
-            if (rightHandAnchor == null
-                || leftHandAnchor == null
-                || rightFistRuntime == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(EquipmentPresentation)} '{name}' requires hand anchors and a fist runtime.");
-            }
-
             rightFistRuntime.Initialize(default, ItemId.Fist);
         }
 

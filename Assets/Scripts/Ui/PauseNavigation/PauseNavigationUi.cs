@@ -1,4 +1,3 @@
-using System;
 using System.Ui.Base;
 using SoulsLike.Ui.Base;
 using UnityEngine;
@@ -33,17 +32,5 @@ namespace SoulsLike.Ui.PauseNavigation
             openSystemButton.onClick.RemoveListener(_presenter.OpenSystem);
         }
 
-        protected override void Awake()
-        {
-            if (openEquipmentButton == null
-                || openInventoryButton == null
-                || openSystemButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(PauseNavigationUi)} '{name}' has missing button references.");
-            }
-
-            base.Awake();
-        }
     }
 }

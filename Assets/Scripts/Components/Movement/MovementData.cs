@@ -143,14 +143,6 @@ namespace SoulsLike.Entities.Character.Components.Movement
 
         public LayerMask GroundLayers => GroundProbeMask;
 
-        private void OnValidate()
-        {
-            if (GroundProbeMask.value == 0)
-            {
-                Debug.LogError($"[{nameof(MovementData)}] GroundProbeMask cannot be zero.", this);
-            }
-        }
-
         [Header("Rolling")]
         [Tooltip("Time required to pass before being able to roll again")]
         [field: SerializeField]

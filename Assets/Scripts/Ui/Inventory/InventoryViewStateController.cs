@@ -22,15 +22,6 @@ namespace SoulsLike.Ui.Inventory
 
         private void Awake()
         {
-            if (gridColumnGroup == null
-                || detailsColumnGroup == null
-                || loreCardGroup == null
-                || statsColumnGroup == null)
-            {
-                throw new System.InvalidOperationException(
-                    $"{nameof(InventoryViewStateController)} '{name}' has missing column references.");
-            }
-
             SetState(CurrentState);
         }
 

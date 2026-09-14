@@ -70,7 +70,7 @@ namespace SoulsLike.Ui.Equipment
 
         public void AssignPresenter(IEquipmentPresenter presenter)
         {
-            _presenter = presenter ?? throw new ArgumentNullException(nameof(presenter));
+            _presenter = presenter;
         }
 
         public override void Show()
@@ -83,11 +83,6 @@ namespace SoulsLike.Ui.Equipment
 
         public void RefreshSlots(IReadOnlyDictionary<EquipmentSlotId, InventoryItemViewData> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-
             int equippedCount = 0;
             foreach (KeyValuePair<EquipmentSlotId, EquipmentSlotUI> pair in _slotsById)
             {
@@ -160,11 +155,6 @@ namespace SoulsLike.Ui.Equipment
 
         public void ShowPicker(IReadOnlyList<InventoryItemViewData> candidates)
         {
-            if (candidates == null)
-            {
-                throw new ArgumentNullException(nameof(candidates));
-            }
-
             ClearPicker();
             inventoryPickerOverlay.SetActive(true);
             comparisonPanel.SetActive(true);
@@ -205,7 +195,6 @@ namespace SoulsLike.Ui.Equipment
         protected override void Awake()
         {
             base.Awake();
-            ValidateReferences();
             BuildSlotMap();
             ConfigureSlotNavigation();
             inventoryPickerOverlay.SetActive(false);
@@ -303,23 +292,23 @@ namespace SoulsLike.Ui.Equipment
         private void HandleSlotFocused(EquipmentSlotUI slot)
         {
             _selectedSlot = slot;
-            RequirePresenter().FocusSlot(slot.SlotId);
+            _presenter.FocusSlot(slot.SlotId);
         }
 
         private void HandleSlotSubmitted(EquipmentSlotUI slot)
         {
             _selectedSlot = slot;
-            RequirePresenter().SubmitSlot(slot.SlotId);
+            _presenter.SubmitSlot(slot.SlotId);
         }
 
         private void HandleCandidateFocused(InventorySlotUI slot)
         {
-            RequirePresenter().FocusCandidate(slot.CurrentItem.EntryId);
+            _presenter.FocusCandidate(slot.CurrentItem.EntryId);
         }
 
         private void HandleCandidateSubmitted(InventorySlotUI slot)
         {
-            RequirePresenter().SubmitCandidate(slot.CurrentItem.EntryId);
+            _presenter.SubmitCandidate(slot.CurrentItem.EntryId);
         }
 
         private void ClearPicker()
@@ -332,39 +321,6 @@ namespace SoulsLike.Ui.Equipment
             }
 
             _pickerSlots.Clear();
-        }
-
-        private IEquipmentPresenter RequirePresenter()
-        {
-            return _presenter ?? throw new InvalidOperationException(
-                $"{nameof(EquipmentUi)} requires a presenter before use.");
-        }
-
-        private void ValidateReferences()
-        {
-            if (screenTitleText == null
-                || playerSummaryText == null
-                || equipmentGridContainer == null
-                || inventoryPickerOverlay == null
-                || inventoryPickerGridContainer == null
-                || comparisonPanel == null
-                || inventoryPickerSlotPrefab == null
-                || characterStatsUi == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(EquipmentUi)} '{name}' has missing structural references.");
-            }
-
-            if (rightHandSlots.Count != 3
-                || leftHandSlots.Count != 3
-                || ammoSlots.Count != 4
-                || armorSlots.Count != 4
-                || talismanSlots.Count != 4
-                || quickItemSlots.Count != 10)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(EquipmentUi)} '{name}' has an invalid equipment-slot topology.");
-            }
         }
 
         private static string FormatScaling(SoulsLike.Items.ScalingGrade grade)

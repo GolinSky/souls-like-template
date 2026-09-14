@@ -57,7 +57,7 @@ namespace SoulsLike.Entities.Character
                 instance.transform.position = spawnPosition.Value;
             }
 
-            Character character = GetRequiredComponent<Character>(instance);
+            Character character = instance.GetComponent<Character>();
             
             //todo: add it dynamically in RootScope.CreateChild
             ViewEntity viewEntity = instance.GetComponent<ViewEntity>();
@@ -66,23 +66,23 @@ namespace SoulsLike.Entities.Character
                 viewEntity = instance.AddComponent<ViewEntity>();
             }
 
-            TargetLockNode targetLockNode = GetRequiredComponentInChildren<TargetLockNode>(instance);
+            TargetLockNode targetLockNode = instance.GetComponentInChildren<TargetLockNode>(true);
             PlayerMeleeCombatRelay meleeCombatRelay =
-                GetRequiredComponent<PlayerMeleeCombatRelay>(instance);
+                instance.GetComponent<PlayerMeleeCombatRelay>();
             CriticalAttackController criticalAttackController =
-                GetRequiredComponent<CriticalAttackController>(instance);
+                instance.GetComponent<CriticalAttackController>();
 
-            AnimatorComponent animatorComponent = GetRequiredComponent<AnimatorComponent>(instance);
-            CharacterAudioComponent audioComponent = GetRequiredComponentInChildren<CharacterAudioComponent>(instance);
-            AttackComponent attackComponent = GetRequiredComponent<AttackComponent>(instance);
-            MovementComponent movementComponent = GetRequiredComponent<MovementComponent>(instance);
-            EquipmentComponent equipmentComponent = GetRequiredComponent<EquipmentComponent>(instance);
+            AnimatorComponent animatorComponent = instance.GetComponent<AnimatorComponent>();
+            CharacterAudioComponent audioComponent = instance.GetComponentInChildren<CharacterAudioComponent>(true);
+            AttackComponent attackComponent = instance.GetComponent<AttackComponent>();
+            MovementComponent movementComponent = instance.GetComponent<MovementComponent>();
+            EquipmentComponent equipmentComponent = instance.GetComponent<EquipmentComponent>();
             EquipmentPresentation equipmentPresentation =
-                GetRequiredComponent<EquipmentPresentation>(instance);
-            InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
-            HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
-            CombatDefenseComponent combatDefense = GetRequiredComponent<CombatDefenseComponent>(instance);
-            LadderClimber ladderClimber = GetRequiredComponent<LadderClimber>(instance);
+                instance.GetComponent<EquipmentPresentation>();
+            InventoryComponent inventoryComponent = instance.GetComponent<InventoryComponent>();
+            HealthComponent healthComponent = instance.GetComponent<HealthComponent>();
+            CombatDefenseComponent combatDefense = instance.GetComponent<CombatDefenseComponent>();
+            LadderClimber ladderClimber = instance.GetComponent<LadderClimber>();
             animatorComponent.ConfigureCharacter(character, movementComponent);
             long entityId = _uniqueIdGenerator.GenerateUniqueId();
 
@@ -127,7 +127,7 @@ namespace SoulsLike.Entities.Character
                 builder.RegisterScriptableObject<WeaponDatabase>();
                 builder.RegisterScriptableObject<ShieldDatabase>();
                 builder.RegisterScriptableObject<ConsumableDatabase>();
-                builder.Register<ItemCatalog>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<ItemCatalog>(Lifetime.Singleton).AsSelf();
                 builder.Register<InventoryModel>(Lifetime.Singleton).AsSelf();
                 builder.RegisterComponent(inventoryComponent).AsSelf().AsImplementedInterfaces();
 
@@ -160,30 +160,5 @@ namespace SoulsLike.Entities.Character
             _characterScope.Dispose();
         }
 
-        private static TComponent GetRequiredComponent<TComponent>(GameObject instance)
-            where TComponent : Component
-        {
-            TComponent component = instance.GetComponent<TComponent>();
-            if (component == null)
-            {
-                throw new InvalidOperationException(
-                    $"Character prefab requires a {typeof(TComponent).Name} component.");
-            }
-
-            return component;
-        }
-
-        private static TComponent GetRequiredComponentInChildren<TComponent>(GameObject instance)
-            where TComponent : Component
-        {
-            TComponent component = instance.GetComponentInChildren<TComponent>(true);
-            if (component == null)
-            {
-                throw new InvalidOperationException(
-                    $"Character prefab requires a {typeof(TComponent).Name} component.");
-            }
-
-            return component;
-        }
     }
 }

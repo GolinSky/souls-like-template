@@ -31,12 +31,6 @@ namespace SoulsLike.Entities.Enemy
         public EnemyActor CreateEnemy(EnemySpawnPoint spawn, EnemyGroupCoordinator groupCoordinator)
         {
             EnemyActor prefab = spawn.EnemyPrefab;
-            if (prefab == null)
-            {
-                throw new InvalidOperationException(
-                    $"Enemy spawn point '{spawn.name}' requires an enemy prefab.");
-            }
-
             NavMeshAgent prefabAgent = prefab.NavMeshAgent;
             NavMeshQueryFilter queryFilter = new()
             {
@@ -65,12 +59,6 @@ namespace SoulsLike.Entities.Enemy
 
             EnemyActivationTrigger[] activationTriggers =
                 prefab.GetComponentsInChildren<EnemyActivationTrigger>(true);
-            if (activationTriggers.Length > 1)
-            {
-                throw new InvalidOperationException(
-                    $"Enemy prefab '{prefab.name}' may contain only one {nameof(EnemyActivationTrigger)}.");
-            }
-
             bool hasActivationTrigger = activationTriggers.Length == 1;
             long entityId = RootScope.Container
                 .Resolve<IUniqueIdGenerator>()

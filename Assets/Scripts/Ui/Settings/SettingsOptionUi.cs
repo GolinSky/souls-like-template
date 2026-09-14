@@ -25,12 +25,6 @@ namespace SoulsLike.Ui.Settings
 
         private void Awake()
         {
-            if (slider == null && toggle == null && actionButton == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(SettingsOptionUi)} '{name}' requires a slider, toggle, or action button.");
-            }
-
             if (slider != null)
             {
                 slider.onValueChanged.AddListener(HandleSliderChanged);

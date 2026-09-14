@@ -66,7 +66,7 @@ namespace SoulsLike.Ui.Inventory
 
         public void AssignPresenter(IInventoryPresenter presenter)
         {
-            _presenter = presenter ?? throw new ArgumentNullException(nameof(presenter));
+            _presenter = presenter;
         }
 
         public override void Show()
@@ -77,12 +77,6 @@ namespace SoulsLike.Ui.Inventory
 
         public void PopulateGrid(IReadOnlyList<InventoryItemViewData> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-
-            RequirePresenter();
             ClearGrid();
             foreach (InventoryItemViewData item in items)
             {
@@ -176,12 +170,6 @@ namespace SoulsLike.Ui.Inventory
             for (int index = 0; index < primaryCategoryToggles.Length; index++)
             {
                 CustomButtonToggle toggle = primaryCategoryToggles[index];
-                if (toggle == null)
-                {
-                    throw new InvalidOperationException(
-                        $"{nameof(InventoryUi)} '{name}' has a missing primary category toggle.");
-                }
-
                 InventoryPrimaryCategory category = (InventoryPrimaryCategory)index;
                 toggle.SetText(category switch
                 {
@@ -197,12 +185,6 @@ namespace SoulsLike.Ui.Inventory
             for (int index = 0; index < subCategoryToggles.Length; index++)
             {
                 CustomButtonToggle toggle = subCategoryToggles[index];
-                if (toggle == null)
-                {
-                    throw new InvalidOperationException(
-                        $"{nameof(InventoryUi)} '{name}' has a missing subcategory toggle.");
-                }
-
                 InventorySubCategory category = (InventorySubCategory)index;
                 // todo: create mapping in data or model
                 toggle.SetText(category switch
@@ -257,14 +239,14 @@ namespace SoulsLike.Ui.Inventory
             _activePrimaryCategory = category;
             ClearSubCategorySelections();
             UpdateSubCategoryVisibility(category);
-            RequirePresenter().SelectPrimaryCategory(category);
+            _presenter.SelectPrimaryCategory(category);
         }
 
         private void HandleSubCategoryValueChanged(InventorySubCategory category, bool isOn)
         {
             if (isOn)
             {
-                RequirePresenter().SelectSubCategory(category);
+                _presenter.SelectSubCategory(category);
                 return;
             }
 
@@ -273,7 +255,7 @@ namespace SoulsLike.Ui.Inventory
                 return;
             }
 
-            RequirePresenter().SelectPrimaryCategory(_activePrimaryCategory);
+            _presenter.SelectPrimaryCategory(_activePrimaryCategory);
         }
 
         private void ClearSubCategorySelections()
@@ -397,12 +379,12 @@ namespace SoulsLike.Ui.Inventory
                 slot.CurrentItem,
                 _spawnedSlots.IndexOf(slot) + 1,
                 _spawnedSlots.Count);
-            RequirePresenter().OnItemFocused(slot.CurrentItem.EntryId);
+            _presenter.OnItemFocused(slot.CurrentItem.EntryId);
         }
 
         private void HandleSlotSubmitted(InventorySlotUI slot)
         {
-            RequirePresenter().OnItemSubmitted(slot.CurrentItem.EntryId);
+            _presenter.OnItemSubmitted(slot.CurrentItem.EntryId);
         }
 
         private void ConfigureGridNavigation()
@@ -477,12 +459,6 @@ namespace SoulsLike.Ui.Inventory
             {
                 _spawnedSlots[0].Select();
             }
-        }
-
-        private IInventoryPresenter RequirePresenter()
-        {
-            return _presenter ?? throw new InvalidOperationException(
-                $"{nameof(InventoryUi)} requires a presenter before use.");
         }
 
     }

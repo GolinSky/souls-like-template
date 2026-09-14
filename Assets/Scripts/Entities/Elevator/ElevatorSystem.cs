@@ -62,7 +62,6 @@ namespace SoulsLike.Entities.Elevator
                 return;
             }
 
-            ValidateSaveIdentifier(elevator);
             ElevatorModel model = new()
             {
                 IsUnlocked = !elevator.StartsLocked
@@ -220,12 +219,6 @@ namespace SoulsLike.Entities.Elevator
 
         private Entity RegisterRootEntity(ElevatorView elevator)
         {
-            if (elevator.ViewEntity == null)
-            {
-                throw new InvalidOperationException(
-                    $"Elevator '{elevator.name}' requires an assigned {nameof(ViewEntity)}.");
-            }
-
             long id = _idGenerator.GenerateUniqueId();
             elevator.ViewEntity.Construct(id, EntityType.Elevator);
             Entity entity = new(id, _entityLocator, EntityType.Elevator);
@@ -237,12 +230,6 @@ namespace SoulsLike.Entities.Elevator
             ElevatorView elevator,
             ElevatorEndpoint endpoint)
         {
-            if (endpoint.ViewEntity == null)
-            {
-                throw new InvalidOperationException(
-                    $"Elevator endpoint '{endpoint.name}' requires an assigned {nameof(ViewEntity)}.");
-            }
-
             long id = _idGenerator.GenerateUniqueId();
             endpoint.ViewEntity.Construct(id, endpoint.EntityType);
             Entity entity = new(id, _entityLocator, endpoint.EntityType);
@@ -287,32 +274,6 @@ namespace SoulsLike.Entities.Elevator
 
             throw new InvalidOperationException(
                 $"Elevator endpoint '{endpoint.name}' is not registered.");
-        }
-
-        private void ValidateSaveIdentifier(ElevatorView elevator)
-        {
-            if (!elevator.StartsLocked)
-            {
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(elevator.SaveIdentifier))
-            {
-                throw new InvalidOperationException(
-                    $"Locked elevator '{elevator.name}' requires a stable {nameof(ElevatorView.SaveIdentifier)}.");
-            }
-
-            foreach (ElevatorView registered in _elevators.Keys)
-            {
-                if (registered != elevator
-                    && registered.StartsLocked
-                    && registered.SaveIdentifier == elevator.SaveIdentifier)
-                {
-                    throw new InvalidOperationException(
-                        $"Locked elevator id '{elevator.SaveIdentifier}' is duplicated by "
-                        + $"'{registered.name}' and '{elevator.name}'.");
-                }
-            }
         }
 
         private static void ApplyEndpointAvailability(ElevatorModel model)

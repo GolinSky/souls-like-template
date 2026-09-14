@@ -58,10 +58,10 @@ namespace SoulsLike.Editor
             ConfigureWeaponDatabase(weaponDatabase, animationProfile, combatProfile);
             ConfigureShieldDatabase(shieldDatabase);
             ConfigureConsumableDatabase(consumableDatabase);
-            itemDatabase.ValidateDatabase();
-            weaponDatabase.ValidateDatabase();
-            shieldDatabase.ValidateDatabase();
-            consumableDatabase.ValidateDatabase();
+            itemDatabase.RebuildIndex();
+            weaponDatabase.RebuildIndex();
+            shieldDatabase.RebuildIndex();
+            consumableDatabase.RebuildIndex();
 
             ConfigureInitialInventory();
             ConfigureCharacterPrefab();
@@ -97,12 +97,10 @@ namespace SoulsLike.Editor
             ConfigureWeaponDatabase(weaponDatabase, animationProfile, combatProfile);
             ConfigureShieldDatabase(shieldDatabase);
             ConfigureConsumableDatabase(consumableDatabase);
-            new ItemCatalog(
-                    itemDatabase,
-                    weaponDatabase,
-                    shieldDatabase,
-                    consumableDatabase)
-                .ValidateCatalog();
+            itemDatabase.RebuildIndex();
+            weaponDatabase.RebuildIndex();
+            shieldDatabase.RebuildIndex();
+            consumableDatabase.RebuildIndex();
             ConfigureAddressables(
                 itemDatabase,
                 weaponDatabase,

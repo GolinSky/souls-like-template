@@ -48,17 +48,12 @@ namespace SoulsLike.Items
 
         public void Register(GroundItem item)
         {
-            if (item == null || _entities.ContainsKey(item))
+            if (_entities.ContainsKey(item))
             {
                 return;
             }
 
             ViewEntity viewEntity = item.GetComponent<ViewEntity>();
-            if (viewEntity == null)
-            {
-                viewEntity = item.gameObject.AddComponent<ViewEntity>();
-            }
-
             long id = _idGenerator.GenerateUniqueId();
             viewEntity.Construct(id, EntityType.GroundItem);
             Entity entity = new(id, _entityLocator, EntityType.GroundItem);

@@ -45,21 +45,6 @@ namespace SoulsLike.Ui.Equipment
         public event Action<EquipmentSlotUI> SlotFocused;
         public event Action<EquipmentSlotUI> SlotSubmitted;
 
-        private void Awake()
-        {
-            if (iconImage == null
-                || borderImage == null
-                || selectionHighlight == null
-                || lockOverlay == null
-                || quantityText == null
-                || emptyIcon == null
-                || equippedBadge == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(EquipmentSlotUI)} '{name}' has missing serialized references.");
-            }
-        }
-
         public void Bind(
             EquipmentSlotId slotId,
             InventoryItemViewData item,
@@ -99,11 +84,6 @@ namespace SoulsLike.Ui.Equipment
 
         public void Select()
         {
-            if (EventSystem.current == null)
-            {
-                throw new InvalidOperationException("Equipment UI requires an active EventSystem.");
-            }
-
             EventSystem.current.SetSelectedGameObject(gameObject);
         }
 
