@@ -4,7 +4,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
-using SoulsLike.Interactions;
 using UnityEngine;
 
 namespace SoulsLike.Entities.Elevator
@@ -39,10 +38,10 @@ namespace SoulsLike.Entities.Elevator
         public ElevatorEndpointType EndpointType => endpointType;
         public ElevatorFloor Floor => floor;
         public Transform InteractionAnchor => interactionAnchor == null ? transform : interactionAnchor;
-        public global::SoulsLike.Entities.BaseEntity.EntityType EntityType =>
+        public EntityType EntityType =>
             endpointType == ElevatorEndpointType.PressurePlate
-                ? global::SoulsLike.Entities.BaseEntity.EntityType.ElevatorPressurePlate
-                : global::SoulsLike.Entities.BaseEntity.EntityType.ElevatorLever;
+                ? EntityType.ElevatorPressurePlate
+                : EntityType.ElevatorLever;
         public ViewEntity ViewEntity => viewEntity;
         public IElevatorPresenter Presenter => _presenter;
         public ElevatorView Elevator => _elevator;
@@ -79,9 +78,9 @@ namespace SoulsLike.Entities.Elevator
         }
 
         public bool IsActorAllowed(IEntity actor) => actor.EntityType
-                == global::SoulsLike.Entities.BaseEntity.EntityType.Player
+                == EntityType.Player
             || allowEnemyActivation && actor.EntityType
-                == global::SoulsLike.Entities.BaseEntity.EntityType.Enemy;
+                == EntityType.Enemy;
 
         public ElevatorFloor GetRequestedFloor(ElevatorFloor currentFloor) =>
             endpointType == ElevatorEndpointType.PressurePlate

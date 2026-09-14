@@ -25,10 +25,10 @@ namespace SoulsLike.Entities.Elevator
         }
 
         private void ApplyFatalDamage(Collider other)
-        {
+        {//todo:check health command - ability to die - instead of hardcoding repeating EntityType equals
             if (_entityLocator == null
                 || !_entityLocator.TryGetEntity(other, out IEntity entity)
-                || entity.EntityType != EntityType.Player && entity.EntityType != EntityType.Enemy)
+                || entity.EntityType != EntityType.Player && entity.EntityType != EntityType.Enemy) 
             {
                 return;
             }
