@@ -1,0 +1,78 @@
+// Execute with unity command eval. Preview-only data and camera; never enter Play Mode.
+var scene = UnityEditor.SceneManagement.EditorSceneManager.NewPreviewScene();
+var previousActive = UnityEngine.RenderTexture.active;
+try
+{
+    var canvasGo = new UnityEngine.GameObject("EquipmentPreviewCanvas", typeof(UnityEngine.RectTransform), typeof(UnityEngine.Canvas));
+    UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(canvasGo, scene);
+    var canvas = canvasGo.GetComponent<UnityEngine.Canvas>(); canvas.renderMode = UnityEngine.RenderMode.WorldSpace; canvasGo.layer = 5;
+    ((UnityEngine.RectTransform)canvasGo.transform).sizeDelta = new UnityEngine.Vector2(1920,1080);
+    var cameraGo = new UnityEngine.GameObject("EquipmentPreviewCamera", typeof(UnityEngine.Camera));
+    UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(cameraGo, scene);
+    var camera = cameraGo.GetComponent<UnityEngine.Camera>(); camera.scene = scene;
+    // World-space capture excludes HDRP exposure/postprocessing, matching overlay UI colors.
+    var hd = cameraGo.AddComponent<UnityEngine.Rendering.HighDefinition.HDAdditionalCameraData>();
+    hd.customRenderingSettings = true;
+    hd.volumeLayerMask = 0;
+    hd.renderingPathCustomFrameSettings.SetEnabled(UnityEngine.Rendering.HighDefinition.FrameSettingsField.Postprocess, false);
+    hd.renderingPathCustomFrameSettings.SetEnabled(UnityEngine.Rendering.HighDefinition.FrameSettingsField.ExposureControl, false);
+    hd.renderingPathCustomFrameSettingsOverrideMask.mask[(uint)UnityEngine.Rendering.HighDefinition.FrameSettingsField.Postprocess] = true;
+    hd.renderingPathCustomFrameSettingsOverrideMask.mask[(uint)UnityEngine.Rendering.HighDefinition.FrameSettingsField.ExposureControl] = true;
+    camera.orthographic = true; camera.orthographicSize = 540; camera.aspect = 16f/9f;
+    camera.transform.position = new UnityEngine.Vector3(0,0,-10); camera.clearFlags = UnityEngine.CameraClearFlags.SolidColor;
+    camera.backgroundColor = UnityEngine.Color.black; camera.cullingMask = 1<<5; canvas.worldCamera = camera;
+    var prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>("Assets/Prefabs/Ui/Equipment/EquipmentUi.prefab");
+    var ui = (UnityEngine.GameObject)UnityEditor.PrefabUtility.InstantiatePrefab(prefab,scene); ui.transform.SetParent(canvasGo.transform,false);
+    var rect = (UnityEngine.RectTransform)ui.transform; rect.anchorMin = UnityEngine.Vector2.zero; rect.anchorMax=UnityEngine.Vector2.one; rect.offsetMin=rect.offsetMax=UnityEngine.Vector2.zero;
+    foreach(var group in ui.GetComponentsInChildren<UnityEngine.CanvasGroup>(true)) group.alpha=1;
+    var db = UnityEditor.AssetDatabase.LoadAssetAtPath<SoulsLike.Items.ItemDatabase>("Assets/Settings/Items/ItemDatabase.asset");
+    var catalog = new SoulsLike.Items.ItemCatalog(db,
+        UnityEditor.AssetDatabase.LoadAssetAtPath<SoulsLike.Items.WeaponDatabase>("Assets/Settings/Items/WeaponDatabase.asset"),
+        UnityEditor.AssetDatabase.LoadAssetAtPath<SoulsLike.Items.ShieldDatabase>("Assets/Settings/Items/ShieldDatabase.asset"),
+        UnityEditor.AssetDatabase.LoadAssetAtPath<SoulsLike.Items.ConsumableDatabase>("Assets/Settings/Items/ConsumableDatabase.asset"));
+    var constructor = typeof(SoulsLike.Ui.Inventory.Data.InventoryItemViewData).GetConstructors(System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Single();
+    SoulsLike.Ui.Inventory.Data.InventoryItemViewData Item(SoulsLike.Items.ItemId id,int count) =>
+        (SoulsLike.Ui.Inventory.Data.InventoryItemViewData)constructor.Invoke(new object[]{new SoulsLike.Entities.Character.Components.Inventory.InventoryEntry(SoulsLike.Entities.Character.Components.Inventory.InventoryEntryId.Create(),id,count),db.GetRequired(id),catalog.GetStats(id),catalog.GetSkillIcon(id),true,string.Empty,true});
+    var sword=Item(SoulsLike.Items.ItemId.GreatSword,1); var shield=Item(SoulsLike.Items.ItemId.WoodenShield,1); var flask=Item(SoulsLike.Items.ItemId.CrimsonFlask,5);
+    var slots=ui.GetComponentsInChildren<SoulsLike.Ui.Equipment.EquipmentSlotUI>(true);
+    for(int i=0;i<slots.Length;i++) slots[i].Bind((SoulsLike.Entities.Character.Components.Equipment.EquipmentSlotId)i,null,false);
+    slots[0].Bind(SoulsLike.Entities.Character.Components.Equipment.EquipmentSlotId.RightHand1,sword);
+    slots[3].Bind(SoulsLike.Entities.Character.Components.Equipment.EquipmentSlotId.LeftHand1,shield);
+    slots[18].Bind(SoulsLike.Entities.Character.Components.Equipment.EquipmentSlotId.QuickItem1,flask);
+    var characterGo=new UnityEngine.GameObject("PreviewCharacterData"); characterGo.SetActive(false); UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(characterGo,scene);
+    var character=characterGo.AddComponent<SoulsLike.Entities.Character.Character>();
+    var data=UnityEditor.AssetDatabase.LoadAssetAtPath<SoulsLike.Entities.Character.CharacterData>("Assets/Settings/Data/CharacterData.asset");
+    typeof(SoulsLike.Entities.Character.Character).GetField("_characterData",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).SetValue(character,data);
+    var view=ui.GetComponent<SoulsLike.Ui.Equipment.EquipmentUi>();
+    view.CharacterStats.Display(character,sword.Weight+shield.Weight+flask.Weight,45f+character.Attributes.Endurance*1.5f,sword.Stats.PhysicalAttack,shield.Stats.PhysicalAttack);
+    view.DisplayPlayerSummary(character);
+    var lore=ui.GetComponentInChildren<SoulsLike.Ui.Inventory.LoreCardUi>(true);
+    var texts=ui.GetComponentsInChildren<TMPro.TMP_Text>(true);
+    texts.Single(t=>t.name=="LoadoutSummaryText").text="3 equipped · 28 slots";
+    void Selected(int index,string name,string slotName,SoulsLike.Ui.Inventory.Data.InventoryItemViewData item)
+    {
+        foreach(var slot in slots)slot.OnDeselect(null); slots[index].OnSelect(null);
+        texts.Single(t=>t.name=="SelectedSlotText").text=slotName;
+        texts.Single(t=>t.name=="SelectedItemNameText").text=name;
+        if(item==null)lore.DisplayEmpty(slotName,slots[index].EmptyIcon);else lore.Display(item);
+        UnityEngine.Canvas.ForceUpdateCanvases(); foreach(var t in texts) if(t.gameObject.activeInHierarchy)t.ForceMeshUpdate(); UnityEngine.Canvas.ForceUpdateCanvases();
+    }
+    void Render(int width,int height,string path)
+    {
+        var rt=new UnityEngine.RenderTexture(width,height,24,UnityEngine.RenderTextureFormat.ARGB32,UnityEngine.RenderTextureReadWrite.sRGB);
+        UnityEngine.Texture2D pixels=null;
+        try {camera.targetTexture=rt;camera.Render();UnityEngine.RenderTexture.active=rt;pixels=new UnityEngine.Texture2D(width,height,UnityEngine.TextureFormat.RGBA32,false);pixels.ReadPixels(new UnityEngine.Rect(0,0,width,height),0,0);pixels.Apply();System.IO.File.WriteAllBytes(path,pixels.EncodeToPNG());}
+        finally {UnityEngine.RenderTexture.active=previousActive;camera.targetTexture=null;if(pixels!=null)UnityEngine.Object.DestroyImmediate(pixels);rt.Release();UnityEngine.Object.DestroyImmediate(rt);}
+    }
+    Selected(0,sword.DisplayName,"RIGHT HAND ARMAMENT 1",sword);
+    Render(1920,1080,"Design/EquipmentUI/Unity/Equipment-Unity-1920.png");
+    Render(1280,720,"Design/EquipmentUI/Unity/Equipment-Unity-1280.png");
+    Selected(11,"Empty slot","Chest",null);
+    Render(1920,1080,"Design/EquipmentUI/Unity/Equipment-Unity-Empty-Chest.png");
+    Selected(3,shield.DisplayName,"LEFT HAND ARMAMENT 1",shield);
+    Render(1920,1080,"Design/EquipmentUI/Unity/Equipment-Unity-Shield.png");
+    Selected(18,flask.DisplayName,"QUICK ITEM 1",flask);
+    Render(1920,1080,"Design/EquipmentUI/Unity/Equipment-Unity-Flask.png");
+    return Newtonsoft.Json.JsonConvert.SerializeObject(new {slots=slots.Length,overflow=texts.Where(t=>t.gameObject.activeInHierarchy&&t.isTextOverflowing).Select(t=>t.name).ToArray(),statsSource=UnityEditor.PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(view.CharacterStats),loreSource=UnityEditor.PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(lore)});
+}
+finally {UnityEngine.RenderTexture.active=previousActive;UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(scene);}

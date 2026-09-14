@@ -1,0 +1,292 @@
+[
+  {
+    "name": "Weapon",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      20,
+      21,
+      218,
+      216
+    ],
+    "transparentFraction": 0.9081,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyWeapon.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Shield",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      55,
+      37,
+      147,
+      180
+    ],
+    "transparentFraction": 0.721,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyShield-final.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Flask",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      69,
+      45,
+      119,
+      167
+    ],
+    "transparentFraction": 0.8144,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyFlask-final.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Ring",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      53,
+      48,
+      150,
+      161
+    ],
+    "transparentFraction": 0.8425,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyRing-final.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Head",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      64,
+      38,
+      130,
+      181
+    ],
+    "transparentFraction": 0.7481,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyHead-final.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Chest",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      43,
+      41,
+      171,
+      176
+    ],
+    "transparentFraction": 0.7146,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyChest-final.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Arms",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      78,
+      38,
+      98,
+      185
+    ],
+    "transparentFraction": 0.7994,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyArms-transparent.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Legs",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      73,
+      34,
+      110,
+      189
+    ],
+    "transparentFraction": 0.7867,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyLegs-final.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Arrow",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      20,
+      22,
+      219,
+      216
+    ],
+    "transparentFraction": 0.9363,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyArrow.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  },
+  {
+    "name": "Bolt",
+    "sourceCanvas": [
+      1254,
+      1254
+    ],
+    "exportCanvas": [
+      256,
+      256
+    ],
+    "semanticBoundsAlphaOver16": [
+      43,
+      48,
+      174,
+      164
+    ],
+    "transparentFraction": 0.9065,
+    "cornerAlpha": 0,
+    "source": "Source/EquipmentEmptyBolt-final.png",
+    "resizePolicy": "Uniform full-canvas scaling; centered transparent padding for Arms at 74%",
+    "intendedCanvasInUI": [
+      64,
+      64
+    ],
+    "semanticSlotInUI": [
+      88,
+      88
+    ]
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "runId": "equipment-2026-09-14-a",
+  "scope": "Four Equipment boards on 02 Approved; reviewed exports Review/Equipment-{Loadout,Wooden-Shield,Crimson-Flask,Empty-Chest}.png and Review/Equipment-Empty-Icons.png. Main board: 8b1ed794-e91e-807d-8008-a328d714c22e.",
+  "styleProfile": "Editorial, adapted to the existing restrained dark fantasy inventory design",
+  "skeleton": "Equipment grid / lore detail / character status rail",
+  "axes": [
+    {
+      "axis": "hierarchy",
+      "score": 4,
+      "evidence": "Equipment heading leads the screen. Gold 2px outline identifies one selected slot; occupied art and E badges separate equipped items from 45% opacity category ghosts."
+    },
+    {
+      "axis": "composition",
+      "score": 4,
+      "evidence": "1920x1080 frame retains the approved atmosphere, header and footer. 584px equipment panel, 648px lore panel and 464px status rail align with two 48px gaps."
+    },
+    {
+      "axis": "typography",
+      "score": 4,
+      "evidence": "Approved Cinzel headings, EB Garamond body and Inter utility text remain legible without clipping. Category row labels were removed at user request; small ammo labels remain 14px."
+    },
+    {
+      "axis": "color",
+      "score": 4,
+      "evidence": "Warm ivory text, charcoal olive surfaces, restrained gold selection and desaturated empty ghosts preserve the existing inventory palette. Only equipped item art is saturated."
+    },
+    {
+      "axis": "spacing",
+      "score": 4,
+      "evidence": "28 cells use 88px bodies, 64px independent images, 12px gaps, and seven explicit flex rows; all created boards have flex layouts. Arms canvas padding normalizes its optical height with the other armor icons."
+    },
+    {
+      "axis": "content",
+      "score": 4,
+      "evidence": "Slot counts match EquipmentSlotCatalog and EquipmentUi.prefab. Three occupied item descriptions/lore map to ItemDatabase.asset. An empty chest state explains the next action; Character Status deliberately retains existing sample values."
+    },
+    {
+      "axis": "distinctiveness",
+      "score": 4,
+      "evidence": "The reference-inspired slot arrangement uses the project's existing smoke atmosphere, serif typography, equipped art and selection treatment. Ten category-specific empty silhouettes replace generic placeholders."
+    }
+  ],
+  "belowThreshold": 0,
+  "findings": [
+    {
+      "id": "dq-typography-01",
+      "severity": "Low",
+      "axis": "typography",
+      "issue": "Penpot's fontFamilies token binding rejected the API call; some cloned/new shapes expose incomplete token metadata even though their rendered values match the existing semantic palette and font styles.",
+      "fix": "Preserve the current appearance. Rebind the existing semantic font-family and color tokens when the Penpot token API supports reliable binding; do not create duplicate raw-value tokens.",
+      "safeSet": false
+    }
+  ],
+  "revisionPasses": 2,
+  "assumptions": [
+    "Desktop design at the existing 1920x1080 logical canvas; no smaller-screen variant requested.",
+    "Left-hand ghosts use shield art and right-hand ghosts use weapon art as visual category cues; they do not change runtime slot compatibility.",
+    "All ten quick-item slots use the requested flask ghost as a generic empty quick-item cue.",
+    "Character stats and equipped quantity 5 are inherited/illustrative design content, not a captured live game state.",
+    "Only RightHand1, LeftHand1, QuickItem1 and Chest navigate between the four preview states; action-key hints are visual and do not perform equipment mutations.",
+    "Visual and structural review only; no full WCAG audit, game integration or Unity validation performed."
+  ],
+  "truncation": ""
+}

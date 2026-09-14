@@ -6,7 +6,7 @@ domains:
   - equipment
 status: needs-review
 authority: advisory
-updated: 2026-09-07
+updated: 2026-09-14
 context_keys:
   - equipment-ui
 aliases:
@@ -25,7 +25,7 @@ This guide breaks down the structure, spatial layout, UX interaction states, vis
 The equipment interface follows FromSoftware's dark fantasy minimalist aesthetic:
 - **Low Clutter, High Information Density:** Complex RPG calculations and equipment slots are neatly organized into modular panels that update dynamically without obscuring gameplay context.
 - **Immediate Feedback Loop:** Every hover, selection, or slot assignment instantly updates inspector cards, candidate comparisons, and global character stats (Equip Load, Weight, Attack Ratings).
-- **Diegetic Medieval Palette:** Dark slate/stone container backgrounds (`#121417`, `#1A1A18`) with subtle borders (`#3A342B`), framed by warm gold focus accents (`#C5A059`) and parchment typography (`#E6DFD3` / `#E6E1C5`).
+- **Diegetic Medieval Palette:** Charcoal olive backgrounds (`#171916`, `#20231D`), muted control borders (`#858B76`), warm gold focus (`#C9B67C`), and parchment text (`#E6E1CE`).
 - **Gamepad-First Spatial Navigation:** Grid-based multi-row navigation explicitly configured for D-pad / WASD movement with clear active selection borders and seamless mouse/pointer hover support.
 - **Decoupled MVP / Controller Pattern:** Built on `EquipmentUi` (View), `EquipmentUiController` (Controller / Presenter), `EquipmentSlotUI` (Slot View), and `CharacterStatsUi` (Shared Stats View), resolved and injected via VContainer.
 
@@ -33,107 +33,44 @@ The equipment interface follows FromSoftware's dark fantasy minimalist aesthetic
 
 ## 2. Spatial UI Breakdown (What is Located Where)
 
-The Equipment Screen is divided into **four main visual zones** plus an **Inventory Picker Overlay modal** rendered over a dimmed live game world.
+The equipment view uses the approved Penpot design on a 1920 × 1080 logical canvas. The main content starts at (64, 136), measures 1792 × 800, and contains three columns with 48-unit gaps.
 
-```
-+-----------------------------------------------------------------------------------------------+
-| ZONE 1: TOP HEADER (Title: "EQUIPMENT", Player Summary: "Runes 45,210")                       |
-+-------------------------------------------------------------+---------------------------------+
-| ZONE 2: EQUIPMENT SLOTS GRID (Left Side - 28 Slots)         | ZONE 4: CHARACTER STATUS        |
-|                                                             |         & CALCULATIONS PANEL    |
-| [R-Arm 1]   [R-Arm 2]   [R-Arm 3]                           | (Right Side: CharacterStatsUi)  |
-| [L-Arm 1]   [L-Arm 2]   [L-Arm 3]                           | - Base Attributes (8 stats)     |
-| [Arrow 1]   [Arrow 2]   [Bolt 1]   [Bolt 2]                 |   (Vig, Min, End, Str, Dex,     |
-| [Head]      [Chest]     [Arms]     [Legs]                   |    Int, Fth, Arc)               |
-| [Talisman1] [Talisman2] [Talisman3] [Talisman4]             | - Right Armament Attack Power   |
-| [Quick 1]   [Quick 2]   [Quick 3]  [Quick 4]  [Quick 5]     | - Left Armament Attack Power    |
-| [Quick 6]   [Quick 7]   [Quick 8]  [Quick 9]  [Quick 10]    | - Equip Load (Current / Max)    |
-|                                                             | - Poise                         |
-| +---------------------------------------------------------+ |                                 |
-| | ZONE 3: ITEM INSPECTOR CARD (Middle / Lower Left)       | |                                 |
-| | Icon, Name, Category, Skill, FP Cost, Physical Attack,  | |                                 |
-| | Requirements (Str/Dex/Int/Fth/Arc), Scaling, Weight     | |                                 |
-| +---------------------------------------------------------+ |                                 |
-+-------------------------------------------------------------+---------------------------------+
-| ZONE 5: BOTTOM ACTION BAR (Select, Back, Remove, Switch Display)                              |
-+-----------------------------------------------------------------------------------------------+
-```
-
----
-
-### Zone 1: Top Navigation Bar & Header
-- **Location:** Top edge of the screen (Full Width).
-- **Elements:**
-  - **Screen Title (`screenTitleText`):** Fixed label displaying `"EQUIPMENT"`.
-  - **Player Summary (`playerSummaryText`):** Bound via `DisplayPlayerSummary(Character character)` displaying held currency: `Runes {character.HeldCurrency:N0}`.
-
----
+| Zone | Current presentation |
+|---|---|
+| Header | Inventory-style frame, equipment emblem, and EQUIPMENT title. |
+| Equipment grid | 584-unit left column with selected slot/name and equipped count, followed by 28 slots. Category row labels are omitted. |
+| Lore | 648-unit center column using the linked inventory `LoreCard.prefab` and `LoreCardUi`. |
+| Character status | 464-unit right column using the linked inventory `CharacterStats.prefab` and existing controller updates. |
+| Footer | Current actions: Select, Back, Unequip. No unsupported Switch Display action is advertised. |
 
 ### Zone 2: Equipment Grid Panel (Left Side)
-Organized into 6 logical equipment groups across 7 navigation rows (28 total slots defined by `EquipmentSlotId`). Each slot is an `EquipmentSlotUI` component showing the equipped item sprite, stack quantity, lock overlay, or empty slot placeholder.
 
-1. **Right-Hand Armaments (Row 1 - 3 Slots):** `RightHand1`, `RightHand2`, `RightHand3` (Weapons/Catalysts/Shields in Right Hand).
-2. **Left-Hand Armaments (Row 2 - 3 Slots):** `LeftHand1`, `LeftHand2`, `LeftHand3` (Shields/Weapons/Catalysts in Left Hand).
-3. **Ammunition (Row 3 - 4 Slots):** `Arrow1`, `Arrow2`, `Bolt1`, `Bolt2` (Projectiles for Bows & Crossbows).
-4. **Apparel / Armor (Row 4 - 4 Slots):** `Head`, `Chest`, `Arms`, `Legs`.
-5. **Talismans (Row 5 - 4 Slots):** `Talisman1`, `Talisman2`, `Talisman3`, `Talisman4`.
-6. **Quick Items / Belt (Rows 6 & 7 - 10 Slots in 2x5 Grid):** `QuickItem1` through `QuickItem5` (Row 6) and `QuickItem6` through `QuickItem10` (Row 7).
+The six logical equipment groups retain seven navigation rows:
 
----
+1. RightHand1–3.
+2. LeftHand1–3.
+3. Arrow1–2 and Bolt1–2.
+4. Head, Chest, Arms, Legs.
+5. Talisman1–4.
+6. QuickItem1–5.
+7. QuickItem6–10.
 
-### Zone 3: Item Inspector Card (Middle / Lower Left)
-Displays detailed specifications of the **currently highlighted slot or candidate item** (bound via `EquipmentUi.DisplaySlot()`):
-- **Item Graphic (`inspectorItemIcon`):** Item sprite thumbnail (disabled when slot is empty).
-- **Item Title (`inspectorItemName`):** Full display name, or placeholder `[Empty {SlotDisplayName}]` when unequipped.
-- **Category (`inspectorItemCategory`):** Item type label (`item.ItemType.ToString()`).
-- **Weapon Skill & FP Cost (`inspectorSkillName`, `inspectorSkillFpCost`):** Equipped skill name and focus point cost (`FP {stats.SkillFocusCost}`).
-- **Attack Rating Summary (`inspectorAttackSummary`):** Physical attack power (`Physical {stats.PhysicalAttack}`).
-- **Stat Requirements (`inspectorReqStr`, `inspectorReqDex`, `inspectorReqInt`, `inspectorReqFth`, `inspectorReqArc`):** Required attribute thresholds. Rendered in **Red** (`ColorUnmetRequirement` `#E53935`) if the character's base attribute is below the required value, otherwise rendered in **Parchment Primary** (`ColorParchmentPrimary` `#E6DFD3`).
-- **Attribute Scaling (`inspectorScalingText`):** Formatted scaling grades (`STR {grade}  DEX {grade}`).
-- **Item Weight (`inspectorWeightText`):** Numerical weight value (`Weight {item.Weight:F1}`).
-- **Live Comparison Delta (`EquipmentUi.UpdateComparison`):** When previewing candidate gear, modifies attack and weight strings:
-  - Attack: `Physical {candidateAttack} ({attackDelta:+#;-#;0})`
-  - Weight: `Weight Δ {weightDelta:+0.0;-0.0;0.0}`
+Each logical slot is 88 × 88 with a 64 × 64 icon and 12-unit spacing. Empty category sprites come from `Assets/Art/Textures/EquipmentUI/EmptySlots/`. Right-hand slots use the weapon ghost, left-hand slots the shield ghost, ammo and armor use matching ghosts, talismans use a ring, and quick items use a flask. These visual cues do not change equipment compatibility.
 
----
+### Zone 3: Shared Inventory Lore Card
 
-### Zone 4: Character Status & Calculations Panel (Right Side)
-Rendered by the reusable `CharacterStatsUi` component, updating in real time on loadout changes:
-- **Character Attributes (8 Stats):**
-  - `vigorText`: Vigor
-  - `mindText`: Mind
-  - `enduranceText`: Endurance
-  - `strengthText`: Strength
-  - `dexterityText`: Dexterity
-  - `intelligenceText`: Intelligence
-  - `faithText`: Faith
-  - `arcaneText`: Arcane
-- **Attack Ratings:**
-  - `rightAttackText`: Right Armament Attack Power (supports live delta comparison)
-  - `leftAttackText`: Left Armament Attack Power
-- **Equip Load (`equipLoadText`):**
-  - Displays `{equipWeight:F1} / {maxEquipWeight:F1}`
-  - Maximum load formula: `maxEquipWeight = 45.0f + (character.Attributes.Endurance * 1.5f)`
-- **Poise (`poiseText`):**
-  - Poise rating (currently initialized to `0`).
+`EquipmentUi.DisplaySlot` updates `selectedSlotText`, `selectedItemNameText`, and the linked `loreCardUi`.
 
----
+- Occupied slots use the same `LoreCardUi.Display(InventoryItemViewData)` path as inventory, showing the item name, artwork, description, and lore.
+- Empty slots call `DisplayEmpty(slotName, slotIcon)`, replacing stale artwork/text with the category icon and an equipment-selection instruction.
+- `RefreshSlots` updates the equipped count and all 28 slot presentations.
+- Character statistics remain owned by the existing `CharacterStatsUi` and equipment controller.
 
-### Zone 5: Bottom Action Bar (Controller Legend)
-- **Location:** Bottom of the screen (`actionPromptsText`).
-- **Text:** `"Select   Back   Remove   Switch Display"`.
-- **Action Bindings:**
-  - `[Enter / Gamepad A / Left Click]`: Select / Open item picker for focused slot.
-  - `[Delete / Gamepad X]`: Unequip item from selected slot (`UnequipAction`).
-  - `[Q / Escape / Gamepad B]`: Back / Close screen (`UiBackAction` / `PauseNavigationUiController`).
-  - `[F / Gamepad RS]`: Switch display / Toggle simple view.
+### Inventory Selection and Retained Inspector
 
----
+The active change-equipment flow uses `EquipmentUiController.SubmitSlot` → `InventoryRequested` to open the shared inventory route. Returning to equipment restores the previously selected slot.
 
-### Inventory Picker Overlay & Stat Comparison Modal
-- **Container (`inventoryPickerOverlay`):** Modal window embedded within `EquipmentUi` (or routed via `PauseNavigationUiController` to `InventoryUiController.Open`).
-- **Grid Container (`inventoryPickerGridContainer`):** 5-column layout populated with candidate `InventorySlotUI` instances matching the target slot's `EquipmentGroup` compatibility.
-- **Comparison Panel (`comparisonPanel`):** Displays side-by-side attack power and weight differences when focusing candidate items before confirming equipment.
+The older detailed inspector is retained under `InventoryPickerOverlay/PickerModalWindow/ComparisonViewPanel/ItemInspectorPanel` so its serialized bindings and comparison methods remain intact. `PickerGridContent` remains a direct child of `PickerModalWindow`. This retained overlay is separate from the active shared-inventory route.
 
 ---
 
@@ -148,12 +85,10 @@ Rendered by the reusable `CharacterStatsUi` component, updating in real time on 
        |-- (Press Q / Escape / B) -------> Close equipment screen & return to pause / gameplay
        |
        v  (Press Enter / Gamepad A / Click)
-[ Inventory Selection Modal / Picker ]
+[ Shared Inventory Selection Route ]
        |
        |-- Populates filtered candidate items (EquipmentGroup compatibility)
-       |-- (Navigate Candidate Grid) ----> Live hover stat comparison (UpdateComparison)
-       |                                   - Attack delta: (+5) in Blue / (-12) in Red
-       |                                   - Weight delta: Δ +2.5
+       |-- (Navigate Candidate Grid) ----> Existing inventory item inspection
        |-- (Press Enter / Gamepad A) ----> Assign item to slot & refresh loadout
        |-- (Press Q / Escape / B) -------> Cancel picker & restore focused slot
 ```
@@ -162,9 +97,9 @@ Rendered by the reusable `CharacterStatsUi` component, updating in real time on 
 - The user navigates the 28 equipment slots using D-Pad, WASD, Arrow keys, or Mouse Hover.
 - `ConfigureSlotNavigation()` establishes explicit 2D neighbor relationships (`_up`, `_down`, `_left`, `_right`) between rows of varying widths (3, 3, 4, 4, 4, 5, 5).
 - On focus (`OnSelect` / `OnPointerEnter`), `EquipmentSlotUI` fires `SlotFocused`, calling `EquipmentUiController.FocusSlot(slotId)`.
-- Zone 3 (Item Inspector) and Zone 4 (Character Stats) refresh immediately with the slot's current item details.
+- Zone 3 (shared LoreCard) refreshes with the focused item; Character Stats refreshes through the existing loadout flow.
 
-### State 2: Inventory Selection Modal & Live Stat Comparison
+### State 2: Shared Inventory Selection
 - Pressing `Enter` / Gamepad `A` / clicking an unlocked slot invokes `SubmitSlot(slotId)`.
 - Opens candidate items filtered by `EquipmentSlotCatalog.GetCompatibilityGroup(slotId)`:
   - `RightHand1..3` & `LeftHand1..3` $\rightarrow$ Armaments (Weapons / Shields)
@@ -173,10 +108,9 @@ Rendered by the reusable `CharacterStatsUi` component, updating in real time on 
   - `Head`, `Chest`, `Arms`, `Legs` $\rightarrow$ Corresponding Armor types
   - `Talisman1..4` $\rightarrow$ Talismans
   - `QuickItem1..10` $\rightarrow$ Consumables
-- Focusing a candidate item triggers `EquipmentUiController.FocusCandidate(entryId)`, calculating deltas:
-  $$\Delta \text{Attack} = \text{Candidate.PhysicalAttack} - \text{Current.PhysicalAttack}$$
-  $$\Delta \text{Weight} = \text{Candidate.Weight} - \text{Current.Weight}$$
+- `SubmitSlot` raises `InventoryRequested`; the navigation route opens the existing inventory UI for the selected equipment slot. Candidate inspection uses the inventory presentation.
 - Submitting a candidate calls `EquipmentUiController.SelectItem(entryId)` $\rightarrow$ `EquipmentComponent.Assign(slotId, entryId)`, updating character attributes, weapon models, and UI slots.
+- `FocusCandidate`, `UpdateComparison`, and the modal picker remain available to the retained legacy picker. They do not describe the active shared-inventory route.
 
 ### State 3: Unequipping & Slot Clearing
 - While focusing an assigned slot, pressing `Delete` (Keyboard) or `Gamepad X` triggers `UnequipAction`.
@@ -189,49 +123,26 @@ Rendered by the reusable `CharacterStatsUi` component, updating in real time on 
 
 ### Prefab GameObject & CanvasGroup Structure (`EquipmentUi.prefab`)
 
-```
-[EquipmentUi] (Root: RectTransform, CanvasGroup, EquipmentUi)
- ├── [HeaderPanel]
- │    ├── TitleText ("EQUIPMENT")
- │    └── PlayerSummaryText ("Runes 45,210")
- ├── [MainContentPanel]
- │    ├── [EquipmentGridPanel] (Transform: equipmentGridContainer)
- │    │    ├── Row 1 (RightHandSlots: 3x EquipmentSlotUI)
- │    │    ├── Row 2 (LeftHandSlots: 3x EquipmentSlotUI)
- │    │    ├── Row 3 (AmmoSlots: 4x EquipmentSlotUI)
- │    │    ├── Row 4 (ArmorSlots: 4x EquipmentSlotUI)
- │    │    ├── Row 5 (TalismanSlots: 4x EquipmentSlotUI)
- │    │    ├── Row 6 (QuickItemSlots 1..5: 5x EquipmentSlotUI)
- │    │    └── Row 7 (QuickItemSlots 6..10: 5x EquipmentSlotUI)
- │    ├── [ItemInspectorPanel]
- │    │    ├── InspectorItemIcon (Image)
- │    │    ├── InspectorItemName (TMP_Text)
- │    │    ├── InspectorItemCategory (TMP_Text)
- │    │    ├── InspectorSkillName & InspectorSkillFpCost (TMP_Text)
- │    │    ├── InspectorAttackSummary (TMP_Text)
- │    │    ├── InspectorRequirementsContainer (5x TMP_Text: Str, Dex, Int, Fth, Arc)
- │    │    ├── InspectorScalingText (TMP_Text)
- │    │    └── InspectorWeightText (TMP_Text)
- │    └── [CharacterStatsPanel] (CharacterStatsUi component)
- │         ├── AttributeValuesContainer (8x TMP_Text: Vig, Min, End, Str, Dex, Int, Fth, Arc)
- │         ├── RightAttackText (TMP_Text)
- │         ├── LeftAttackText (TMP_Text)
- │         ├── EquipLoadText (TMP_Text)
- │         └── PoiseText (TMP_Text)
- ├── [InventoryPickerOverlay] (GameObject: inventoryPickerOverlay)
- │    ├── [InventoryPickerGridContainer] (5-column Grid: Transform)
- │    └── [ComparisonPanel] (GameObject: comparisonPanel)
- └── [BottomActionBar]
-      └── ActionPromptsText (TMP_Text)
-```
+- Root: existing `EquipmentUi`, `RectTransform`, and `CanvasGroup`.
+- Background layers: inventory vignette and center fade.
+- `HeaderBar`: inventory frame, equipment emblem, and editable TMP title.
+- `MainContentPanel`: equipment grid, linked `LoreCard.prefab`, and linked `CharacterStats.prefab`.
+- `InventoryPickerOverlay/PickerModalWindow`: preserved `PickerGridContent` and comparison inspector.
+- `BottomActionBar`: current action prompts.
+
+The shared inventory prefab source assets are unchanged. Equipment layout and presentation overrides are stored on their nested instances. The equipment prefab GUID and its existing `EquipmentUi` Addressables mapping are preserved.
 
 ### Component Layer Hierarchy (`EquipmentSlotUI`)
-Each equipment slot widget is built with layered MPUIKit and TextMeshPro components:
-1. **`borderImage` (`MPImage`):** Outer styled frame (`normalBorderColor` `#1A1A18`).
-2. **`selectionHighlight` (`MPImage`):** Golden focus highlight border (`#C5A059`), enabled on focus.
-3. **`iconImage` (`Image`):** High-resolution item icon sprite.
-4. **`quantityText` (`TMP_Text`):** Stack counter (active when item is stackable and quantity > 1).
-5. **`lockOverlay` (`GameObject`):** Padlock graphic displayed if the slot is locked.
+
+1. Logical 88-unit body and pointer target.
+2. Independent background and border; focus uses the gold selection boundary.
+3. Non-interactive 120-unit selection effect, independent of logical bounds.
+4. 64-unit item/empty icon. Empty icons use alpha 0.45; occupied icons use full opacity.
+5. Independent equipped badge, visible for an occupied unlocked slot.
+6. Quantity text, visible for an unlocked stackable item with quantity greater than one.
+7. Existing lock overlay; locked slots suppress item/ghost, badge, and quantity.
+
+Focus state is retained when `Bind` refreshes an item. `EquipmentUi.Show` restores the previously selected slot, using RightHand1 only for the initial selection.
 
 ---
 
@@ -241,16 +152,16 @@ Each equipment slot widget is built with layered MPUIKit and TextMeshPro compone
 
 | Token Name | Hex Code | Visual Application & UX Context |
 | :--- | :--- | :--- |
-| **Slate Background** | `#121417` | Screen backdrop and main container panels. |
-| **Slot Frame Border** | `#1A1A18` / `#3A342B` | Default unselected slot borders (`normalBorderColor`). |
-| **Active Focus Gold** | `#C5A059` / `#D4AF37` | Active selection border and focus glow (`selectedBorderColor`). |
-| **Parchment Primary** | `#E6DFD3` / `#E6E1C5` | Primary text for item titles, normal stats, and labels (`ColorParchmentPrimary`). |
+| **Background / Panel** | `#171916` / `#20231D` | Screen backdrop and main container panels. |
+| **Slot / Control Border** | `#272B23` / `#858B76` | Slot fill and default unselected boundary. |
+| **Active Focus Gold** | `#C9B67C` | Active selection border and focus glow. |
+| **Parchment Primary / Secondary** | `#E6E1CE` / `#ADAFA0` | Titles and body text / supporting text. |
 | **Stat Buff / Improvement** | `#62B5F6` / Soft Blue | Positive attack comparison deltas (`ColorStatBuff`). |
 | **Stat Nerf / Penalty** | `#EF5350` / Soft Red | Negative attack comparison deltas (`ColorStatNerf`). |
 | **Unmet Requirement** | `#E53935` / Solid Red | Stat requirement text when player stats are insufficient (`ColorUnmetRequirement`). |
 
 ### Typography & Styling
-- **Font Asset:** Cinzel / TextMeshPro serif tabular font asset.
+- **Fonts:** Cinzel for display and headings, EB Garamond for body and stat rows, Inter for slot utilities and counters; all remain editable TMP text.
 - **Numbers & Counters:** Fixed numeric widths (tabular figures) to eliminate jitter when updating real-time stats.
 
 ---

@@ -30,6 +30,10 @@ namespace SoulsLike.Ui.Equipment
         [SerializeField] private List<EquipmentSlotUI> quickItemSlots = new();
 
         [Header("Zone 3: Item Inspector Card")]
+        [SerializeField] private LoreCardUi loreCardUi;
+        [SerializeField] private TMP_Text selectedSlotText;
+        [SerializeField] private TMP_Text selectedItemNameText;
+        [SerializeField] private TMP_Text loadoutSummaryText;
         [SerializeField] private Image inspectorItemIcon;
         [SerializeField] private TMP_Text inspectorItemName;
         [SerializeField] private TMP_Text inspectorItemCategory;
@@ -72,7 +76,9 @@ namespace SoulsLike.Ui.Equipment
         public override void Show()
         {
             base.Show();
-            _slotsById[EquipmentSlotId.RightHand1].Select();
+            (_selectedSlot != null
+                ? _selectedSlot
+                : _slotsById[EquipmentSlotId.RightHand1]).Select();
         }
 
         public void RefreshSlots(IReadOnlyDictionary<EquipmentSlotId, InventoryItemViewData> items)
@@ -82,11 +88,18 @@ namespace SoulsLike.Ui.Equipment
                 throw new ArgumentNullException(nameof(items));
             }
 
+            int equippedCount = 0;
             foreach (KeyValuePair<EquipmentSlotId, EquipmentSlotUI> pair in _slotsById)
             {
                 items.TryGetValue(pair.Key, out InventoryItemViewData item);
                 pair.Value.Bind(pair.Key, item);
+                if (item != null)
+                {
+                    equippedCount++;
+                }
             }
+
+            loadoutSummaryText.text = $"{equippedCount} equipped · 28 slots";
         }
 
         public void DisplaySlot(
@@ -94,10 +107,15 @@ namespace SoulsLike.Ui.Equipment
             InventoryItemViewData item,
             CharacterAttributeStats attributes)
         {
+            string slotName = EquipmentSlotCatalog.GetDisplayName(slotId);
+            selectedSlotText.text = slotName;
+            selectedItemNameText.text = item == null ? "Empty slot" : item.DisplayName;
+
             if (item == null)
             {
+                loreCardUi.DisplayEmpty(slotName, _slotsById[slotId].EmptyIcon);
                 inspectorItemIcon.enabled = false;
-                inspectorItemName.text = $"[Empty {EquipmentSlotCatalog.GetDisplayName(slotId)}]";
+                inspectorItemName.text = $"[Empty {slotName}]";
                 inspectorItemCategory.text = "-";
                 inspectorSkillName.text = "-";
                 inspectorSkillFpCost.text = "-";
@@ -112,6 +130,7 @@ namespace SoulsLike.Ui.Equipment
                 return;
             }
 
+            loreCardUi.Display(item);
             ItemStatSnapshot stats = item.Stats;
             inspectorItemIcon.sprite = item.Icon;
             inspectorItemIcon.enabled = item.Icon != null;
@@ -192,7 +211,7 @@ namespace SoulsLike.Ui.Equipment
             inventoryPickerOverlay.SetActive(false);
             comparisonPanel.SetActive(false);
             screenTitleText.text = "EQUIPMENT";
-            actionPromptsText.text = "Select   Back   Remove   Switch Display";
+            actionPromptsText.text = "Select   Back   Unequip";
         }
 
         private void OnDestroy()

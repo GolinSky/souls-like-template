@@ -23,6 +23,8 @@ namespace SoulsLike.Ui.Equipment
         [SerializeField] private MPImage selectionHighlight;
         [SerializeField] private GameObject lockOverlay;
         [SerializeField] private TMP_Text quantityText;
+        [SerializeField] private Sprite emptyIcon;
+        [SerializeField] private GameObject equippedBadge;
 
         [Header("Visual Colors")]
         [SerializeField] private Color normalBorderColor = new(0.102f, 0.102f, 0.094f, 1f);
@@ -32,11 +34,13 @@ namespace SoulsLike.Ui.Equipment
         private EquipmentSlotUI _down;
         private EquipmentSlotUI _left;
         private EquipmentSlotUI _right;
+        private bool _isFocused;
 
         public EquipmentSlotId SlotId { get; private set; }
         public InventoryItemViewData CurrentItem { get; private set; }
         public bool IsLocked { get; private set; }
         public bool IsEmpty => CurrentItem == null;
+        public Sprite EmptyIcon => emptyIcon;
 
         public event Action<EquipmentSlotUI> SlotFocused;
         public event Action<EquipmentSlotUI> SlotSubmitted;
@@ -47,7 +51,9 @@ namespace SoulsLike.Ui.Equipment
                 || borderImage == null
                 || selectionHighlight == null
                 || lockOverlay == null
-                || quantityText == null)
+                || quantityText == null
+                || emptyIcon == null
+                || equippedBadge == null)
             {
                 throw new InvalidOperationException(
                     $"{nameof(EquipmentSlotUI)} '{name}' has missing serialized references.");
@@ -64,15 +70,19 @@ namespace SoulsLike.Ui.Equipment
             IsLocked = isLocked;
             lockOverlay.SetActive(isLocked);
 
-            iconImage.sprite = item == null ? null : item.Icon;
-            iconImage.enabled = !isLocked && item?.Icon != null;
+            iconImage.sprite = item == null ? emptyIcon : item.Icon;
+            iconImage.color = item == null
+                ? new Color(1f, 1f, 1f, 0.45f)
+                : Color.white;
+            iconImage.enabled = !isLocked && iconImage.sprite != null;
+            equippedBadge.SetActive(!isLocked && item != null);
             bool showQuantity = !isLocked
                 && item != null
                 && item.IsStackable
                 && item.Quantity > 1;
             quantityText.text = showQuantity ? item.Quantity.ToString() : string.Empty;
             quantityText.gameObject.SetActive(showQuantity);
-            SetHighlight(false);
+            SetHighlight(_isFocused);
         }
 
         public void ConfigureNavigation(
@@ -99,12 +109,14 @@ namespace SoulsLike.Ui.Equipment
 
         public void OnSelect(BaseEventData eventData)
         {
+            _isFocused = true;
             SetHighlight(true);
             SlotFocused?.Invoke(this);
         }
 
         public void OnDeselect(BaseEventData eventData)
         {
+            _isFocused = false;
             SetHighlight(false);
         }
 

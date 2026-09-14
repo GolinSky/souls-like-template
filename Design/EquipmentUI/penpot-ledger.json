@@ -1,0 +1,601 @@
+{
+  "runId": "equipment-2026-09-14-a",
+  "phase": "complete",
+  "sourceLore": "2876d2eb-131b-80f3-8008-9f8ce0fc2787",
+  "decisions": [
+    "Retain approved inventory atmosphere, lore and character status.",
+    "Use reference-led equipment grid matched to live project slots.",
+    "Fixed 1920x1080 desktop reference with flex columns and independent decorative overlays.",
+    "Lore text and occupied art map to ItemDatabase.asset; Character Status reuses approved illustrative values.",
+    "Typography preserves the approved Cinzel / EB Garamond / Inter style family.",
+    "One new opacity token: opacity.equipment.empty-icon=0.45; separate from cell surface opacity.",
+    "User revision: remove all seven category row labels from the left equipment panel; flex rows close the label column."
+  ],
+  "created": [
+    "8b1ed794-e91e-807d-8008-a328d714c22e",
+    "8b1ed794-e91e-807d-8008-a32c511a68d9",
+    "8b1ed794-e91e-807d-8008-a32c53372952",
+    "8b1ed794-e91e-807d-8008-a32c92a18f1a",
+    "8b1ed794-e91e-807d-8008-a32c0f326361"
+  ],
+  "selfReview": {
+    "runId": "equipment-2026-09-14-a",
+    "scope": "Four Equipment boards on 02 Approved; reviewed exports Review/Equipment-{Loadout,Wooden-Shield,Crimson-Flask,Empty-Chest}.png and Review/Equipment-Empty-Icons.png. Main board: 8b1ed794-e91e-807d-8008-a328d714c22e.",
+    "styleProfile": "Editorial, adapted to the existing restrained dark fantasy inventory design",
+    "skeleton": "Equipment grid / lore detail / character status rail",
+    "axes": [
+      {
+        "axis": "hierarchy",
+        "score": 4,
+        "evidence": "Equipment heading leads the screen. Gold 2px outline identifies one selected slot; occupied art and E badges separate equipped items from 45% opacity category ghosts."
+      },
+      {
+        "axis": "composition",
+        "score": 4,
+        "evidence": "1920x1080 frame retains the approved atmosphere, header and footer. 584px equipment panel, 648px lore panel and 464px status rail align with two 48px gaps."
+      },
+      {
+        "axis": "typography",
+        "score": 4,
+        "evidence": "Approved Cinzel headings, EB Garamond body and Inter utility text remain legible without clipping. Category row labels were removed at user request; small ammo labels remain 14px."
+      },
+      {
+        "axis": "color",
+        "score": 4,
+        "evidence": "Warm ivory text, charcoal olive surfaces, restrained gold selection and desaturated empty ghosts preserve the existing inventory palette. Only equipped item art is saturated."
+      },
+      {
+        "axis": "spacing",
+        "score": 4,
+        "evidence": "28 cells use 88px bodies, 64px independent images, 12px gaps, and seven explicit flex rows; all created boards have flex layouts. Arms canvas padding normalizes its optical height with the other armor icons."
+      },
+      {
+        "axis": "content",
+        "score": 4,
+        "evidence": "Slot counts match EquipmentSlotCatalog and EquipmentUi.prefab. Three occupied item descriptions/lore map to ItemDatabase.asset. An empty chest state explains the next action; Character Status deliberately retains existing sample values."
+      },
+      {
+        "axis": "distinctiveness",
+        "score": 4,
+        "evidence": "The reference-inspired slot arrangement uses the project's existing smoke atmosphere, serif typography, equipped art and selection treatment. Ten category-specific empty silhouettes replace generic placeholders."
+      }
+    ],
+    "belowThreshold": 0,
+    "findings": [
+      {
+        "id": "dq-typography-01",
+        "severity": "Low",
+        "axis": "typography",
+        "issue": "Penpot's fontFamilies token binding rejected the API call; some cloned/new shapes expose incomplete token metadata even though their rendered values match the existing semantic palette and font styles.",
+        "fix": "Preserve the current appearance. Rebind the existing semantic font-family and color tokens when the Penpot token API supports reliable binding; do not create duplicate raw-value tokens.",
+        "safeSet": false
+      }
+    ],
+    "revisionPasses": 2,
+    "assumptions": [
+      "Desktop design at the existing 1920x1080 logical canvas; no smaller-screen variant requested.",
+      "Left-hand ghosts use shield art and right-hand ghosts use weapon art as visual category cues; they do not change runtime slot compatibility.",
+      "All ten quick-item slots use the requested flask ghost as a generic empty quick-item cue.",
+      "Character stats and equipped quantity 5 are inherited/illustrative design content, not a captured live game state.",
+      "Only RightHand1, LeftHand1, QuickItem1 and Chest navigate between the four preview states; action-key hints are visual and do not perform equipment mutations.",
+      "Visual and structural review only; no full WCAG audit, game integration or Unity validation performed."
+    ],
+    "truncation": ""
+  },
+  "screen": "8b1ed794-e91e-807d-8008-a328d714c22e",
+  "header": "8b1ed794-e91e-807d-8008-a328e3e10157",
+  "main": "8b1ed794-e91e-807d-8008-a329502eee65",
+  "left": "8b1ed794-e91e-807d-8008-a329503c49b8",
+  "lore": "8b1ed794-e91e-807d-8008-a32965b2bf71",
+  "status": "8b1ed794-e91e-807d-8008-a3298d1445b6",
+  "media": {
+    "greatsword": {
+      "name": "GreatSwordIcon.png",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "c514c1fb-1cda-8125-8008-a3298aac36d9",
+      "keepAspectRatio": null
+    },
+    "emblem": {
+      "name": "FlatShieldIcon.png",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "d8ac01df-6646-81d2-8008-a3298c3a050c",
+      "keepAspectRatio": null
+    },
+    "shield": {
+      "name": "ShieldIcon.png",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "c514c1fb-1cda-8125-8008-a329a3912189",
+      "keepAspectRatio": null
+    },
+    "flask": {
+      "name": "CrimsonFlaskIcon.png",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "c514c1fb-1cda-8125-8008-a329a59d2772",
+      "keepAspectRatio": null
+    }
+  },
+  "grid": "8b1ed794-e91e-807d-8008-a32a0a7f3306",
+  "rows": [
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a0a98ce57",
+      "cells": "8b1ed794-e91e-807d-8008-a32a0aec0ed7",
+      "slots": [
+        "RightHand1",
+        "RightHand2",
+        "RightHand3"
+      ]
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a0b040e15",
+      "cells": "8b1ed794-e91e-807d-8008-a32a0b56f076",
+      "slots": [
+        "LeftHand1",
+        "LeftHand2",
+        "LeftHand3"
+      ]
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a0b700e47",
+      "cells": "8b1ed794-e91e-807d-8008-a32a0bc0617a",
+      "slots": [
+        "Arrow1",
+        "Arrow2",
+        "Bolt1",
+        "Bolt2"
+      ]
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a0bd76b35",
+      "cells": "8b1ed794-e91e-807d-8008-a32a0c297fbb",
+      "slots": [
+        "Head",
+        "Chest",
+        "Arms",
+        "Legs"
+      ]
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a0c424c67",
+      "cells": "8b1ed794-e91e-807d-8008-a32a0c948f92",
+      "slots": [
+        "Talisman1",
+        "Talisman2",
+        "Talisman3",
+        "Talisman4"
+      ]
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a0cae7140",
+      "cells": "8b1ed794-e91e-807d-8008-a32a0cfd9f1d",
+      "slots": [
+        "QuickItem1",
+        "QuickItem2",
+        "QuickItem3",
+        "QuickItem4",
+        "QuickItem5"
+      ]
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a0d146ab1",
+      "cells": "8b1ed794-e91e-807d-8008-a32a34425c58",
+      "slots": [
+        "QuickItem6",
+        "QuickItem7",
+        "QuickItem8",
+        "QuickItem9",
+        "QuickItem10"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a7d739aa2",
+      "slotId": "RightHand1",
+      "ghostKey": "weapon",
+      "occupied": "greatsword",
+      "img": "8b1ed794-e91e-807d-8008-a32a7df90600"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a7e42832d",
+      "slotId": "RightHand2",
+      "ghostKey": "weapon",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32a7e9e4cce"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32a7ea50938",
+      "slotId": "RightHand3",
+      "ghostKey": "weapon",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32a7efabefb"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ad80c5811",
+      "slotId": "LeftHand1",
+      "ghostKey": "shield",
+      "occupied": "shield",
+      "img": "8b1ed794-e91e-807d-8008-a32ad8697664"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ad8b20483",
+      "slotId": "LeftHand2",
+      "ghostKey": "shield",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ad9064ad1"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ad90c7edb",
+      "slotId": "LeftHand3",
+      "ghostKey": "shield",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ad968d30d"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ad9b4845f",
+      "slotId": "Arrow1",
+      "ghostKey": "arrow",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ada06adc7"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ada0c5deb",
+      "slotId": "Arrow2",
+      "ghostKey": "arrow",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ada67cd5f"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ada6eaf75",
+      "slotId": "Bolt1",
+      "ghostKey": "bolt",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32adac4244a"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32adacada20",
+      "slotId": "Bolt2",
+      "ghostKey": "bolt",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32adb1b0542"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32adb681849",
+      "slotId": "Head",
+      "ghostKey": "head",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32adbc43366"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32adbcb06d3",
+      "slotId": "Chest",
+      "ghostKey": "chest",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32adc1df4ed"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32adc245099",
+      "slotId": "Arms",
+      "ghostKey": "arms",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32adc76b450"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32adc7d9661",
+      "slotId": "Legs",
+      "ghostKey": "legs",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32adccf481d"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32add1c2cfb",
+      "slotId": "Talisman1",
+      "ghostKey": "ring",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32add6f7bda"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32add75502b",
+      "slotId": "Talisman2",
+      "ghostKey": "ring",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32addc7a792"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32addce43b3",
+      "slotId": "Talisman3",
+      "ghostKey": "ring",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ade229ad6"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ade2a2244",
+      "slotId": "Talisman4",
+      "ghostKey": "ring",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ade79e074"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32adec8e503",
+      "slotId": "QuickItem1",
+      "ghostKey": "flask",
+      "occupied": "flask",
+      "img": "8b1ed794-e91e-807d-8008-a32adf200990"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32adf69f9e2",
+      "slotId": "QuickItem2",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32adfbeb886"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32adfc3c8d0",
+      "slotId": "QuickItem3",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ae014c669"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ae01ad34a",
+      "slotId": "QuickItem4",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ae06ecce4"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ae075f1c3",
+      "slotId": "QuickItem5",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ae0c947a4"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ae116cd34",
+      "slotId": "QuickItem6",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ae176770f"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ae17bb2ea",
+      "slotId": "QuickItem7",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ae1cf8182"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ae1d5a465",
+      "slotId": "QuickItem8",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ae2297fa8"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ae2303b6c",
+      "slotId": "QuickItem9",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ae288d69b"
+    },
+    {
+      "id": "8b1ed794-e91e-807d-8008-a32ae28fcd40",
+      "slotId": "QuickItem10",
+      "ghostKey": "flask",
+      "occupied": null,
+      "img": "8b1ed794-e91e-807d-8008-a32ae2e18788"
+    }
+  ],
+  "ghosts": {
+    "weapon": {
+      "name": "EquipmentEmptyWeapon",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "d8ac01df-6646-81d2-8008-a32a3513f7c8",
+      "keepAspectRatio": null
+    },
+    "shield": {
+      "name": "EquipmentEmptyShield",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "c514c1fb-1cda-8125-8008-a32e19145f00",
+      "keepAspectRatio": null
+    },
+    "flask": {
+      "name": "EquipmentEmptyFlask",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "d8ac01df-6646-81d2-8008-a32e19d3ca21",
+      "keepAspectRatio": null
+    },
+    "ring": {
+      "name": "EquipmentEmptyRing",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "c514c1fb-1cda-8125-8008-a32e1a9bf950",
+      "keepAspectRatio": null
+    },
+    "head": {
+      "name": "EquipmentEmptyHead",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "c514c1fb-1cda-8125-8008-a32e1ba0c68e",
+      "keepAspectRatio": null
+    },
+    "chest": {
+      "name": "EquipmentEmptyChest",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "c514c1fb-1cda-8125-8008-a32e1c8bc4f1",
+      "keepAspectRatio": null
+    },
+    "arms": {
+      "name": "EquipmentEmptyArms",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "d8ac01df-6646-81d2-8008-a32e1d6e0547",
+      "keepAspectRatio": null
+    },
+    "legs": {
+      "name": "EquipmentEmptyLegs",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "d8ac01df-6646-81d2-8008-a32e1e622756",
+      "keepAspectRatio": null
+    },
+    "arrow": {
+      "name": "EquipmentEmptyArrow",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "d8ac01df-6646-81d2-8008-a32e1f21c7ec",
+      "keepAspectRatio": null
+    },
+    "bolt": {
+      "name": "EquipmentEmptyBolt",
+      "width": 256,
+      "height": 256,
+      "mtype": "image/png",
+      "id": "c514c1fb-1cda-8125-8008-a32e1fe947a5",
+      "keepAspectRatio": null
+    }
+  },
+  "footer": "8b1ed794-e91e-807d-8008-a32aaf5a3a85",
+  "iconBoard": "8b1ed794-e91e-807d-8008-a32c0f326361",
+  "iconCards": [
+    {
+      "key": "weapon",
+      "id": "8b1ed794-e91e-807d-8008-a32c1065d1f9",
+      "master": "8b1ed794-e91e-807d-8008-a32c110ff574",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c112f4575",
+        "8b1ed794-e91e-807d-8008-a32c1134ced3",
+        "8b1ed794-e91e-807d-8008-a32c113a81a8"
+      ]
+    },
+    {
+      "key": "shield",
+      "id": "8b1ed794-e91e-807d-8008-a32c113f82c3",
+      "master": "8b1ed794-e91e-807d-8008-a32c11de3238",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c1200b576",
+        "8b1ed794-e91e-807d-8008-a32c1206364e",
+        "8b1ed794-e91e-807d-8008-a32c120bed37"
+      ]
+    },
+    {
+      "key": "flask",
+      "id": "8b1ed794-e91e-807d-8008-a32c120fe251",
+      "master": "8b1ed794-e91e-807d-8008-a32c12975b2c",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c12b5b641",
+        "8b1ed794-e91e-807d-8008-a32c12ba1d3b",
+        "8b1ed794-e91e-807d-8008-a32c12bf3fe5"
+      ]
+    },
+    {
+      "key": "ring",
+      "id": "8b1ed794-e91e-807d-8008-a32c12c3c202",
+      "master": "8b1ed794-e91e-807d-8008-a32c134b72b5",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c136bdc3a",
+        "8b1ed794-e91e-807d-8008-a32c13719514",
+        "8b1ed794-e91e-807d-8008-a32c137681a5"
+      ]
+    },
+    {
+      "key": "head",
+      "id": "8b1ed794-e91e-807d-8008-a32c137bafe1",
+      "master": "8b1ed794-e91e-807d-8008-a32c1404d7e9",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c1426e2c7",
+        "8b1ed794-e91e-807d-8008-a32c142ce835",
+        "8b1ed794-e91e-807d-8008-a32c14323a9e"
+      ]
+    },
+    {
+      "key": "chest",
+      "id": "8b1ed794-e91e-807d-8008-a32c1452fee1",
+      "master": "8b1ed794-e91e-807d-8008-a32c14e6a1b1",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c1508b8eb",
+        "8b1ed794-e91e-807d-8008-a32c150d762b",
+        "8b1ed794-e91e-807d-8008-a32c151275a9"
+      ]
+    },
+    {
+      "key": "arms",
+      "id": "8b1ed794-e91e-807d-8008-a32c151789e2",
+      "master": "8b1ed794-e91e-807d-8008-a32c159e8bb8",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c15bdb495",
+        "8b1ed794-e91e-807d-8008-a32c15c33760",
+        "8b1ed794-e91e-807d-8008-a32c15c861ff"
+      ]
+    },
+    {
+      "key": "legs",
+      "id": "8b1ed794-e91e-807d-8008-a32c15cd4b36",
+      "master": "8b1ed794-e91e-807d-8008-a32c1661695e",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c16808c82",
+        "8b1ed794-e91e-807d-8008-a32c168603ee",
+        "8b1ed794-e91e-807d-8008-a32c168b6dfd"
+      ]
+    },
+    {
+      "key": "arrow",
+      "id": "8b1ed794-e91e-807d-8008-a32c168ffc0a",
+      "master": "8b1ed794-e91e-807d-8008-a32c1719a889",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c17397937",
+        "8b1ed794-e91e-807d-8008-a32c173eb907",
+        "8b1ed794-e91e-807d-8008-a32c174477fa"
+      ]
+    },
+    {
+      "key": "bolt",
+      "id": "8b1ed794-e91e-807d-8008-a32c1749dce8",
+      "master": "8b1ed794-e91e-807d-8008-a32c17ca975d",
+      "samples": [
+        "8b1ed794-e91e-807d-8008-a32c17ea03e5",
+        "8b1ed794-e91e-807d-8008-a32c17ee1766",
+        "8b1ed794-e91e-807d-8008-a32c17f67c00"
+      ]
+    }
+  ],
+  "shield": "8b1ed794-e91e-807d-8008-a32c511a68d9",
+  "flask": "8b1ed794-e91e-807d-8008-a32c53372952",
+  "empty": "8b1ed794-e91e-807d-8008-a32c92a18f1a",
+  "newTokens": [
+    "opacity.equipment.empty-icon"
+  ],
+  "assetPath": "Design/EquipmentUI",
+  "validation": {
+    "screenCount": 4,
+    "slotCountPerScreen": 28,
+    "iconTypes": 10,
+    "missingImageFills": 0,
+    "boardsWithoutFlex": 0,
+    "exportSizes": [
+      256,
+      512
+    ],
+    "allAlphaCornersZero": true
+  }
+}

@@ -18,5 +18,13 @@ namespace SoulsLike.Ui.Inventory
             loreItemArtwork.enabled = item.Icon != null;
             loreFullText.text = $"{item.Description}\n\n{item.LoreDescription}";
         }
+
+        public void DisplayEmpty(string slotName, Sprite slotIcon)
+        {
+            loreItemName.text = "Empty slot";
+            loreItemArtwork.sprite = slotIcon;
+            loreItemArtwork.enabled = slotIcon != null;
+            loreFullText.text = $"No {slotName} equipped. Select this slot to choose equipment from your inventory.";
+        }
     }
 }
