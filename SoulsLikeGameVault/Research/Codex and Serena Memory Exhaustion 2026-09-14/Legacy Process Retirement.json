@@ -1,0 +1,290 @@
+[
+  {
+    "root_pid": 18484,
+    "processes": [
+      {
+        "pid": 18484,
+        "created": 1789392867.2015817,
+        "name": "serena.exe"
+      },
+      {
+        "pid": 4948,
+        "created": 1789392867.2096598,
+        "name": "python.exe"
+      },
+      {
+        "pid": 17936,
+        "created": 1789392867.2173145,
+        "name": "python.exe"
+      },
+      {
+        "pid": 33620,
+        "created": 1789392868.9726536,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 31844,
+        "created": 1789392868.9780233,
+        "name": "conhost.exe"
+      },
+      {
+        "pid": 26200,
+        "created": 1789392868.989812,
+        "name": "dotnet.exe"
+      }
+    ],
+    "log": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-163428_17936.txt"
+  },
+  {
+    "root_pid": 25128,
+    "processes": [
+      {
+        "pid": 25128,
+        "created": 1789393923.3117647,
+        "name": "serena.exe"
+      },
+      {
+        "pid": 37544,
+        "created": 1789393923.3223772,
+        "name": "python.exe"
+      },
+      {
+        "pid": 34396,
+        "created": 1789393923.3347082,
+        "name": "python.exe"
+      },
+      {
+        "pid": 40108,
+        "created": 1789393928.1598914,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 41180,
+        "created": 1789393928.1731,
+        "name": "conhost.exe"
+      },
+      {
+        "pid": 10000,
+        "created": 1789393928.2042534,
+        "name": "dotnet.exe"
+      }
+    ],
+    "log": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-165206_34396.txt"
+  },
+  {
+    "root_pid": 25360,
+    "processes": [
+      {
+        "pid": 25360,
+        "created": 1789391216.9333036,
+        "name": "serena.exe"
+      },
+      {
+        "pid": 25412,
+        "created": 1789391216.9600585,
+        "name": "python.exe"
+      },
+      {
+        "pid": 25444,
+        "created": 1789391216.9759493,
+        "name": "python.exe"
+      },
+      {
+        "pid": 26356,
+        "created": 1789391222.967207,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 26520,
+        "created": 1789391222.972517,
+        "name": "conhost.exe"
+      },
+      {
+        "pid": 18480,
+        "created": 1789391222.9851768,
+        "name": "dotnet.exe"
+      }
+    ],
+    "log": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-160702_25444.txt"
+  },
+  {
+    "root_pid": 29308,
+    "processes": [
+      {
+        "pid": 29308,
+        "created": 1789391315.9846892,
+        "name": "serena.exe"
+      },
+      {
+        "pid": 29384,
+        "created": 1789391315.9949374,
+        "name": "python.exe"
+      },
+      {
+        "pid": 29408,
+        "created": 1789391316.0033634,
+        "name": "python.exe"
+      },
+      {
+        "pid": 30160,
+        "created": 1789391319.313517,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 30500,
+        "created": 1789391319.320614,
+        "name": "conhost.exe"
+      },
+      {
+        "pid": 30908,
+        "created": 1789391319.3383653,
+        "name": "dotnet.exe"
+      }
+    ],
+    "log": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-160838_29408.txt"
+  },
+  {
+    "root_pid": 30400,
+    "processes": [
+      {
+        "pid": 30400,
+        "created": 1789392512.9609666,
+        "name": "serena.exe"
+      },
+      {
+        "pid": 30964,
+        "created": 1789392512.9721408,
+        "name": "python.exe"
+      },
+      {
+        "pid": 14968,
+        "created": 1789392512.9814265,
+        "name": "python.exe"
+      },
+      {
+        "pid": 16964,
+        "created": 1789392516.0544264,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 31136,
+        "created": 1789392516.064479,
+        "name": "conhost.exe"
+      },
+      {
+        "pid": 30140,
+        "created": 1789392516.0969007,
+        "name": "dotnet.exe"
+      }
+    ],
+    "log": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-162835_14968.txt"
+  },
+  {
+    "root_pid": 40092,
+    "processes": [
+      {
+        "pid": 40092,
+        "created": 1789393924.7470064,
+        "name": "serena.exe"
+      },
+      {
+        "pid": 40184,
+        "created": 1789393924.776928,
+        "name": "python.exe"
+      },
+      {
+        "pid": 40296,
+        "created": 1789393924.8078537,
+        "name": "python.exe"
+      },
+      {
+        "pid": 42932,
+        "created": 1789393929.6475399,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 43548,
+        "created": 1789393929.686558,
+        "name": "conhost.exe"
+      },
+      {
+        "pid": 42300,
+        "created": 1789393929.7527175,
+        "name": "dotnet.exe"
+      }
+    ],
+    "log": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-165207_40296.txt"
+  },
+  {
+    "root_pid": 44508,
+    "processes": [
+      {
+        "pid": 44508,
+        "created": 1789393936.1300137,
+        "name": "serena.exe"
+      },
+      {
+        "pid": 39980,
+        "created": 1789393936.1488953,
+        "name": "python.exe"
+      },
+      {
+        "pid": 5744,
+        "created": 1789393936.1607733,
+        "name": "python.exe"
+      },
+      {
+        "pid": 38856,
+        "created": 1789393940.0861704,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 41412,
+        "created": 1789393940.0954585,
+        "name": "conhost.exe"
+      },
+      {
+        "pid": 35340,
+        "created": 1789393940.125615,
+        "name": "dotnet.exe"
+      }
+    ],
+    "log": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-165218_5744.txt"
+  },
+  {
+    "root_pid": 47916,
+    "processes": [
+      {
+        "pid": 47916,
+        "created": 1789393968.3050723,
+        "name": "serena.exe"
+      },
+      {
+        "pid": 48064,
+        "created": 1789393968.334336,
+        "name": "python.exe"
+      },
+      {
+        "pid": 48120,
+        "created": 1789393968.3586445,
+        "name": "python.exe"
+      },
+      {
+        "pid": 8332,
+        "created": 1789393972.7903004,
+        "name": "cmd.exe"
+      },
+      {
+        "pid": 18812,
+        "created": 1789393972.8023648,
+        "name": "conhost.exe"
+      },
+      {
+        "pid": 47772,
+        "created": 1789393972.8293183,
+        "name": "dotnet.exe"
+      }
+    ],
+    "log": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-165251_48120.txt"
+  }
+]

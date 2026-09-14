@@ -1,0 +1,14 @@
+﻿{
+    "CapturedAt":  "2026-09-14T16:50:35.6534502+03:00",
+    "AutomaticManagedPagefile":  false,
+    "Settings":  [
+                     {
+                         "Name":  "d:\\pagefile.sys",
+                         "InitialSize":  16384,
+                         "MaximumSize":  49152
+                     }
+                 ],
+    "PagingFiles":  [
+                        "d:\\pagefile.sys 16384 49152"
+                    ]
+}

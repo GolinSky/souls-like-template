@@ -3,21 +3,11 @@ command = "unity"
 args = [ "mcp" ]
 
 [mcp_servers.serena]
-command = "uvx"
-args = [
-  "-p", "3.13",
-  "--from", "serena-agent==1.7.0",
-  "serena", "start-mcp-server",
-  "--context", "codex",
-  "--project-from-cwd",
-  "--enable-web-dashboard", "false",
-]
+# One independently managed backend for this exact checkout; see Tools/Serena/README.md.
+url = "http://127.0.0.1:9121/mcp"
+enabled = true
 startup_timeout_sec = 60
 tool_timeout_sec = 120
-
-[mcp_servers.serena.env]
-SERENA_HOME = ".serena/home"
-PYTHONUTF8 = "1"
 
 [mcp_servers.soulslike-vault]
 command = "C:\\Program Files\\nodejs\\node.exe"

@@ -1,0 +1,26 @@
+{
+  "CapturedAt": "2026-09-14T16:44:30.8926661+03:00",
+  "RequestedChange": "System-managed sizing for existing D:\\pagefile.sys",
+  "Applied": false,
+  "ElevationResult": "Start-Process -Verb RunAs returned: The operation was canceled by the user.",
+  "ScriptExecuted": false,
+  "CurrentSetting": [
+    {
+      "Name": "d:\\pagefile.sys",
+      "InitialSize": 16384,
+      "MaximumSize": 49152
+    }
+  ],
+  "CurrentUsage": [
+    {
+      "Name": "D:\\pagefile.sys",
+      "AllocatedBaseSize": 16384,
+      "CurrentUsage": 193,
+      "PeakUsage": 208
+    }
+  ],
+  "CurrentPagingFiles": [
+    "d:\\pagefile.sys 16384 49152"
+  ],
+  "ScriptPath": "F:\\Private\\SoulsLikeTemplate\\tmp\\codex-pagefile-20260914\\Set-PagefileHeadroom.ps1"
+}

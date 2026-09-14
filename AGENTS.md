@@ -47,7 +47,7 @@ Live source, serialized assets, and current tool output take precedence over gen
 - Use Serena for live C# symbol work: symbol/file overviews, definitions, callers and references, implementations, diagnostics, symbol-aware renames, and surgical symbol-body edits. Prefer Serena over reading entire source files when the target can be identified semantically.
 - For architecture-driven changes, use Graphify to identify the relevant subsystem or path, then use Serena to confirm the current symbols and references before editing. Source and Serena's live language-server results take precedence when they disagree with Graphify's indexed snapshot.
 - Use built-in search/read/patch tools for non-code files, exact text searches, and small line-oriented edits. Use Unity tooling, not Serena, for scenes, prefabs, assets, Editor state, imports, serialization, and play/build operations.
-- The local MCP launch auto-activates `SoulsLikeTemplate`. If Serena reports that no project is active, activate `F:\Private\SoulsLikeTemplate` before using symbol tools.
+- Serena uses one shared HTTP backend at `http://127.0.0.1:9121/mcp` for this exact checkout. `Tools/Serena/Start-Serena.ps1` starts it idempotently and activates `SoulsLikeTemplate`; setup installs a per-user sign-in shortcut. If unavailable, run that launcher and inspect `.serena/service/` logs. Never switch the shared backend to another project or worktree; use a separate backend and endpoint for another checkout. See `Tools/Serena/README.md`.
 - Do not run Serena onboarding or write Serena memories automatically. `AGENTS.md` is the source of durable agent instructions; use Serena memories only when the user explicitly requests them.
 
 ## UI Workflow

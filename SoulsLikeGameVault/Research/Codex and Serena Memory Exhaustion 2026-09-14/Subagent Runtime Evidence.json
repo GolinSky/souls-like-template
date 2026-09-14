@@ -1,0 +1,261 @@
+{
+  "captured_local": "2026-09-14T16:41:09.899393+03:00",
+  "nine_simultaneous_startup_thread_records": [
+    {
+      "id": "01a09f90-473a-7793-af2f-1c751c56461d",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09f65-37da-7e83-b449-fd163509fe5f",
+            "depth": 1,
+            "agent_path": "/root/elevator_code",
+            "agent_nickname": "Averroes",
+            "agent_role": "csharp_worker"
+          }
+        }
+      },
+      "agent_role": "csharp_worker",
+      "agent_path": "/root/elevator_code",
+      "created_at": 1789383427,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T13:57:07+03:00"
+    },
+    {
+      "id": "01a09f91-580b-71b2-b947-25a96d332956",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09f65-37da-7e83-b449-fd163509fe5f",
+            "depth": 1,
+            "agent_path": "/root/elevator_assets",
+            "agent_nickname": "Archimedes",
+            "agent_role": "unity_operator"
+          }
+        }
+      },
+      "agent_role": "unity_operator",
+      "agent_path": "/root/elevator_assets",
+      "created_at": 1789383497,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T13:58:17+03:00"
+    },
+    {
+      "id": "01a09f96-8fd1-74f0-9743-f03c88dbb152",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09f90-b97b-7661-b717-920e7abb2343",
+            "depth": 1,
+            "agent_path": "/root/save_storage_trace",
+            "agent_nickname": "Sagan",
+            "agent_role": "graph_explorer"
+          }
+        }
+      },
+      "agent_role": "graph_explorer",
+      "agent_path": "/root/save_storage_trace",
+      "created_at": 1789383839,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T14:03:59+03:00"
+    },
+    {
+      "id": "01a09f9b-7aeb-7c10-b96e-0cb8f7258b3c",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09f65-37da-7e83-b449-fd163509fe5f",
+            "depth": 1,
+            "agent_path": "/root/elevator_review",
+            "agent_nickname": "Kant",
+            "agent_role": "unity_reviewer"
+          }
+        }
+      },
+      "agent_role": "unity_reviewer",
+      "agent_path": "/root/elevator_review",
+      "created_at": 1789384162,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T14:09:22+03:00"
+    },
+    {
+      "id": "01a09fbd-5355-7632-be4b-cd1cacfd6a7a",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09fba-cc73-7420-8ff8-244052a3f202",
+            "depth": 1,
+            "agent_path": "/root/audit_instructions_skills",
+            "agent_nickname": "Banach",
+            "agent_role": "graph_explorer"
+          }
+        }
+      },
+      "agent_role": "graph_explorer",
+      "agent_path": "/root/audit_instructions_skills",
+      "created_at": 1789386380,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T14:46:20+03:00"
+    },
+    {
+      "id": "01a09fbd-7941-71d3-b5b3-f5d0af6d465c",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09fba-cc73-7420-8ff8-244052a3f202",
+            "depth": 1,
+            "agent_path": "/root/audit_context",
+            "agent_nickname": "Boyle",
+            "agent_role": "context_curator"
+          }
+        }
+      },
+      "agent_role": "context_curator",
+      "agent_path": "/root/audit_context",
+      "created_at": 1789386389,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T14:46:29+03:00"
+    },
+    {
+      "id": "01a09fc1-06b5-7412-902f-739b0dc50c57",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09f8c-cdf1-7f41-bc76-39c6bdd49859",
+            "depth": 1,
+            "agent_path": "/root/equipment_runtime",
+            "agent_nickname": "Kepler",
+            "agent_role": "csharp_worker"
+          }
+        }
+      },
+      "agent_role": "csharp_worker",
+      "agent_path": "/root/equipment_runtime",
+      "created_at": 1789386622,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T14:50:22+03:00"
+    },
+    {
+      "id": "01a09fc5-686c-7661-ad73-113133b87be6",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09f8c-cdf1-7f41-bc76-39c6bdd49859",
+            "depth": 1,
+            "agent_path": "/root/equipment_review",
+            "agent_nickname": "Hypatia",
+            "agent_role": "unity_reviewer"
+          }
+        }
+      },
+      "agent_role": "unity_reviewer",
+      "agent_path": "/root/equipment_review",
+      "created_at": 1789386909,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T14:55:09+03:00"
+    },
+    {
+      "id": "01a09fd2-d184-7a62-8790-441cd2134328",
+      "source": {
+        "subagent": {
+          "thread_spawn": {
+            "parent_thread_id": "01a09f8c-cdf1-7f41-bc76-39c6bdd49859",
+            "depth": 1,
+            "agent_path": "/root/equipment_tests",
+            "agent_nickname": "Peirce",
+            "agent_role": "unity_test_runner"
+          }
+        }
+      },
+      "agent_role": "unity_test_runner",
+      "agent_path": "/root/equipment_tests",
+      "created_at": 1789387788,
+      "cwd": "\\\\?\\F:\\Private\\SoulsLikeTemplate",
+      "cli_version": "0.154.0-alpha.6.2",
+      "created_local": "2026-09-14T15:09:48+03:00"
+    }
+  ],
+  "role_configuration": [
+    {
+      "file": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\context-curator.toml",
+      "name": "context_curator",
+      "serena_explicit_override": false,
+      "serena_enabled_value": null,
+      "has_serena_launch_command": false,
+      "recursive_agents_enabled": false
+    },
+    {
+      "file": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\csharp-worker.toml",
+      "name": "csharp_worker",
+      "serena_explicit_override": false,
+      "serena_enabled_value": null,
+      "has_serena_launch_command": false,
+      "recursive_agents_enabled": false
+    },
+    {
+      "file": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\graph-explorer.toml",
+      "name": "graph_explorer",
+      "serena_explicit_override": true,
+      "serena_enabled_value": false,
+      "has_serena_launch_command": true,
+      "recursive_agents_enabled": false
+    },
+    {
+      "file": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\unity-architect.toml",
+      "name": "unity_architect",
+      "serena_explicit_override": false,
+      "serena_enabled_value": null,
+      "has_serena_launch_command": false,
+      "recursive_agents_enabled": false
+    },
+    {
+      "file": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\unity-operator.toml",
+      "name": "unity_operator",
+      "serena_explicit_override": false,
+      "serena_enabled_value": null,
+      "has_serena_launch_command": false,
+      "recursive_agents_enabled": false
+    },
+    {
+      "file": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\unity-profiler.toml",
+      "name": "unity_profiler",
+      "serena_explicit_override": false,
+      "serena_enabled_value": null,
+      "has_serena_launch_command": false,
+      "recursive_agents_enabled": false
+    },
+    {
+      "file": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\unity-reviewer.toml",
+      "name": "unity_reviewer",
+      "serena_explicit_override": false,
+      "serena_enabled_value": null,
+      "has_serena_launch_command": false,
+      "recursive_agents_enabled": false
+    },
+    {
+      "file": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\unity-test-runner.toml",
+      "name": "unity_test_runner",
+      "serena_explicit_override": false,
+      "serena_enabled_value": null,
+      "has_serena_launch_command": false,
+      "recursive_agents_enabled": false
+    }
+  ],
+  "runtime_probe": {
+    "role": "graph_explorer",
+    "agent_path": "/root/serena_role_runtime_check",
+    "configured_serena_enabled": false,
+    "serena_tool_definitions_visible": 23,
+    "call": "mcp__serena__get_current_config",
+    "result": "Succeeded; Serena 1.7.0, active SoulsLikeTemplate project, LSP backend, C# language server ready, codex context.",
+    "proven": "Serena tools remain callable in this role despite its disabled TOML setting.",
+    "not_proven": "A new process was spawned by the probe; no new Serena log was observed."
+  }
+}

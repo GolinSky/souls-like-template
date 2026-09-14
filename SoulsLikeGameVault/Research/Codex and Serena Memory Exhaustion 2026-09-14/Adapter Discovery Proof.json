@@ -1,0 +1,22 @@
+{
+  "source": "C:\\Users\\golin\\AppData\\Local\\uv\\cache\\archive-v0\\gVUiKcO_2bAhD0Qs\\Lib\\site-packages\\solidlsp\\language_servers\\csharp_language_server.py",
+  "method_executed": "Unmodified installed adapter functions extracted with AST; no Roslyn/.NET/MCP process started",
+  "notifications": [
+    {
+      "method": "solution/open",
+      "params": {
+        "solution": "file:///F:/Private/SoulsLikeTemplate/tmp/codex-pagefile-20260914/Adapter%20Discovery%20Fixture/Project.sln"
+      }
+    },
+    {
+      "method": "project/open",
+      "params": {
+        "projects": [
+          "file:///F:/Private/SoulsLikeTemplate/tmp/codex-pagefile-20260914/Adapter%20Discovery%20Fixture/Project.csproj",
+          "file:///F:/Private/SoulsLikeTemplate/tmp/codex-pagefile-20260914/Adapter%20Discovery%20Fixture/Library/Ignored.csproj"
+        ]
+      }
+    }
+  ],
+  "included_gitignored_library_project": true
+}
