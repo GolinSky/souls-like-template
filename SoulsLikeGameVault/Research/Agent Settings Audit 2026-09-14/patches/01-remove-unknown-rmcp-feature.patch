@@ -1,0 +1,8 @@
+--- a/config.toml
++++ b/config.toml
+@@ -255,5 +255,4 @@
+ 
+ [features]
+-rmcp_client = true
+ js_repl = false
+ multi_agent = true

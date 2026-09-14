@@ -1,0 +1,11 @@
+--- a/.agents/skills/soulslike-probuilder/SKILL.md
++++ b/.agents/skills/soulslike-probuilder/SKILL.md
+@@ -13,6 +13,6 @@
+ Before acting, verify the exact worktree and Editor with `unity status --json`.
+ Pass `--project-path` explicitly when multiple Editors exist. Inspect the live
+-command schema before invoking an operation. Read
+-[command-contract.md](references/command-contract.md) for the implemented surface.
++command schema before invoking an operation. Use `unity command --json` from
++the verified project root to discover the implemented command surface and parameters.
+ 
+ ## Build loop

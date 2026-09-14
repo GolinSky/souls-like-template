@@ -1,0 +1,37 @@
+[
+  {
+    "patch": "01-remove-unknown-rmcp-feature.patch",
+    "target": "C:\\Users\\golin\\.codex\\config.toml",
+    "baseline_sha256": "79003508355d13a25725d893a98fb8f1be0125e40fafd5b4fec7167e9c486a7b",
+    "status": "staged only",
+    "parser_check": "pass"
+  },
+  {
+    "patch": "02-repair-probuilder-command-reference.patch",
+    "target": "F:\\Private\\SoulsLikeTemplate\\.agents\\skills\\soulslike-probuilder\\SKILL.md",
+    "baseline_sha256": "bf70d727ab246e740ce237b217fedffb05e50ad4da701602b96c076ba4e3ba0a",
+    "status": "staged only",
+    "parser_check": "not applicable"
+  },
+  {
+    "patch": "03-scope-competing-personal-skills.patch",
+    "target": "F:\\Private\\SoulsLikeTemplate\\.codex\\config.toml",
+    "baseline_sha256": "b5ddf1cc781c2e7b41ccdb9ce01e95bcf23b001fb8546fe881b9719bd5f3e3a1",
+    "status": "staged only",
+    "parser_check": "pass"
+  },
+  {
+    "patch": "04-exclude-cv-filesystem-from-soulslike.patch",
+    "target": "F:\\Private\\SoulsLikeTemplate\\.codex\\config.toml",
+    "baseline_sha256": "b5ddf1cc781c2e7b41ccdb9ce01e95bcf23b001fb8546fe881b9719bd5f3e3a1",
+    "status": "staged only",
+    "parser_check": "pass"
+  },
+  {
+    "patch": "05-correct-role-isolation-documentation.patch",
+    "target": "F:\\Private\\SoulsLikeTemplate\\.codex\\agents\\README.md",
+    "baseline_sha256": "5c04f2b105b2218b0cedd13ad532a8207e54d1784024b992561c2966d05e305b",
+    "status": "staged only",
+    "parser_check": "not applicable"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "id": 1,
+  "result": {
+    "userAgent": "Codex Desktop/0.154.0 (Windows 10.0.26200; x86_64) dumb (agent_config_readonly_audit; 1.0.0)",
+    "codexHome": "C:\\Users\\golin\\.codex",
+    "platformFamily": "windows",
+    "platformOs": "windows"
+  }
+}

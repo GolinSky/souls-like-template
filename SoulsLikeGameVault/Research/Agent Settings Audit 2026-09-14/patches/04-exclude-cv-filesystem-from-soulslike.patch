@@ -1,0 +1,9 @@
+--- a/.codex/config.toml
++++ b/.codex/config.toml
+@@ -70,2 +70,6 @@
+ default_subagent_reasoning_effort = "high"
+ interrupt_message = true
++
++# This service targets the separate CV project.
++[mcp_servers.cv_filesystem]
++enabled = false
