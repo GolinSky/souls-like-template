@@ -23,6 +23,8 @@ using SoulsLike.Ui.Equipment;
 using SoulsLike.Ui.Interaction;
 using SoulsLike.Ui.PauseNavigation;
 using SoulsLike.Ui.Status;
+using SoulsLike.Ui.Grace;
+using SoulsLike.Ui.LevelUp;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -145,6 +147,8 @@ namespace SoulsLike.Entities.Character
                 builder.Register<StatusUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<SystemUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<PauseNavigationUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<LevelUpUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<GraceUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 
                 builder.Register<PlayerInputReader>(Lifetime.Singleton).AsSelf();
                 builder.Register<InteractionController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

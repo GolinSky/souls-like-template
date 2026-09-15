@@ -52,7 +52,6 @@ namespace SoulsLike
             builder.Register<CheatsUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<TravelService>(Lifetime.Singleton);
             builder.Register<TravelUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-            builder.Register<GraceUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<SettingsUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<CharacterFactory>(Lifetime.Singleton);
             builder.Register<NavMeshService>(Lifetime.Singleton).As<INavMeshService>();

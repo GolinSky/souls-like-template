@@ -2,6 +2,7 @@ using System;
 using SoulsLike.Interactions;
 using SoulsLike.Services;
 using SoulsLike.Services.Fade;
+using SoulsLike.Ui.LevelUp;
 using SoulsLike.Ui.Navigation;
 using SoulsLike.Ui.Travel;
 using VContainer.Unity;
@@ -23,6 +24,7 @@ namespace SoulsLike.Ui.Grace
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly IFadeService _fadeService;
         private readonly ITravelRoute _travelRoute;
+        private readonly ILevelUpRoute _levelUpRoute;
         private readonly IInputService _inputService;
 
         private GraceUi _view;
@@ -37,6 +39,7 @@ namespace SoulsLike.Ui.Grace
             IGameStateNotifier gameStateNotifier,
             IFadeService fadeService,
             ITravelRoute travelRoute,
+            ILevelUpRoute levelUpRoute,
             IInputService inputService)
             : base(uiService)
         {
@@ -44,6 +47,7 @@ namespace SoulsLike.Ui.Grace
             _gameStateNotifier = gameStateNotifier;
             _fadeService = fadeService;
             _travelRoute = travelRoute;
+            _levelUpRoute = levelUpRoute;
             _inputService = inputService;
         }
 
@@ -53,6 +57,7 @@ namespace SoulsLike.Ui.Grace
             _view.AssignPresenter(this);
             _routeStack = new UiRouteStack(_view.Show, _view.Hide);
             _travelRoute.CloseRequested += HandleTravelCloseRequested;
+            _levelUpRoute.CloseRequested += HandleLevelUpCloseRequested;
             _gameStateNotifier.RegisterObserver(this);
             OnGameStateChanged(_gameStateNotifier.CurrentGameState);
         }
@@ -60,12 +65,18 @@ namespace SoulsLike.Ui.Grace
         public void Dispose()
         {
             _travelRoute.CloseRequested -= HandleTravelCloseRequested;
+            _levelUpRoute.CloseRequested -= HandleLevelUpCloseRequested;
             _gameStateNotifier.UnregisterObserver(this);
         }
 
         public void OpenTravel()
         {
             OpenRoute(_travelRoute);
+        }
+
+        public void OpenLevelUp()
+        {
+            OpenRoute(_levelUpRoute);
         }
 
         public void Tick()
@@ -128,6 +139,11 @@ namespace SoulsLike.Ui.Grace
         }
 
         private void HandleTravelCloseRequested()
+        {
+            CloseRoute();
+        }
+
+        private void HandleLevelUpCloseRequested()
         {
             CloseRoute();
         }
