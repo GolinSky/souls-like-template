@@ -22,6 +22,7 @@ using SoulsLike.Ui.Inventory;
 using SoulsLike.Ui.Equipment;
 using SoulsLike.Ui.Interaction;
 using SoulsLike.Ui.PauseNavigation;
+using SoulsLike.Ui.Status;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -141,6 +142,7 @@ namespace SoulsLike.Entities.Character
                 builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<InventoryUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<EquipmentUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+                builder.Register<StatusUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<SystemUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<PauseNavigationUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 

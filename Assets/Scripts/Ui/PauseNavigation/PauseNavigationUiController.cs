@@ -8,6 +8,7 @@ using SoulsLike.Ui.Equipment;
 using SoulsLike.Ui.Inventory;
 using SoulsLike.Ui.Navigation;
 using SoulsLike.Ui.Settings;
+using SoulsLike.Ui.Status;
 using VContainer.Unity;
 
 namespace SoulsLike.Ui.PauseNavigation
@@ -22,6 +23,7 @@ namespace SoulsLike.Ui.PauseNavigation
         private readonly ICoreGameOrchestrator _gameOrchestrator;
         private readonly IInputService _inputService;
         private readonly IEquipmentRoute _equipmentRoute;
+        private readonly IStatusRoute _statusRoute;
         private readonly IInventoryRoute _inventoryRoute;
         private readonly ISystemRoute _systemRoute;
         private readonly ISettingsRoute _settingsRoute;
@@ -41,6 +43,7 @@ namespace SoulsLike.Ui.PauseNavigation
             IUiService uiService,
             ICoreGameOrchestrator gameOrchestrator,
             IInputService inputService,
+            IStatusRoute statusRoute,
             IEquipmentRoute equipmentRoute,
             IInventoryRoute inventoryRoute,
             ISystemRoute systemRoute,
@@ -49,6 +52,7 @@ namespace SoulsLike.Ui.PauseNavigation
         {
             _gameOrchestrator = gameOrchestrator;
             _inputService = inputService;
+            _statusRoute = statusRoute;
             _equipmentRoute = equipmentRoute;
             _inventoryRoute = inventoryRoute;
             _systemRoute = systemRoute;
@@ -62,6 +66,7 @@ namespace SoulsLike.Ui.PauseNavigation
             _view.Hide();
             _routeStack = new UiRouteStack(_view.Show, _view.Hide);
 
+            _statusRoute.CloseRequested += HandleStatusCloseRequested;
             _equipmentRoute.CloseRequested += HandleEquipmentCloseRequested;
             _equipmentRoute.InventoryRequested += HandleEquipmentInventoryRequested;
             _inventoryRoute.CloseRequested += HandleInventoryCloseRequested;
@@ -73,6 +78,7 @@ namespace SoulsLike.Ui.PauseNavigation
 
         public void Dispose()
         {
+            _statusRoute.CloseRequested -= HandleStatusCloseRequested;
             _equipmentRoute.CloseRequested -= HandleEquipmentCloseRequested;
             _equipmentRoute.InventoryRequested -= HandleEquipmentInventoryRequested;
             _inventoryRoute.CloseRequested -= HandleInventoryCloseRequested;
@@ -116,6 +122,11 @@ namespace SoulsLike.Ui.PauseNavigation
             }
         }
 
+        public void OpenStatus()
+        {
+            OpenRoute(_statusRoute);
+        }
+
         public void OpenEquipment()
         {
             OpenRoute(_equipmentRoute);
@@ -137,6 +148,11 @@ namespace SoulsLike.Ui.PauseNavigation
         }
 
         private void HandleEquipmentCloseRequested()
+        {
+            CloseRoute();
+        }
+
+        private void HandleStatusCloseRequested()
         {
             CloseRoute();
         }

@@ -212,3 +212,10 @@ MonoBehaviour:
         m_SubObjectType: 
         m_SubObjectGUID: 
         m_EditorAssetChanged: 0
+    - key: StatusUi
+      value:
+        m_AssetGUID: e46619fd9c1393c4096a4c84bec1a184
+        m_SubObjectName: 
+        m_SubObjectType: 
+        m_SubObjectGUID: 
+        m_EditorAssetChanged: 0

@@ -15,6 +15,7 @@ aliases:
   - Pause_Navigation_Route_Architecture
 tags:
   - architecture/verified
+updated: 2026-09-14
 ---
 # Pause Navigation Route Architecture
 
@@ -59,7 +60,7 @@ namespace SoulsLike.Ui.PauseNavigation
     }
 }
 ```
-All Pause sub-routes (`IEquipmentRoute`, `IInventoryRoute`, `ISystemRoute`) inherit from this interface, ensuring they provide a standardized `CloseRequested` event.
+All Pause sub-routes (`IEquipmentRoute`, `IInventoryRoute`, `IStatusRoute`, `ISystemRoute`) inherit from this interface, ensuring they provide a standardized `CloseRequested` event.
 
 ### B. Presenter Interface: `IPauseNavigationPresenter`
 Defined in [`Assets/Scripts/Ui/PauseNavigation/IPauseNavigationPresenter.cs`](../../../../Assets/Scripts/Ui/PauseNavigation/IPauseNavigationPresenter.cs):
@@ -70,6 +71,7 @@ namespace SoulsLike.Ui.PauseNavigation
     {
         void OpenEquipment();
         void OpenInventory();
+        void OpenStatus();
         void OpenSystem();
     }
 }
@@ -85,6 +87,7 @@ namespace SoulsLike.Ui.PauseNavigation
     {
         void OpenEquipment();
         void OpenInventory();
+        void OpenStatus();
         void OpenSystem();
     }
 }
@@ -93,7 +96,8 @@ namespace SoulsLike.Ui.PauseNavigation
 ### D. View: `PauseNavigationUi`
 Defined in [`Assets/Scripts/Ui/PauseNavigation/PauseNavigationUi.cs`](../../../../Assets/Scripts/Ui/PauseNavigation/PauseNavigationUi.cs):
 - Inherits from [`BaseUi`](../../../../Assets/Scripts/Ui/Base/BaseUi.cs).
-- Binds buttons (`openEquipmentButton`, `openInventoryButton`, `openSystemButton`) to presenter methods.
+- Binds buttons (`openEquipmentButton`, `openInventoryButton`, `openStatusButton`, `openSystemButton`) to presenter methods.
+- The Status entry uses `CustomButton.onClick`, matching the pre-existing button wiring.
 
 ### E. Controller & Host Router: `PauseNavigationUiController`
 Defined in [`Assets/Scripts/Ui/PauseNavigation/PauseNavigationUiController.cs`](../../../../Assets/Scripts/Ui/PauseNavigation/PauseNavigationUiController.cs):
@@ -104,6 +108,7 @@ Defined in [`Assets/Scripts/Ui/PauseNavigation/PauseNavigationUiController.cs`](
   - `IInputService` — Input action queries (`UiBackAction`, `Pause`, `OpenEquipmentAction`, `OpenInventoryAction`).
   - `IEquipmentRoute` — Sub-route for equipment management.
   - `IInventoryRoute` — Sub-route for inventory and item picking.
+  - `IStatusRoute` — Character status overview; exposes `CloseRequested`.
   - `ISystemRoute` — Sub-route for system settings and quit.
 - Manages an internal [`UiRouteStack`](../../../../Assets/Scripts/Ui/Navigation/UiRouteStack.cs).
 
@@ -180,6 +185,16 @@ private void HandleUiBack()
 
 ---
 
+### E. Status Overview
+
+The pause root opens `IStatusRoute`, implemented by `StatusUiController` in `Assets/Scripts/Ui/Status/`. The controller creates `StatusUi` through the existing UI factory and binds its `IStatusPresenter`. `StatusUi` is Addressable under its class name and saved at `Assets/Prefabs/Ui/Status/StatusUi.prefab`.
+
+Back uses the existing pause route stack. Help is inline and nonmodal. F uses the existing `ToggleSimpleViewAction`; Help is accessible through the footer controls without adding input actions.
+
+The overview reads character attributes, held currency, current/max vitals, equipment weight, existing UI capacity convention, current poise, and the sum of the five base attack channels for each armament slot. Empty armament slots display zero. Player name, level, next-level cost, load class, discovery, spells/memory, player defense/negation, and resistances display `—` until domain data exists. Item guard values are not used as player defense. The poise label explicitly says **Current poise**.
+
+The view fits a centered 1920 × 1080 reference composition uniformly inside the existing UI canvas, with separate fullscreen atmosphere. The prefab reuses inventory/equipment art and fonts and one exported soft-panel sprite. Footer navigation uses `CustomButton` with explicit navigation and hidden/disabled action suppression.
+
 ## 4. Slot-to-ItemType Mapping Rules
 
 When opening the inventory picker for an equipment slot, `PauseNavigationUiController` applies slot filter rules:
@@ -225,6 +240,7 @@ Registered in [`CharacterFactory.cs`](../../../../Assets/Scripts/Entities/Charac
 ```csharp
 builder.Register<EquipmentUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 builder.Register<InventoryUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+builder.Register<StatusUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 builder.Register<PauseNavigationUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
 ```
 
