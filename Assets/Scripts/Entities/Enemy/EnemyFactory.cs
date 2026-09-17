@@ -4,6 +4,7 @@ using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.BaseEntity.EntityCommands;
 using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Character.Components.Health;
+using SoulsLike.Entities.Character.Components.Targeting;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Extensions;
 using SoulsLike.Factory;
@@ -67,7 +68,7 @@ namespace SoulsLike.Entities.Enemy
             LifetimeScope scope = RootScope.CreateChild(builder =>
             {
                 Func<IObjectResolver, Transform> actorTransform =
-                    resolver => resolver.Resolve<EnemyActor>().transform;
+                    resolver => resolver.Resolve<EnemyActor>().Transform;
 
                 builder.RegisterEntitySystemExt(EntityType.Enemy, entityId);
                 builder.RegisterComponentInNewPrefab(prefab, Lifetime.Scoped)
@@ -81,9 +82,10 @@ namespace SoulsLike.Entities.Enemy
                     .UnderTransform(actorTransform)
                     .AsSelf()
                     .AsImplementedInterfaces();
-                builder.RegisterComponentInHierarchy<TargetLockNode>()
+                builder.RegisterComponentInHierarchy<TargetLockComponent>()
                     .UnderTransform(actorTransform)
-                    .AsSelf();
+                    .AsSelf()
+                    .AsImplementedInterfaces();
 
                 builder.RegisterInstance(spawn.HealthData).AsImplementedInterfaces().AsSelf();
                 builder.RegisterInstance(spawn.BehaviourProfile);

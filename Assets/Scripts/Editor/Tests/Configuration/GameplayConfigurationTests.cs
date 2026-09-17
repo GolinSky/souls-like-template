@@ -8,6 +8,7 @@ using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
+using SoulsLike.Entities.Character.Components.Targeting;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Entities.Enemy;
 using SoulsLike.Entities.Ladder;
@@ -104,7 +105,7 @@ namespace SoulsLike.Editor.Tests.Configuration
             {
                 Assert.That(prefab.GetComponent(type), Is.Not.Null, $"{PATH}: requires {type.Name} on the root.");
             }
-            Assert.That(prefab.GetComponentInChildren<TargetLockNode>(true), Is.Not.Null, PATH);
+            Assert.That(prefab.GetComponentInChildren<TargetLockComponent>(true), Is.Not.Null, PATH);
             Assert.That(prefab.GetComponentInChildren<CharacterAudioComponent>(true), Is.Not.Null, PATH);
         }
     }

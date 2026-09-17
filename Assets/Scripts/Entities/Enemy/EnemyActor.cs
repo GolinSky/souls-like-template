@@ -22,6 +22,7 @@ namespace SoulsLike.Entities.Enemy
         [FormerlySerializedAs("<NavMeshAgent>k__BackingField")]
         [SerializeField] private NavMeshAgent navMeshAgent;
 
+        public Transform Transform => transform;
         public NavMeshAgent NavMeshAgent => navMeshAgent;
         public EnemyBehaviourProfile BehaviourProfile { get; private set; }
         public WeaponMovesetDefinition Moveset { get; private set; }

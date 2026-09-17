@@ -9,6 +9,7 @@ using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
+using SoulsLike.Entities.Character.Components.Targeting;
 using SoulsLike.Entities.Character.Input;
 using SoulsLike.Extensions;
 using SoulsLike.Factory;
@@ -69,7 +70,7 @@ namespace SoulsLike.Entities.Character
                 viewEntity = instance.AddComponent<ViewEntity>();
             }
 
-            TargetLockNode targetLockNode = instance.GetComponentInChildren<TargetLockNode>(true);
+            TargetLockComponent targetLockComponent = instance.GetComponentInChildren<TargetLockComponent>(true);
             PlayerMeleeCombatRelay meleeCombatRelay =
                 instance.GetComponent<PlayerMeleeCombatRelay>();
             CriticalAttackController criticalAttackController =
@@ -93,7 +94,7 @@ namespace SoulsLike.Entities.Character
             {
                 builder.RegisterEntitySystemExt(EntityType.Player, entityId);
                 builder.RegisterComponent(viewEntity).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(targetLockNode).AsSelf();
+                builder.RegisterComponent(targetLockComponent).AsSelf().AsImplementedInterfaces();
                 builder.Register<InteractionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<GroundItemCollectionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
                 builder.Register<ApplyDamageCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();

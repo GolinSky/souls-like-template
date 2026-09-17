@@ -7,6 +7,7 @@ using SoulsLike.Components.Visibility;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Character.Components.Health;
+using SoulsLike.Entities.Character.Components.Targeting;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Entities.Enemy;
 using UnityEditor;
@@ -127,7 +128,7 @@ namespace SoulsLike.Editor
                 prefab,
                 label,
                 report);
-            RequireComponentInChildren<TargetLockNode>(prefab, label, report);
+            RequireComponentInChildren<TargetLockComponent>(prefab, label, report);
             EnemyActionExecutor executor = RequireComponentInChildren<EnemyActionExecutor>(
                 prefab,
                 label,

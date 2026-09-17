@@ -111,6 +111,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Equipment.WeaponRuntime
   meleeHitbox: {fileID: 2041761784940847427}
+  supportHandGrip:
+    isEnabled: 0
+    localPosition: {x: 0, y: 0, z: 0}
+    localEulerAngles: {x: 0, y: 0, z: 0}
 --- !u!1 &257469743898706817
 GameObject:
   m_ObjectHideFlags: 0
@@ -1171,7 +1175,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99eb2a3c1aeafb84989841a1428c2af8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.TargetLockNode
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Character.Components.Targeting.TargetLockComponent
   anchorType: 1
   customTargetPoint: {fileID: 0}
 --- !u!1 &8351316026818483686

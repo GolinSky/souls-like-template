@@ -1,17 +1,8 @@
 using UnityEngine;
 
-namespace SoulsLike.Entities.Character
+namespace SoulsLike.Entities.Character.Components.Targeting
 {
-    public enum TargetLockAnchorType
-    {
-        Base = 0,
-        Torso = 1,
-        Head = 2,
-        Custom = 3
-    }
-
-    //todo: move and refactor 
-    public class TargetLockNode : MonoBehaviour
+    public class TargetLockComponent : BaseComponent
     {
         [SerializeField] private TargetLockAnchorType anchorType = TargetLockAnchorType.Torso;
         [SerializeField] private Transform customTargetPoint;
@@ -31,11 +22,6 @@ namespace SoulsLike.Entities.Character
 
         private void OnDrawGizmosSelected()
         {
-            if (TargetTransform == null)
-            {
-                return;
-            }
-
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(TargetTransform.position, 0.12f);
         }
