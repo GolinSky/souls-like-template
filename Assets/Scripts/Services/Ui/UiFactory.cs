@@ -37,10 +37,6 @@ namespace SoulsLike.Services
                 if (_mappingData == null)
                 {
                     _mappingData = AssetService.Load<AssetMappingData>("AssetMappingData");
-                    if (_mappingData == null)
-                    {
-                        Debug.LogError("[UiFactory] AssetMappingData is null! Failed to load mapping data asset.");
-                    }
                 }
                 return _mappingData;
             }
@@ -49,21 +45,9 @@ namespace SoulsLike.Services
         private TUi CreateUiInstance<TUi>(Transform parent)
         {
             var className = typeof(TUi).Name;
-            var mapping = MappingData;
-            var addressableKey = className;
-            if (mapping != null)
-            {
-                addressableKey = mapping.GetUiKey(className);
-            }
-            else
-            {
-                Debug.LogError($"[UiFactory] MappingData is missing while creating UI instance for {className}!");
-            }
+            var addressableKey = MappingData.GetUiKey(className);
 
             var prefab = AssetService.Load<GameObject>(addressableKey);
-            if (prefab == null)
-                throw new Exception($"UI prefab for Addressables key '{addressableKey}' not found.");
-
             var instance = Object.Instantiate(prefab, parent);
             instance.name = $"{className}_Instance";
 

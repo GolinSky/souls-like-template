@@ -34,11 +34,6 @@ namespace SoulsLike.Entities.Character
             }
 
             GameObject prefab = _assetService.LoadPrefab(CHARACTER_PREFAB_KEY);
-            if (prefab == null)
-            {
-                throw new InvalidOperationException($"Character prefab for Addressables key '{CHARACTER_PREFAB_KEY}' was not found.");
-            }
-
             CharacterScopeInstaller scope = _parentScope.CreateChildFromPrefab(_characterScopePrefab);
             GameObject instance = UnityEngine.Object.Instantiate(prefab, scope.transform, true);
             instance.name = $"{nameof(Character)}_Instance";

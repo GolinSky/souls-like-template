@@ -15,17 +15,29 @@ namespace SoulsLike.Services.Repository
     {
         public TSource Load<TSource>(string key) where TSource : Object
         {
-            return Addressables.LoadAssetAsync<TSource>(key).WaitForCompletion();
+            TSource asset = Addressables.LoadAssetAsync<TSource>(key).WaitForCompletion();
+            if (asset == null)
+            {
+                throw new System.InvalidOperationException($"Addressable asset for key '{key}' was not found.");
+            }
+
+            return asset;
         }
 
         public TComponent LoadComponent<TComponent>(string key) where TComponent : Component
         {
-            return Addressables.LoadAssetAsync<GameObject>(key).WaitForCompletion().GetComponent<TComponent>();
+            TComponent component = Load<GameObject>(key).GetComponent<TComponent>();
+            if (component == null)
+            {
+                throw new System.InvalidOperationException($"Addressable prefab for key '{key}' does not contain a {typeof(TComponent).Name} component.");
+            }
+
+            return component;
         }
         
         public GameObject LoadPrefab(string key)
         {
-            return Addressables.LoadAssetAsync<GameObject>(key).WaitForCompletion();
+            return Load<GameObject>(key);
         }
     }
 }
