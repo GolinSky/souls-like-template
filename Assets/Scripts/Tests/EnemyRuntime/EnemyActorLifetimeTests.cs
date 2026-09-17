@@ -1,37 +1,68 @@
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.TestTools;
 
 namespace SoulsLike.Tests.EnemyRuntime
 {
     public sealed class EnemyActorLifetimeTests
     {
+        private static int _despawnNotifications;
+
         [Test]
-        public void LifetimeRootCanOnlyBeAttachedOnce()
+        public void DespawnRemainsIdempotentWhenNotificationThrows()
         {
             Type actorType = GetRequiredType("SoulsLike.Entities.Enemy.EnemyActor");
+            Type scopeType = GetRequiredType("SoulsLike.Services.VContainer.EntityLifetimeScope");
+            Type concreteScopeType = GetRequiredType("SoulsLike.Services.VContainer.EnemyScopeInstaller");
+            Type handlerType = GetRequiredType("SoulsLike.Services.VContainer.EnemyDespawnHandler");
             var actorObject = new GameObject("EnemyActor");
-            var firstRoot = new GameObject("FirstLifetimeRoot");
-            var secondRoot = new GameObject("SecondLifetimeRoot");
+            var scopeObject = new GameObject("EntityScope");
+            scopeObject.SetActive(false);
+            _despawnNotifications = 0;
+
             try
             {
+                Component scope = scopeObject.AddComponent(concreteScopeType);
+                scopeType.GetField("autoRun").SetValue(scope, false);
                 Component actor = actorObject.AddComponent(actorType);
-                MethodInfo attachLifetimeRoot = actorType.GetMethod("AttachLifetimeRoot");
+                ConstructorInfo handlerConstructor = handlerType.GetConstructor(new[] { scopeType });
+                Assert.That(handlerConstructor, Is.Not.Null);
+                object handler = handlerConstructor.Invoke(new object[] { scope });
+                actorType.GetMethod("Construct").Invoke(actor, new[] { null, null, null, handler });
 
-                attachLifetimeRoot.Invoke(actor, new object[] { firstRoot });
+                EventInfo despawned = actorType.GetEvent("Despawned");
+                MethodInfo callback = typeof(EnemyActorLifetimeTests).GetMethod(
+                    nameof(ThrowOnDespawn),
+                    BindingFlags.Static | BindingFlags.NonPublic);
+                Delegate throwingSubscriber = Delegate.CreateDelegate(despawned.EventHandlerType, callback);
+                despawned.AddEventHandler(actor, throwingSubscriber);
 
-                Assert.That(
-                    () => attachLifetimeRoot.Invoke(actor, new object[] { secondRoot }),
-                    Throws.TypeOf<TargetInvocationException>());
-                Assert.That(actorType.GetEvent("Despawned"), Is.Not.Null);
+                MethodInfo despawn = actorType.GetMethod("Despawn");
+                LogAssert.Expect(
+                    LogType.Error,
+                    new Regex("Destroy may not be called from edit mode! Use DestroyImmediate instead\\."));
+                TargetInvocationException exception = Assert.Throws<TargetInvocationException>(
+                    () => despawn.Invoke(actor, null));
+
+                Assert.That(exception.InnerException, Is.TypeOf<InvalidOperationException>());
+                Assert.That(_despawnNotifications, Is.EqualTo(1));
+                Assert.DoesNotThrow(() => despawn.Invoke(actor, null));
+                Assert.That(_despawnNotifications, Is.EqualTo(1));
             }
             finally
             {
                 UnityEngine.Object.DestroyImmediate(actorObject);
-                UnityEngine.Object.DestroyImmediate(firstRoot);
-                UnityEngine.Object.DestroyImmediate(secondRoot);
+                UnityEngine.Object.DestroyImmediate(scopeObject);
             }
+        }
+
+        private static void ThrowOnDespawn(Component actor)
+        {
+            _despawnNotifications++;
+            throw new InvalidOperationException($"{actor.name} despawn notification failed.");
         }
 
         private static Type GetRequiredType(string typeName) =>

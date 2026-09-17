@@ -116,6 +116,15 @@ namespace SoulsLike.Entities.Character
             _criticalAttackController = criticalAttackController;
             _attributes = characterData.Attributes;
             _heldCurrency = characterData.StartingCurrency;
+            animatorComponent.ConfigureCharacter(this, movementComponent);
+        }
+
+        public void StageSpawn(Vector3? spawnPosition)
+        {
+            if (spawnPosition.HasValue)
+            {
+                transform.position = spawnPosition.Value;
+            }
         }
 
         public void Initialize()

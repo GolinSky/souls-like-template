@@ -82232,7 +82232,10 @@ MonoBehaviour:
   cameraService: {fileID: 3018529732569510667}
   graceSystem: {fileID: 198951721}
   enemyEncounterSystem: {fileID: 848389965}
+  characterScopePrefab: {fileID: 4094485961562877707, guid: 560cf3aede8136e4ba287943e88e13d2, type: 3}
+  enemyScopePrefab: {fileID: 9135650520872018953, guid: ad80232070429d64fb1af30b59167e78, type: 3}
   playerSpawnPositionProvider: {fileID: 2017232390}
+  elevatorViews: []
 --- !u!33 &1726297631417279923
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -82330,6 +82333,46 @@ MonoBehaviour:
   targetCamera: {fileID: 1800770206}
   cinemachineCamera: {fileID: 1470855207966471111}
   cinemachineThirdPersonFollow: {fileID: 6260723787445959970}
+  impulseDefinition:
+    ImpulseChannel: 1
+    ImpulseShape: 2
+    CustomImpulseShape:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    ImpulseDuration: 0.2
+    ImpulseType: 1
+    DissipationRate: 0.25
+    RawSignal: {fileID: 0}
+    AmplitudeGain: 2
+    FrequencyGain: 1
+    RepeatMode: 0
+    Randomize: 1
+    TimeEnvelope:
+      AttackShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      DecayShape:
+        serializedVersion: 2
+        m_Curve: []
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      AttackTime: 0
+      SustainTime: 0.2
+      DecayTime: 0.7
+      ScaleWithImpact: 1
+      HoldForever: 0
+    ImpactRadius: 100
+    DirectionMode: 0
+    DissipationMode: 2
+    DissipationDistance: 12
+    PropagationSpeed: 343
   debugIsYawOrbiting: 0
   debugIsPitchOrbiting: 0
   debugYawVelocity: 0

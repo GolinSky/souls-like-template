@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6996894876412749561
+--- !u!1 &5904853438935023832
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4087083661555740003}
-  - component: {fileID: 4059130874614539547}
+  - component: {fileID: 296959647995425759}
+  - component: {fileID: 4094485961562877707}
   m_Layer: 0
-  m_Name: CoreScope
+  m_Name: CharacterScope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4087083661555740003
+  m_IsActive: 0
+--- !u!4 &296959647995425759
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6996894876412749561}
+  m_GameObject: {fileID: 5904853438935023832}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,26 +32,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4059130874614539547
+--- !u!114 &4094485961562877707
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6996894876412749561}
+  m_GameObject: {fileID: 5904853438935023832}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d75ff225c9b5411a8a1a80ae0e7c0cca, type: 3}
+  m_Script: {fileID: 11500000, guid: 9e224c6855e43bf48aacb4d2af515a86, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.CoreScope
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.VContainer.CharacterScopeInstaller
   parentReference:
-    TypeName: SoulsLike.MainMenuScope
-  autoRun: 1
+    TypeName: 
+  autoRun: 0
   autoInjectGameObjects: []
-  cameraService: {fileID: 0}
-  graceSystem: {fileID: 0}
-  enemyEncounterSystem: {fileID: 0}
-  characterScopePrefab: {fileID: 4094485961562877707, guid: 560cf3aede8136e4ba287943e88e13d2, type: 3}
-  enemyScopePrefab: {fileID: 9135650520872018953, guid: ad80232070429d64fb1af30b59167e78, type: 3}
-  playerSpawnPositionProvider: {fileID: 0}
-  elevatorViews: []

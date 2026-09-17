@@ -62,16 +62,17 @@ The player entity is composed of two coordinated layers:
 ### 2.2 Factory & Lifetime Scope (`CharacterFactory.cs`)
 
 When `CharacterFactory.CreateCharacter` is called:
-1. Loads the `Character` prefab via Addressables (`IAssetService.LoadPrefab`).
-2. Instantiates the prefab and applies the initial spawn position.
-3. Retrieves or binds required components: `Character`, `ViewEntity`, `TargetLockNode`, `PlayerMeleeCombatRelay`, `CriticalAttackController`, `AnimatorComponent`, `AttackComponent`, `MovementComponent`, `EquipmentComponent`, `EquipmentPresentation`, `InventoryComponent`, `HealthComponent`, `CombatDefenseComponent`, `CharacterAudioComponent`.
-4. Creates a child `LifetimeScope` beneath `RootScope` registering:
+1. Loads and validates the independent `Character` prefab via `IAssetService.LoadPrefab`.
+2. Calls the parent scope's `CreateChildFromPrefab` with the inactive `CharacterScopeInstaller` prefab. VContainer clones the concrete scope and assigns its parent. The factory instantiates Character under it and calls `Character.StageSpawn` to apply the optional world-space position before activation.
+3. Activates the hierarchy so `Awake` and `OnEnable` run, then builds the scope synchronously. `Character` configures its animator during injection, before entry-point initialization.
+4. `CharacterScopeInstaller` finds required actor components under its own transform and registers:
    - Entity system (`RegisterEntitySystemExt`, commands: `InteractionCommand`, `GroundItemCollectionCommand`, `ApplyDamageCommand`, `ResolveMeleeHitCommand`, `TargetingCommand`).
    - Domain models, components, ScriptableObjects, and database catalogs (`ItemCatalog`, `WeaponDatabase`, `ShieldDatabase`, `ConsumableDatabase`).
    - UI Controllers (`PlayerHudUiController`, `LockOnUiController`, `InventoryUiController`, `EquipmentUiController`, `SystemUiController`, `PauseNavigationUiController`, `InteractionUiController`).
    - Player orchestration (`PlayerInputReader`, `InteractionController`, `PlayerController`).
-5. Reparents the character instance under the child `LifetimeScope` transform.
-6. Disposing `CharacterFactory` disposes the entire player child scope cleanly.
+5. Generates one scoped entity ID through `IUniqueIdGenerator` and returns `Character` only after the build succeeds. `CharacterFactory.Dispose` disposes its one owned local-player scope. Creation failures propagate without factory cleanup of the partial scope.
+
+The `Character` prefab has no `LifetimeScope`. Normal respawn reuses the existing actor, while later coop-specific creation and removal remain at the composition boundary.
 
 ---
 

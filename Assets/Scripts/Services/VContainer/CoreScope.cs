@@ -16,6 +16,7 @@ using SoulsLike.Ui.Cheats;
 using SoulsLike.Ui.Grace;
 using SoulsLike.Ui.Travel;
 using SoulsLike.Ui.Settings;
+using SoulsLike.Services.VContainer;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -27,6 +28,8 @@ namespace SoulsLike
         [SerializeField] private CameraService cameraService;
         [SerializeField] private GraceSystem graceSystem;
         [SerializeField] private EnemyEncounterSystem enemyEncounterSystem;
+        [SerializeField] private CharacterScopeInstaller characterScopePrefab;
+        [SerializeField] private EnemyScopeInstaller enemyScopePrefab;
         [SerializeField] private PlayerSpawnPositionProvider playerSpawnPositionProvider;
         [SerializeField] private ElevatorView[] elevatorViews = Array.Empty<ElevatorView>();
 
@@ -53,9 +56,11 @@ namespace SoulsLike
             builder.Register<TravelService>(Lifetime.Singleton);
             builder.Register<TravelUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<SettingsUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-            builder.Register<CharacterFactory>(Lifetime.Singleton);
+            builder.Register<CharacterFactory>(Lifetime.Singleton)
+                .WithParameter(characterScopePrefab);
             builder.Register<NavMeshService>(Lifetime.Singleton).As<INavMeshService>();
-            builder.Register<EnemyFactory>(Lifetime.Singleton);
+            builder.Register<EnemyFactory>(Lifetime.Singleton)
+                .WithParameter(enemyScopePrefab);
             builder.RegisterEntryPoint<CoreGameOrchestrator>();
         }
     }

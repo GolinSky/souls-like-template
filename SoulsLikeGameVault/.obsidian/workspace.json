@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Knowledge/Architecture/UI/Grace Navigation.md",
+                "file": "Work/Plans/Enemy Factory DI Refactor.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Grace Navigation"
+              "title": "Enemy Factory DI Refactor"
             }
           }
         ]
@@ -187,6 +187,10 @@
   },
   "active": "1da76326f671a503",
   "lastOpenFiles": [
+    "History/Records/Enemy and Character Factory Scope First DI Implementation.md",
+    "Work/Plans/Character Factory DI Refactor.md",
+    "Work/Plans/Enemy Factory DI Refactor.md",
+    "Knowledge/Architecture/UI/Grace Navigation.md",
     "Knowledge/Architecture/UI/UI Route Navigation.md",
     "Knowledge/Guides/UI/UI Code Build Guide.md",
     "History/Records/Status UI Penpot Integration 2026-09-14.md",
@@ -213,10 +217,6 @@
     "History/Records/Serena Shared Backend and Pagefile Headroom.md",
     "History/Records/Scene Loading Model State and Fail Fast Policy.md",
     "History/Records/Roll Movement Lock Cleanup.md",
-    "History/Records/Pause Navigation Naming Refactor.md",
-    "History/Records/Obsidian MCP Vault Setup.md",
-    "History/Records/Layer Service Remediation.md",
-    "History/Records/Inventory Category Controls Wiring.md",
     "History/Records",
     "Knowledge/Guides/UI",
     "Knowledge/Guides/Tooling",

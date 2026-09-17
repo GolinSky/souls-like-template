@@ -1,4 +1,5 @@
 ﻿using SoulsLike.Factory;
+using SoulsLike.Services.Repository;
 using SoulsLike.Ui.Base;
 using UnityEngine;
 using VContainer;
@@ -9,7 +10,7 @@ namespace SoulsLike.Services
 {
     public class UiFactory: BaseFactory
     {
-        public UiFactory(IObjectResolver resolver): base(resolver)
+        public UiFactory(IObjectResolver resolver, IAssetService assetService): base(resolver, assetService)
         {
         }
         
@@ -19,7 +20,7 @@ namespace SoulsLike.Services
         {
             var uiInstance = CreateUiInstance<TUi>(parent);
 
-            var childScope = RootScope.CreateChild(builder =>
+            RootScope.CreateChild(builder =>
             {
                 builder.RegisterComponentInHierarchy<TUi>().AsImplementedInterfaces(); 
             });

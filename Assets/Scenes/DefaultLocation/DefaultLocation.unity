@@ -16521,7 +16521,10 @@ MonoBehaviour:
   cameraService: {fileID: 3018529732569510667}
   graceSystem: {fileID: 198951721}
   enemyEncounterSystem: {fileID: 922633214}
+  characterScopePrefab: {fileID: 4094485961562877707, guid: 560cf3aede8136e4ba287943e88e13d2, type: 3}
+  enemyScopePrefab: {fileID: 9135650520872018953, guid: ad80232070429d64fb1af30b59167e78, type: 3}
   playerSpawnPositionProvider: {fileID: 2025814494}
+  elevatorViews: []
 --- !u!114 &3018529732569510667 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7385200506573806041, guid: c41e5c3ac64d01e4c9e2eddbce0a3c16, type: 3}
