@@ -5,6 +5,7 @@ namespace SoulsLike.Ui.Settings
         void SelectTab(SettingsTab tab);
         void OnOptionValueChanged(SettingsOptionId optionId, float value);
         void OnOptionValueChanged(SettingsOptionId optionId, bool value);
+        void OnOptionValueChanged(SettingsOptionId optionId, int value);
         void OnOptionAction(SettingsOptionId optionId);
         void Apply();
         void ResetCurrentSection();

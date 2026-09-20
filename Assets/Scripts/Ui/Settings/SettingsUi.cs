@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Ui.Base;
 using SoulsLike.Services.Settings;
 using SoulsLike.Ui.Base;
@@ -33,13 +34,17 @@ namespace SoulsLike.Ui.Settings
             _presenter = presenter;
         }
 
-        public void Render(GameSettingsData settings, SettingsTab activeTab)
+        public void Render(
+            GameSettingsData settings,
+            SettingsTab activeTab,
+            IReadOnlyList<DisplayModeData> availableDisplayModes = null,
+            SettingsCapabilities capabilities = default)
         {
             for (int index = 0; index < options.Length; index++)
             {
                 SettingsOptionUi option = options[index];
                 option.SetVisible(option.Tab == activeTab);
-                RenderOption(option, settings);
+                RenderOption(option, settings, availableDisplayModes, capabilities);
             }
         }
 
@@ -72,6 +77,7 @@ namespace SoulsLike.Ui.Settings
                 SettingsOptionUi option = options[index];
                 option.FloatValueChanged += HandleFloatValueChanged;
                 option.BoolValueChanged += HandleBoolValueChanged;
+                option.DropdownValueChanged += HandleDropdownValueChanged;
                 option.ActionRequested += HandleActionRequested;
             }
 
@@ -98,6 +104,7 @@ namespace SoulsLike.Ui.Settings
                 SettingsOptionUi option = options[index];
                 option.FloatValueChanged -= HandleFloatValueChanged;
                 option.BoolValueChanged -= HandleBoolValueChanged;
+                option.DropdownValueChanged -= HandleDropdownValueChanged;
                 option.ActionRequested -= HandleActionRequested;
             }
 
@@ -115,7 +122,11 @@ namespace SoulsLike.Ui.Settings
             continueEditingButton.onClick.RemoveListener(HandleContinueEditing);
         }
 
-        private static void RenderOption(SettingsOptionUi option, GameSettingsData settings)
+        private static void RenderOption(
+            SettingsOptionUi option,
+            GameSettingsData settings,
+            IReadOnlyList<DisplayModeData> availableDisplayModes,
+            SettingsCapabilities capabilities)
         {
             switch (option.OptionId)
             {
@@ -141,19 +152,115 @@ namespace SoulsLike.Ui.Settings
                     option.SetToggle(settings.Camera.InvertY, settings.Camera.InvertY ? "On" : "Off");
                     break;
                 case SettingsOptionId.WindowMode:
-                    option.SetActionValue(settings.Graphics.WindowMode.ToString());
+                    RenderWindowMode(option, settings.Graphics.WindowMode, capabilities);
                     break;
                 case SettingsOptionId.Resolution:
-                    option.SetActionValue(FormatDisplayMode(settings.Graphics.DisplayMode));
+                    RenderResolution(option, settings.Graphics.DisplayMode, availableDisplayModes);
                     break;
                 case SettingsOptionId.Quality:
-                    option.SetActionValue(settings.Graphics.QualityLevelName);
+                    RenderQuality(option, settings.Graphics.QualityLevelName);
                     break;
                 case SettingsOptionId.ResetBindings:
                     option.SetActionValue("Reset");
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private static void RenderWindowMode(
+            SettingsOptionUi option,
+            FullScreenMode currentMode,
+            SettingsCapabilities capabilities)
+        {
+            IReadOnlyList<FullScreenMode> modes = GetAvailableWindowModes(capabilities.SupportsExclusiveFullscreen);
+            var modeStrings = new List<string>(modes.Count);
+            int selectedIndex = 0;
+            for (int i = 0; i < modes.Count; i++)
+            {
+                modeStrings.Add(FormatWindowMode(modes[i]));
+                if (modes[i] == currentMode)
+                {
+                    selectedIndex = i;
+                }
+            }
+
+            option.SetDropdown(selectedIndex, modeStrings);
+        }
+
+        private static void RenderQuality(SettingsOptionUi option, string currentQualityLevelName)
+        {
+            string[] names = QualitySettings.names;
+            if (names != null && names.Length > 0)
+            {
+                var qualityStrings = new List<string>(names);
+                int selectedIndex = Array.IndexOf(names, currentQualityLevelName);
+                if (selectedIndex < 0)
+                {
+                    selectedIndex = QualitySettings.GetQualityLevel();
+                }
+
+                option.SetDropdown(selectedIndex, qualityStrings);
+            }
+            else
+            {
+                option.SetActionValue(currentQualityLevelName);
+            }
+        }
+
+        public static IReadOnlyList<FullScreenMode> GetAvailableWindowModes(bool supportsExclusiveFullscreen)
+        {
+            if (supportsExclusiveFullscreen)
+            {
+                return new[]
+                {
+                    FullScreenMode.FullScreenWindow,
+                    FullScreenMode.ExclusiveFullScreen,
+                    FullScreenMode.Windowed
+                };
+            }
+
+            return new[]
+            {
+                FullScreenMode.FullScreenWindow,
+                FullScreenMode.Windowed
+            };
+        }
+
+        private static string FormatWindowMode(FullScreenMode mode)
+        {
+            return mode switch
+            {
+                FullScreenMode.FullScreenWindow => "Borderless",
+                FullScreenMode.ExclusiveFullScreen => "Exclusive Fullscreen",
+                FullScreenMode.Windowed => "Windowed",
+                _ => mode.ToString()
+            };
+        }
+
+        private static void RenderResolution(
+            SettingsOptionUi option,
+            DisplayModeData currentMode,
+            IReadOnlyList<DisplayModeData> availableModes)
+        {
+            if (availableModes != null && availableModes.Count > 0)
+            {
+                var optionStrings = new List<string>(availableModes.Count);
+                int selectedIndex = 0;
+                for (int i = 0; i < availableModes.Count; i++)
+                {
+                    optionStrings.Add(FormatDisplayMode(availableModes[i]));
+                    if (SettingsDataUtility.AreEqual(availableModes[i], currentMode))
+                    {
+                        selectedIndex = i;
+                    }
+                }
+
+                option.SetDropdown(selectedIndex, optionStrings);
+            }
+            else
+            {
+                option.SetActionValue(FormatDisplayMode(currentMode));
             }
         }
 
@@ -179,6 +286,11 @@ namespace SoulsLike.Ui.Settings
         }
 
         private void HandleBoolValueChanged(SettingsOptionId optionId, bool value)
+        {
+            _presenter.OnOptionValueChanged(optionId, value);
+        }
+
+        private void HandleDropdownValueChanged(SettingsOptionId optionId, int value)
         {
             _presenter.OnOptionValueChanged(optionId, value);
         }

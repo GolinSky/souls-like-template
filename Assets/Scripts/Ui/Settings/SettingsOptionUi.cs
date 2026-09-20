@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Ui.Base;
 using SoulsLike.Ui.Base;
 using TMPro;
@@ -14,10 +15,12 @@ namespace SoulsLike.Ui.Settings
         [SerializeField] private Slider slider;
         [SerializeField] private Toggle toggle;
         [SerializeField] private CustomButton actionButton;
+        [SerializeField] private TMP_Dropdown dropdown;
         [SerializeField] private TMP_Text valueText;
 
         public event Action<SettingsOptionId, float> FloatValueChanged;
         public event Action<SettingsOptionId, bool> BoolValueChanged;
+        public event Action<SettingsOptionId, int> DropdownValueChanged;
         public event Action<SettingsOptionId> ActionRequested;
 
         public SettingsTab Tab => tab;
@@ -38,6 +41,11 @@ namespace SoulsLike.Ui.Settings
             if (actionButton != null)
             {
                 actionButton.onClick.AddListener(HandleActionRequested);
+            }
+
+            if (dropdown != null)
+            {
+                dropdown.onValueChanged.AddListener(HandleDropdownChanged);
             }
         }
 
@@ -71,6 +79,34 @@ namespace SoulsLike.Ui.Settings
             SetDisplayValue(displayValue);
         }
 
+        public void SetDropdown(int selectedIndex, List<string> options)
+        {
+            if (dropdown != null)
+            {
+                bool optionsChanged = dropdown.options.Count != options.Count;
+                if (!optionsChanged)
+                {
+                    for (int i = 0; i < options.Count; i++)
+                    {
+                        if (dropdown.options[i].text != options[i])
+                        {
+                            optionsChanged = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (optionsChanged)
+                {
+                    dropdown.ClearOptions();
+                    dropdown.AddOptions(options);
+                }
+
+                dropdown.SetValueWithoutNotify(selectedIndex);
+                dropdown.RefreshShownValue();
+            }
+        }
+
         private void OnDestroy()
         {
             if (slider != null)
@@ -87,6 +123,11 @@ namespace SoulsLike.Ui.Settings
             {
                 actionButton.onClick.RemoveListener(HandleActionRequested);
             }
+
+            if (dropdown != null)
+            {
+                dropdown.onValueChanged.RemoveListener(HandleDropdownChanged);
+            }
         }
 
         private void HandleSliderChanged(float value)
@@ -102,6 +143,11 @@ namespace SoulsLike.Ui.Settings
         private void HandleActionRequested()
         {
             ActionRequested?.Invoke(optionId);
+        }
+
+        private void HandleDropdownChanged(int value)
+        {
+            DropdownValueChanged?.Invoke(optionId, value);
         }
 
         private void SetDisplayValue(string displayValue)
