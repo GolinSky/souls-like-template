@@ -69,13 +69,21 @@ Shader "SoulsLike/GroundItemAdditive"
             half4 Frag(Varyings input) : SV_Target
             {
                 float2 centered = input.uv - 0.5;
-                float stripMask = smoothstep(0.5, 0.18, abs(centered.y));
-                float radialMask = smoothstep(0.52, 0.05, length(centered));
+                float stripMask = smoothstep(0.5, 0.15, abs(centered.y));
+                float radialMask = smoothstep(0.5, 0.05, length(centered));
                 float shape = lerp(stripMask, radialMask, _Radial);
-                float dissolveEdge = _Dissolve + (input.noise - 0.5) * 0.12;
-                clip(shape * input.color.a - dissolveEdge);
-                float pulse = 0.9 + sin(_Time.y * _PulseSpeed) * 0.1;
-                return half4(_Tint.rgb * _Intensity * pulse * input.color.rgb, shape * _Tint.a);
+                float alpha = shape * _Tint.a * input.color.a;
+                if (_Dissolve > 0.001)
+                {
+                    float dissolveEdge = _Dissolve + (input.noise - 0.5) * 0.15;
+                    clip(alpha - dissolveEdge);
+                }
+                else
+                {
+                    clip(alpha - 0.001);
+                }
+                float pulse = 0.95 + sin(_Time.y * _PulseSpeed) * 0.05;
+                return half4(_Tint.rgb * _Intensity * pulse * input.color.rgb, alpha);
             }
             ENDHLSL
         }

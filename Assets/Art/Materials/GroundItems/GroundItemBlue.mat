@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GroundItemGroundGlow
+  m_Name: GroundItemBlue
   m_Shader: {fileID: 4800000, guid: abfda01f98740de45811d39253519dd6, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -26,11 +26,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _Dissolve: 0
-    - _Intensity: 2.5
+    - _Intensity: 5
     - _PulseSpeed: 3.14
-    - _Radial: 1
-    - _Wobble: 0
+    - _Radial: 0
+    - _Wobble: 0.008
     m_Colors:
-    - _Tint: {r: 1.1, g: 0.55, b: 0.08, a: 0.55}
+    - _Tint: {r: 0.4, g: 0.8, b: 1.8, a: 0.95}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
