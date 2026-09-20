@@ -1,7 +1,3 @@
-[mcp_servers.unity]
-command = "unity"
-args = [ "mcp" ]
-
 [mcp_servers.serena]
 # One independently managed backend for this exact checkout; see Tools/Serena/README.md.
 url = "http://127.0.0.1:9121/mcp"
@@ -45,11 +41,6 @@ tool_timeout_sec = 60
 [mcp_servers.graphify.env]
 GRAPHIFY_QUERY_LOG_DISABLE = "1"
 
-# Compatibility tombstone: the user-level config still defines this legacy server.
-# Keep it disabled here so the project exposes only the official `unity mcp` bridge.
-[mcp_servers.unityMCP]
-enabled = false
-
 [features]
 multi_agent = true
 
@@ -59,3 +50,7 @@ max_concurrent_threads_per_session = 4
 default_subagent_model = "gpt-5.6-terra"
 default_subagent_reasoning_effort = "high"
 interrupt_message = true
+
+[mcp_servers.unity]
+command = "C:\\Users\\golin\\AppData\\Local\\Unity\\bin\\unity.exe"
+args = ["mcp","--project-path","F:\\Private\\SoulsLikeTemplate"]
