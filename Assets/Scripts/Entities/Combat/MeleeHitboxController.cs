@@ -77,9 +77,7 @@ namespace SoulsLike.Entities.Combat
 
             if (!target.TryGetComponent(out ResolveMeleeHitCommand resolveMeleeHit))
             {
-                throw new InvalidOperationException(
-                    $"Entity {target.Id} ({target.EntityType}) is missing "
-                    + $"{nameof(ResolveMeleeHitCommand)}.");
+                return;
             }
 
             if (!_entityLocator.TryGetEntity(_ownerEntityId, out IEntity owner))
