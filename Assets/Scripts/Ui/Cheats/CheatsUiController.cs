@@ -23,7 +23,7 @@ namespace SoulsLike.Ui.Cheats
         private readonly IInputService _inputService;
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly IEntityLocator _entityLocator;
-        private readonly EnemyEncounterSystem _enemyEncounterSystem;
+        private readonly EnemyService _enemyService;
         private readonly GraceSystem _graceSystem;
         private readonly List<IEntity> _entities = new();
 
@@ -40,14 +40,14 @@ namespace SoulsLike.Ui.Cheats
             IInputService inputService,
             IGameStateNotifier gameStateNotifier,
             IEntityLocator entityLocator,
-            EnemyEncounterSystem enemyEncounterSystem,
+            EnemyService enemyService,
             GraceSystem graceSystem)
             : base(uiService)
         {
             _inputService = inputService;
             _gameStateNotifier = gameStateNotifier;
             _entityLocator = entityLocator;
-            _enemyEncounterSystem = enemyEncounterSystem;
+            _enemyService = enemyService;
             _graceSystem = graceSystem;
         }
 
@@ -157,7 +157,7 @@ namespace SoulsLike.Ui.Cheats
 
         public void RespawnEnemies()
         {
-            _enemyEncounterSystem.RespawnEnemies();
+            _enemyService.RespawnEnemies();
         }
 
         public void OnGameStateChanged(GameState newState)

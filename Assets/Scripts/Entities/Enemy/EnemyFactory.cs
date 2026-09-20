@@ -22,9 +22,12 @@ namespace SoulsLike.Entities.Enemy
             _navMeshService = navMeshService;
         }
 
-        public EnemyActor CreateEnemy(EnemySpawnPoint spawn, EnemyGroupCoordinator groupCoordinator)
+        public EnemyActor CreateEnemy(
+            EnemySpawner spawn,
+            EnemyCatalog.Definition definition,
+            EnemyGroupCoordinator groupCoordinator)
         {
-            EnemyActor prefab = spawn.EnemyPrefab;
+            EnemyActor prefab = definition.EnemyPrefab;
             NavMeshAgent prefabAgent = prefab.NavMeshAgent;
             NavMeshQueryFilter queryFilter = new()
             {
@@ -48,7 +51,7 @@ namespace SoulsLike.Entities.Enemy
             EnemyActor actor = UnityEngine.Object.Instantiate(prefab, scope.transform, true);
             actor.name = $"{prefab.name}_Instance";
             actor.StageSpawn(spawnData);
-            scope.ConfigureEnemy(spawn, groupCoordinator);
+            scope.ConfigureEnemy(definition, groupCoordinator);
             scope.gameObject.SetActive(true);
             scope.BuildOnce();
             return actor;

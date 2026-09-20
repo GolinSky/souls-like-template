@@ -61,6 +61,7 @@ namespace SoulsLike.Editor
             Dictionary<string, WeaponMovesetDefinition> movesets = FindAssets<WeaponMovesetDefinition>();
             Dictionary<string, EnemyBehaviourProfile> profiles = FindAssets<EnemyBehaviourProfile>();
             Dictionary<string, HealthData> healthData = FindAssets<HealthData>();
+            Dictionary<string, EnemyCatalog> catalogs = FindAssets<EnemyCatalog>();
 
             foreach ((string path, WeaponMovesetDefinition moveset) in movesets)
             {
@@ -73,8 +74,19 @@ namespace SoulsLike.Editor
             }
 
             ValidateEnemyPrefabs(report);
-            ValidateEncounterPrefabs(movesets, profiles, healthData, report);
-            ValidateEncounterScenes(movesets, profiles, healthData, report);
+            if (catalogs.Count != 1)
+            {
+                report.Error($"Expected one shared enemy catalog, found {catalogs.Count}.", null);
+            }
+
+            EnemyCatalog catalog = catalogs.Count == 1 ? catalogs.Values.First() : null;
+            if (catalog != null)
+            {
+                ValidateCatalog(catalog, movesets, profiles, healthData, report);
+            }
+
+            ValidateEncounterPrefabs(catalog, report);
+            ValidateEncounterScenes(catalog, report);
             ValidateCriticalCompletionCallback(report);
             report.LogSummary(movesets.Count, profiles.Count);
         }
@@ -708,123 +720,109 @@ namespace SoulsLike.Editor
             }
         }
 
-        private static void ValidateEncounterPrefabs(
+        private static void ValidateCatalog(
+            EnemyCatalog catalog,
             IReadOnlyDictionary<string, WeaponMovesetDefinition> movesets,
             IReadOnlyDictionary<string, EnemyBehaviourProfile> profiles,
             IReadOnlyDictionary<string, HealthData> healthData,
             ValidationReport report)
+        {
+            foreach (string error in catalog.GetValidationErrors())
+            {
+                report.Error($"Enemy catalog '{AssetDatabase.GetAssetPath(catalog)}': {error}", catalog);
+            }
+
+            if (catalog.Definitions == null)
+            {
+                return;
+            }
+
+            foreach (KeyValue<EnemyId, EnemyCatalog.Definition> entry in catalog.Definitions)
+            {
+                if (entry?.Value == null)
+                {
+                    continue;
+                }
+
+                EnemyCatalog.Definition definition = entry.Value;
+                string label = $"Enemy catalog entry '{entry.Key}'";
+                RequireReference(definition.EnemyPrefab, "EnemyPrefab", label, report);
+                RequireReference(definition.BehaviourProfile, "BehaviourProfile", label, report);
+                RequireReference(definition.Moveset, "Moveset", label, report);
+                RequireReference(definition.HealthData, "HealthData", label, report);
+
+                if (definition.EnemyPrefab != null
+                    && AssetDatabase.GetAssetPath(definition.EnemyPrefab) == string.Empty)
+                {
+                    report.Error($"{label} must reference a prefab asset, not a scene object.", catalog);
+                }
+
+                ValidateReferencedAsset(definition.Moveset, movesets, "Moveset", label, catalog, report);
+                ValidateReferencedAsset(definition.BehaviourProfile, profiles, "BehaviourProfile", label, catalog, report);
+                ValidateReferencedAsset(definition.HealthData, healthData, "HealthData", label, catalog, report);
+
+                bool requiresTrigger = definition.BehaviourProfile != null
+                    && definition.BehaviourProfile.ActivationMode == EnemyActivationMode.Triggered;
+                ValidateActivationTrigger(definition.EnemyPrefab, requiresTrigger, label, report);
+            }
+        }
+
+        private static void ValidateEncounterPrefabs(EnemyCatalog catalog, ValidationReport report)
         {
             foreach (string path in FindPrefabPaths())
             {
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-                EnemyEncounterSystem[] encounters = prefab.GetComponentsInChildren<EnemyEncounterSystem>(true);
-                EnemySpawnPoint[] spawnPoints = prefab.GetComponentsInChildren<EnemySpawnPoint>(true);
-                if (encounters.Length == 0 && spawnPoints.Length == 0)
+                EnemySpawnGroup[] groups = prefab.GetComponentsInChildren<EnemySpawnGroup>(true);
+                EnemySpawner[] spawners = prefab.GetComponentsInChildren<EnemySpawner>(true);
+                if (groups.Length == 0 && spawners.Length == 0)
                 {
                     continue;
                 }
 
-                report.EncounterPrefabCount += encounters.Length;
-                foreach (EnemyEncounterSystem encounter in encounters)
+                report.EncounterPrefabCount += groups.Length;
+                foreach (EnemySpawnGroup group in groups)
                 {
-                    ValidateEncounterReferences(encounter, path, report);
+                    ValidateGroup(group, path, report);
                 }
 
-                foreach (EnemySpawnPoint spawnPoint in spawnPoints)
+                foreach (EnemySpawner spawner in spawners)
                 {
-                    ValidateSpawnPoint(spawnPoint, path, movesets, profiles, healthData, report);
+                    ValidateSpawner(spawner, catalog, path, report);
                 }
             }
         }
 
-        private static void ValidateEncounterReferences(
-            EnemyEncounterSystem encounter,
+        private static void ValidateGroup(
+            EnemySpawnGroup group,
             string path,
             ValidationReport report)
         {
-            var serialized = new SerializedObject(encounter);
-            SerializedProperty spawnPoints = serialized.FindProperty("spawnPoints");
-            SerializedProperty spawnOnStart = serialized.FindProperty("spawnOnStart");
-            SerializedProperty respawnOnGrace = serialized.FindProperty("respawnOnGrace");
-            SerializedProperty respawnOnGameEnded = serialized.FindProperty("respawnOnGameEnded");
-            SerializedProperty maxPressureSlots = serialized.FindProperty("maxPressureSlots");
-            SerializedProperty pressureSlotTimeoutSeconds = serialized.FindProperty(
-                "pressureSlotTimeoutSeconds");
-            if (spawnOnStart == null
-                || respawnOnGrace == null
-                || respawnOnGameEnded == null
-                || maxPressureSlots == null
-                || pressureSlotTimeoutSeconds == null)
+            if (group.MaxPressureSlots < 1)
             {
-                report.Error(
-                    $"Encounter '{path}' must serialize spawning and pressure-slot settings.",
-                    encounter);
-                return;
+                report.Error($"Enemy group '{path}/{group.name}' requires at least one pressure slot.", group);
             }
 
-            if (maxPressureSlots.intValue < 1)
+            if (group.PressureSlotTimeoutSeconds <= 0f)
             {
-                report.Error($"Encounter '{path}' requires at least one pressure slot.", encounter);
+                report.Error($"Enemy group '{path}/{group.name}' requires a positive pressure slot timeout.", group);
             }
 
-            if (pressureSlotTimeoutSeconds.floatValue <= 0f)
+            bool canSpawn = group.isActiveAndEnabled && group.SpawnOnStart;
+            if (canSpawn && !group.GetComponentsInChildren<EnemySpawner>(true)
+                    .Any(spawner => spawner.isActiveAndEnabled))
             {
-                report.Error($"Encounter '{path}' requires a positive pressure slot timeout.", encounter);
-            }
-
-            if (spawnPoints == null || spawnPoints.arraySize == 0)
-            {
-                bool canSpawn = encounter.isActiveAndEnabled
-                    && (spawnOnStart.boolValue
-                        || respawnOnGrace.boolValue
-                        || respawnOnGameEnded.boolValue);
-                if (canSpawn)
-                {
-                    report.Error($"Encounter '{path}' has no spawn points.", encounter);
-                }
-
-                return;
-            }
-
-            var offsets = new HashSet<(EnemyBehaviourProfile Profile, int Offset)>();
-            for (int index = 0; index < spawnPoints.arraySize; index++)
-            {
-                EnemySpawnPoint spawnPoint = spawnPoints.GetArrayElementAtIndex(index)
-                    .objectReferenceValue as EnemySpawnPoint;
-                if (spawnPoint == null)
-                {
-                    report.Error($"Encounter '{path}' has a null spawn point at index {index}.", encounter);
-                    continue;
-                }
-
-                if (spawnPoint.BehaviourProfile != null
-                    && !offsets.Add((spawnPoint.BehaviourProfile, spawnPoint.RandomSeedOffset)))
-                {
-                    report.Error(
-                        $"Encounter '{path}' has duplicate randomSeedOffset {spawnPoint.RandomSeedOffset} for behaviour profile '{spawnPoint.BehaviourProfile.name}'.",
-                        spawnPoint);
-                }
+                report.Error($"Enemy group '{path}/{group.name}' has no enabled spawners.", group);
             }
         }
 
-        private static void ValidateEncounterScenes(
-            IReadOnlyDictionary<string, WeaponMovesetDefinition> movesets,
-            IReadOnlyDictionary<string, EnemyBehaviourProfile> profiles,
-            IReadOnlyDictionary<string, HealthData> healthData,
-            ValidationReport report)
+        private static void ValidateEncounterScenes(EnemyCatalog catalog, ValidationReport report)
         {
             foreach (string path in FindScenePaths())
             {
                 Scene previewScene = EditorSceneManager.OpenPreviewScene(path);
                 try
                 {
-                    ValidateEncounterScene(
-                        previewScene,
-                        path,
-                        movesets,
-                        profiles,
-                        healthData,
-                        report);
+                    ValidateEncounterScene(previewScene, path, catalog, report);
                 }
                 finally
                 {
@@ -836,98 +834,129 @@ namespace SoulsLike.Editor
         private static void ValidateEncounterScene(
             Scene scene,
             string path,
-            IReadOnlyDictionary<string, WeaponMovesetDefinition> movesets,
-            IReadOnlyDictionary<string, EnemyBehaviourProfile> profiles,
-            IReadOnlyDictionary<string, HealthData> healthData,
+            EnemyCatalog catalog,
             ValidationReport report)
         {
-            var sceneOffsets = new HashSet<(EnemyBehaviourProfile Profile, int Offset)>();
+            var services = new List<EnemyService>();
+            var scopes = new List<CoreScope>();
+            var groups = new List<EnemySpawnGroup>();
+            var spawners = new List<EnemySpawner>();
             foreach (GameObject root in scene.GetRootGameObjects())
             {
-                EnemyEncounterSystem[] encounters = root.GetComponentsInChildren<EnemyEncounterSystem>(true);
-                EnemySpawnPoint[] spawnPoints = root.GetComponentsInChildren<EnemySpawnPoint>(true);
-                report.EncounterSceneCount += encounters.Length;
+                services.AddRange(root.GetComponentsInChildren<EnemyService>(true));
+                scopes.AddRange(root.GetComponentsInChildren<CoreScope>(true));
+                groups.AddRange(root.GetComponentsInChildren<EnemySpawnGroup>(true));
+                spawners.AddRange(root.GetComponentsInChildren<EnemySpawner>(true));
+            }
 
-                foreach (EnemyEncounterSystem encounter in encounters)
+            if (groups.Count > 0 && services.Count != 1)
+            {
+                report.Error($"Scene '{path}' has {groups.Count} enemy groups but {services.Count} enemy services; expected one service.", null);
+            }
+
+            foreach (EnemyService service in services)
+            {
+                if (service.Catalog != catalog)
                 {
-                    ValidateEncounterReferences(encounter, path, report);
-                    ValidateSceneSpawnOffsets(encounter, path, sceneOffsets, report);
+                    report.Error($"Scene enemy service '{path}/{service.name}' must reference the shared catalog.", service);
+                }
+            }
+
+            if (groups.Count > 0)
+            {
+                if (scopes.Count != 1)
+                {
+                    report.Error($"Scene '{path}' has {scopes.Count} core scopes; expected one for its enemy groups.", null);
                 }
 
-                foreach (EnemySpawnPoint spawnPoint in spawnPoints)
+                foreach (CoreScope scope in scopes)
                 {
-                    ValidateSpawnPoint(spawnPoint, path, movesets, profiles, healthData, report);
+                    SerializedProperty serviceProperty = new SerializedObject(scope).FindProperty("enemyService");
+                    if (serviceProperty == null)
+                    {
+                        report.Error($"Core scope '{path}/{scope.name}' is missing its enemy service field.", scope);
+                        continue;
+                    }
+
+                    EnemyService registeredService = serviceProperty.objectReferenceValue as EnemyService;
+                    if (services.Count != 1 || registeredService != services[0])
+                    {
+                        report.Error($"Core scope '{path}/{scope.name}' must register the scene enemy service.", scope);
+                    }
                 }
             }
-        }
 
-        private static void ValidateSceneSpawnOffsets(
-            EnemyEncounterSystem encounter,
-            string path,
-            HashSet<(EnemyBehaviourProfile Profile, int Offset)> sceneOffsets,
-            ValidationReport report)
-        {
-            if (!encounter.isActiveAndEnabled)
+            report.EncounterSceneCount += groups.Count;
+            foreach (EnemySpawnGroup group in groups)
             {
-                return;
+                ValidateGroup(group, path, report);
+                if (group.GetComponentsInParent<EnemyService>(true).Length != 1)
+                {
+                    report.Error($"Enemy group '{path}/{group.name}' must belong to exactly one enemy service.", group);
+                }
             }
 
-            SerializedProperty spawnPoints = new SerializedObject(encounter)
-                .FindProperty("spawnPoints");
-            if (spawnPoints == null)
+            var offsets = new HashSet<(EnemyBehaviourProfile Profile, int Offset)>();
+            foreach (EnemySpawner spawner in spawners)
             {
-                return;
-            }
-
-            for (int index = 0; index < spawnPoints.arraySize; index++)
-            {
-                EnemySpawnPoint spawnPoint = spawnPoints.GetArrayElementAtIndex(index)
-                    .objectReferenceValue as EnemySpawnPoint;
-                if (spawnPoint == null
-                    || !spawnPoint.isActiveAndEnabled
-                    || spawnPoint.BehaviourProfile == null)
+                ValidateSpawner(spawner, catalog, path, report);
+                if (!spawner.isActiveAndEnabled
+                    || !spawner.GetComponentsInParent<EnemySpawnGroup>(true)
+                        .Any(group => group.isActiveAndEnabled))
                 {
                     continue;
                 }
 
-                if (!sceneOffsets.Add((spawnPoint.BehaviourProfile, spawnPoint.RandomSeedOffset)))
+                EnemyCatalog.Definition definition = FindDefinition(catalog, spawner.EnemyId);
+                if (definition?.BehaviourProfile != null
+                    && !offsets.Add((definition.BehaviourProfile, spawner.RandomSeedOffset)))
                 {
                     report.Error(
-                        $"Scene encounter '{path}' has duplicate randomSeedOffset {spawnPoint.RandomSeedOffset} for behaviour profile '{spawnPoint.BehaviourProfile.name}'.",
-                        spawnPoint);
+                        $"Scene '{path}' has duplicate randomSeedOffset {spawner.RandomSeedOffset} for behaviour profile '{definition.BehaviourProfile.name}'.",
+                        spawner);
                 }
             }
         }
 
-        private static void ValidateSpawnPoint(
-            EnemySpawnPoint spawnPoint,
+        private static void ValidateSpawner(
+            EnemySpawner spawner,
+            EnemyCatalog catalog,
             string path,
-            IReadOnlyDictionary<string, WeaponMovesetDefinition> movesets,
-            IReadOnlyDictionary<string, EnemyBehaviourProfile> profiles,
-            IReadOnlyDictionary<string, HealthData> healthData,
             ValidationReport report)
         {
             report.SpawnPointCount++;
-            string label = $"Spawn point '{path}/{spawnPoint.name}'";
-            RequireReference(spawnPoint.EnemyPrefab, "EnemyPrefab", label, report);
-            RequireReference(spawnPoint.BehaviourProfile, "BehaviourProfile", label, report);
-            RequireReference(spawnPoint.Moveset, "Moveset", label, report);
-            RequireReference(spawnPoint.HealthData, "HealthData", label, report);
-
-            if (spawnPoint.EnemyPrefab != null
-                && AssetDatabase.GetAssetPath(spawnPoint.EnemyPrefab) == string.Empty)
+            string label = $"Enemy spawner '{path}/{spawner.name}'";
+            if (spawner.GetComponentsInParent<EnemySpawnGroup>(true).Length != 1)
             {
-                report.Error($"{label} must reference a prefab asset, not a scene object.", spawnPoint);
+                report.Error($"{label} must belong to exactly one enemy group.", spawner);
             }
 
-            ValidateReferencedAsset(spawnPoint.Moveset, movesets, "Moveset", label, spawnPoint, report);
-            ValidateReferencedAsset(spawnPoint.BehaviourProfile, profiles, "BehaviourProfile", label, spawnPoint, report);
-            ValidateReferencedAsset(spawnPoint.HealthData, healthData, "HealthData", label, spawnPoint, report);
+            if ((int)spawner.EnemyId == 0)
+            {
+                report.Error($"{label} has an unassigned enemy ID.", spawner);
+            }
+            else if (catalog != null && FindDefinition(catalog, spawner.EnemyId) == null)
+            {
+                report.Error($"{label} has unknown enemy ID '{spawner.EnemyId}'.", spawner);
+            }
+        }
 
-            bool requiresTrigger = spawnPoint.BehaviourProfile != null
-                && spawnPoint.BehaviourProfile.ActivationMode == EnemyActivationMode.Triggered;
-            ValidateActivationTrigger(spawnPoint.EnemyPrefab, requiresTrigger, label, report);
+        private static EnemyCatalog.Definition FindDefinition(EnemyCatalog catalog, EnemyId id)
+        {
+            if (catalog == null || catalog.Definitions == null)
+            {
+                return null;
+            }
 
+            foreach (KeyValue<EnemyId, EnemyCatalog.Definition> entry in catalog.Definitions)
+            {
+                if (entry != null && entry.Key == id)
+                {
+                    return entry.Value;
+                }
+            }
+
+            return null;
         }
 
         private static void ValidateActivationTrigger(

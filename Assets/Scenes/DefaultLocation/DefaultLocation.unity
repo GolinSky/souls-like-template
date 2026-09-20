@@ -5576,7 +5576,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1915411775}
     m_Modifications:
     - target: {fileID: 152581692203435649, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5604,15 +5604,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5646,6 +5646,11 @@ PrefabInstance:
 --- !u!1 &846277528 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4781684685654345843, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
+  m_PrefabInstance: {fileID: 846277527}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &846277529 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1217264613415031913, guid: e9d91844455a2ae4298f154bd0aff719, type: 3}
   m_PrefabInstance: {fileID: 846277527}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &860482424
@@ -6368,17 +6373,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1358261729}
   m_LocalEulerAnglesHint: {x: 40.931, y: 98.995, z: 14.227}
---- !u!114 &922633214 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-  m_PrefabInstance: {fileID: 1881587232}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c31b1bb4172f42144a7f887bb766dbc8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyEncounterSystem
 --- !u!114 &923558706 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7651691237837284798, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
@@ -14263,8 +14257,12 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1915411775}
     m_Modifications:
+    - target: {fileID: 2613125677331963689, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2927633110591006639, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_Name
       value: EnemyEncounter
@@ -14299,15 +14297,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -14326,6 +14324,58 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+--- !u!4 &1881587233 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+  m_PrefabInstance: {fileID: 1881587232}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1915411773
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1915411775}
+  - component: {fileID: 1915411774}
+  m_Layer: 0
+  m_Name: EnemyService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1915411774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915411773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 995a96fbed225124494bc6986173e4f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyService
+  catalog: {fileID: 11400000, guid: d8d728043ef64a0468ac7c2448fc2666, type: 2}
+--- !u!4 &1915411775
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915411773}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1881587233}
+  - {fileID: 846277529}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1961771233
 GameObject:
   m_ObjectHideFlags: 0
@@ -16520,7 +16570,7 @@ MonoBehaviour:
   - {fileID: 846277528}
   cameraService: {fileID: 3018529732569510667}
   graceSystem: {fileID: 198951721}
-  enemyEncounterSystem: {fileID: 922633214}
+  enemyService: {fileID: 1915411774}
   characterScopePrefab: {fileID: 4094485961562877707, guid: 560cf3aede8136e4ba287943e88e13d2, type: 3}
   enemyScopePrefab: {fileID: 9135650520872018953, guid: ad80232070429d64fb1af30b59167e78, type: 3}
   playerSpawnPositionProvider: {fileID: 2025814494}
@@ -16855,9 +16905,8 @@ SceneRoots:
   - {fileID: 4945162219537986709}
   - {fileID: 2072043099}
   - {fileID: 198951720}
-  - {fileID: 1881587232}
   - {fileID: 1599396926}
-  - {fileID: 846277527}
   - {fileID: 2025814495}
   - {fileID: 1594063181}
   - {fileID: 2035904672}
+  - {fileID: 1915411775}

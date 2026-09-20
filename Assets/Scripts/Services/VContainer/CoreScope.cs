@@ -27,7 +27,7 @@ namespace SoulsLike
     {
         [SerializeField] private CameraService cameraService;
         [SerializeField] private GraceSystem graceSystem;
-        [SerializeField] private EnemyEncounterSystem enemyEncounterSystem;
+        [SerializeField] private EnemyService enemyService;
         [SerializeField] private CharacterScopeInstaller characterScopePrefab;
         [SerializeField] private EnemyScopeInstaller enemyScopePrefab;
         [SerializeField] private PlayerSpawnPositionProvider playerSpawnPositionProvider;
@@ -37,7 +37,7 @@ namespace SoulsLike
         {
             builder.RegisterComponent(cameraService).AsSelf().As<ICameraService>();
             builder.RegisterComponent(graceSystem).AsSelf().AsImplementedInterfaces();
-            builder.RegisterComponent(enemyEncounterSystem).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponent(enemyService).AsSelf().AsImplementedInterfaces();
             builder.RegisterComponent(playerSpawnPositionProvider).AsSelf();
             builder.RegisterComponentOnNewGameObject<LadderSystem>(Lifetime.Singleton, nameof(LadderSystem)).AsSelf().AsImplementedInterfaces();
             builder.RegisterComponentOnNewGameObject<ElevatorSystem>(Lifetime.Singleton, nameof(ElevatorSystem)).AsSelf().AsImplementedInterfaces();

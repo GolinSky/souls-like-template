@@ -2675,6 +2675,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 836483458}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &76654156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 76654158}
+  - component: {fileID: 76654157}
+  m_Layer: 0
+  m_Name: EnemyService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &76654157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76654156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 995a96fbed225124494bc6986173e4f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyService
+  catalog: {fileID: 11400000, guid: d8d728043ef64a0468ac7c2448fc2666, type: 2}
+--- !u!4 &76654158
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76654156}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 848389966}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &79240850
 GameObject:
   m_ObjectHideFlags: 0
@@ -34727,7 +34773,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31b1bb4172f42144a7f887bb766dbc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyEncounterSystem
-  spawnPoints: []
   spawnOnStart: 0
   respawnOnGrace: 0
   respawnOnGameEnded: 0
@@ -34741,12 +34786,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 848389964}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -28.51837, y: 0.26, z: 16.51594}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 76654158}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &859382589
 GameObject:
@@ -82231,7 +82276,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   cameraService: {fileID: 3018529732569510667}
   graceSystem: {fileID: 198951721}
-  enemyEncounterSystem: {fileID: 848389965}
+  enemyService: {fileID: 76654157}
   characterScopePrefab: {fileID: 4094485961562877707, guid: 560cf3aede8136e4ba287943e88e13d2, type: 3}
   enemyScopePrefab: {fileID: 9135650520872018953, guid: ad80232070429d64fb1af30b59167e78, type: 3}
   playerSpawnPositionProvider: {fileID: 2017232390}
@@ -83277,7 +83322,7 @@ SceneRoots:
   - {fileID: 7583737156145638810}
   - {fileID: 2072043099}
   - {fileID: 198951720}
-  - {fileID: 848389966}
   - {fileID: 819965373}
   - {fileID: 4945162219537986709}
   - {fileID: 2017232391}
+  - {fileID: 76654158}

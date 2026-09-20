@@ -44,10 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42452bfa730fdb24db97e9cc077d89b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemySpawnPoint
-  enemyPrefab: {fileID: 9216140226880738682, guid: fd5a5879c75839a419395d1349b2422f, type: 3}
-  behaviourProfile: {fileID: 11400000, guid: 14685d97b4d0d6d4990786a1c9cf2954, type: 2}
-  moveset: {fileID: 11400000, guid: 41cf74f8da69d804fba3a03619c398f6, type: 2}
-  healthData: {fileID: 11400000, guid: 9afd00ea71ad46a4b9d739b7e2997665, type: 2}
+  enemyId: 2
   patrolPoints: []
   randomSeedOffset: 100
 --- !u!1 &4781684685654345843
@@ -96,9 +93,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c31b1bb4172f42144a7f887bb766dbc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyEncounterSystem
-  spawnPoints:
-  - {fileID: 6718173525358866060}
-  - {fileID: 8867665909327873426}
   spawnOnStart: 1
   respawnOnGrace: 1
   respawnOnGameEnded: 1
@@ -148,9 +142,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42452bfa730fdb24db97e9cc077d89b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemySpawnPoint
-  enemyPrefab: {fileID: 9216140226880738682, guid: fd5a5879c75839a419395d1349b2422f, type: 3}
-  behaviourProfile: {fileID: 11400000, guid: 4cddcd2a916d3f2419deab586b95f06f, type: 2}
-  moveset: {fileID: 11400000, guid: 0c5733680627f6043bdd98faff7247a1, type: 2}
-  healthData: {fileID: 11400000, guid: 9afd00ea71ad46a4b9d739b7e2997665, type: 2}
+  enemyId: 3
   patrolPoints: []
   randomSeedOffset: 101

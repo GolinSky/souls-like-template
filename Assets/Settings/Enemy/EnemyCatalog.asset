@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6adca629f9f7cd445b5948515eaa4eb2, type: 3}
+  m_Name: EnemyCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyCatalog
+  definitions:
+    keyValue:
+    - key: 1
+      value:
+        enemyPrefab: {fileID: 9216140226880738682, guid: fd5a5879c75839a419395d1349b2422f, type: 3}
+        behaviourProfile: {fileID: 11400000, guid: dd7088631eba6674cbe3b2bd8cf6bfac, type: 2}
+        moveset: {fileID: 11400000, guid: 1ddec27955b1a6143b5450f26262d037, type: 2}
+        healthData: {fileID: 11400000, guid: bf8276a3814be5441b37093b029f1881, type: 2}
+    - key: 2
+      value:
+        enemyPrefab: {fileID: 9216140226880738682, guid: fd5a5879c75839a419395d1349b2422f, type: 3}
+        behaviourProfile: {fileID: 11400000, guid: 14685d97b4d0d6d4990786a1c9cf2954, type: 2}
+        moveset: {fileID: 11400000, guid: 41cf74f8da69d804fba3a03619c398f6, type: 2}
+        healthData: {fileID: 11400000, guid: 9afd00ea71ad46a4b9d739b7e2997665, type: 2}
+    - key: 3
+      value:
+        enemyPrefab: {fileID: 9216140226880738682, guid: fd5a5879c75839a419395d1349b2422f, type: 3}
+        behaviourProfile: {fileID: 11400000, guid: 4cddcd2a916d3f2419deab586b95f06f, type: 2}
+        moveset: {fileID: 11400000, guid: 0c5733680627f6043bdd98faff7247a1, type: 2}
+        healthData: {fileID: 11400000, guid: 9afd00ea71ad46a4b9d739b7e2997665, type: 2}

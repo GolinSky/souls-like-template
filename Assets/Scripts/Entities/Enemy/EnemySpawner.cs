@@ -1,22 +1,14 @@
-using SoulsLike.Entities.Character.Components.Health;
 using UnityEngine;
 
 namespace SoulsLike.Entities.Enemy
 {
-    //todo: fully rework
-    public sealed class EnemySpawnPoint : MonoBehaviour
+    public sealed class EnemySpawner : MonoBehaviour
     {
-        [SerializeField] private EnemyActor enemyPrefab;
-        [SerializeField] private EnemyBehaviourProfile behaviourProfile;
-        [SerializeField] private WeaponMovesetDefinition moveset;
-        [SerializeField] private HealthData healthData;
+        [SerializeField] private EnemyId enemyId;
         [SerializeField] private Transform[] patrolPoints = { };
         [SerializeField] private int randomSeedOffset;
 
-        public EnemyActor EnemyPrefab => enemyPrefab;
-        public EnemyBehaviourProfile BehaviourProfile => behaviourProfile;
-        public WeaponMovesetDefinition Moveset => moveset;
-        public HealthData HealthData => healthData;
+        public EnemyId EnemyId => enemyId;
         public bool HasPatrolPositions => patrolPoints is { Length: > 0 };
         public int RandomSeedOffset => randomSeedOffset;
 

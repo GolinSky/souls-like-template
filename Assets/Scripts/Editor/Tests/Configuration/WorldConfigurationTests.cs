@@ -18,7 +18,7 @@ namespace SoulsLike.Editor.Tests.Configuration
     {
         [TestCase(typeof(LadderView))]
         [TestCase(typeof(GroundItem))]
-        [TestCase(typeof(EnemySpawnPoint))]
+        [TestCase(typeof(EnemySpawner))]
         public void WorldPrefabs_HaveRequiredConfiguration(Type componentType)
         {
             int checkedCount = 0;
@@ -38,7 +38,7 @@ namespace SoulsLike.Editor.Tests.Configuration
 
         [TestCase(typeof(LadderView), "Assets/Scripts/Entities/Ladder/LadderView.cs")]
         [TestCase(typeof(GroundItem), "Assets/Scripts/Items/GroundItem.cs")]
-        [TestCase(typeof(EnemySpawnPoint), "Assets/Scripts/Entities/Enemy/EnemySpawnPoint.cs")]
+        [TestCase(typeof(EnemySpawner), "Assets/Scripts/Entities/Enemy/EnemySpawner.cs")]
         public void AuthoredScenes_HaveRequiredConfiguration(Type componentType, string scriptPath)
         {
             var saveIdentifiers = new HashSet<string>();
@@ -72,12 +72,55 @@ namespace SoulsLike.Editor.Tests.Configuration
             Assert.That(checkedCount, Is.GreaterThan(0), $"No authored {componentType.Name} scene components were checked.");
         }
 
+        [Test]
+        public void DefaultLocation_ExcludesFourthMainEnemySpawner()
+        {
+            const string SCENE_PATH = "Assets/Scenes/DefaultLocation/DefaultLocation.unity";
+            Scene preview = EditorSceneManager.OpenPreviewScene(SCENE_PATH);
+            try
+            {
+                EnemySpawner[] mainSpawners = preview.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<EnemySpawner>(true))
+                    .Where(spawner => spawner.EnemyId == EnemyId.ErikaMelee)
+                    .ToArray();
+
+                Assert.That(mainSpawners.Length, Is.EqualTo(4));
+                Assert.That(mainSpawners.Count(spawner => spawner.isActiveAndEnabled), Is.EqualTo(3));
+                Assert.That(mainSpawners.Single(spawner => spawner.RandomSeedOffset == 3).isActiveAndEnabled, Is.False);
+            }
+            finally
+            {
+                EditorSceneManager.ClosePreviewScene(preview);
+            }
+        }
+
+        [Test]
+        public void ElevatorDemo_KeepsMainEncounterEmpty()
+        {
+            const string SCENE_PATH = "Assets/Sandbox/Scenes/ElevatorDemo/ElevatorDemo.unity";
+            Scene preview = EditorSceneManager.OpenPreviewScene(SCENE_PATH);
+            try
+            {
+                EnemySpawnGroup group = preview.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<EnemySpawnGroup>(true))
+                    .Single();
+                Assert.That(group.SpawnOnStart, Is.False);
+                Assert.That(group.GetComponentsInChildren<EnemySpawner>(true).Length, Is.EqualTo(4));
+                Assert.That(group.GetComponentsInChildren<EnemySpawner>(true)
+                    .Any(spawner => spawner.isActiveAndEnabled), Is.False);
+            }
+            finally
+            {
+                EditorSceneManager.ClosePreviewScene(preview);
+            }
+        }
+
         private static void AssertConfiguration(Component component, string path, HashSet<string> saveIdentifiers)
         {
             string context = $"{path}: '{component.name}'";
-            if (component is EnemySpawnPoint spawn)
+            if (component is EnemySpawner spawn)
             {
-                Assert.That(spawn.EnemyPrefab, Is.Not.Null, $"{context} requires an enemy prefab.");
+                Assert.That((int)spawn.EnemyId, Is.Not.Zero, $"{context} requires an enemy ID.");
                 return;
             }
 

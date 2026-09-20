@@ -16,14 +16,14 @@ namespace SoulsLike.Services.VContainer
 {
     public sealed class EnemyScopeInstaller : EntityLifetimeScope
     {
-        private EnemySpawnPoint _spawn;
+        private EnemyCatalog.Definition _definition;
         private EnemyGroupCoordinator _groupCoordinator;
 
         public void ConfigureEnemy(
-            EnemySpawnPoint spawn,
+            EnemyCatalog.Definition definition,
             EnemyGroupCoordinator groupCoordinator)
         {
-            _spawn = spawn;
+            _definition = definition;
             _groupCoordinator = groupCoordinator;
         }
 
@@ -33,9 +33,9 @@ namespace SoulsLike.Services.VContainer
 
             // Entity identity and actor components.
             builder.RegisterEntitySystemExt(EntityType.Enemy);
-            builder.RegisterInstance(_spawn.HealthData).AsImplementedInterfaces().AsSelf();
-            builder.RegisterInstance(_spawn.BehaviourProfile);
-            builder.RegisterInstance(_spawn.Moveset);
+            builder.RegisterInstance(_definition.HealthData).AsImplementedInterfaces().AsSelf();
+            builder.RegisterInstance(_definition.BehaviourProfile);
+            builder.RegisterInstance(_definition.Moveset);
             builder.RegisterInstance(_groupCoordinator);
             builder.RegisterInstance(new EnemyDespawnHandler(this)).As<IEnemyDespawnHandler>();
             builder.RegisterComponentInHierarchy<EnemyActor>().UnderTransform(transform).AsSelf();

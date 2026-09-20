@@ -119,6 +119,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &76654156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 76654158}
+  - component: {fileID: 76654157}
+  m_Layer: 0
+  m_Name: EnemyService
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &76654157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76654156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 995a96fbed225124494bc6986173e4f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyService
+  catalog: {fileID: 11400000, guid: d8d728043ef64a0468ac7c2448fc2666, type: 2}
+--- !u!4 &76654158
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76654156}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1881587233}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &198951719
 GameObject:
   m_ObjectHideFlags: 0
@@ -1899,17 +1945,6 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
---- !u!114 &922633214 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-  m_PrefabInstance: {fileID: 1881587232}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c31b1bb4172f42144a7f887bb766dbc8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Entities.Enemy.EnemyEncounterSystem
 --- !u!43 &1004336431
 Mesh:
   m_ObjectHideFlags: 0
@@ -4134,8 +4169,12 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 76654158}
     m_Modifications:
+    - target: {fileID: 2613125677331963689, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2927633110591006639, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_Name
       value: EnemyEncounter
@@ -4144,17 +4183,13 @@ PrefabInstance:
       propertyPath: spawnOnStart
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-      propertyPath: spawnPoints.Array.size
+    - target: {fileID: 4846245521169120973, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-      propertyPath: 'spawnPoints.Array.data[1]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4814139022787123590, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-      propertyPath: 'spawnPoints.Array.data[2]'
-      value: 
+    - target: {fileID: 5218878594018366240, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4174,15 +4209,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -4196,15 +4231,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7728417752804511700, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 7728417752804511700, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-    - {fileID: 5218878594018366240, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-    - {fileID: 4846245521169120973, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
-    - {fileID: 2613125677331963689, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+--- !u!4 &1881587233 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6965793515978147859, guid: 7aac08ee55ad1fa4f9934fb325946116, type: 3}
+  m_PrefabInstance: {fileID: 1881587232}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1931213578
 GameObject:
   m_ObjectHideFlags: 0
@@ -4859,7 +4899,7 @@ MonoBehaviour:
   autoInjectGameObjects: []
   cameraService: {fileID: 3018529732569510667}
   graceSystem: {fileID: 198951721}
-  enemyEncounterSystem: {fileID: 922633214}
+  enemyService: {fileID: 76654157}
   characterScopePrefab: {fileID: 4094485961562877707, guid: 560cf3aede8136e4ba287943e88e13d2, type: 3}
   enemyScopePrefab: {fileID: 9135650520872018953, guid: ad80232070429d64fb1af30b59167e78, type: 3}
   playerSpawnPositionProvider: {fileID: 2025814494}
@@ -5104,9 +5144,9 @@ SceneRoots:
   - {fileID: 4945162219537986709}
   - {fileID: 2072043099}
   - {fileID: 198951720}
-  - {fileID: 1881587232}
   - {fileID: 1599396926}
   - {fileID: 2025814495}
   - {fileID: 636654859}
   - {fileID: 1537493073}
   - {fileID: 1597594673}
+  - {fileID: 76654158}
