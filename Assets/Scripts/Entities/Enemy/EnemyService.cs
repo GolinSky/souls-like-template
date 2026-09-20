@@ -11,8 +11,10 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField] private EnemyCatalog catalog;
 
         private readonly Dictionary<EnemySpawnGroup, GroupState> _groups = new();
+        private readonly List<EnemyActor> _dynamicEnemies = new();
         private IGameStateNotifier _gameStateNotifier;
         private EnemyFactory _enemyFactory;
+        private EnemyGroupCoordinator _dynamicCoordinator;
         private bool _isConstructed;
         private bool _isObserverRegistered;
         private bool _hasStarted;
@@ -57,6 +59,8 @@ namespace SoulsLike.Entities.Enemy
         {
             _isDestroyed = true;
             UnregisterObserver();
+            DespawnDynamicEnemies();
+            _dynamicCoordinator?.Clear();
             foreach (GroupState state in _groups.Values)
             {
                 state.Group.Enabled -= OnGroupEnabled;
@@ -74,6 +78,8 @@ namespace SoulsLike.Entities.Enemy
             {
                 state.Coordinator.Tick(Time.time);
             }
+
+            _dynamicCoordinator?.Tick(Time.time);
         }
 
         public void OnGameStateChanged(GameState newState)
@@ -81,6 +87,11 @@ namespace SoulsLike.Entities.Enemy
             if (!isActiveAndEnabled)
             {
                 return;
+            }
+
+            if (newState == GameState.OnGraceSit)
+            {
+                DespawnDynamicEnemies();
             }
 
             foreach (GroupState state in _groups.Values)
@@ -105,6 +116,7 @@ namespace SoulsLike.Entities.Enemy
 
         public void RespawnEnemies()
         {
+            DespawnDynamicEnemies();
             foreach (GroupState state in _groups.Values)
             {
                 if (state.Group.isActiveAndEnabled)
@@ -112,6 +124,44 @@ namespace SoulsLike.Entities.Enemy
                     RespawnGroup(state);
                 }
             }
+        }
+
+        public EnemyActor SpawnEnemy(EnemyId enemyId, Vector3 position, Quaternion rotation)
+        {
+            if (_dynamicCoordinator == null)
+            {
+                _dynamicCoordinator = new EnemyGroupCoordinator(5, 10f);
+            }
+
+            EnemyCatalog.Definition definition = catalog.GetDefinition(enemyId);
+            EnemyActor enemy = _enemyFactory.CreateEnemy(position, rotation, definition, _dynamicCoordinator);
+            enemy.Despawned += OnDynamicEnemyDespawned;
+            _dynamicEnemies.Add(enemy);
+            return enemy;
+        }
+
+        private void OnDynamicEnemyDespawned(EnemyActor enemy)
+        {
+            enemy.Despawned -= OnDynamicEnemyDespawned;
+            _dynamicEnemies.Remove(enemy);
+        }
+
+        private void DespawnDynamicEnemies()
+        {
+            EnemyActor[] enemies = _dynamicEnemies.ToArray();
+            _dynamicEnemies.Clear();
+            foreach (EnemyActor enemy in enemies)
+            {
+                if (enemy == null)
+                {
+                    continue;
+                }
+
+                enemy.Despawned -= OnDynamicEnemyDespawned;
+                enemy.Despawn();
+            }
+
+            _dynamicCoordinator?.ReleaseAllPressureSlots();
         }
 
         private void TryInitialize()
