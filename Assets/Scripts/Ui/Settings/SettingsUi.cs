@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Ui.Base;
+using SoulsLike.Extensions;
 using SoulsLike.Services.Settings;
 using SoulsLike.Ui.Base;
 using TMPro;
@@ -10,6 +11,13 @@ namespace SoulsLike.Ui.Settings
 {
     public sealed class SettingsUi : BaseUi
     {
+        [Header("Tab Groups")]
+        [SerializeField] private CanvasGroup audioTabGroup;
+        [SerializeField] private CanvasGroup cameraTabGroup;
+        [SerializeField] private CanvasGroup graphicsTabGroup;
+        [SerializeField] private CanvasGroup controlsTabGroup;
+
+        [Header("Options")]
         [SerializeField] private SettingsOptionUi[] options;
         [SerializeField] private CustomButton audioTabButton;
         [SerializeField] private CustomButton cameraTabButton;
@@ -40,10 +48,11 @@ namespace SoulsLike.Ui.Settings
             IReadOnlyList<DisplayModeData> availableDisplayModes = null,
             SettingsCapabilities capabilities = default)
         {
+            UpdateTabVisibility(activeTab);
+
             for (int index = 0; index < options.Length; index++)
             {
                 SettingsOptionUi option = options[index];
-                option.SetVisible(option.Tab == activeTab);
                 RenderOption(option, settings, availableDisplayModes, capabilities);
             }
         }
@@ -67,6 +76,29 @@ namespace SoulsLike.Ui.Settings
         public void HideUnsavedChanges()
         {
             unsavedChangesPanel.SetActive(false);
+        }
+
+        private void UpdateTabVisibility(SettingsTab activeTab)
+        {
+            if (audioTabGroup != null)
+            {
+                audioTabGroup.SetActive(activeTab == SettingsTab.Audio);
+            }
+
+            if (cameraTabGroup != null)
+            {
+                cameraTabGroup.SetActive(activeTab == SettingsTab.Camera);
+            }
+
+            if (graphicsTabGroup != null)
+            {
+                graphicsTabGroup.SetActive(activeTab == SettingsTab.Graphics);
+            }
+
+            if (controlsTabGroup != null)
+            {
+                controlsTabGroup.SetActive(activeTab == SettingsTab.Controls);
+            }
         }
 
         protected override void Awake()
@@ -95,6 +127,7 @@ namespace SoulsLike.Ui.Settings
             continueEditingButton.onClick.AddListener(HandleContinueEditing);
             HideDisplayConfirmation();
             HideUnsavedChanges();
+            UpdateTabVisibility(SettingsTab.Audio);
         }
 
         private void OnDestroy()

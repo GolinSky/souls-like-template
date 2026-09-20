@@ -47,7 +47,8 @@ namespace SoulsLike.Editor.Tests.Configuration
                         AssertReferences(settings, path, "audioTabButton", "cameraTabButton", "graphicsTabButton",
                             "controlsTabButton", "applyButton", "defaultsButton", "backButton", "displayConfirmationPanel",
                             "displayConfirmationText", "keepDisplayButton", "revertDisplayButton", "unsavedChangesPanel",
-                            "applyUnsavedButton", "discardUnsavedButton", "continueEditingButton");
+                            "applyUnsavedButton", "discardUnsavedButton", "continueEditingButton",
+                            "audioTabGroup", "cameraTabGroup", "graphicsTabGroup", "controlsTabGroup");
                         AssertReferenceArray(settings, path, "options");
                         break;
                     case SettingsOptionUi option:
