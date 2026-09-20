@@ -22,16 +22,11 @@ namespace SoulsLike.Ui.PauseNavigation
             openSystemButton.onClick.AddListener(_presenter.OpenSystem);
         }
 
-        public override void Show()
-        {
-            base.Show();
-            openStatusButton.Select();
-        }
-
         private void OnDestroy()
         {
             if (_presenter == null)
             {
+                Debug.LogError($"Presenter is null: {nameof(PauseNavigationUi)}");
                 return;
             }
 
@@ -40,6 +35,5 @@ namespace SoulsLike.Ui.PauseNavigation
             openInventoryButton.onClick.RemoveListener(_presenter.OpenInventory);
             openSystemButton.onClick.RemoveListener(_presenter.OpenSystem);
         }
-
     }
 }

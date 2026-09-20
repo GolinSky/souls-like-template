@@ -55,7 +55,8 @@ namespace SoulsLike.Editor.Tests.Configuration
                         {
                             bool hasControl = serialized.FindProperty("slider").objectReferenceValue != null
                                 || serialized.FindProperty("toggle").objectReferenceValue != null
-                                || serialized.FindProperty("actionButton").objectReferenceValue != null;
+                                || serialized.FindProperty("actionButton").objectReferenceValue != null
+                                || serialized.FindProperty("dropdown").objectReferenceValue != null;
                             Assert.That(hasControl, Is.True, $"{path}: '{option.name}' requires an option control.");
                         }
                         break;
