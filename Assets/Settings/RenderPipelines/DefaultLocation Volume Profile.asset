@@ -490,7 +490,7 @@ MonoBehaviour:
   interCascadeBorders: 1
   maxShadowDistance:
     m_OverrideState: 1
-    m_Value: 5000
+    m_Value: 150
   directionalTransmissionMultiplier:
     m_OverrideState: 1
     m_Value: 1
@@ -499,13 +499,13 @@ MonoBehaviour:
     m_Value: 4
   cascadeShadowSplit0:
     m_OverrideState: 1
-    m_Value: 0.05
+    m_Value: 0.067
   cascadeShadowSplit1:
     m_OverrideState: 1
-    m_Value: 0.15
+    m_Value: 0.2
   cascadeShadowSplit2:
     m_OverrideState: 1
-    m_Value: 0.3
+    m_Value: 0.467
   cascadeShadowBorder0:
     m_OverrideState: 1
     m_Value: 0
@@ -543,6 +543,7 @@ MonoBehaviour:
   - {fileID: 5205200567210463042}
   - {fileID: -7406312848905122686}
   - {fileID: -8387895191565899984}
+  - {fileID: 0}
 --- !u!114 &474856528584769870
 MonoBehaviour:
   m_ObjectHideFlags: 3
