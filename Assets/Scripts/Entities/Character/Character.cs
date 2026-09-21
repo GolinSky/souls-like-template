@@ -253,6 +253,11 @@ namespace SoulsLike.Entities.Character
 
         public void CompleteDeathAnimation()
         {
+            _isDeathAnimationPlaying = false;
+            _combatDefense.SetBlocking(false);
+            _combatDefense.SetHitReaction(false);
+            _combatDefense.SetParryStunned(false);
+            _actionStateMachine.Clear();
             animatorComponent.CompleteDeathAnimation();
             SetInputBlocked(false);
         }
