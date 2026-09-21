@@ -143,6 +143,10 @@ Captured live from the connected Unity Editor 6000.3.11f1 instance via `UnityEdi
    - All 10 active scenes (`DefaultLocation`, `Rocks`, `Zone_01` through `Zone_08`) verified `isDirty = false` on disk.
    - All ScriptableObjects, HDRP assets, and project settings saved cleanly via `AssetDatabase.SaveAssets()`.
 
+### Verification Addendum (2026-09-21)
+
+The later [[HDRP Optimization Verification and Execution]] review corrected the interpretation of the recorded `shadowCasters` counter: it is Unity's Shadow Casters Count (objects or occurrences), not a count of shadow draw commands. The 37,437 → 13,128 change remains a recorded Editor counter observation, but does not establish 24,309 eliminated shadow draw calls or prove that shadows caused 90% of total draw calls. The recorded draw-call, triangle, and SetPass deltas are single Editor observations, not a Development Player frame-time comparison. Later work restored per-frame updates on 28 cached punctual lights because no renderers in the loaded scenes were marked Static Shadow Caster and the lights had dynamic shadow drawing disabled.
+
 ### Follow-Up
 
 - If static Global Illumination or Adaptive Probe Volumes (APV) are desired in the future, conduct an offline GPU lightmap bake pass for `DefaultLocation` and sub-zones.
