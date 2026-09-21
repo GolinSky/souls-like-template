@@ -7,6 +7,7 @@ namespace SoulsLike.Entities.Enemy
         CircleLeft,
         CircleRight,
         Retreat,
+        WalkBack,
         Guard,
         Attack
     }

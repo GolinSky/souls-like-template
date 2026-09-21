@@ -1936,6 +1936,7 @@ MonoBehaviour:
   gridContentParent: {fileID: 8547340393390369644}
   gridScrollRect: {fileID: 5825796864134921966}
   slotPrefab: {fileID: 6620592934021137978, guid: 149c75ebd0138874eb1c5daedee28f75, type: 3}
+  emptySlotBackgrounds: []
   currentPrimaryCategoryText: {fileID: 0}
   selectedItemNameText: {fileID: 0}
   itemSelectionPositionText: {fileID: 0}

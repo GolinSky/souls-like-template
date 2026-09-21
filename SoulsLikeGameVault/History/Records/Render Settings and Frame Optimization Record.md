@@ -47,24 +47,28 @@ An initial audit of `DefaultLocation.unity` and its 9 sub-scenes (`Rocks`, `Zone
 
 ### Live Rendering Table Metrics
 
-Captured live from the connected Unity Editor 6000.3.11f1 instance via `UnityEditor.UnityStats` at the exact same camera transform overlooking the `DefaultLocation` castle environment with all 10 scenes active:
+### Live Rendering Table Metrics
 
-| Metric | Before Optimization | After Optimization | Absolute Change | Relative Change |
+Captured live from the connected Unity Editor 6000.3.11f1 instance via `UnityEditor.UnityStats` at `2560x1440` overlooking the `DefaultLocation` castle environment with all 10 scenes active:
+
+| Metric | Baseline (Pre-Opt) | Intermediate Pass (`d08d74c5`) | Live State (Now) | Net Change vs Baseline |
 | :--- | :---: | :---: | :---: | :---: |
-| **Draw Calls (Total)** | 41,581 | **19,474** | -22,107 | **-53.2%** |
-| **Shadow Casters** | 37,437 | **13,128** | -24,309 | **-64.9%** |
-| **Batches** | 28,837 | **16,645** | -12,192 | **-42.3%** |
-| **Triangles** | 103,625,797 (103.6M) | **51,558,329 (51.5M)** | -52,067,468 | **-50.2%** |
-| **Vertices** | 198,845,942 (198.8M) | **106,552,001 (106.5M)** | -92,293,941 | **-46.4%** |
-| **SetPass Calls** | 290 | **86** | -204 | **-70.3%** |
-| **Visible Lights** | 44 | **44** | 0 | 0.0% |
-| **Shadow Distance** | 5,000 m | **150 m** | -4,850 m | **-97.0%** |
-| **Shadow Update Mode** | `EveryFrame` (all) | `OnEnable` (static cached) | — | Optimized |
-| **Main Camera AA** | `None` | `TemporalAntialiasing` | — | High Quality |
-| **GPU Resident Drawer** | `Disabled` | `InstancedDrawing` | — | Enabled |
-| **GPU Occlusion Culling** | `Disabled` | `Enabled` | — | Enabled |
-| **Texture Streaming** | `Disabled` | `Enabled` (1024 MB pool) | — | Enabled |
-| **Editor Console Errors**| 0 | 0 | 0 | Clean |
+| **Draw Calls (Total)** | 41,581 | 19,474 | **6,954** | **-83.3% (-34,627 calls)** |
+| **Shadow Casters Count** | 37,437 | 13,128 | **4,897** | **-86.9% (-32,540 casters)** |
+| **Batches** | 28,837 | 16,645 | **6,946** | **-75.9% (-21,891 batches)** |
+| **Indirect Draw Calls** | 0 | 4 | **2,032** | **+2,032 (GPU Resident Drawer active)** |
+| **Triangles Rendered** | 103,625,797 (103.6M) | 51,558,329 (51.5M) | **62,980,437 (63.0M)** | **-39.2% (-40.6M triangles)** |
+| **Vertices Processed** | 198,845,942 (198.8M) | 106,552,001 (106.5M) | **136,271,528 (136.3M)** | **-31.5% (-62.6M vertices)** |
+| **SetPass Calls** | 290 | 86 | **118** | **-59.3% (-172 calls)** |
+| **Frame Time** | 14.26 ms (~70 FPS) | — | **10.30 ms (~97 FPS)** | **-27.8% (+27 FPS headroom)** |
+| **Render Time** | 12.98 ms | — | **8.94 ms** | **-31.1% (-4.04 ms)** |
+| **Directional Shadow Distance** | 5,000 m | 150 m | **150 m** | **-97.0% (-4,850 m)** |
+| **Punctual Shadow Update** | `EveryFrame` (all 28) | `OnEnable` (static cache) | **`EveryFrame` (safety restored)** | Dynamic Casters Verified |
+| **Main Camera AA / Dither** | `None` / Off | TAA / Dither / StopNaNs | **TAA / Dither (StopNaNs off)** | High Quality (Blit optimized) |
+| **GPU Resident Drawer** | `Disabled` | `InstancedDrawing` | **`InstancedDrawing` (settled)** | 2,032 indirect draws active |
+| **GPU Occlusion Culling** | `Disabled` | `Enabled` | **`Enabled`** | Hardware depth culling |
+| **Texture Streaming** | `Disabled` | `Enabled` (1024 MB) | **`Enabled` (1024 MB pool)** | 64 MB async upload buffer |
+| **Editor Console** | 0 errors | 0 errors | **0 errors, 0 warnings** | Clean |
 
 ### Changed Files and Assets
 

@@ -14,6 +14,9 @@ namespace SoulsLike.Entities.Enemy
     {
         private const float ACTION_TRANSITION_SECONDS = 0.08f;
         private const float ACTION_ENTRY_TIMEOUT_SECONDS = 1f;
+        private const float TURN_45_DURATION_SECONDS = 0.6667f;
+        private const float TURN_90_AND_180_DURATION_SECONDS = 1f;
+        private const float TURN_RETRY_DELAY_SECONDS = 0.35f;
         private static readonly int SPEED = Animator.StringToHash("Speed");
         private static readonly int MOVE_X = Animator.StringToHash("MoveX");
         private static readonly int MOVE_Y = Animator.StringToHash("MoveY");
@@ -51,6 +54,10 @@ namespace SoulsLike.Entities.Enemy
         private float _pendingMoveEntryDeadline;
         private bool _recoveryRequested;
         private bool _criticalDeathCompleted;
+        private float _turnEndTime;
+        private float _turnTargetYaw;
+        private float _turnDirection;
+        private float _turnRetryAfter;
 
         public EnemyMove CurrentMove { get; private set; }
         public bool CurrentMoveStarted => _currentMoveStarted;
@@ -60,10 +67,12 @@ namespace SoulsLike.Entities.Enemy
         public bool ComboWindowOpen { get; private set; }
         public bool TrackingOpen { get; private set; }
         public bool IsActionRunning => Mode == EnemyExecutionMode.Action;
+        public bool IsTurnRunning => Mode == EnemyExecutionMode.Turn;
         public bool IsHitReactionRunning => Mode == EnemyExecutionMode.Reaction;
         public bool IsCriticalVictimRunning => Mode == EnemyExecutionMode.CriticalVictim;
         public bool IsCriticalVictimLethal { get; private set; }
         public bool BlocksDecisions => Mode is EnemyExecutionMode.Action
+            or EnemyExecutionMode.Turn
             or EnemyExecutionMode.Reaction
             or EnemyExecutionMode.CriticalVictim
             or EnemyExecutionMode.GetUp
@@ -148,14 +157,101 @@ namespace SoulsLike.Entities.Enemy
             {
                 Interrupt(EnemyInterruptReason.AnimatorEntryTimeout);
             }
+            else if (Mode == EnemyExecutionMode.Turn && now >= _turnEndTime)
+            {
+                CompleteTurn(now);
+            }
+        }
+
+        public bool TryPlayTurn(float signedAngle, float now)
+        {
+            if (Mode != EnemyExecutionMode.Locomotion
+                || actor.BehaviourProfile.LocksFacing
+                || actor.BehaviourProfile.TurnInPlaceAngleThreshold <= 0f
+                || now < _turnRetryAfter)
+            {
+                return false;
+            }
+
+            string turnState = ResolveTurnStateName(signedAngle);
+            if (string.IsNullOrEmpty(turnState))
+            {
+                return false;
+            }
+
+            Mode = EnemyExecutionMode.Turn;
+            motor.Stop();
+            _turnTargetYaw = Mathf.Repeat(actor.transform.eulerAngles.y + signedAngle, 360f);
+            _turnDirection = Mathf.Sign(signedAngle);
+            float absAngle = Mathf.Abs(signedAngle);
+            float duration = absAngle >= 65f
+                ? TURN_90_AND_180_DURATION_SECONDS
+                : TURN_45_DURATION_SECONDS;
+            _turnEndTime = now + duration;
+            animator.CrossFadeInFixedTime(turnState, ACTION_TRANSITION_SECONDS);
+            return true;
+        }
+
+        public void CompleteTurn()
+        {
+            CompleteTurn(Time.time);
+        }
+
+        private void CompleteTurn(float now)
+        {
+            if (Mode == EnemyExecutionMode.Turn)
+            {
+                Mode = EnemyExecutionMode.Locomotion;
+                _turnEndTime = 0f;
+                _turnTargetYaw = 0f;
+                _turnDirection = 0f;
+                _turnRetryAfter = now + TURN_RETRY_DELAY_SECONDS;
+                animator.CrossFadeInFixedTime("Locomotion", ACTION_TRANSITION_SECONDS);
+            }
+        }
+
+        public static string ResolveTurnStateName(float signedAngle)
+        {
+            float abs = Mathf.Abs(signedAngle);
+            if (abs < 25f)
+            {
+                return null;
+            }
+
+            if (signedAngle >= 135f)
+            {
+                return "TurnR180";
+            }
+
+            if (signedAngle <= -135f)
+            {
+                return "Turn180";
+            }
+
+            if (signedAngle > 0f)
+            {
+                return abs >= 65f ? "TurnR90" : "TurnR45";
+            }
+
+            return abs >= 65f ? "TurnL90" : "TurnL45";
         }
 
         public void SetLocomotion(Vector3 localVelocity)
         {
             Vector3 planarVelocity = new Vector3(localVelocity.x, 0f, localVelocity.z);
-            animator.SetFloat(SPEED, planarVelocity.magnitude);
-            animator.SetFloat(MOVE_X, planarVelocity.x);
-            animator.SetFloat(MOVE_Y, planarVelocity.z);
+            float dt = Time.deltaTime;
+            if (dt > 0f)
+            {
+                animator.SetFloat(SPEED, planarVelocity.magnitude, 0.12f, dt);
+                animator.SetFloat(MOVE_X, planarVelocity.x, 0.12f, dt);
+                animator.SetFloat(MOVE_Y, planarVelocity.z, 0.12f, dt);
+            }
+            else
+            {
+                animator.SetFloat(SPEED, planarVelocity.magnitude);
+                animator.SetFloat(MOVE_X, planarVelocity.x);
+                animator.SetFloat(MOVE_Y, planarVelocity.z);
+            }
         }
 
         public void ReportStateEntered(CharacterActionId actionId)
@@ -304,6 +400,10 @@ namespace SoulsLike.Entities.Enemy
             _forcedAction = null;
             _currentMoveStarted = false;
             _pendingMoveEntryDeadline = 0f;
+            _turnEndTime = 0f;
+            _turnTargetYaw = 0f;
+            _turnDirection = 0f;
+            _turnRetryAfter = 0f;
             IsCriticalVictimLethal = false;
             _criticalDeathCompleted = false;
             Mode = EnemyExecutionMode.Locomotion;
@@ -451,6 +551,15 @@ namespace SoulsLike.Entities.Enemy
         {
             if (Mode is EnemyExecutionMode.CriticalVictim or EnemyExecutionMode.GetUp)
             {
+                return;
+            }
+
+            if (Mode == EnemyExecutionMode.Turn)
+            {
+                motor.ApplyRootMotionRotation(
+                    animator.deltaRotation,
+                    _turnTargetYaw,
+                    _turnDirection);
                 return;
             }
 

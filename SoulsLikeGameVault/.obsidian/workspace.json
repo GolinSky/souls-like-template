@@ -55,7 +55,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "# Character Aggregate Architecture and Readability",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -79,7 +79,8 @@
               "title": "Bookmarks"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -185,13 +186,22 @@
       "bases:Create new base": false
     }
   },
-  "active": "1da76326f671a503",
+  "active": "0165393451fcc3ce",
   "lastOpenFiles": [
+    "Work/Issues/Character State and Ownership Boundaries Need Consolidation.md",
+    "Work/Plans/Character Architecture and Readability Improvement.md",
+    "Work/Issues/Character Aggregate Architecture and Readability.md",
+    "History/Records/HDRP Shadow and Camera Verification Correction.md",
+    "Work/Plans/HDRP Optimization Verification and Execution.md",
+    "History/Records/Render Settings and Frame Optimization Record.md",
+    "History/Completed Plans/Character Respawn Dead Loop Pose Fix.md",
+    "Work/Plans/Character Respawn Dead Loop Pose Fix.md",
+    "History/Completed Plans/Render Settings Optimization Plan.md",
+    "Work/Plans/Enemy Factory DI Refactor.md",
     "Work/Plans/Enemy System Scalability.md",
     "History/Completed Plans/Enemy System Scalability.md",
     "History/Records/Enemy System Scalability Implementation.md",
     "Knowledge/Architecture/Systems/Enemy System.md",
-    "Work/Plans/Enemy Factory DI Refactor.md",
     "History/Records/Enemy and Character Factory Scope First DI Implementation.md",
     "Work/Plans/Character Factory DI Refactor.md",
     "Knowledge/Architecture/UI/Grace Navigation.md",
@@ -207,16 +217,7 @@
     "History/Completed Plans",
     "History/Closed Issues/Stance Recovery Is Gated By Poise Delay.md",
     "Work/Issues/Rejected Scene Transition Can Overwrite Pending Spawn Intent.md",
-    "History/Closed Issues/Roll Interruption Issue.md",
-    "History/Closed Issues/Locked Roll State Is Cleared Before Root Motion.md",
-    "History/Closed Issues/Inventory Category Controls Are Not Connected.md",
-    "History/Closed Issues/DefaultLocation Memory and Rendering Issues.md",
-    "History/Closed Issues/Character Lifecycle Can Stall When Animation Notifications Are Missing.md",
-    "History/Closed Issues/Architecture And Roll Issue Notes Contain Superseded Evidence.md",
-    "History/Closed Issues/Animation Completion Is Not Correlated To The Owning Action.md",
     "History/Closed Issues",
-    "History/Records/Vault Structure Refactor.md",
-    "History/Records/Unity Test Framework Integration.md",
     "History/Records",
     "Knowledge/Guides/UI",
     "Knowledge/Guides/Tooling",

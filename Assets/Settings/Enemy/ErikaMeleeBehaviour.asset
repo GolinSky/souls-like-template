@@ -47,6 +47,11 @@ MonoBehaviour:
   decisionJitterSeconds: 0.05
   firstAttackHesitationMin: 0
   firstAttackHesitationMax: 0
+  combatWalkSpeed: 1.3
+  combatRunSpeed: 3.5
+  spacingCommitmentSeconds: 1.2
+  attackFacingAngle: 20
+  turnInPlaceAngleThreshold: 30
   usesPressureSlot: 1
   remainsStationary: 0
   locksFacing: 0

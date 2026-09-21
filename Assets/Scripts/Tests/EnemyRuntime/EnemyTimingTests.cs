@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Runtime.Serialization;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -65,11 +66,12 @@ namespace SoulsLike.Tests.EnemyRuntime
                 delayField.SetValue(profile, 0.5f);
 
                 Component actor = gameObject.AddComponent(actorType);
-                FieldInfo profileField = actorType.GetField("behaviourProfile", BindingFlags.Instance | BindingFlags.NonPublic);
+                FieldInfo profileField = actorType.GetField("<BehaviourProfile>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?? actorType.GetField("behaviourProfile", BindingFlags.Instance | BindingFlags.NonPublic);
                 profileField.SetValue(actor, profile);
 
                 Component executor = gameObject.AddComponent(executorType);
-                Component controller = gameObject.AddComponent(controllerType);
+                object controller = FormatterServices.GetUninitializedObject(controllerType);
 
                 object coordinator = Activator.CreateInstance(coordinatorType, 1, 3f);
 
@@ -103,8 +105,24 @@ namespace SoulsLike.Tests.EnemyRuntime
             }
         }
 
-        private static Type GetRequiredType(string typeName) =>
-            Type.GetType($"{typeName}, Assembly-CSharp")
-            ?? throw new InvalidOperationException($"Type '{typeName}' was not loaded.");
+        private static Type GetRequiredType(string typeName)
+        {
+            Type direct = Type.GetType(typeName);
+            if (direct != null)
+            {
+                return direct;
+            }
+
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Type type = assembly.GetType(typeName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            throw new InvalidOperationException($"Type '{typeName}' was not loaded.");
+        }
     }
 }

@@ -47,6 +47,11 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField, Min(0f)] private float decisionJitterSeconds;
         [SerializeField, Min(0f)] private float firstAttackHesitationMin;
         [SerializeField, Min(0f)] private float firstAttackHesitationMax;
+        [SerializeField, Min(0f)] private float combatWalkSpeed = 1.3f;
+        [SerializeField, Min(0f)] private float combatRunSpeed = 3.5f;
+        [SerializeField, Min(0f)] private float spacingCommitmentSeconds = 1.2f;
+        [SerializeField, Range(0f, 180f)] private float attackFacingAngle = 20f;
+        [SerializeField, Range(0f, 180f)] private float turnInPlaceAngleThreshold;
         [SerializeField] private bool usesPressureSlot;
         [SerializeField] private bool remainsStationary;
         [SerializeField] private bool locksFacing;
@@ -93,6 +98,11 @@ namespace SoulsLike.Entities.Enemy
         public float FirstAttackHesitationMax => Mathf.Max(
             firstAttackHesitationMin,
             firstAttackHesitationMax);
+        public float CombatWalkSpeed => combatWalkSpeed;
+        public float CombatRunSpeed => combatRunSpeed;
+        public float SpacingCommitmentSeconds => spacingCommitmentSeconds;
+        public float AttackFacingAngle => attackFacingAngle;
+        public float TurnInPlaceAngleThreshold => turnInPlaceAngleThreshold;
         public bool UsesPressureSlot => usesPressureSlot;
         public bool RemainsStationary => remainsStationary;
         public bool LocksFacing => locksFacing;

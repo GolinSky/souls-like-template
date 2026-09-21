@@ -81,34 +81,26 @@ namespace SoulsLike.Services.CameraService
         [field: SerializeField, Min(0f)] public float LockYawLeadTime { get; private set; } = 0.045f;
         [field: SerializeField, Min(0f)] public float LockYawMaxLeadDegrees { get; private set; } = 5f;
 
-        [Header("Lock Orbit Pitch")]
-        [field: SerializeField] public float LockBasePitch { get; private set; } = 1f;
+        [Header("Lock Aim Tilt")]
+        [field: SerializeField] public float LockBasePitch { get; private set; } = 20f;
+        [field: SerializeField, Min(0f)] public float LockAimTiltNearDistance { get; private set; } = 2f;
+        [field: SerializeField, Min(0f)] public float LockAimTiltFarDistance { get; private set; } = 5f;
         [field: SerializeField, Min(0.01f)] public float LockOrbitPitchSmoothTime { get; private set; } = 0.35f;
         [field: SerializeField, Min(0f)] public float LockOrbitPitchMaxSpeed { get; private set; } = 60f;
 
         [Header("Lock Rig Profile")]
         [field: SerializeField] public CameraRigProfile HumanoidLockProfile { get; private set; } = new CameraRigProfile
         {
-            ShoulderOffset = new Vector3(0f, 0.48f, 0f),
-            VerticalArmLength = -0.31f,
-            CameraDistance = 3.30f,
             CameraSide = 0.5f,
             FieldOfView = 48f,
-            MinPitch = -10f,
-            MaxPitch = 16f,
             Damping = new Vector3(0.08f, 0.10f, 0.18f)
         };
 
         [Serializable]
         public struct CameraRigProfile
         {
-            public Vector3 ShoulderOffset;
-            public float VerticalArmLength;
-            public float CameraDistance;
             public float CameraSide;
             public float FieldOfView;
-            public float MinPitch;
-            public float MaxPitch;
             public Vector3 Damping;
         }
     }

@@ -61,15 +61,12 @@ MonoBehaviour:
   <LockYawUrgencySmoothTime>k__BackingField: 0.08
   <LockYawLeadTime>k__BackingField: 0.045
   <LockYawMaxLeadDegrees>k__BackingField: 5
-  <LockBasePitch>k__BackingField: 1
+  <LockBasePitch>k__BackingField: 20
+  <LockAimTiltNearDistance>k__BackingField: 2
+  <LockAimTiltFarDistance>k__BackingField: 5
   <LockOrbitPitchSmoothTime>k__BackingField: 0.35
   <LockOrbitPitchMaxSpeed>k__BackingField: 60
   <HumanoidLockProfile>k__BackingField:
-    ShoulderOffset: {x: 0, y: 0.48, z: 0}
-    VerticalArmLength: -0.31
-    CameraDistance: 3.3
     CameraSide: 0.5
     FieldOfView: 48
-    MinPitch: -10
-    MaxPitch: 16
     Damping: {x: 0.08, y: 0.1, z: 0.18}

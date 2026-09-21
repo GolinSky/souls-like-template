@@ -44,6 +44,7 @@ namespace SoulsLike.Services.CameraService
         private Tween _switchTween;
         private Tween _zoomTween;
         private Tween _rigTween;
+        private Tween _lockAimTiltTween;
         private long? _lockOnTargetEntityId;
         private IEntityLocator _entityLocator;
         private IInputService _inputService;
@@ -52,6 +53,7 @@ namespace SoulsLike.Services.CameraService
         private Transform _sourceTarget;
         private Transform _followTarget;
         private Transform _lockLookAtTarget;
+        private CinemachineRecomposer _cinemachineRecomposer;
         private CameraData.CameraRigProfile _freeRigProfile;
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -81,6 +83,7 @@ namespace SoulsLike.Services.CameraService
             _switchTween?.Kill();
             _zoomTween?.Kill();
             _rigTween?.Kill();
+            _lockAimTiltTween?.Kill();
         }
 
         [Inject]
@@ -100,6 +103,9 @@ namespace SoulsLike.Services.CameraService
         public void SetTarget(Transform target)
         {
             _sourceTarget = target;
+            _lockAimTiltTween?.Kill();
+            _cinemachineRecomposer = cinemachineCamera.GetComponent<CinemachineRecomposer>();
+            _cinemachineRecomposer.Tilt = 0f;
 
             if (_followTarget == null)
             {
@@ -238,6 +244,7 @@ namespace SoulsLike.Services.CameraService
                 return;
             }
 
+            _lockAimTiltTween?.Kill();
             if (_lockOnTargetEntityId == targetEntityId)
             {
                 cinemachineCamera.LookAt = _lockLookAtTarget;
@@ -315,11 +322,6 @@ namespace SoulsLike.Services.CameraService
                 _cinemachineTargetYaw = Mathf.Atan2(planarForward.x, planarForward.z) * Mathf.Rad2Deg;
             }
 
-            _cinemachineTargetPitch = ClampAngle(
-                -Mathf.Asin(Mathf.Clamp(cameraForward.y, -1f, 1f)) * Mathf.Rad2Deg,
-                _cameraData.BottomClamp,
-                _cameraData.TopClamp);
-
             if (_followTarget != null)
             {
                 _followTarget.rotation = Quaternion.Euler(
@@ -331,6 +333,18 @@ namespace SoulsLike.Services.CameraService
             _lockOnTargetEntityId = null;
             cinemachineCamera.LookAt = null;
             ResetLockModeState();
+
+            _lockAimTiltTween?.Kill();
+            _lockAimTiltTween = DOTween.To(
+                () => _cinemachineRecomposer.Tilt,
+                value =>
+                {
+                    _cinemachineRecomposer.Tilt = value;
+                    _isPitchOrbiting = Mathf.Abs(value) > 0.1f;
+                },
+                0f,
+                _cameraData.LockBlendDuration)
+                .SetEase(_cameraData.LockBlendEase);
 
             _rigTween?.Kill();
             _rigTween = DOTween.To(
@@ -375,8 +389,8 @@ namespace SoulsLike.Services.CameraService
                     UpdateStableLockDirection(snapshot);
                     UpdateLockBearingRate(snapshot, Time.deltaTime);
                     UpdateLockBodyYaw(Time.deltaTime);
-                    UpdateLockBodyPitch(Time.deltaTime);
                     UpdateLockLookAtTarget(snapshot, Time.deltaTime);
+                    UpdateLockAimPitch(snapshot, Time.deltaTime);
                 }
                 else
                 {
@@ -390,10 +404,13 @@ namespace SoulsLike.Services.CameraService
             }
 
             _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
-            float minPitch = Mathf.Lerp(_cameraData.BottomClamp, Mathf.Max(_cameraData.BottomClamp, _cameraData.HumanoidLockProfile.MinPitch), _lockBlend);
-            float maxPitch = Mathf.Lerp(_cameraData.TopClamp, Mathf.Min(_cameraData.TopClamp, _cameraData.HumanoidLockProfile.MaxPitch), _lockBlend);
-
-            _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, minPitch, maxPitch);
+            if (!_lockOnTargetEntityId.HasValue)
+            {
+                _cinemachineTargetPitch = ClampAngle(
+                    _cinemachineTargetPitch,
+                    _cameraData.BottomClamp,
+                    _cameraData.TopClamp);
+            }
             ApplyLogicalRotation();
 
 #if UNITY_EDITOR
@@ -555,17 +572,27 @@ namespace SoulsLike.Services.CameraService
                 deltaTime);
         }
 
-        private void UpdateLockBodyPitch(float deltaTime)
+        private void UpdateLockAimPitch(TargetingSnapshot snapshot, float deltaTime)
         {
-            _cinemachineTargetPitch = Mathf.SmoothDampAngle(
-                _cinemachineTargetPitch,
+            Vector3 toTarget = snapshot.Position - _sourceTarget.position;
+            toTarget.y = 0f;
+            float targetTilt = Mathf.Lerp(
                 _cameraData.LockBasePitch,
+                0f,
+                Mathf.InverseLerp(
+                    _cameraData.LockAimTiltNearDistance,
+                    _cameraData.LockAimTiltFarDistance,
+                    toTarget.magnitude));
+
+            _cinemachineRecomposer.Tilt = Mathf.SmoothDampAngle(
+                _cinemachineRecomposer.Tilt,
+                targetTilt,
                 ref _pitchVelocity,
                 _cameraData.LockOrbitPitchSmoothTime,
                 _cameraData.LockOrbitPitchMaxSpeed,
                 deltaTime);
 
-            _isPitchOrbiting = Mathf.Abs(_cinemachineTargetPitch - _cameraData.LockBasePitch) > 0.1f;
+            _isPitchOrbiting = Mathf.Abs(_cinemachineRecomposer.Tilt - targetTilt) > 0.1f;
         }
 
         private void UpdateLockLookAtTarget(TargetingSnapshot snapshot, float deltaTime)
@@ -611,13 +638,8 @@ namespace SoulsLike.Services.CameraService
         {
             _freeRigProfile = new CameraData.CameraRigProfile
             {
-                ShoulderOffset = cinemachineThirdPersonFollow.ShoulderOffset,
-                VerticalArmLength = cinemachineThirdPersonFollow.VerticalArmLength,
-                CameraDistance = cinemachineThirdPersonFollow.CameraDistance,
                 CameraSide = cinemachineThirdPersonFollow.CameraSide,
                 FieldOfView = cinemachineCamera.Lens.FieldOfView,
-                MinPitch = _cameraData.BottomClamp,
-                MaxPitch = _cameraData.TopClamp,
                 Damping = cinemachineThirdPersonFollow.Damping
             };
         }
@@ -649,18 +671,6 @@ namespace SoulsLike.Services.CameraService
 
         private void ApplyRigBlend()
         {
-            cinemachineThirdPersonFollow.ShoulderOffset = Vector3.Lerp(
-                _freeRigProfile.ShoulderOffset,
-                _cameraData.HumanoidLockProfile.ShoulderOffset,
-                _lockBlend);
-            cinemachineThirdPersonFollow.VerticalArmLength = Mathf.Lerp(
-                _freeRigProfile.VerticalArmLength,
-                _cameraData.HumanoidLockProfile.VerticalArmLength,
-                _lockBlend);
-            cinemachineThirdPersonFollow.CameraDistance = Mathf.Lerp(
-                _freeRigProfile.CameraDistance,
-                _cameraData.HumanoidLockProfile.CameraDistance,
-                _lockBlend);
             cinemachineThirdPersonFollow.CameraSide = Mathf.Lerp(
                 _freeRigProfile.CameraSide,
                 _cameraData.HumanoidLockProfile.CameraSide,
