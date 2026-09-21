@@ -7,16 +7,16 @@ namespace SoulsLike.Services.CameraService
     [CreateAssetMenu(fileName = "CameraData", menuName = "Data/CameraData")]
     public sealed class CameraData : ScriptableObject
     {
-        [Header("Switch Angle")]
+        [field:Header("Switch Angle")]
         [field: SerializeField] public float SwitchAngleDuration { get; private set; } = 0.4f;
         [field: SerializeField] public Ease SwitchAngleEase { get; private set; } = Ease.InOutQuad;
 
-        [Header("Zoom")]
+        [field:Header("Zoom")]
         [field: SerializeField] public float ZoomFov { get; private set; } = 30f;
         [field: SerializeField] public float ZoomDuration { get; private set; } = 0.3f;
         [field: SerializeField] public Ease ZoomEase { get; private set; } = Ease.OutSine;
 
-        [Header("Vertical Follow")]
+        [field:Header("Vertical Follow")]
         [field: SerializeField, Min(0f)] public float AirborneRiseLag { get; private set; } = 0.65f;
         [field: SerializeField, Min(0f)] public float AirborneFallLag { get; private set; } = 0.40f;
         [field: SerializeField, Min(0.01f)] public float GroundedFollowSmoothTime { get; private set; } = 0.10f;
@@ -29,13 +29,13 @@ namespace SoulsLike.Services.CameraService
         [field: SerializeField, Min(0f)] public float LongFallMaxSpeed { get; private set; } = 18f;
         [field: SerializeField, Min(0f)] public float LongFallCatchupDistance { get; private set; } = 4f;
 
-        [Header("Free Look")]
+        [field:Header("Free Look")]
         [field: SerializeField, Min(0f)] public float MouseYawDegreesPerPixel { get; private set; } = 0.09f;
         [field: SerializeField, Min(0f)] public float MousePitchDegreesPerPixel { get; private set; } = 0.08f;
         [field: SerializeField, Min(0f)] public float StickYawDegreesPerSecond { get; private set; } = 220f;
         [field: SerializeField, Min(0f)] public float StickPitchDegreesPerSecond { get; private set; } = 150f;
 
-        [Header("Cinemachine")]
+        [field:Header("Cinemachine")]
         [field: SerializeField, Tooltip("How far in degrees can you move the camera up")]
         public float TopClamp { get; private set; } = 70.0f;
 
@@ -48,18 +48,18 @@ namespace SoulsLike.Services.CameraService
         [field: SerializeField, Tooltip("For locking the camera position on all axes")]
         public bool LockCameraPosition { get; private set; }
 
-        [Header("Lock Acquisition")]
+        [field:Header("Lock Acquisition")]
         [field: SerializeField, Min(0f)] public float LockBlendDuration { get; private set; } = 0.3f;
         [field: SerializeField] public Ease LockBlendEase { get; private set; } = Ease.InOutSine;
         [field: SerializeField, Min(0f)] public float LockInitialFocusMinDistance { get; private set; } = 1.50f;
 
-        [Header("Lock Aim")]
+        [field:Header("Lock Aim")]
         [field: SerializeField, Min(0.01f)] public float LockAimSmoothTime { get; private set; } = 0.08f;
         [field: SerializeField, Min(0f)] public float LockAimMaxSpeed { get; private set; } = 40f;
         [field: SerializeField] public float LockMinFocusHeight { get; private set; } = -0.75f;
         [field: SerializeField] public float LockMaxFocusHeight { get; private set; } = 1.25f;
 
-        [Header("Lock Orbit Yaw")]
+        [field:Header("Lock Orbit Yaw")]
         [field: SerializeField, Min(0f)] public float LockOrbitYawEnterAngle { get; private set; } = 7f;
         [field: SerializeField, Min(0f)] public float LockOrbitYawReleaseAngle { get; private set; } = 3.5f;
         [field: SerializeField, Min(0.01f)] public float LockOrbitYawSmoothTime { get; private set; } = 0.32f;
@@ -68,7 +68,7 @@ namespace SoulsLike.Services.CameraService
         [field: SerializeField, Min(0f)] public float LockHeadingHoldDistance { get; private set; } = 0.55f;
         [field: SerializeField, Min(0f)] public float LockHeadingReleaseDistance { get; private set; } = 0.90f;
 
-        [Header("Lock Orbit Fast Yaw")]
+        [field:Header("Lock Orbit Fast Yaw")]
         [field: SerializeField, Min(0.01f)] public float LockYawFastSmoothTime { get; private set; } = 0.05f;
         [field: SerializeField, Min(0f)] public float LockYawFastMaxSpeed { get; private set; } = 360f;
         [field: SerializeField, Min(0f)] public float LockYawFastDeadZoneDegrees { get; private set; } = 0.75f;
@@ -81,14 +81,14 @@ namespace SoulsLike.Services.CameraService
         [field: SerializeField, Min(0f)] public float LockYawLeadTime { get; private set; } = 0.045f;
         [field: SerializeField, Min(0f)] public float LockYawMaxLeadDegrees { get; private set; } = 5f;
 
-        [Header("Lock Aim Tilt")]
+        [field:Header("Lock Aim Tilt")]
         [field: SerializeField] public float LockBasePitch { get; private set; } = 20f;
         [field: SerializeField, Min(0f)] public float LockAimTiltNearDistance { get; private set; } = 2f;
         [field: SerializeField, Min(0f)] public float LockAimTiltFarDistance { get; private set; } = 5f;
         [field: SerializeField, Min(0.01f)] public float LockOrbitPitchSmoothTime { get; private set; } = 0.35f;
         [field: SerializeField, Min(0f)] public float LockOrbitPitchMaxSpeed { get; private set; } = 60f;
 
-        [Header("Lock Rig Profile")]
+        [field:Header("Lock Rig Profile")]
         [field: SerializeField] public CameraRigProfile HumanoidLockProfile { get; private set; } = new CameraRigProfile
         {
             CameraSide = 0.5f,

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.CameraService.CameraData
   <SwitchAngleDuration>k__BackingField: 0.4
   <SwitchAngleEase>k__BackingField: 7
-  <ZoomFov>k__BackingField: 30
+  <ZoomFov>k__BackingField: 48
   <ZoomDuration>k__BackingField: 0.3
   <ZoomEase>k__BackingField: 3
   <AirborneRiseLag>k__BackingField: 0.65
