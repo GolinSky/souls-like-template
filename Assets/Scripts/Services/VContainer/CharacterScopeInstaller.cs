@@ -10,6 +10,7 @@ using SoulsLike.Entities.Character.Components.Inventory;
 using SoulsLike.Entities.Character.Components.Movement;
 using SoulsLike.Entities.Character.Components.Targeting;
 using SoulsLike.Entities.Character.Input;
+using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Entities.Ladder;
 using SoulsLike.Extensions;
@@ -24,22 +25,32 @@ using SoulsLike.Ui.LockOn;
 using SoulsLike.Ui.PauseNavigation;
 using SoulsLike.Ui.PlayerHud;
 using SoulsLike.Ui.Status;
+using SoulsLike.Services.PlayerSession;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
 namespace SoulsLike.Services.VContainer
 {
+    /// <summary>Composes reusable character runtime services and the local player binding.</summary>
     public sealed class CharacterScopeInstaller : EntityLifetimeScope
     {
         protected override void Configure(IContainerBuilder builder)
         {
             builder.RegisterEntryPointExceptionHandler(exception => throw exception);
 
+            RegisterActorServices(builder, transform);
+            RegisterLocalPlayerServices(builder);
+        }
+
+        /// <summary>Registers reusable actor services under a supplied character hierarchy.</summary>
+        public static void RegisterActorServices(IContainerBuilder builder, Transform actorRoot)
+        {
             // Entity identity and scene components.
             builder.RegisterEntitySystemExt(EntityType.Player);
-            builder.RegisterComponentInHierarchy<ViewEntity>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<TargetLockComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<Character>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<ViewEntity>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<TargetLockComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<Character>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
 
             // Entity commands.
             builder.Register<InteractionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
@@ -52,20 +63,20 @@ namespace SoulsLike.Services.VContainer
             // Character configuration, animation, and combat.
             builder.RegisterScriptableObject<CharacterData>();
             builder.Register<AnimatorModel>(Lifetime.Singleton).AsSelf();
-            builder.RegisterComponentInHierarchy<AnimatorComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<AnimatorComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
             builder.RegisterScriptableObject<CharacterAudioData>();
-            builder.RegisterComponentInHierarchy<CharacterAudioComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<AttackComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<PlayerMeleeCombatRelay>().UnderTransform(transform).AsSelf();
-            builder.RegisterComponentInHierarchy<CriticalAttackController>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<CharacterAudioComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<AttackComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<PlayerMeleeCombatRelay>().UnderTransform(actorRoot).AsSelf();
+            builder.RegisterComponentInHierarchy<CriticalAttackController>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
 
             // Movement and equipment.
             builder.Register<MovementModel>(Lifetime.Singleton).AsSelf();
             builder.RegisterScriptableObject<MovementData>().As<IMovementData>();
-            builder.RegisterComponentInHierarchy<MovementComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<MovementComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
             builder.Register<EquipmentModel>(Lifetime.Singleton).AsSelf();
-            builder.RegisterComponentInHierarchy<EquipmentComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<EquipmentPresentation>().UnderTransform(transform).AsSelf();
+            builder.RegisterComponentInHierarchy<EquipmentComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<EquipmentPresentation>().UnderTransform(actorRoot).AsSelf();
 
             // Inventory and health.
             builder.RegisterScriptableObject<InventoryData>();
@@ -75,14 +86,21 @@ namespace SoulsLike.Services.VContainer
             builder.RegisterScriptableObject<ConsumableDatabase>();
             builder.Register<ItemCatalog>(Lifetime.Singleton).AsSelf();
             builder.Register<InventoryModel>(Lifetime.Singleton).AsSelf();
-            builder.RegisterComponentInHierarchy<InventoryComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<InventoryComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
             builder.RegisterScriptableObject<HealthData>();
             builder.Register<CharacterHealthData>(Lifetime.Singleton).As<IHealthData>();
             builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
-            builder.RegisterComponentInHierarchy<HealthComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<CombatDefenseComponent>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
-            builder.RegisterComponentInHierarchy<LadderClimber>().UnderTransform(transform).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<HealthComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<CombatDefenseComponent>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
+            builder.RegisterComponentInHierarchy<LadderClimber>().UnderTransform(actorRoot).AsSelf().AsImplementedInterfaces();
 
+            builder.Register<CharacterActionStateMachine>(Lifetime.Scoped).AsSelf();
+            builder.Register<CharacterActionCoordinator>(Lifetime.Scoped).AsSelf();
+            builder.Register<CharacterActorTick>(Lifetime.Scoped).AsSelf().AsImplementedInterfaces();
+        }
+
+        private void RegisterLocalPlayerServices(IContainerBuilder builder)
+        {
             // Local-player UI, input, and orchestration.
             builder.Register<PlayerHudUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
@@ -96,6 +114,7 @@ namespace SoulsLike.Services.VContainer
             builder.Register<PlayerInputReader>(Lifetime.Singleton).AsSelf();
             builder.Register<InteractionController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<InteractionUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
+            builder.Register<PlayerSessionCoordinator>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
             builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
         }
     }

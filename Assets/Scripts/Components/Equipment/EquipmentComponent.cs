@@ -9,11 +9,11 @@ using SoulsLike.Entities.Character.Runtime;
 
 namespace SoulsLike.Entities.Character.Components.Equipment
 {
+    /// <summary>Owns equipment selection and publishes loadout changes to aggregate consumers.</summary>
     public sealed class EquipmentComponent : BaseComponent<EquipmentModel>, IInitializable, IDisposable
     {
         private InventoryComponent _inventory;
         private ItemCatalog _itemCatalog;
-        private Character _character;
         private AnimatorComponent _animator;
         private EquipmentPresentation _presentation;
         private SwapPhase _swapPhase;
@@ -24,11 +24,10 @@ namespace SoulsLike.Entities.Character.Components.Equipment
 
         //todo: avoid other component dependency (InventoryComponent)
         [Inject]
-        public void InjectDependencies(InventoryComponent inventory, ItemCatalog itemCatalog, Character character, AnimatorComponent animator, EquipmentPresentation presentation)
+        public void InjectDependencies(InventoryComponent inventory, ItemCatalog itemCatalog, AnimatorComponent animator, EquipmentPresentation presentation)
         {
             _inventory = inventory;
             _itemCatalog = itemCatalog;
-            _character = character;
             _animator = animator;
             _presentation = presentation;
         }
@@ -249,7 +248,6 @@ namespace SoulsLike.Entities.Character.Components.Equipment
             NormalizeHandMode();
             EquipmentLoadout loadout = BuildLoadout();
             LoadoutChanged?.Invoke(loadout);
-            _character.ApplyEquipmentLoadout(loadout);
         }
 
         private void NormalizeHandMode()

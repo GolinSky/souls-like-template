@@ -4,6 +4,7 @@ using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Inventory;
+using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Items;
 using SoulsLike.Services;
@@ -13,6 +14,7 @@ using VContainer.Unity;
 
 namespace SoulsLike.Ui.LevelUp
 {
+    /// <summary>Builds level-up previews and commits the same progression cost through Character.</summary>
     public sealed class LevelUpUiController : UiController,
         IInitializable,
         ITickable,
@@ -166,8 +168,8 @@ namespace SoulsLike.Ui.LevelUp
                 return;
             }
 
-            int currentLevel = LevelUpUiFormatter.CalculateLevel(_character.Attributes);
-            int totalCost = LevelUpUiFormatter.CalculateTotalRuneCost(currentLevel, totalAllocated);
+            int currentLevel = CalculateLevel(_character.Attributes);
+            int totalCost = CharacterProgressionRules.CalculateTotalRuneCost(currentLevel, totalAllocated);
             if (_character.HeldCurrency < totalCost)
             {
                 return;
@@ -253,10 +255,10 @@ namespace SoulsLike.Ui.LevelUp
             CharacterAttributeStats currentStats = _character.Attributes;
             CharacterAttributeStats nextStats = BuildProjectedAttributes();
 
-            int currentLevel = LevelUpUiFormatter.CalculateLevel(currentStats);
-            int nextLevel = LevelUpUiFormatter.CalculateLevel(nextStats);
+            int currentLevel = CalculateLevel(currentStats);
+            int nextLevel = CalculateLevel(nextStats);
             int totalAllocated = GetTotalAllocatedPoints();
-            int runesNeeded = LevelUpUiFormatter.CalculateTotalRuneCost(currentLevel, totalAllocated);
+            int runesNeeded = CharacterProgressionRules.CalculateTotalRuneCost(currentLevel, totalAllocated);
             bool isAffordable = _character.HeldCurrency >= runesNeeded;
             int projectedRunes = isAffordable ? _character.HeldCurrency - runesNeeded : _character.HeldCurrency;
 
@@ -287,16 +289,16 @@ namespace SoulsLike.Ui.LevelUp
         private void RefreshBaseStats(CharacterAttributeStats currentStats, CharacterAttributeStats nextStats)
         {
             float currentHp = _character.HealthStats.MaxHealth;
-            float nextHp = LevelUpUiFormatter.CalculateProjectedHealth(currentHp, currentStats.Vigor, nextStats.Vigor);
+            float nextHp = CharacterProgressionRules.CalculateProjectedHealth(currentHp, currentStats.Vigor, nextStats.Vigor);
 
             float currentFp = _character.HealthStats.MaxFocus;
-            float nextFp = LevelUpUiFormatter.CalculateProjectedFocus(currentFp, currentStats.Mind, nextStats.Mind);
+            float nextFp = CharacterProgressionRules.CalculateProjectedFocus(currentFp, currentStats.Mind, nextStats.Mind);
 
             float currentStamina = _character.HealthStats.MaxStamina;
-            float nextStamina = LevelUpUiFormatter.CalculateProjectedStamina(currentStamina, currentStats.Endurance, nextStats.Endurance);
+            float nextStamina = CharacterProgressionRules.CalculateProjectedStamina(currentStamina, currentStats.Endurance, nextStats.Endurance);
 
-            float currentEquipLoad = LevelUpUiFormatter.CalculateProjectedEquipLoad(currentStats.Endurance);
-            float nextEquipLoad = LevelUpUiFormatter.CalculateProjectedEquipLoad(nextStats.Endurance);
+            float currentEquipLoad = CharacterProgressionRules.CalculateProjectedEquipLoad(currentStats.Endurance);
+            float nextEquipLoad = CharacterProgressionRules.CalculateProjectedEquipLoad(nextStats.Endurance);
 
             float currentPoise = Mathf.Round(_combatDefense.CurrentPoise);
             float nextPoise = currentPoise;
@@ -437,6 +439,13 @@ namespace SoulsLike.Ui.LevelUp
             }
 
             return sum;
+        }
+
+        private static int CalculateLevel(CharacterAttributeStats stats)
+        {
+            return CharacterProgressionRules.CalculateLevel(
+                stats.Vigor, stats.Mind, stats.Endurance, stats.Strength,
+                stats.Dexterity, stats.Intelligence, stats.Faith, stats.Arcane);
         }
     }
 }

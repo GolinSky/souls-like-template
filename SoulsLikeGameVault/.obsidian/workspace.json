@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Work/Plans/Enemy Factory DI Refactor.md",
+                "file": "Work/Plans/Character Clean Architecture with Separate Domain and Application.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Enemy Factory DI Refactor"
+              "title": "Character Clean Architecture with Separate Domain and Application"
             }
           }
         ]
@@ -55,7 +55,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "# Character Aggregate Architecture and Readability",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -79,8 +79,7 @@
               "title": "Bookmarks"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -186,18 +185,23 @@
       "bases:Create new base": false
     }
   },
-  "active": "0165393451fcc3ce",
+  "active": "1da76326f671a503",
   "lastOpenFiles": [
-    "Work/Issues/Character State and Ownership Boundaries Need Consolidation.md",
-    "Work/Plans/Character Architecture and Readability Improvement.md",
+    "History/Records/Character Session Registration Fix.md",
+    "History/Records/Character Clean Architecture Implementation.md",
+    "Work/Plans/Character Clean Architecture.md",
     "Work/Issues/Character Aggregate Architecture and Readability.md",
+    "Work/Plans/Character Clean Architecture with Separate Domain and Application.md",
+    "Work/Plans/Character Architecture.md",
+    "Work/Plans/Character Architecture and Readability Improvement.md",
+    "Work/Plans/Enemy Factory DI Refactor.md",
+    "Work/Issues/Character State and Ownership Boundaries Need Consolidation.md",
     "History/Records/HDRP Shadow and Camera Verification Correction.md",
     "Work/Plans/HDRP Optimization Verification and Execution.md",
     "History/Records/Render Settings and Frame Optimization Record.md",
     "History/Completed Plans/Character Respawn Dead Loop Pose Fix.md",
     "Work/Plans/Character Respawn Dead Loop Pose Fix.md",
     "History/Completed Plans/Render Settings Optimization Plan.md",
-    "Work/Plans/Enemy Factory DI Refactor.md",
     "Work/Plans/Enemy System Scalability.md",
     "History/Completed Plans/Enemy System Scalability.md",
     "History/Records/Enemy System Scalability Implementation.md",
@@ -210,13 +214,8 @@
     "History/Records/Status UI Penpot Integration 2026-09-14.md",
     "Work/Work Queue.md",
     "Work/Work Queue.base",
-    "Research/Architecture and Systems Audit 2026-09-08.md",
     "Meta/Knowledge Catalog.base",
-    "History/Records/Vault Simplification and Issue Closure 2026-09-14.md",
-    "History/Completed Plans/Character Owned Animation Sequencing and Recovery.md",
     "History/Completed Plans",
-    "History/Closed Issues/Stance Recovery Is Gated By Poise Delay.md",
-    "Work/Issues/Rejected Scene Transition Can Overwrite Pending Spawn Intent.md",
     "History/Closed Issues",
     "History/Records",
     "Knowledge/Guides/UI",

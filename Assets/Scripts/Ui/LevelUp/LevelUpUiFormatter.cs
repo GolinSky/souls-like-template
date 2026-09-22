@@ -1,45 +1,13 @@
-using System;
 using System.Globalization;
-using SoulsLike.Entities.Character;
-using UnityEngine;
 
 namespace SoulsLike.Ui.LevelUp
 {
+    /// <summary>Formats already calculated level-up values for the view.</summary>
     public static class LevelUpUiFormatter
     {
         public const string INCREASED_COLOR_HEX = "7CB5EC";
         public const string UNAFFORDABLE_COLOR_HEX = "E05252";
         public const string DEFAULT_TEXT_COLOR_HEX = "DDD6C8";
-
-        public static int CalculateLevel(CharacterAttributeStats stats)
-        {
-            int sum = stats.Vigor + stats.Mind + stats.Endurance + stats.Strength
-                + stats.Dexterity + stats.Intelligence + stats.Faith + stats.Arcane;
-            return Mathf.Max(1, sum - 79);
-        }
-
-        public static int CalculateRuneCost(int currentLevel)
-        {
-            float x = Mathf.Max(0f, (currentLevel + 81 - 92) * 0.02f);
-            float baseCost = (x + 0.1f) * Mathf.Pow(currentLevel + 81, 2);
-            return Mathf.FloorToInt(baseCost) + 1;
-        }
-
-        public static int CalculateTotalRuneCost(int currentLevel, int pointsToAllocate)
-        {
-            if (pointsToAllocate <= 0)
-            {
-                return 0;
-            }
-
-            int totalCost = 0;
-            for (int i = 0; i < pointsToAllocate; i++)
-            {
-                totalCost = checked(totalCost + CalculateRuneCost(currentLevel + i));
-            }
-
-            return totalCost;
-        }
 
         public static string FormatWholeNumber(int value)
         {
@@ -89,27 +57,5 @@ namespace SoulsLike.Ui.LevelUp
             return formatted;
         }
 
-        public static float CalculateProjectedHealth(float baseHealth, int currentVigor, int nextVigor)
-        {
-            const float healthPerVigor = 20f;
-            return baseHealth + (nextVigor - currentVigor) * healthPerVigor;
-        }
-
-        public static float CalculateProjectedFocus(float baseFocus, int currentMind, int nextMind)
-        {
-            const float focusPerMind = 3f;
-            return baseFocus + (nextMind - currentMind) * focusPerMind;
-        }
-
-        public static float CalculateProjectedStamina(float baseStamina, int currentEndurance, int nextEndurance)
-        {
-            const float staminaPerEndurance = 1.5f;
-            return baseStamina + (nextEndurance - currentEndurance) * staminaPerEndurance;
-        }
-
-        public static float CalculateProjectedEquipLoad(int endurance)
-        {
-            return 45f + endurance * 1.5f;
-        }
     }
 }

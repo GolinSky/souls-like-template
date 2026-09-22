@@ -40,6 +40,7 @@ namespace SoulsLike.Entities.Character.Components.Attack
         }
     }
 
+    /// <summary>Resolves the equipped weapon and animation context for an accepted attack.</summary>
     public sealed class AttackComponent : BaseComponent, IInitializable
     {
         private const float CHARGED_HEAVY_SPEED = 0.25f;
@@ -61,8 +62,6 @@ namespace SoulsLike.Entities.Character.Components.Attack
         public CombatProfile ActiveCombatProfile { get; private set; }
         public WeaponRuntime ActiveWeaponRuntime { get; private set; }
         public HandMode ActiveHandMode { get; private set; } = HandMode.OneHanded;
-        public AttackExecutionContext CurrentExecutionContext =>
-            new AttackExecutionContext(_activeState, _contextualState);
 
         public void Initialize()
         {
@@ -96,10 +95,11 @@ namespace SoulsLike.Entities.Character.Components.Attack
             _strongInputActive = held;
         }
 
-        public AttackResolution ResolveAttack(
-            in CharacterAction action,
-            in AttackExecutionContext context)
+        public AttackResolution ResolveAttack(in CharacterAction action)
         {
+            AttackExecutionContext context = new AttackExecutionContext(
+                _activeState,
+                _contextualState);
             SetActionWeapon(action.IsLeftHand);
             AttackType attackType = action.IsLeftHand
                 ? ResolveLeftHandAttack(context.ActiveState)

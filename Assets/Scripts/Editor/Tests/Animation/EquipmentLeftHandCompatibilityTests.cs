@@ -71,7 +71,7 @@ namespace SoulsLike.Editor.Tests.Animation
 
             var equipment = _gameObject.AddComponent<EquipmentComponent>();
             equipment.Model = new EquipmentModel();
-            equipment.InjectDependencies(inventory, catalog, null, null, null);
+            equipment.InjectDependencies(inventory, catalog, null, null);
             return equipment;
         }
 

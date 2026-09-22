@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Numerics;
 using SoulsLike.Entities.Character.Runtime;
 
 namespace SoulsLike.Tests.CharacterRuntime
@@ -200,9 +201,89 @@ namespace SoulsLike.Tests.CharacterRuntime
             Assert.That(machine.CurrentState, Is.EqualTo(CharacterAction.State.Neutral));
         }
 
+        [Test]
+        public void ToggleHandModeBeatsCombatInput()
+        {
+            var coordinator = new CharacterActionCoordinator(new CharacterActionStateMachine());
+
+            CharacterInput input = coordinator.BuildInput(
+                Frame(attackPressed: true, twoHandedPressed: true));
+
+            Assert.That(input.FirstAction.Value.EquipmentAction,
+                Is.EqualTo(CharacterAction.EquipmentKind.ToggleHandMode));
+            Assert.That(input.SecondAction, Is.Null);
+        }
+
+        [Test]
+        public void EquipmentAndToggleHandModeRemainTheOnlySameFramePair()
+        {
+            var coordinator = new CharacterActionCoordinator(new CharacterActionStateMachine());
+
+            CharacterInput input = coordinator.BuildInput(
+                Frame(switchWeaponPressed: true, twoHandedPressed: true));
+
+            Assert.That(input.FirstAction.Value.EquipmentAction,
+                Is.EqualTo(CharacterAction.EquipmentKind.SwitchRightWeapon));
+            Assert.That(input.SecondAction.Value.EquipmentAction,
+                Is.EqualTo(CharacterAction.EquipmentKind.ToggleHandMode));
+        }
+
+        [Test]
+        public void HeavyPressDuringRollDoesNotSuppressLaterLightAttack()
+        {
+            var machine = new CharacterActionStateMachine();
+            var coordinator = new CharacterActionCoordinator(machine);
+            machine.ReportExecution(
+                Roll(), CharacterAction.Result.Executed, CharacterAction.State.Roll, 0f);
+            coordinator.BuildInput(Frame(strongAttackPressed: true, attackHeld: true));
+
+            machine.HandleExited(CharacterAction.State.Roll);
+            CharacterInput input = coordinator.BuildInput(
+                Frame(attackPressed: true, attackHeld: true));
+
+            Assert.That(input.FirstAction.Value.Intent,
+                Is.EqualTo(CharacterAction.AttackIntent.Light));
+        }
+
+        [Test]
+        public void StaminaAdmissionPreservesThresholdAndZeroCostRules()
+        {
+            Assert.That(CharacterStaminaPolicy.CanStart(10f, 100f, 0f, 50f), Is.True);
+            Assert.That(CharacterStaminaPolicy.CanStart(50f, 100f, 10f, 50f), Is.False);
+            Assert.That(CharacterStaminaPolicy.CanStart(51f, 100f, 10f, 50f), Is.True);
+            Assert.That(CharacterStaminaPolicy.CanStart(-100f, 100f, 10f, -500f), Is.False);
+        }
+
+        [Test]
+        public void AttackStaminaUsesHeavyValuesForHeavyAndSpecialActions()
+        {
+            Assert.That(
+                CharacterStaminaPolicy.CalculateAttackCost(false, 10f, 20f, 1.5f),
+                Is.EqualTo(15f));
+            Assert.That(
+                CharacterStaminaPolicy.CalculateAttackCost(true, 10f, 20f, 1.5f),
+                Is.EqualTo(30f));
+            Assert.That(
+                CharacterStaminaPolicy.GetAttackStartThreshold(true, 5f, 15f),
+                Is.EqualTo(15f));
+        }
+
         private static CharacterAction Attack() => CharacterAction.Attack(
             CharacterAction.AttackIntent.Light, false, false, default, 0f);
         private static CharacterAction Roll() => CharacterAction.Roll(default, 0f);
+        private static CharacterInputFrame Frame(
+            bool attackPressed = false,
+            bool attackHeld = false,
+            bool strongAttackPressed = false,
+            bool switchWeaponPressed = false,
+            bool twoHandedPressed = false)
+        {
+            return new CharacterInputFrame(
+                Vector2.Zero, 0f, false, false,
+                false, false, false, attackPressed, attackHeld,
+                strongAttackPressed, false, false, switchWeaponPressed,
+                false, false, false, twoHandedPressed, false);
+        }
         private static void Start(CharacterActionStateMachine machine, CharacterAction action, CharacterAction.State state) =>
             machine.ReportExecution(action, CharacterAction.Result.Executed, state, 0f);
     }

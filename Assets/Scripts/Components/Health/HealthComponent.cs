@@ -1,9 +1,11 @@
 using System;
+using SoulsLike.Entities.Character.Runtime;
 using UnityEngine;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character.Components.Health
 {
+    /// <summary>Owns mutable health, focus, stamina, and invulnerability state for one actor.</summary>
     public class HealthComponent : BaseComponent<HealthModel>, IHealthComponent, IInitializable
     {
         private const float MAX_STAMINA_DEBT_MULTIPLIER = 1.0f;
@@ -174,11 +176,12 @@ namespace SoulsLike.Entities.Character.Components.Health
 
         public bool CanConsumeStamina(float amount, float startThreshold = 0f)
         {
-            if (amount <= 0f) return true;
-
             HealthStats stats = Stats;
-            float threshold = Mathf.Clamp(startThreshold, -stats.MaxStamina, stats.MaxStamina);
-            return stats.CurrentStamina > threshold;
+            return CharacterStaminaPolicy.CanStart(
+                stats.CurrentStamina,
+                stats.MaxStamina,
+                amount,
+                startThreshold);
         }
 
         public bool TryConsumeStamina(float amount, float startThreshold = 0f)

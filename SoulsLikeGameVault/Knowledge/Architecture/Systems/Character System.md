@@ -7,8 +7,9 @@ domains:
   - movement
 status: needs-review
 authority: advisory
-verified: 2026-09-07
-source_commit: fcaf410d
+verified: 2026-09-22
+source_commit: 509f9d27
+updated: 2026-09-22
 context_keys:
   - character-architecture
 aliases:
@@ -18,38 +19,28 @@ tags:
 ---
 # Character System Architecture & Runtime Guide
 
-> [!warning] Validation status — partial
-> Checked against live source on 2026-09-07 at `fcaf410d`. The `Character` aggregate, serialized components, injected services, and action state machine exist. Detailed tick-order and gating claims still require a section-by-section source pass before this note can become required policy.
+> [!warning] Validation boundary
+> Updated for the authorized Character Clean Architecture refactor on 2026-09-22. Source and focused Edit Mode checks cover the structural changes; animation, root-motion, scene transitions, and full gameplay remain a separate review phase. See [[Work/Plans/Character Clean Architecture]].
 
 ## 1. Overview & Core Architectural Philosophy
 
-The **Character System** in the SoulsLikeTemplate represents the player entity aggregate, its motor locomotion, combat action lifecycle, equipment management, and animation feedback loops. 
+Character keeps Unity effects and entity integration outside an engine-independent runtime. Source dependencies point inward: the local session and Unity adapters depend on runtime contracts; runtime code does not depend on Unity, VContainer, input services, or session services.
 
-Following comprehensive refactoring, the architecture adheres to a **Pragmatic Aggregate Facade + Lean Pure C# Runtime** pattern. It eliminates redundant sink interfaces, excessive generic command boilerplate, and disparate boolean flags in favor of high internal cohesion, clear single-source-of-truth capability gating, and a deterministic action state machine.
+| Owner | Responsibility |
+|---|---|
+| `PlayerInputReader` | Recognize physical button edges and the 0.30-second sprint/roll gesture; return session-owned input. |
+| `PlayerController` | Feed the local session and update the camera through a Character-agnostic snapshot. |
+| `PlayerSessionCoordinator` | Translate local input, coordinate targeting/interaction and death/rest, and clear pending input when the binding ends. |
+| `CharacterActorTick` | Consume one submitted semantic frame in VContainer's `IPostTickable` phase; enforce pause/death/control gates without local input/UI/camera dependencies. |
+| `CharacterActionCoordinator` | Resolve semantic priority, submit actions, and report outer execution results to the existing state machine. |
+| `CharacterActionStateMachine` | Sole owner of action state, one-slot buffering, queue windows, and chained-exit handling. |
+| `Character` | Execute Unity-facing actions, route animation observations, coordinate rest, and expose aggregate operations. |
+| Components | Own movement, animation playback, equipment, health, inventory, and combat state. |
+| `CharacterProgressionRules` | Calculate levels, rune costs, and projected stat values shared by UI preview and commit. |
+| `CharacterStaminaPolicy` | Calculate stamina admission thresholds and attack costs; adapters preserve physical acceptance and charging order. |
 
-The system is easiest to read as an ownership map rather than one dense dependency graph:
+VContainer constructs the state machine, coordinator, actor tick, and local session in the existing character scope. The runtime assembly has `noEngineReferences: true`; its vectors use `System.Numerics`. Unity adapters convert vectors at the boundary. HealthComponent remains the only mutable resource owner. No networking, recovery framework, or second resource state store is introduced.
 
-| Boundary | Owner | Responsibility | Main collaboration |
-|---|---|---|---|
-| Input and session | `InputService`, `PlayerInputReader`, `PlayerController` | Convert hardware input into semantic `CharacterInput` and tick the player | Calls the `Character` facade |
-| Aggregate facade | `Character` | Coordinate character use cases, capability locks, and presentation | Owns the domain components below |
-| Pure runtime | `CharacterActionStateMachine`, `CharacterAction`, `CharacterInput` | Action state, one-slot buffering, and queue windows | Receives semantic input and animation signals |
-| Motor and presentation | `MovementComponent`, `AnimatorComponent`, `CharacterAudioComponent` | Produce movement snapshots and apply audiovisual state | Snapshot flows through `Character` |
-| Combat and equipment | `AttackComponent`, `EquipmentComponent`, `CombatDefenseComponent`, `CriticalAttackController` | Own attack, loadout, defense, and critical lifecycles | Coordinated by `Character` |
-| Stats and inventory | `HealthComponent`, `InventoryComponent` | Own resources, survivability, and stored items | Exposed through the aggregate boundary |
-| Animation feedback | `AnimatorStateMachine`, `AnimatorStateMachineReceiver` | Return normalized state-machine events | Routed by `Character.OnAnimationStateChanged` |
-
-### Core Architectural Pillars
-
-1. **Explicit Aggregate Facade (`Character.cs`)**: `Character` is the central coordination point and external API for the player entity. It coordinates use cases across specialized components without routing through unneeded one-line sink interfaces.
-2. **Lean Pure C# Runtime Assembly (`SoulsLike.Character.Runtime.asmdef`)**: Volatile per-frame action sequencing, command buffering, and queue windows are isolated into 4 concise, pure C# types (`CharacterAction`, `CharacterInput`, `CharacterActionStateMachine`, `CharacterActionId`).
-3. **Reason-Aware Capability Gating (`MovementLockReason`)**: Control and movement blocking is unified under a single bitmask enum. Independent reasons (Spawn, Animation, Parry, Critical, Manual) prevent overlapping lifecycles from prematurely restoring input or movement.
-4. **Deterministic Action State Machine**: 5 discrete states (`Neutral`, `Attack`, `Roll`, `EquipmentSwap`, `Critical`), a 1-slot 1.0s buffer, animation-driven queue windows, roll-to-sprint interrupts, and chained attack exit suppression.
-5. **Decoupled Input Adapter (`PlayerInputReader`)**: Translates raw Unity Input System presses and camera yaw into high-level semantic structs (`CharacterInput`), isolating entity logic from hardware input devices.
-6. **Snapshot Presentation Flow**: `MovementComponent` produces an immutable `MovementPresentation` struct snapshot each frame, which `Character` pushes directly to `AnimatorComponent` and `CharacterAudioComponent`.
-7. **Animation Loopback via DTO Routing**: `AnimatorStateMachine` behaviours emit normalized `AnimatorStateMachineDto` events, which `Character.OnAnimationStateChanged` routes directly to the specific subsystems that own those animation lifecycles.
-
----
 
 ## 2. Entity Identity & Lifetime Management
 
@@ -69,118 +60,44 @@ When `CharacterFactory.CreateCharacter` is called:
    - Entity system (`RegisterEntitySystemExt`, commands: `InteractionCommand`, `GroundItemCollectionCommand`, `ApplyDamageCommand`, `ResolveMeleeHitCommand`, `TargetingCommand`).
    - Domain models, components, ScriptableObjects, and database catalogs (`ItemCatalog`, `WeaponDatabase`, `ShieldDatabase`, `ConsumableDatabase`).
    - UI Controllers (`PlayerHudUiController`, `LockOnUiController`, `InventoryUiController`, `EquipmentUiController`, `SystemUiController`, `PauseNavigationUiController`, `InteractionUiController`).
-   - Player orchestration (`PlayerInputReader`, `InteractionController`, `PlayerController`).
+   - Player orchestration (`PlayerInputReader`, `InteractionController`, `PlayerSessionCoordinator`, `PlayerController`).
 5. Generates one scoped entity ID through `IUniqueIdGenerator` and returns `Character` only after the build succeeds. `CharacterFactory.Dispose` disposes its one owned local-player scope. Creation failures propagate without factory cleanup of the partial scope.
 
 The `Character` prefab has no `LifetimeScope`. Normal respawn reuses the existing actor, while later coop-specific creation and removal remain at the composition boundary.
+
+`PlayerSessionCoordinator` uses `.AsSelf().AsImplementedInterfaces()` to expose the same registration through its concrete type, `IPlayerSession`, and lifecycle interfaces. Do not also add `.As<IPlayerSession>()`: the installed VContainer version appends implemented interfaces without deduplication, causing scope construction to fail.
 
 ---
 
 ## 3. Input Pipeline & Semantic Control Translation
 
-Hardware input reads and gesture evaluations are completely decoupled from `Character.cs`.
+The path is `PlayerInputReader -> PlayerController -> IPlayerSession -> PlayerSessionCoordinator -> CharacterActionCoordinator -> CharacterActorTick -> Character`. Neither the controller nor the reader references Character components, character commands, or action states.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant UnityInput as Unity Input System
-    participant PC as PlayerController
-    participant PIR as PlayerInputReader
-    participant C as Character
-    participant CASM as CharacterActionStateMachine
-
-    UnityInput->>PIR: Raw Action Map Reads
-    PC->>PIR: Read(currentState)
-    Note over PIR: 1. Evaluate Sprint Hold (0.3s threshold)<br/>2. Resolve Strong Attack Hold & Light Suppression<br/>3. Resolve Action Priorities (Equipment > Attack > Roll > Jump)
-    PIR-->>PC: CharacterInput
-    PC->>C: Tick(in CharacterInput)
-    C->>CASM: Tick(sprintHeld, swapInProgress)
-    C->>CASM: Submit(FirstAction, SecondAction)
-    CASM-->>C: Dispatch / Buffer Decision
-    C->>C: ExecuteAction()
-```
+`PlayerSessionInput` carries axes, button edges, and held values. The session translates it into `CharacterInputFrame`; the coordinator produces `CharacterInput` with at most two semantic actions. `PlayerSessionSnapshot` exposes only camera and control information to the local controller.
 
 ### 3.1 PlayerInputReader (`Assets/Scripts/Entities/Character/Input/PlayerInputReader.cs`)
 
-`PlayerInputReader` encapsulates all gesture timing and input prioritization:
-- **Sprint/Roll Gesture**: 
-  - Tracks hold duration with a `0.3s` threshold (`SPRINT_HOLD_THRESHOLD`).
-  - Hold $\ge 0.3\text{s}$ with movement input $\rightarrow$ `SprintHeld = true`.
-  - Release before $0.3\text{s}$ $\rightarrow$ triggers `Roll` action on release.
-- **Heavy Attack Gesture**:
-  - Pressing strong attack sets `_suppressLightUntilRelease = true`.
-  - Prevents accidental light attack execution during heavy attack presses.
-- **Action Prioritization Order**:
-  1. *Equipment Slot Switches*: `SwitchRightWeapon`, `SwitchLeftWeapon`, `SwitchQuickItem`, `UseQuickItem`.
-  2. *Hand Mode Toggle*: `TwoHanded` (can be submitted as a companion second action in the same frame as an equipment switch).
-  3. *Heavy Attack*: If strong attack pressed and not currently rolling.
-  4. *Special Ability*: If special ability pressed and not rolling.
-  5. *Light Attack*: If light attack pressed and not suppressed.
-  6. *Guard Press*: Dispatched as Left-Hand Light Attack.
-  7. *Roll / Backstep*: Dispatched on sprint button release without hold qualification.
-  8. *Jump*: Dispatched on jump press.
+The reader owns the 0.30-second sprint hold and short-release roll gesture. It resets physical gesture state when control is disabled. The runtime coordinator owns state-dependent arbitration: heavy/special suppression during rolls, heavy/light suppression, and ItemUse restrictions.
+
+Priority remains right equipment, left equipment, quick-item selection, item use, then hand-mode toggle. Hand mode is the only companion to an equipment action. With no equipment action, priority is heavy attack, special attack, light attack, guard-as-left-hand attack, roll, then jump. A heavy press during a roll does not activate later light-attack suppression.
 
 ### 3.2 CharacterInput & CharacterAction Structs
 
-```csharp
-public readonly struct CharacterInput
-{
-    public Vector2 MoveInput { get; }
-    public float CameraYaw { get; }
-    public bool SprintHeld { get; }
-    public bool CrouchHeld { get; }
-    public bool GuardHeld { get; }
-    public bool StrongAttackHeld { get; }
-    public CharacterAction? FirstAction { get; }
-    public CharacterAction? SecondAction { get; }
-}
+`CharacterInputFrame` contains control intent before priority selection. `CharacterInput` contains movement and holds plus the selected first/second action. `CharacterAction` contains only runtime values and semantic action identifiers. `CharacterActionExecution` returns acceptance and the started state through `ICharacterActionExecutor`; Character implements that real Unity execution boundary.
 
-public readonly struct CharacterAction
-{
-    public enum Kind { Attack, Roll, Jump, Equipment }
-    public enum AttackIntent { Light, Heavy, Special }
-    public enum EquipmentKind { SwitchRightWeapon, SwitchLeftWeapon, SwitchQuickItem, UseQuickItem, ToggleHandMode }
-    public enum Result { Executed, TemporarilyBlocked, Invalid }
-    public enum State { Neutral, Attack, Roll, EquipmentSwap, Critical }
-
-    public Kind ActionKind { get; }
-    public AttackIntent Intent { get; }
-    public EquipmentKind EquipmentAction { get; }
-    public bool IsLeftHand { get; }
-    public bool IsSprinting { get; }
-    public Vector2 MoveInput { get; }
-    public float CameraYaw { get; }
-    public bool CanBuffer => ActionKind != Kind.Equipment;
-}
-```
-
----
 
 ## 4. Action State Machine & Action Lifecycle
 
-The `CharacterActionStateMachine` (`Assets/Scripts/Entities/Character/Runtime/CharacterActionStateMachine.cs`) governs action admission, buffering, queue windows, and chaining.
+`CharacterActionStateMachine` owns the states `Neutral`, `Attack`, `Roll`, `EquipmentSwap`, `Critical`, `ItemUse`, and `BlockHit`. `CharacterActionCoordinator` uses that same injected instance; it does not maintain another action state or buffer.
 
 ### 4.1 State Hierarchy & Transitions
 
-| State | Allowed Inputs | Queue Window Behavior | Exit / Transition |
-|---|---|---|---|
-| **`Neutral`** | All actions admitted immediately | N/A (Buffer pruned on timeout) | Transitions to `Attack`, `Roll`, `EquipmentSwap`, or `Critical` on execution |
-| **`Attack`** | Non-equipment actions only when Queue Window is open; otherwise buffered | Opens at `QueueCheck` SMB signal; closes on `Enter` | Exits to `Neutral` on `Exit` SMB signal (unless chained) |
-| **`Roll`** | Non-equipment actions only when Queue Window is open; otherwise buffered | Opens at `QueueCheck` SMB signal | Exits to `Neutral` on `Exit` SMB signal or early sprint interrupt |
-| **`EquipmentSwap`** | One companion equipment action allowed while `_acceptEquipmentCompanion` is true | Managed by `EquipmentComponent` swap phase | Exits to `Neutral` when `equipmentActionInProgress == false` |
-| **`Critical`** | All inputs blocked | N/A | Exits to `Neutral` upon `CriticalAttackController.OnCompleted` |
+Neutral permits immediate dispatch. Attack, Roll, ItemUse, and BlockHit follow the existing state-specific admission and animation queue rules. EquipmentSwap admits the existing companion equipment action. Critical rejects ordinary actions until completion. Unity execution can report Executed, TemporarilyBlocked, or Invalid; the coordinator reports that result to the state machine without charging resources or forcing success itself.
 
 ### 4.2 Buffering & Execution Semantics
 
-- **Capacity**: Exactly 1 slot (`_bufferedAction`).
-- **Replacement**: Latest actionable input overwrites any previously buffered action.
-- **Expiration**: Fixed 1.0 second duration (`BUFFER_DURATION_SECONDS`).
-- **Pruning Rule**: Buffer expiration is only pruned while in `Neutral`. A command buffered during an attack remains preserved to execute when the `QueueCheck` window opens, even if nominal duration elapsed during a long attack.
-- **Queue Window Execution**: When an animation reaches `QueueCheck`, the state machine opens `_queueWindowOpen` and `Character` immediately attempts to execute the buffered action via `TryExecuteBufferedAction(now)`.
-- **Chained Attack Stale-Exit Suppression**: If an attack is chained while another attack animation is active, `_ignoreNextActionExit = true`. When the first animation emits `Exit`, the state machine remains in `Attack` instead of prematurely popping to `Neutral`.
-- **Roll-to-Sprint Interrupt**: During `Roll`, if `_sprintHeldDuringRoll` is true when the `QueueCheck` window opens, the state machine sets `_rollSprintInterruptRequested = true` and immediately enters `Neutral`. `Character` consumes this flag and calls `AnimatorComponent.InterruptRollForSprint()`.
+The buffer remains one slot with latest-input replacement and a one-second timeout. Expiration is pruned only in Neutral. QueueCheck permits buffered execution, including commands retained through a long action. Chained exits and roll-to-sprint interruption retain their existing state-machine ownership. Animation callbacks route observations to that state machine and ask the coordinator to execute any newly permitted buffered action.
 
----
 
 ## 5. Unified Capability Gating (`MovementLockReason`)
 
@@ -215,155 +132,43 @@ private enum MovementLockReason
 
 ## 6. Component Responsibilities & Boundaries
 
-```mermaid
-classDiagram
-    class Character {
-        +Transform CameraTarget
-        +bool IsGrounded
-        +float VerticalVelocity
-        +InventoryComponent InventoryComponent
-        +HealthStats HealthStats
-        +int HeldCurrency
-        +CharacterAttributeStats Attributes
-        +bool IsInputBlocked
-        +State CurrentActionState
-        +Tick(in CharacterInput)
-        +PlayDeath()
-        +PlayGraceUnblock(CancellationToken)
-        +EnterGraceRest(CancellationToken)
-        +ExitGraceRest(CancellationToken)
-        +ApplyEquipmentLoadout(EquipmentLoadout)
-        +SetLockOnTarget(bool, long?)
-    }
-
-    class MovementComponent {
-        +MovementPresentation Presentation
-        +bool IsMoving
-        +float HorizontalSpeed
-        +float VerticalVelocity
-        +Initialize()
-        +Move(Vector2, float, bool, bool)
-        +SetMovementBlocked(bool)
-        +TryStartRoll(Vector2, float, bool, bool)
-        +TryStartJump(bool, bool)
-        +FaceInputDirection(Vector2, float)
-    }
-
-    class AnimatorComponent {
-        +SetLocomotion(float, Vector2)
-        +SetTurn(float)
-        +SetGrounded(bool)
-        +SetAirborneMotion(float, LandingType)
-        +SetCrouch(bool)
-        +PlayAttack(AttackType, bool)
-        +TriggerRoll(Vector2)
-        +TriggerBackStep()
-        +TriggerParry()
-        +TriggerHit(MeleeHitResult)
-        +TriggerSpawn()
-        +TriggerDeath()
-    }
-
-    class AttackComponent {
-        +AttackExecutionContext CurrentExecutionContext
-        +ItemId? ActiveWeaponId
-        +CombatProfile ActiveCombatProfile
-        +SetActiveWeapons(ItemId?, WeaponRuntime, ItemId?, WeaponRuntime, HandMode)
-        +ResolveAttack(in CharacterAction, AttackExecutionContext) AttackResolution
-        +HandleAnimatorState(AnimatorStateMachineDto)
-    }
-
-    class EquipmentComponent {
-        +bool IsSwapInProgress
-        +EquipmentLoadout BuildLoadout()
-        +StartSwap(EquipmentSlotGroup) Result
-        +SwitchActive(EquipmentSlotGroup)
-        +TrySwitchHandMode(out HandMode)
-        +HandleAnimationState(AnimatorStateMachineDto)
-    }
-
-    class CombatDefenseComponent {
-        +bool IsBlocking
-        +bool IsInHitReaction
-        +bool IsParryStunned
-        +bool IsInCriticalState
-        +SetBlocking(bool)
-        +TickRecovery(float)
-    }
-
-    class CriticalAttackController {
-        +bool IsRunning
-        +UpdateNeutralEligibility(bool)
-        +TryStart() bool
-    }
-
-    Character --> MovementComponent
-    Character --> AnimatorComponent
-    Character --> AttackComponent
-    Character --> EquipmentComponent
-    Character --> CombatDefenseComponent
-    Character --> CriticalAttackController
-```
+Character coordinates workflows spanning components. Direct single-component operations remain appropriate where they already express ownership clearly; do not introduce a facade wrapper for every method. Cross-entity communication still uses `IEntityLocator -> IEntity -> target-owned command`.
 
 ### 6.1 `MovementComponent` (`Assets/Scripts/Components/Movement/MovementComponent.cs`)
-- Owns CharacterController motion, ground probing (sphere cast + raycasts), slope alignment, gravity, vertical velocity, and jump/roll/backstep trajectory timers.
-- Produces the immutable `MovementPresentation` struct containing: `Speed`, `BlendDirection`, `TurnAmount`, `VerticalVelocity`, `LandingType`, `Grounded`, `Crouching`.
-- Exposes one-shot consumption checks: `TryConsumeJumpStarted()`, `TryConsumeRollStarted(out Vector2 dir)`, `TryConsumeBackStepStarted()`, `TryConsumeLanded()`.
+
+Owns physics, ground probing, gravity, and jump/roll trajectories. Character converts pure runtime vectors to Unity vectors and applies the resulting movement presentation.
 
 ### 6.2 `AnimatorComponent` (`Assets/Scripts/Components/Animator/AnimatorComponent.cs`)
-- Owns Animator parameters, layer weights (`OneHandedLayer`, `TwoHandedLayer`, `UpperBodyActions`, `FullBodyActions`), smoothing logic, and runtime controller/profile assignment.
-- Listens to `AnimatorStateMachineReceiver` and forwards all state machine DTO events to `Character.OnAnimationStateChanged`.
+
+Owns Animator playback and observed timing. Its existing callback into Character is an outer Unity collaboration. Short state names/hashes, sub-state machines, root-motion ownership, and callback correlation remain unchanged.
 
 ### 6.3 `AttackComponent` (`Assets/Scripts/Components/Attack/AttackComponent.cs`)
-- Resolves contextual attacks based on movement and combo state: Light Combo (alternates `LightAttack1` / `LightAttack2`), Heavy Attack, Charged Heavy Attack, Roll Attack, Backstep Attack, Run Attack, Special Attack, and Left-Hand Attack.
-- Tracks active weapon IDs, `WeaponRuntime` instances, and combat profile data.
+
+Owns weapon/combo context and attack resolution. `ResolveAttack(in CharacterAction)` reads its own context; callers no longer fetch that context only to pass it back.
 
 ### 6.4 `EquipmentComponent` (`Assets/Scripts/Components/Equipment/EquipmentComponent.cs`)
-- Owns equipment slots (Right/Left Armaments, Quick Items, Talismans, Armor) and active slot indexing.
-- Direct weapon swap sequencing: `StartSwap` triggers `SwapOut` animation $\rightarrow$ hides current weapon visual on progress $\rightarrow$ advances slot $\rightarrow$ triggers `SwapIn` animation $\rightarrow$ shows new weapon visual $\rightarrow$ completes swap.
-- Builds immutable `EquipmentLoadout` snapshots.
+
+Owns slots, active selections, and swap timing. It publishes `SlotChanged` followed by `LoadoutChanged`. Character subscribes to loadout changes and applies presentation/weapon updates once, including one explicit initial application. Equipment does not inject or call Character. Character removes its subscription on disposal.
 
 ### 6.5 `CombatDefenseComponent` & `CriticalAttackController` (`Assets/Scripts/Entities/Combat/`)
-- **`CombatDefenseComponent`**: Owns poise, stance, guard angle calculations, guard break stun duration, parry window timing, hyper armor bonuses, and hit reaction states.
-- **`CriticalAttackController`**: Evaluates backstab and riposte eligibility based on target distance, height difference, and rear/front angle alignment; executes synchronized victim/attacker animations and applies direct damage.
 
----
+Keep defense, hit reactions, and synchronized critical execution ownership. Critical eligibility must be updated after state-machine ticking and before current-frame action submission.
+
+`BaseComponent<TModel>.Model` remains an injection/standalone-setup contract because existing component tests construct models explicitly. Runtime model replacement is not a gameplay operation. HealthComponent owns mutable health, focus, stamina, and invulnerability; rest applies authoritative stats once and then refills the existing flask supply.
+
 
 ## 7. Frame Execution & Update Order
 
-Each frame follows a strict execution pipeline in `Character.Tick(in CharacterInput input)`:
+VContainer phases establish order without depending on registration order within a phase:
 
-```text
-Character.Tick()
-├── 1. Set Strong Attack Held state on AttackComponent; reset charged speed if released
-├── 2. Action State Machine Tick:
-│      ├── Sample Sprint during Roll for early interrupt
-│      └── Advance / complete EquipmentSwap state if swap finished
-├── 3. Update CriticalAttackController neutral eligibility
-├── 4. State Machine Action Submission:
-│      ├── Submit(input.FirstAction)
-│      └── Submit(input.SecondAction)
-├── 5. Buffer Maintenance:
-│      ├── Prune expired buffer if in Neutral
-│      ├── TryExecuteBufferedAction() if window open
-│      └── ApplyActionStateMachineRequests() (e.g. Roll-to-Sprint Interrupt)
-├── 6. Guard & Block Evaluation:
-│      ├── Classify Shield Block vs Weapon Block from EquipmentLoadout & ItemCatalog
-│      └── Update AnimatorComponent & CombatDefenseComponent blocking state
-├── 7. Motor & Physics Execution:
-│      ├── Calculate Combat Sprint stamina drain & threshold validation
-│      ├── Set MovementComponent movement blocked flag from _movementLockReasons
-│      ├── MovementComponent.Move(moveInput, cameraYaw, sprintActive, crouchHeld)
-│      └── Consume combat sprint stamina if moving
-├── 8. Audio & Recovery:
-│      ├── CharacterAudioComponent.Tick(isMoving, isSprinting)
-│      ├── CombatDefenseComponent.TickRecovery(deltaTime)
-│      └── HealthComponent.TickStaminaRecovery(deltaTime, isBlocking)
-└── 9. ApplyMovementPresentation():
-       └── Read MovementComponent.Presentation and push values to AnimatorComponent
-```
+1. `PlayerController.ITickable`: read local input, then session targeting/interaction and semantic arbitration; submit a frame.
+2. `CharacterActorTick.IPostTickable`: consume that frame once; apply existing death/input-block/pause/ladder gates; call Character.Tick.
+3. `PlayerController.ILateTickable`: update camera follow, then the existing Idle camera rotation/tracking path.
 
----
+Within Character.Tick, preserve strong-attack hold, state-machine advancement, critical eligibility, semantic submissions and buffer processing, guard/block decisions, movement/stamina charging, audio/recovery, then movement presentation. Animation callbacks may independently open a queue window and process the buffered action.
+
+Scripted control can submit semantic CharacterInput directly to CharacterActorTick without resolving the local controller or session. The actor adapter consumes each submitted frame once; a continuous scripted controller submits each frame. The existing factory still creates the complete local-player composition. Its topology, prefab GUIDs, and serialized component fields are unchanged.
+
 
 ## 8. Animation Feedback & Routing Matrix
 
@@ -386,34 +191,25 @@ Character.Tick()
 ## 9. Lifecycle Systems: Spawn, Death, Grace
 
 ### 9.1 Spawn
-- `Character.Initialize()` sets `SetInputBlocked(true)` (locking `MovementLockReason.Spawn`) and triggers `Spawn` animation.
-- When `StateMachineName.Spawn` exits, `SetInputBlocked(false)` is invoked, enabling player control.
+
+Character initialization sets up components, subscribes to their events, applies the initial loadout, and blocks input. The factory stages the arrival before beginning the existing spawn/grace animation flow. Cursor locking belongs to local PlayerController initialization.
 
 ### 9.2 Death & Respawn
-- `PlayerController` observes `HealthModel.OnDied` $\rightarrow$ calls `Character.PlayDeath()`.
-- `PlayDeath()` cancels any active equipment swap, marks `_isDeathAnimationPlaying = true`, locks input, and triggers `Death` animation.
-- When `StateMachineName.Death` exits, `Character` raises `OnDeathAnimationCompleted`.
-- `PlayerController` receives `OnDeathAnimationCompleted` $\rightarrow$ calls `_coreGameOrchestrator.RespawnAtLastGrace().Forget()`.
-- After scene/fade transitions, `CoreGameOrchestrator` calls `Character.SetPosition()` and `Character.CompleteDeathAnimation()`.
+
+PlayerSessionCoordinator observes health death, calls Character.PlayDeath, then requests the existing core respawn operation when the death animation completes. It unregisters its game-state and death subscriptions on disposal and clears pending input. Factory/scope lifetime ownership remains unchanged.
 
 ### 9.3 Grace Rest Transitions
-Grace transitions are managed asynchronously using `UniTaskCompletionSource<bool>` and `GracePhase` (`None`, `Unblock`, `RestStart`, `RestIdle`, `RestEnd`):
-- **`PlayGraceUnblock(token)`**: Locks input, activates invulnerability, plays unblock animation, awaits animation completion.
-- **`EnterGraceRest(token)`**: Locks input, activates invulnerability, plays sit down animation, awaits transition into `RestIdle`.
-- **`ExitGraceRest(token)`**: Plays stand up animation, awaits completion, clears protection and returns to normal gameplay.
 
----
+Character retains existing animation-driven grace transitions and completion sources. The session invokes Character.RestoreAtGrace on the same game-state transitions as before. That use case restores existing resource values/alive state through HealthComponent and refills five Crimson Flasks. No identity-only restoration class or parallel resource model is needed.
+
 
 ## 10. Rules of the Character System (Durable Invariants)
 
-All future modifications, extensions, or agents working on the character codebase MUST adhere to these design rules:
-
-1. **Maintain Single Facade Integrity**: Do not bypass `Character.cs` to mutate internal component state directly from outside the character scope. External systems (`PlayerController`, `CoreGameOrchestrator`, UI controllers) must communicate through `Character` or read-only domain models.
-2. **Keep the Runtime Assembly Lean**: Do not introduce Unity scene types, `MonoBehaviour` references, or large interface hierachies into `SoulsLike.Character.Runtime`. Keep `CharacterAction`, `CharacterInput`, and `CharacterActionStateMachine` pure C# with zero external dependencies.
-3. **Never Use Unreasoned Boolean Control Locks**: Always use `MovementLockReason` bit flags when locking movement. Never overwrite or clear movement locks with a plain boolean that could clobber an active spawn, parry, critical, or animation lock.
-4. **Preserve One-Slot Action Buffer Semantics**: The buffer must remain 1-slot with latest-input replacement and 1.0s timeout. Expired buffer pruning must ONLY occur during `Neutral`.
-5. **Honor Animation Queue Windows**: Actions submitted during an attack or roll must never execute immediately; they must buffer and execute when the `QueueCheck` SMB signal is received.
-6. **Decouple Hardware Input from Gameplay Logic**: Never read `ProjectInputActions` or `UnityEngine.Input` inside `Character.cs` or any component. All hardware input must be parsed into `CharacterInput` via `PlayerInputReader`.
-7. **Use Snapshot Presentation**: Motor and physics components must expose read-only presentation structs (`MovementPresentation`). `Character` is responsible for applying these snapshots to visual/audio sinks.
-8. **No Global Event Buses for Gameplay Coordination**: Do not introduce global event aggregators or static events for character internal communication. Use explicit direct method calls, state machines, and scoped observer callbacks.
-9. **Single Top-Level Type Per File**: Every C# class, struct, interface, or enum must be defined in its own file matching the type name exactly.
+1. Keep runtime policy independent of Unity, VContainer, local input, UI, camera, and session services. VContainer belongs in the outer composition root.
+2. Keep action state/buffering in the existing state machine, and health storage in HealthComponent.
+3. Preserve the one-slot/one-second buffer, Neutral-only expiry pruning, queue windows, interruption cleanup, and physical rejection/resource-charge timing.
+4. Keep reason-aware movement locks; one workflow must not unlock another.
+5. Keep physical gestures in the input adapter and state-dependent action choices in the runtime coordinator.
+6. Apply component snapshots at presentation boundaries. Cross-entity work uses the existing locator/command path.
+7. Keep scoped subscriptions paired with disposal, and clear pending input on disable/unbind.
+8. Add only meaningful responsibilities and real boundary contracts, with one top-level type per new file and a short class summary. Avoid global event buses, speculative wrappers, or new recovery machinery.

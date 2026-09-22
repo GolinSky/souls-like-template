@@ -7,7 +7,7 @@ domains:
 status: open
 authority: evidence
 priority: medium
-updated: 2026-09-21
+updated: 2026-09-22
 verified: 2026-09-21
 source_commit: 8d54481f
 tags:
@@ -74,7 +74,15 @@ These are design options for review, not verified gameplay problems.
 
 ### Approved Fix Scope
 
-No code change is authorized by this note. Proposed architectural cleanup is [[Work/Plans/Character Architecture and Readability Improvement]]. Preserve gameplay behavior and serialized Unity references. Avoid a wholesale Clean Architecture rewrite, generalized service layer, or pattern-driven class splitting.
+The user authorized execution of [[Work/Plans/Character Clean Architecture]] on 2026-09-22. Its Option A implementation preserves serialized Unity references and existing factory/entity infrastructure, with VContainer composition, a small pure rule core, and a local session boundary. No generic service framework or pattern-only class splitting was added.
+
+### Implementation Ready for Review
+
+The input/controller path now uses session contracts; action priority and dispatch use a pure coordinator and the existing state machine; actor ticking is independent of local input/UI/camera. Equipment publishes its existing event instead of calling Character. Attack reads its own context. Shared progression/stamina calculations live in the engine-independent runtime, and Character owns the rest operation. Short summaries explain new and touched production classes.
+
+The public Model setter remains explicitly documented for VContainer and existing isolated component fixtures, as allowed by the plan. Scoped actor registration is separated from local-player registration. The existing entity-command boundary and serialized fields are preserved.
+
+Initial evidence: successful Unity compilation, 19/19 runtime tests, 6/6 formatter/progression tests, zero current console errors, all scenes clean, and no active test run. Source review found no remaining material defect after correcting camera update parity. See [[History/Records/Character Clean Architecture Implementation]]. This issue remains open for the user's review and deferred gameplay parity checks; the original observations above are historical evidence, not a claim that every old coupling remains.
 
 ### Acceptance Criteria
 

@@ -1,22 +1,24 @@
 #if UNITY_EDITOR
 using NUnit.Framework;
 using SoulsLike.Entities.Character;
+using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Ui.LevelUp;
 
 namespace SoulsLike.Editor.Tests.LevelUp
 {
+    /// <summary>Verifies presentation formatting and pure progression calculations.</summary>
     public sealed class LevelUpUiFormatterTests
     {
         [Test]
         public void CalculateLevel_MatchesStartingClassAndScreenshotValues()
         {
             var startingStats = new CharacterAttributeStats(10, 10, 10, 10, 10, 10, 10, 10);
-            int startingLevel = LevelUpUiFormatter.CalculateLevel(startingStats);
+            int startingLevel = CalculateLevel(startingStats);
             Assert.That(startingLevel, Is.EqualTo(1));
 
             // Reference screenshot stats: 38, 10, 21, 18, 18, 23, 9, 7
             var screenshotStats = new CharacterAttributeStats(38, 10, 21, 18, 18, 23, 9, 7);
-            int screenshotLevel = LevelUpUiFormatter.CalculateLevel(screenshotStats);
+            int screenshotLevel = CalculateLevel(screenshotStats);
             Assert.That(screenshotLevel, Is.EqualTo(65));
         }
 
@@ -24,21 +26,21 @@ namespace SoulsLike.Editor.Tests.LevelUp
         public void CalculateRuneCost_MatchesExactEldenRingScreenshot()
         {
             // Level 65 in screenshot requires 25,153 runes to reach level 66
-            int costAt65 = LevelUpUiFormatter.CalculateRuneCost(65);
+            int costAt65 = CharacterProgressionRules.CalculateRuneCost(65);
             Assert.That(costAt65, Is.EqualTo(25153));
         }
 
         [Test]
         public void CalculateTotalRuneCost_CalculatesCumulativeCostsCorrectly()
         {
-            int zeroCost = LevelUpUiFormatter.CalculateTotalRuneCost(65, 0);
+            int zeroCost = CharacterProgressionRules.CalculateTotalRuneCost(65, 0);
             Assert.That(zeroCost, Is.EqualTo(0));
 
-            int singleLevelCost = LevelUpUiFormatter.CalculateTotalRuneCost(65, 1);
+            int singleLevelCost = CharacterProgressionRules.CalculateTotalRuneCost(65, 1);
             Assert.That(singleLevelCost, Is.EqualTo(25153));
 
-            int twoLevelCost = LevelUpUiFormatter.CalculateTotalRuneCost(65, 2);
-            int expectedTwoLevelCost = LevelUpUiFormatter.CalculateRuneCost(65) + LevelUpUiFormatter.CalculateRuneCost(66);
+            int twoLevelCost = CharacterProgressionRules.CalculateTotalRuneCost(65, 2);
+            int expectedTwoLevelCost = CharacterProgressionRules.CalculateRuneCost(65) + CharacterProgressionRules.CalculateRuneCost(66);
             Assert.That(twoLevelCost, Is.EqualTo(expectedTwoLevelCost));
         }
 
@@ -66,17 +68,24 @@ namespace SoulsLike.Editor.Tests.LevelUp
         [Test]
         public void ProjectedStats_CalculateExpectedValues()
         {
-            float hp = LevelUpUiFormatter.CalculateProjectedHealth(1000f, 10, 20);
+            float hp = CharacterProgressionRules.CalculateProjectedHealth(1000f, 10, 20);
             Assert.That(hp, Is.EqualTo(1200f));
 
-            float fp = LevelUpUiFormatter.CalculateProjectedFocus(100f, 10, 15);
+            float fp = CharacterProgressionRules.CalculateProjectedFocus(100f, 10, 15);
             Assert.That(fp, Is.EqualTo(115f));
 
-            float stamina = LevelUpUiFormatter.CalculateProjectedStamina(100f, 10, 14);
+            float stamina = CharacterProgressionRules.CalculateProjectedStamina(100f, 10, 14);
             Assert.That(stamina, Is.EqualTo(106f));
 
-            float equipLoad = LevelUpUiFormatter.CalculateProjectedEquipLoad(20);
+            float equipLoad = CharacterProgressionRules.CalculateProjectedEquipLoad(20);
             Assert.That(equipLoad, Is.EqualTo(75f));
+        }
+
+        private static int CalculateLevel(CharacterAttributeStats stats)
+        {
+            return CharacterProgressionRules.CalculateLevel(
+                stats.Vigor, stats.Mind, stats.Endurance, stats.Strength,
+                stats.Dexterity, stats.Intelligence, stats.Faith, stats.Arcane);
         }
     }
 }

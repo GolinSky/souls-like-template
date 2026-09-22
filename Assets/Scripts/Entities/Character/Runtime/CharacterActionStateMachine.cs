@@ -2,6 +2,7 @@ using System;
 
 namespace SoulsLike.Entities.Character.Runtime
 {
+    /// <summary>Owns action admission, queue windows, and the single buffered action.</summary>
     public sealed class CharacterActionStateMachine
     {
         private const float BUFFER_DURATION_SECONDS = 1f;

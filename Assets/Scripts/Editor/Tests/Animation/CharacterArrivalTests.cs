@@ -7,6 +7,7 @@ using SoulsLike.Entities.Character.Components.Attack;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Movement;
+using SoulsLike.Entities.Character.Runtime;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Items;
 using UnityEditor;
@@ -116,6 +117,10 @@ namespace SoulsLike.Editor.Tests.Animation
                 AssetDatabase.LoadAssetAtPath<CharacterData>(CHARACTER_DATA_PATH));
             SetPrivateField(character, "_combatDefense", combatDefense);
             SetPrivateField(character, "_criticalAttackController", criticalAttack);
+            var actionStateMachine = new CharacterActionStateMachine();
+            SetPrivateField(character, "_actionStateMachine", actionStateMachine);
+            SetPrivateField(character, "_actionCoordinator",
+                new CharacterActionCoordinator(actionStateMachine));
 
             animatorComponent.ConfigureCharacter(character, movement);
             character.Initialize();

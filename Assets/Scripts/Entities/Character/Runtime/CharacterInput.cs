@@ -1,7 +1,8 @@
-using UnityEngine;
+using System.Numerics;
 
 namespace SoulsLike.Entities.Character.Runtime
 {
+    /// <summary>Provides one actor frame of resolved movement and actions.</summary>
     public readonly struct CharacterInput
     {
         public Vector2 MoveInput { get; }

@@ -22,7 +22,8 @@ using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character
 {
-    public sealed class Character : MonoBehaviour, IInitializable, IDisposable, IPlatformRiderMotor
+    /// <summary>Coordinates Unity-facing character components while runtime rules stay in plain C# services.</summary>
+    public sealed class Character : MonoBehaviour, IInitializable, IDisposable, IPlatformRiderMotor, ICharacterActionExecutor
     {
         private const float NORMAL_ATTACK_SPEED = 1.0f;
 
@@ -48,7 +49,8 @@ namespace SoulsLike.Entities.Character
         [Header("Aim Settings")]
         [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;
         private AttackComponent _attackComponent;
-        private readonly CharacterActionStateMachine _actionStateMachine = new CharacterActionStateMachine();
+        private CharacterActionStateMachine _actionStateMachine;
+        private CharacterActionCoordinator _actionCoordinator;
         private ItemCatalog _itemCatalog;
         private IEntityLocator _entityLocator;
         private ICombatStateNotifier _combatStateNotifier;
@@ -103,7 +105,9 @@ namespace SoulsLike.Entities.Character
             CharacterData characterData,
             CombatDefenseComponent combatDefense,
             PlayerMeleeCombatRelay meleeCombatRelay,
-            CriticalAttackController criticalAttackController)
+            CriticalAttackController criticalAttackController,
+            CharacterActionStateMachine actionStateMachine,
+            CharacterActionCoordinator actionCoordinator)
         {
             _attackComponent = attackComponent;
             equipmentPresentation = presentation;
@@ -114,6 +118,8 @@ namespace SoulsLike.Entities.Character
             _combatDefense = combatDefense;
             _meleeCombatRelay = meleeCombatRelay;
             _criticalAttackController = criticalAttackController;
+            _actionStateMachine = actionStateMachine;
+            _actionCoordinator = actionCoordinator;
             _attributes = characterData.Attributes;
             _heldCurrency = characterData.StartingCurrency;
             animatorComponent.ConfigureCharacter(this, movementComponent);
@@ -132,11 +138,11 @@ namespace SoulsLike.Entities.Character
             healthComponent.Model.OnDamageApplied += OnDamageApplied;
             _combatDefense.OnHitResolved += OnHitResolved;
             _criticalAttackController.OnCompleted += OnCriticalCompleted;
+            equipmentComponent.LoadoutChanged += ApplyEquipmentLoadout;
             movementComponent.Initialize();
             animatorComponent.SetHandMode(equipmentComponent.Model.ActiveHandMode);
             ApplyEquipmentLoadout(equipmentComponent.BuildLoadout());
             ApplyMovementPresentation();
-            Cursor.lockState = CursorLockMode.Locked;
             SetInputBlocked(true);
         }
 
@@ -160,6 +166,7 @@ namespace SoulsLike.Entities.Character
             healthComponent.Model.OnDamageApplied -= OnDamageApplied;
             _combatDefense.OnHitResolved -= OnHitResolved;
             _criticalAttackController.OnCompleted -= OnCriticalCompleted;
+            equipmentComponent.LoadoutChanged -= ApplyEquipmentLoadout;
         }
 
         public void Tick(in CharacterInput input)
@@ -185,10 +192,7 @@ namespace SoulsLike.Entities.Character
                 && !_combatDefense.IsInHitReaction
                 && !_combatDefense.IsParryStunned
                 && !_combatDefense.IsInCriticalState);
-            Submit(input.FirstAction, now);
-            Submit(input.SecondAction, now);
-            _actionStateMachine.PruneExpiredBuffer(now);
-            TryExecuteBufferedAction(now);
+            _actionCoordinator.Process(input, now, this);
             ApplyActionStateMachineRequests();
             EquipmentLoadout loadout = equipmentComponent.BuildLoadout();
             bool blockRequested = input.GuardHeld
@@ -210,12 +214,14 @@ namespace SoulsLike.Entities.Character
             float sprintStaminaCost =
                 movementModel.CombatSprintStaminaDrainPerSecond * Time.deltaTime;
             bool sprintAllowed = !combatSprintDrainsStamina
-                || healthComponent.CanConsumeStamina(
+                || CharacterStaminaPolicy.CanStart(
+                    healthComponent.Stats.CurrentStamina,
+                    healthComponent.Stats.MaxStamina,
                     sprintStaminaCost,
                     movementModel.CombatSprintStaminaStartThreshold);
             movementComponent.SetMovementBlocked(_movementLockReasons != MovementLockReason.None);
             movementComponent.Move(
-                input.MoveInput,
+                ToUnityVector2(input.MoveInput),
                 input.CameraYaw,
                 input.SprintHeld && sprintAllowed,
                 input.CrouchHeld);
@@ -378,9 +384,22 @@ namespace SoulsLike.Entities.Character
             if (weaponId.HasValue)
             {
                 CombatProfile combatProfile = _itemCatalog.GetWeapon(weaponId.Value).CombatProfile;
-                float staminaCost = ResolveAttackStaminaCost(action, combatProfile);
-                float staminaStartThreshold = ResolveAttackStaminaStartThreshold(action, combatProfile);
-                if (!healthComponent.CanConsumeStamina(staminaCost, staminaStartThreshold))
+                bool usesHeavyCost = action.Intent is CharacterAction.AttackIntent.Heavy
+                    or CharacterAction.AttackIntent.Special;
+                float staminaCost = CharacterStaminaPolicy.CalculateAttackCost(
+                    usesHeavyCost,
+                    combatProfile.LightAttackStaminaCost,
+                    combatProfile.HeavyAttackStaminaCost,
+                    combatProfile.StaminaCostMultiplier);
+                float staminaStartThreshold = CharacterStaminaPolicy.GetAttackStartThreshold(
+                    usesHeavyCost,
+                    combatProfile.LightAttackStaminaStartThreshold,
+                    combatProfile.HeavyAttackStaminaStartThreshold);
+                if (!CharacterStaminaPolicy.CanStart(
+                    healthComponent.Stats.CurrentStamina,
+                    healthComponent.Stats.MaxStamina,
+                    staminaCost,
+                    staminaStartThreshold))
                 {
                     return CharacterAction.Result.TemporarilyBlocked;
                 }
@@ -388,10 +407,11 @@ namespace SoulsLike.Entities.Character
                 healthComponent.ConsumeStamina(staminaCost);
             }
 
-            AttackExecutionContext context = _attackComponent.CurrentExecutionContext;
-            AttackResolution resolution = _attackComponent.ResolveAttack(action, context);
+            AttackResolution resolution = _attackComponent.ResolveAttack(action);
             animatorComponent.SetChargedAttackSpeed(resolution.ChargedSpeed);
-            movementComponent.FaceInputDirection(action.MoveInput, action.CameraYaw);
+            movementComponent.FaceInputDirection(
+                ToUnityVector2(action.MoveInput),
+                action.CameraYaw);
             animatorComponent.PlayAttack(
                 resolution.AttackType,
                 resolution.IsLeftHandAttack);
@@ -406,7 +426,9 @@ namespace SoulsLike.Entities.Character
             bool drainsStamina = _combatStateNotifier.CurrentCombatState == CombatState.Combat;
             float staminaCost = drainsStamina ? movementModel.RollStaminaCost : 0f;
 
-            if (drainsStamina && !healthComponent.CanConsumeStamina(
+            if (drainsStamina && !CharacterStaminaPolicy.CanStart(
+                    healthComponent.Stats.CurrentStamina,
+                    healthComponent.Stats.MaxStamina,
                     staminaCost,
                     movementModel.RollStaminaStartThreshold))
             {
@@ -414,7 +436,7 @@ namespace SoulsLike.Entities.Character
             }
 
             if (!movementComponent.TryStartRoll(
-                    action.MoveInput,
+                    ToUnityVector2(action.MoveInput),
                     action.CameraYaw,
                     true,
                     canInterrupt))
@@ -436,7 +458,9 @@ namespace SoulsLike.Entities.Character
         {
             MovementModel movementModel = movementComponent.Model;
             float staminaCost = movementModel.JumpStaminaCost;
-            if (!healthComponent.CanConsumeStamina(
+            if (!CharacterStaminaPolicy.CanStart(
+                    healthComponent.Stats.CurrentStamina,
+                    healthComponent.Stats.MaxStamina,
                     staminaCost,
                     movementModel.JumpStaminaStartThreshold))
             {
@@ -582,7 +606,7 @@ namespace SoulsLike.Entities.Character
 
                 if (handled && state.State == StateMachineState.QueueCheck)
                 {
-                    TryExecuteBufferedAction(Time.time);
+                    _actionCoordinator.TryExecuteBufferedAction(this);
                     ApplyActionStateMachineRequests();
                 }
             }
@@ -769,6 +793,18 @@ namespace SoulsLike.Entities.Character
         public void Revive(float health) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateRevive(healthComponent.Stats, health));
 
+        /// <summary>Restores the actor's resources and flask supply after grace rest or respawn.</summary>
+        public void RestoreAtGrace()
+        {
+            HealthStats stats = healthComponent.Stats;
+            stats.CurrentHealth = stats.MaxHealth;
+            stats.CurrentFocus = stats.MaxFocus;
+            stats.CurrentStamina = stats.MaxStamina;
+            stats.IsAlive = true;
+            healthComponent.ApplyAuthoritativeStats(stats);
+            inventoryComponent.RefillFlask(ItemId.CrimsonFlask, 5);
+        }
+
         public void SetPosition(Vector3 position) => movementComponent.SetPosition(position);
 
         public void ApplyPlatformDisplacement(Vector3 displacement) =>
@@ -916,53 +952,26 @@ namespace SoulsLike.Entities.Character
                     : null;
         }
 
-        private static float ResolveAttackStaminaCost(
-            in CharacterAction action,
-            CombatProfile combatProfile)
+        private static Vector2 ToUnityVector2(System.Numerics.Vector2 value)
         {
-            float baseCost = action.Intent == CharacterAction.AttackIntent.Heavy
-                || action.Intent == CharacterAction.AttackIntent.Special
-                    ? combatProfile.HeavyAttackStaminaCost
-                    : combatProfile.LightAttackStaminaCost;
-            return baseCost * combatProfile.StaminaCostMultiplier;
+            return new Vector2(value.X, value.Y);
         }
 
-        private static float ResolveAttackStaminaStartThreshold(
-            in CharacterAction action,
-            CombatProfile combatProfile)
+        public CharacterActionExecution Execute(in CharacterAction action)
         {
-            return action.Intent == CharacterAction.AttackIntent.Heavy
-                || action.Intent == CharacterAction.AttackIntent.Special
-                    ? combatProfile.HeavyAttackStaminaStartThreshold
-                    : combatProfile.LightAttackStaminaStartThreshold;
-        }
-
-        private void Submit(CharacterAction? action, float now)
-        {
-            if (!action.HasValue || !_actionStateMachine.TryDispatch(action.Value, now)) return;
-            ExecuteAction(action.Value, false, now);
-        }
-
-        private void TryExecuteBufferedAction(float now)
-        {
-            if (_actionStateMachine.TryGetBufferedAction(out CharacterAction action)) ExecuteAction(action, true, now);
-        }
-
-        private void ExecuteAction(in CharacterAction action, bool buffered, float now)
-        {
-            if (!buffered
-                && action.ActionKind == CharacterAction.Kind.Attack
+            if (action.ActionKind == CharacterAction.Kind.Attack
                 && action.Intent == CharacterAction.AttackIntent.Light
                 && !action.IsLeftHand
                 && _actionStateMachine.CurrentState == CharacterAction.State.Neutral
                 && !_actionStateMachine.HasBufferedAction
                 && _criticalAttackController.TryStart())
             {
-                _actionStateMachine.EnterCritical();
                 _actionStateMachine.SetInputBlocked(true);
                 SetMovementLock(MovementLockReason.Critical, true);
                 movementComponent.SetMovementBlocked(true);
-                return;
+                return new CharacterActionExecution(
+                    CharacterAction.Result.Executed,
+                    CharacterAction.State.Critical);
             }
 
             CharacterAction.Result result = action.ActionKind switch
@@ -981,8 +990,7 @@ namespace SoulsLike.Entities.Character
                 CharacterAction.Kind.Equipment when _isItemUseInProgress => CharacterAction.State.ItemUse,
                 _ => CharacterAction.State.Neutral
             };
-            if (buffered) _actionStateMachine.ReportBufferedExecution(result, state);
-            else _actionStateMachine.ReportExecution(action, result, state, now);
+            return new CharacterActionExecution(result, state);
         }
 
         private void OnCriticalCompleted()

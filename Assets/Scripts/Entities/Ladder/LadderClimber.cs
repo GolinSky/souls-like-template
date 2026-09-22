@@ -16,6 +16,7 @@ using VContainer.Unity;
 
 namespace SoulsLike.Entities.Ladder
 {
+    /// <summary>Owns ladder traversal and consumes character input through the runtime contract.</summary>
     public sealed class LadderClimber : MonoBehaviour, IEntityComponent, IInitializable, IDisposable
     {
         private const float ENTER_BOTTOM_SECONDS = 1.167f;
@@ -187,7 +188,7 @@ namespace SoulsLike.Entities.Ladder
             if (!IsAttached || _isTransitioning || _isExiting || TickPendingAction()) return;
             if (input.FirstAction.HasValue && HandlePlayerAction(input.FirstAction.Value)) return;
             if (input.SecondAction.HasValue && HandlePlayerAction(input.SecondAction.Value)) return;
-            TickTraversal(input.MoveInput.y, input.SprintHeld, HasDropAction(input), deltaTime);
+            TickTraversal(input.MoveInput.Y, input.SprintHeld, HasDropAction(input), deltaTime);
         }
 
         public void TickEnemy(Vector3 targetPosition, float deltaTime)

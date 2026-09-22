@@ -1,7 +1,8 @@
-using UnityEngine;
+using System.Numerics;
 
 namespace SoulsLike.Entities.Character.Runtime
 {
+    /// <summary>Describes one semantic action without Unity dependencies.</summary>
     public readonly struct CharacterAction
     {
         public enum Kind { Attack, Roll, Jump, Equipment }
