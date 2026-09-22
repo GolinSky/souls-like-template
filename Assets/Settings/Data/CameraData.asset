@@ -12,61 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 003a3a9e615c7cd49915bef497fba6a7, type: 3}
   m_Name: CameraData
   m_EditorClassIdentifier: Assembly-CSharp::SoulsLike.Services.CameraService.CameraData
-  <SwitchAngleDuration>k__BackingField: 0.4
-  <SwitchAngleEase>k__BackingField: 7
-  <ZoomFov>k__BackingField: 48
-  <ZoomDuration>k__BackingField: 0.3
-  <ZoomEase>k__BackingField: 3
-  <AirborneRiseLag>k__BackingField: 0.65
-  <AirborneFallLag>k__BackingField: 0.4
-  <GroundedFollowSmoothTime>k__BackingField: 0.1
-  <JumpFollowSmoothTime>k__BackingField: 0.22
-  <FallFollowSmoothTime>k__BackingField: 0.15
-  <LongFallSmoothTime>k__BackingField: 0.08
-  <GroundedMaxFollowSpeed>k__BackingField: 5
-  <JumpMaxFollowSpeed>k__BackingField: 5
-  <FallMaxFollowSpeed>k__BackingField: 8
-  <LongFallMaxSpeed>k__BackingField: 18
-  <LongFallCatchupDistance>k__BackingField: 4
-  <MouseYawDegreesPerPixel>k__BackingField: 0.09
-  <MousePitchDegreesPerPixel>k__BackingField: 0.08
-  <StickYawDegreesPerSecond>k__BackingField: 220
-  <StickPitchDegreesPerSecond>k__BackingField: 150
-  <TopClamp>k__BackingField: 70
-  <BottomClamp>k__BackingField: -30
-  <CameraAngleOverride>k__BackingField: 0
-  <LockCameraPosition>k__BackingField: 0
-  <LockBlendDuration>k__BackingField: 0.3
-  <LockBlendEase>k__BackingField: 4
-  <LockInitialFocusMinDistance>k__BackingField: 1.5
-  <LockAimSmoothTime>k__BackingField: 0.08
-  <LockAimMaxSpeed>k__BackingField: 40
-  <LockMinFocusHeight>k__BackingField: -0.75
-  <LockMaxFocusHeight>k__BackingField: 1.25
-  <LockOrbitYawEnterAngle>k__BackingField: 12
-  <LockOrbitYawReleaseAngle>k__BackingField: 6
-  <LockOrbitYawSmoothTime>k__BackingField: 0.42
-  <LockOrbitYawMaxSpeed>k__BackingField: 90
-  <LockYawHalfTurnTolerance>k__BackingField: 2
-  <LockHeadingHoldDistance>k__BackingField: 0.55
-  <LockHeadingReleaseDistance>k__BackingField: 0.9
-  <LockYawFastSmoothTime>k__BackingField: 0.05
-  <LockYawFastMaxSpeed>k__BackingField: 360
-  <LockYawFastDeadZoneDegrees>k__BackingField: 0.75
-  <LockFastFollowStartRate>k__BackingField: 45
-  <LockFastFollowFullRate>k__BackingField: 135
-  <LockFastFollowStartError>k__BackingField: 5
-  <LockFastFollowFullError>k__BackingField: 18
-  <LockYawRateFilterTime>k__BackingField: 0.08
-  <LockYawUrgencySmoothTime>k__BackingField: 0.08
-  <LockYawLeadTime>k__BackingField: 0.045
-  <LockYawMaxLeadDegrees>k__BackingField: 5
-  <LockBasePitch>k__BackingField: 20
-  <LockAimTiltNearDistance>k__BackingField: 2
-  <LockAimTiltFarDistance>k__BackingField: 5
-  <LockOrbitPitchSmoothTime>k__BackingField: 0.35
-  <LockOrbitPitchMaxSpeed>k__BackingField: 60
-  <HumanoidLockProfile>k__BackingField:
-    CameraSide: 0.5
+  <FreeLookCamera>k__BackingField:
     FieldOfView: 48
-    Damping: {x: 0.08, y: 0.1, z: 0.18}
+    CameraSide: 0.5
+    ThirdPersonFollowDamping: {x: 0.08, y: 0.1, z: 0.18}
+  <LockOnCamera>k__BackingField:
+    FieldOfView: 48
+    CameraSide: 0.5
+    ThirdPersonFollowDamping: {x: 0.08, y: 0.1, z: 0.18}
+  <LockOnRotationComposerDamping>k__BackingField: {x: 0.5, y: 0.5}

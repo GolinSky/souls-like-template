@@ -1,5 +1,4 @@
-using System; // Serializable
-using DG.Tweening;
+using System;
 using UnityEngine;
 
 namespace SoulsLike.Services.CameraService
@@ -7,101 +6,32 @@ namespace SoulsLike.Services.CameraService
     [CreateAssetMenu(fileName = "CameraData", menuName = "Data/CameraData")]
     public sealed class CameraData : ScriptableObject
     {
-        [field:Header("Switch Angle")]
-        [field: SerializeField] public float SwitchAngleDuration { get; private set; } = 0.4f;
-        [field: SerializeField] public Ease SwitchAngleEase { get; private set; } = Ease.InOutQuad;
-
-        [field:Header("Zoom")]
-        [field: SerializeField] public float ZoomFov { get; private set; } = 30f;
-        [field: SerializeField] public float ZoomDuration { get; private set; } = 0.3f;
-        [field: SerializeField] public Ease ZoomEase { get; private set; } = Ease.OutSine;
-
-        [field:Header("Vertical Follow")]
-        [field: SerializeField, Min(0f)] public float AirborneRiseLag { get; private set; } = 0.65f;
-        [field: SerializeField, Min(0f)] public float AirborneFallLag { get; private set; } = 0.40f;
-        [field: SerializeField, Min(0.01f)] public float GroundedFollowSmoothTime { get; private set; } = 0.10f;
-        [field: SerializeField, Min(0.01f)] public float JumpFollowSmoothTime { get; private set; } = 0.22f;
-        [field: SerializeField, Min(0.01f)] public float FallFollowSmoothTime { get; private set; } = 0.15f;
-        [field: SerializeField, Min(0.01f)] public float LongFallSmoothTime { get; private set; } = 0.08f;
-        [field: SerializeField, Min(0f)] public float GroundedMaxFollowSpeed { get; private set; } = 5f;
-        [field: SerializeField, Min(0f)] public float JumpMaxFollowSpeed { get; private set; } = 5f;
-        [field: SerializeField, Min(0f)] public float FallMaxFollowSpeed { get; private set; } = 8f;
-        [field: SerializeField, Min(0f)] public float LongFallMaxSpeed { get; private set; } = 18f;
-        [field: SerializeField, Min(0f)] public float LongFallCatchupDistance { get; private set; } = 4f;
-
-        [field:Header("Free Look")]
-        [field: SerializeField, Min(0f)] public float MouseYawDegreesPerPixel { get; private set; } = 0.09f;
-        [field: SerializeField, Min(0f)] public float MousePitchDegreesPerPixel { get; private set; } = 0.08f;
-        [field: SerializeField, Min(0f)] public float StickYawDegreesPerSecond { get; private set; } = 220f;
-        [field: SerializeField, Min(0f)] public float StickPitchDegreesPerSecond { get; private set; } = 150f;
-
-        [field:Header("Cinemachine")]
-        [field: SerializeField, Tooltip("How far in degrees can you move the camera up")]
-        public float TopClamp { get; private set; } = 70.0f;
-
-        [field: SerializeField, Tooltip("How far in degrees can you move the camera down")]
-        public float BottomClamp { get; private set; } = -30.0f;
-
-        [field: SerializeField, Tooltip("Additional degrees to override the camera. Useful for fine tuning camera position when locked")]
-        public float CameraAngleOverride { get; private set; }
-
-        [field: SerializeField, Tooltip("For locking the camera position on all axes")]
-        public bool LockCameraPosition { get; private set; }
-
-        [field:Header("Lock Acquisition")]
-        [field: SerializeField, Min(0f)] public float LockBlendDuration { get; private set; } = 0.3f;
-        [field: SerializeField] public Ease LockBlendEase { get; private set; } = Ease.InOutSine;
-        [field: SerializeField, Min(0f)] public float LockInitialFocusMinDistance { get; private set; } = 1.50f;
-
-        [field:Header("Lock Aim")]
-        [field: SerializeField, Min(0.01f)] public float LockAimSmoothTime { get; private set; } = 0.08f;
-        [field: SerializeField, Min(0f)] public float LockAimMaxSpeed { get; private set; } = 40f;
-        [field: SerializeField] public float LockMinFocusHeight { get; private set; } = -0.75f;
-        [field: SerializeField] public float LockMaxFocusHeight { get; private set; } = 1.25f;
-
-        [field:Header("Lock Orbit Yaw")]
-        [field: SerializeField, Min(0f)] public float LockOrbitYawEnterAngle { get; private set; } = 7f;
-        [field: SerializeField, Min(0f)] public float LockOrbitYawReleaseAngle { get; private set; } = 3.5f;
-        [field: SerializeField, Min(0.01f)] public float LockOrbitYawSmoothTime { get; private set; } = 0.32f;
-        [field: SerializeField, Min(0f)] public float LockOrbitYawMaxSpeed { get; private set; } = 110f;
-        [field: SerializeField, Min(0f)] public float LockYawHalfTurnTolerance { get; private set; } = 2f;
-        [field: SerializeField, Min(0f)] public float LockHeadingHoldDistance { get; private set; } = 0.55f;
-        [field: SerializeField, Min(0f)] public float LockHeadingReleaseDistance { get; private set; } = 0.90f;
-
-        [field:Header("Lock Orbit Fast Yaw")]
-        [field: SerializeField, Min(0.01f)] public float LockYawFastSmoothTime { get; private set; } = 0.05f;
-        [field: SerializeField, Min(0f)] public float LockYawFastMaxSpeed { get; private set; } = 360f;
-        [field: SerializeField, Min(0f)] public float LockYawFastDeadZoneDegrees { get; private set; } = 0.75f;
-        [field: SerializeField, Min(0f)] public float LockFastFollowStartRate { get; private set; } = 45f;
-        [field: SerializeField, Min(0f)] public float LockFastFollowFullRate { get; private set; } = 135f;
-        [field: SerializeField, Min(0f)] public float LockFastFollowStartError { get; private set; } = 5f;
-        [field: SerializeField, Min(0f)] public float LockFastFollowFullError { get; private set; } = 18f;
-        [field: SerializeField, Min(0.01f)] public float LockYawRateFilterTime { get; private set; } = 0.08f;
-        [field: SerializeField, Min(0.01f)] public float LockYawUrgencySmoothTime { get; private set; } = 0.08f;
-        [field: SerializeField, Min(0f)] public float LockYawLeadTime { get; private set; } = 0.045f;
-        [field: SerializeField, Min(0f)] public float LockYawMaxLeadDegrees { get; private set; } = 5f;
-
-        [field:Header("Lock Aim Tilt")]
-        [field: SerializeField] public float LockBasePitch { get; private set; } = 20f;
-        [field: SerializeField, Min(0f)] public float LockAimTiltNearDistance { get; private set; } = 2f;
-        [field: SerializeField, Min(0f)] public float LockAimTiltFarDistance { get; private set; } = 5f;
-        [field: SerializeField, Min(0.01f)] public float LockOrbitPitchSmoothTime { get; private set; } = 0.35f;
-        [field: SerializeField, Min(0f)] public float LockOrbitPitchMaxSpeed { get; private set; } = 60f;
-
-        [field:Header("Lock Rig Profile")]
-        [field: SerializeField] public CameraRigProfile HumanoidLockProfile { get; private set; } = new CameraRigProfile
+        [field: Header("Free Look - Cinemachine Camera")]
+        [field: SerializeField] public CinemachineCameraSettings FreeLookCamera { get; private set; } = new()
         {
-            CameraSide = 0.5f,
             FieldOfView = 48f,
-            Damping = new Vector3(0.08f, 0.10f, 0.18f)
+            CameraSide = 0.5f,
+            ThirdPersonFollowDamping = new Vector3(0.08f, 0.1f, 0.18f)
         };
 
-        [Serializable]
-        public struct CameraRigProfile
+        [field: Header("Lock On - Cinemachine Camera")]
+        [field: SerializeField] public CinemachineCameraSettings LockOnCamera { get; private set; } = new()
         {
-            public float CameraSide;
+            FieldOfView = 48f,
+            CameraSide = 0.5f,
+            ThirdPersonFollowDamping = new Vector3(0.08f, 0.1f, 0.18f)
+        };
+
+        [field: SerializeField, Tooltip("Cinemachine Rotation Composer aim damping (horizontal, vertical).")]
+        public Vector2 LockOnRotationComposerDamping { get; private set; } = new(0.5f, 0.5f);
+
+        [Serializable]
+        public struct CinemachineCameraSettings
+        {
             public float FieldOfView;
-            public Vector3 Damping;
+            public float CameraSide;
+            [Tooltip("Cinemachine Third Person Follow position damping (X, Y, Z).")]
+            public Vector3 ThirdPersonFollowDamping;
         }
     }
 }
