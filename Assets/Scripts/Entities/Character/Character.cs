@@ -25,51 +25,50 @@ namespace SoulsLike.Entities.Character
     /// <summary>Coordinates Unity-facing character components while runtime rules stay in plain C# services.</summary>
     public sealed class Character : MonoBehaviour, IInitializable, IDisposable, IPlatformRiderMotor, ICharacterActionExecutor
     {
-        private const float NORMAL_ATTACK_SPEED = 1.0f;
-
-        private enum GracePhase
-        {
-            None,
-            Unblock,
-            RestStart,
-            RestIdle,
-            RestEnd
-        }
-
+        private const float NORMAL_ATTACK_SPEED = 1.0f;//todo: move to model->data. animator axis
+        
+        public event Action OnDeathAnimationCompleted;
+        public event Action<int> CurrencyChanged;
+        public event Action<CharacterAttributeStats> AttributesChanged;
+        
         [SerializeField] private MovementComponent movementComponent;
         [SerializeField] private AnimatorComponent animatorComponent;
         [SerializeField] private CharacterAudioComponent characterAudioComponent;
         [SerializeField] private EquipmentComponent equipmentComponent;
         [SerializeField] private HealthComponent healthComponent;
         [SerializeField] private InventoryComponent inventoryComponent;
-        [SerializeField] private EquipmentPresentation equipmentPresentation;
+        [SerializeField] private EquipmentPresentation equipmentPresentation;// todo: investigate this type of code
         [SerializeField] private Transform cameraTarget;
-        [SerializeField] private LadderClimber ladderClimber;
+        [SerializeField] private LadderClimber ladderClimber;// todo: rework to components
 
         [Header("Aim Settings")]
-        [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;
-        private AttackComponent _attackComponent;
-        private CharacterActionStateMachine _actionStateMachine;
-        private CharacterActionCoordinator _actionCoordinator;
-        private ItemCatalog _itemCatalog;
+        [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;//todo: what is that and why it here? this is data related
+
         private IEntityLocator _entityLocator;
         private ICombatStateNotifier _combatStateNotifier;
+        private UniTaskCompletionSource<bool> _graceTransitionCompletionSource;
+        //todo: why this component is not assigned as serialized field. not unified composition between components
+        private AttackComponent _attackComponent;
         private CombatDefenseComponent _combatDefense;
+
+        private CharacterActionStateMachine _actionStateMachine;
+        private CharacterActionCoordinator _actionCoordinator;
+        private ItemCatalog _itemCatalog;//todo: naming. we need have strict numbers of classes 
+        
         private PlayerMeleeCombatRelay _meleeCombatRelay;
         private CriticalAttackController _criticalAttackController;
-        private CharacterData _characterData;
+        private CharacterData _characterData;//todo: declared but not used . why
         private CharacterAttributeStats _attributes;
-        private int _heldCurrency;
-        private bool _isDeathAnimationPlaying;
-        private UniTaskCompletionSource<bool> _graceTransitionCompletionSource;
+        private InventoryEntryId _activeItemEntryId;
+        private ConsumableDefinition _activeConsumable;
         private GracePhase _gracePhase;
         private MovementLockReason _movementLockReasons;
+        private ItemId _activeItemId;//todo: declared but not used . why
+        private int _heldCurrency;
+        private bool _isDeathAnimationPlaying;
         private bool _isItemUseInProgress;
         private bool _hasItemUseProgressFired;
-        private InventoryEntryId _activeItemEntryId;
-        private ItemId _activeItemId;
-        private ConsumableDefinition _activeConsumable;
-
+        
         public Transform CameraTarget => cameraTarget;
         public bool IsGrounded => movementComponent.Model.Grounded;
         public float VerticalVelocity => movementComponent.VerticalVelocity;
@@ -79,6 +78,7 @@ namespace SoulsLike.Entities.Character
         public CharacterAttributeStats Attributes => _attributes;
         public bool IsInputBlocked => _actionStateMachine.IsInputBlocked;
         public bool IsInLadderOperation => ladderClimber.IsBusy;
+        //todo: too much condition - not scalable, not readable. find solution - maybe locking bool flag or more complicated data type or pattern
         public bool CanStartLadder => healthComponent.Stats.IsAlive
             && IsGrounded
             && !IsInputBlocked
@@ -90,25 +90,25 @@ namespace SoulsLike.Entities.Character
             && !_combatDefense.IsInCriticalState
             && !_combatDefense.IsInHitReaction
             && !_combatDefense.IsParryStunned;
-        public CharacterAction.State CurrentActionState => _actionStateMachine.CurrentState;
-        public event Action OnDeathAnimationCompleted;
-        public event Action<int> CurrencyChanged;
-        public event Action<CharacterAttributeStats> AttributesChanged;
+
+        private CharacterAction.State CurrentActionState => _actionStateMachine.CurrentState;
+ 
 
         [Inject]
         public void Configure(
-            AttackComponent attackComponent,
-            EquipmentPresentation presentation,
-            ItemCatalog itemCatalog,
             IEntityLocator entityLocator,
             ICombatStateNotifier combatStateNotifier,
-            CharacterData characterData,
-            CombatDefenseComponent combatDefense,
-            PlayerMeleeCombatRelay meleeCombatRelay,
             CriticalAttackController criticalAttackController,
             CharacterActionStateMachine actionStateMachine,
-            CharacterActionCoordinator actionCoordinator)
+            CharacterActionCoordinator actionCoordinator,
+            ItemCatalog itemCatalog,
+            CharacterData characterData,
+            EquipmentPresentation presentation,
+            PlayerMeleeCombatRelay meleeCombatRelay,
+            AttackComponent attackComponent,
+            CombatDefenseComponent combatDefense)
         {
+            //todo: make clean order - categorise diff classes by type/base types 
             _attackComponent = attackComponent;
             equipmentPresentation = presentation;
             _itemCatalog = itemCatalog;
@@ -127,6 +127,7 @@ namespace SoulsLike.Entities.Character
 
         public void StageSpawn(Vector3? spawnPosition)
         {
+            //todo: if nullable spawnPosition has not value - what we do? do we have another entry point for setting position ?
             if (spawnPosition.HasValue)
             {
                 transform.position = spawnPosition.Value;
@@ -143,7 +144,15 @@ namespace SoulsLike.Entities.Character
             animatorComponent.SetHandMode(equipmentComponent.Model.ActiveHandMode);
             ApplyEquipmentLoadout(equipmentComponent.BuildLoadout());
             ApplyMovementPresentation();
-            SetInputBlocked(true);
+            SetInputBlocked(true);//todo: not clear that we need to play entry animation or we sit on grace  - that is why we block input - no linear connections 
+        }
+        
+        public void Dispose()
+        {
+            healthComponent.Model.OnDamageApplied -= OnDamageApplied;
+            _combatDefense.OnHitResolved -= OnHitResolved;
+            _criticalAttackController.OnCompleted -= OnCriticalCompleted;
+            equipmentComponent.LoadoutChanged -= ApplyEquipmentLoadout;
         }
 
         public void BeginArrival(CharacterArrival arrival)
@@ -160,18 +169,10 @@ namespace SoulsLike.Entities.Character
                     throw new ArgumentOutOfRangeException(nameof(arrival), arrival, null);
             }
         }
-
-        public void Dispose()
-        {
-            healthComponent.Model.OnDamageApplied -= OnDamageApplied;
-            _combatDefense.OnHitResolved -= OnHitResolved;
-            _criticalAttackController.OnCompleted -= OnCriticalCompleted;
-            equipmentComponent.LoadoutChanged -= ApplyEquipmentLoadout;
-        }
-
+        
         public void Tick(in CharacterInput input)
         {
-            float now = Time.time;
+            float now = Time.time;//todo: not informative variable name
             _attackComponent.SetStrongAttackHeld(input.StrongAttackHeld);
             if (!input.StrongAttackHeld)
             {
@@ -186,6 +187,8 @@ namespace SoulsLike.Entities.Character
                 return;
             }
 
+            
+            //todo: too much args. hard to read.
             _actionStateMachine.Tick(input.SprintHeld, equipmentComponent.IsSwapInProgress);
             _criticalAttackController.UpdateNeutralEligibility(
                 _actionStateMachine.CurrentState == CharacterAction.State.Neutral
@@ -273,6 +276,7 @@ namespace SoulsLike.Entities.Character
             BeginGraceTransition(GracePhase.Unblock);
             animatorComponent.TriggerGraceUnblock();
 
+            //todo: having try catch finally in core code is bad approach - if smth went wrong with async task - throw exception.remove try catch.Fast Fall
             try
             {
                 await _graceTransitionCompletionSource.Task.AttachExternalCancellation(token);
@@ -291,6 +295,7 @@ namespace SoulsLike.Entities.Character
             BeginGraceTransition(GracePhase.RestStart);
             animatorComponent.TriggerGraceRestStart();
 
+            //todo: having try catch finally in core code is bad approach - if smth went wrong with async task - throw exception.remove try catch.Fast Fall
             try
             {
                 await _graceTransitionCompletionSource.Task.AttachExternalCancellation(token);
@@ -304,7 +309,7 @@ namespace SoulsLike.Entities.Character
             }
         }
 
-        public void EnterGraceRestIdle()
+        private void EnterGraceRestIdle()
         {
             _gracePhase = GracePhase.RestIdle;
             SetGraceProtection(true);
@@ -326,6 +331,7 @@ namespace SoulsLike.Entities.Character
             SetGraceProtection(true);
             animatorComponent.TriggerGraceRestEnd();
 
+            //todo: having try catch finally in core code is bad approach - if smth went wrong with async task - throw exception.remove try catch.Fast Fall
             try
             {
                 await _graceTransitionCompletionSource.Task.AttachExternalCancellation(token);
@@ -449,8 +455,14 @@ namespace SoulsLike.Entities.Character
                 healthComponent.ConsumeStamina(staminaCost);
             }
 
-            if (movementComponent.TryConsumeBackStepStarted()) animatorComponent.TriggerBackStep();
-            else if (movementComponent.TryConsumeRollStarted(out Vector2 direction)) animatorComponent.TriggerRoll(direction);
+            if (movementComponent.TryConsumeBackStepStarted())
+            {
+                animatorComponent.TriggerBackStep();
+            }
+            else if (movementComponent.TryConsumeRollStarted(out Vector2 direction))
+            {
+                animatorComponent.TriggerRoll(direction);
+            }
             return CharacterAction.Result.Executed;
         }
 
@@ -666,13 +678,7 @@ namespace SoulsLike.Entities.Character
             SetInputBlocked(isProtected);
             healthComponent.SetInvulnerable(isProtected);
         }
-
-        public void SetMovementBlocked(bool blocked)
-        {
-            SetMovementLock(MovementLockReason.Manual, blocked);
-            movementComponent.SetMovementBlocked(_movementLockReasons != MovementLockReason.None);
-        }
-
+        
         public void SetAnimationMotionContract(bool movementBlocked)
         {
             SetMovementLock(MovementLockReason.Animation, movementBlocked);
@@ -711,7 +717,7 @@ namespace SoulsLike.Entities.Character
             animatorComponent.TriggerHit(result);
         }
 
-        public void Heal(float amount) => healthComponent.ApplyAuthoritativeStats(
+        private void Heal(float amount) => healthComponent.ApplyAuthoritativeStats(
             healthComponent.CalculateHeal(healthComponent.Stats, amount));
 
         public void OnLadderAttached()
@@ -952,6 +958,7 @@ namespace SoulsLike.Entities.Character
                     : null;
         }
 
+        //todo: move to ext class - this is utility operation. add ext method for unity vector
         private static Vector2 ToUnityVector2(System.Numerics.Vector2 value)
         {
             return new Vector2(value.X, value.Y);
@@ -1062,7 +1069,6 @@ namespace SoulsLike.Entities.Character
             }
         }
 
-        [Flags]
-        private enum MovementLockReason { None = 0, Manual = 1, Animation = 2, Spawn = 4, Parry = 8, Critical = 16, Ladder = 32 }
+       
     }
 }

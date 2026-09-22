@@ -129,7 +129,7 @@ namespace SoulsLike.Entities.Combat
             HandMode handMode = _attack.ActiveHandMode;
             AlignActors(target, isRiposte);
             target.BeginCritical(handMode, _cachedPreview.Killed);
-            _animator.PlayCriticalAttack(handMode);
+            _animator.PlayCriticalAttack();
             return true;
         }
 

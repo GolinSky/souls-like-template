@@ -32,12 +32,12 @@ namespace SoulsLike.Entities.Character.Runtime
         }
 
         public static CharacterAction Attack(AttackIntent intent, bool isLeftHand, bool isSprinting, Vector2 moveInput, float cameraYaw) =>
-            new CharacterAction(Kind.Attack, intent, default, isLeftHand, isSprinting, moveInput, cameraYaw);
+            new(Kind.Attack, intent, default, isLeftHand, isSprinting, moveInput, cameraYaw);
         public static CharacterAction Roll(Vector2 moveInput, float cameraYaw) =>
-            new CharacterAction(Kind.Roll, default, default, false, false, moveInput, cameraYaw);
+            new(Kind.Roll, default, default, false, false, moveInput, cameraYaw);
         public static CharacterAction Jump(bool isSprinting) =>
-            new CharacterAction(Kind.Jump, default, default, false, isSprinting, default, 0f);
+            new(Kind.Jump, default, default, false, isSprinting, default, 0f);
         public static CharacterAction Equipment(EquipmentKind equipmentAction) =>
-            new CharacterAction(Kind.Equipment, default, equipmentAction, false, false, default, 0f);
+            new(Kind.Equipment, default, equipmentAction, false, false, default, 0f);
     }
 }

@@ -111,7 +111,7 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
                     damage));
             }
 
-            if (_defense.ApplyStanceDamage(request.Attack.StanceDamage))
+            if (_defense.TryApplyStanceDamage(request.Attack.StanceDamage))
             {
                 return Publish(CreateResult(
                     request,

@@ -17,6 +17,7 @@ namespace SoulsLike.Entities.Character.Components
         Animations.IObserver<AnimatorStateMachineDto>,
         ILadderAnimator
     {
+        //todo: move to another class holder or create partial class for holding all animator params and layers
         private static readonly int AnimIdHorizontal = Animator.StringToHash("Horizontal");
         private static readonly int AnimIdVertical = Animator.StringToHash("Vertical");
         private static readonly int AnimIdGrounded = Animator.StringToHash("Grounded");
@@ -99,7 +100,10 @@ namespace SoulsLike.Entities.Character.Components
         [SerializeField] private AnimatorRootMotionRelay rootMotionRelay;
         
         
+        //todo: AnimatorModel can handle inner state of this component. mvc rule 
         private Character _character;
+        private RuntimeAnimatorController _defaultController;
+        private HandMode _targetHandMode;
         private Vector2 _targetLocomotion;
         private Vector2 _currentLocomotion;
         private Vector3 _targetAimPosition;
@@ -107,19 +111,19 @@ namespace SoulsLike.Entities.Character.Components
         private float _targetSpeed;
         private float _currentSpeed;
         private float _targetTurnAmount;
-        private HandMode _targetHandMode;
         private float _targetRiffleLayerWeight;
         private float _targetChargedAttackSpeed = 1.0f;
         private bool _aimTargetInitialized;
         private bool _observingStateMachine;
-        private RuntimeAnimatorController _defaultController;
         private bool _supportsLeftHandAttacks;
         private bool _isDeathAnimationPlaying;
         private bool _modelGrounded;
         private bool _groundedOverrideActive;
 
-        private Animator Animator => animator;
+        private Animator Animator => animator;//todo: with current code features we have - we have populated getter for now reason
 
+        //todo: passing Character as impl is low coupling rule violation
+        //todo: passing MovementComponent - make this component not modular by adding dependencies of MovementComponent
         public void ConfigureCharacter(Character character, MovementComponent movementComponent)
         {
             _character = character;
@@ -202,28 +206,27 @@ namespace SoulsLike.Entities.Character.Components
             animator.runtimeAnimatorController = targetController;
             SetGrounded(_modelGrounded);
             animator.SetBool(AnimIdMoving, isMoving);
-            stateMachineReceiver.InitializeStateMachines();
+            stateMachineReceiver.InitializeStateMachines();//todo: make initialize operation must go first before set state to animator
             SetHandMode(_targetHandMode);
             SetActionLayerWeights(upperBodyActionsLayerWeight);
         }
 
         public void ResetAnimationProfile()
         {
-            _supportsLeftHandAttacks = false;
-            if (animator.runtimeAnimatorController == _defaultController)
+            _supportsLeftHandAttacks = false;//todo: why we have this boolean flag - we can not equip weapon in left hand. if it is not about attacking with weapon - rename it 
+            if (animator.runtimeAnimatorController == _defaultController) //todo: this is intended behaviour?
             {
                 return;
             }
-
-            float upperBodyActionsLayerWeight = animator.GetLayerWeight(
-                GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER));
+            
+            float upperBodyLayerWeight = animator.GetLayerWeight(GetRequiredLayerIndex(UPPER_BODY_ACTIONS_LAYER));
             bool isMoving = animator.GetBool(AnimIdMoving);
-            animator.runtimeAnimatorController = _defaultController;
+            animator.runtimeAnimatorController = _defaultController;//todo: find out why we reset to default controller
             SetGrounded(_modelGrounded);
             animator.SetBool(AnimIdMoving, isMoving);
             stateMachineReceiver.InitializeStateMachines();
             SetHandMode(_targetHandMode);
-            SetActionLayerWeights(upperBodyActionsLayerWeight);
+            SetActionLayerWeights(upperBodyLayerWeight);
         }
         
         public void SetLockOn(bool isLockedOn)
@@ -249,9 +252,8 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetInteger(AnimIdLandingType, (int)landingType);
         }
 
-        public void PlayAttack(AttackType attackType, bool isLeftHandAttack)
+        public void PlayAttack(AttackType attackType, bool isLeftHandAttack)//todo: why we still have that - can it just permanently removed - isLeftHandAttack bool
         {
-            //todo: remove noise checks
             if (isLeftHandAttack && !_supportsLeftHandAttacks)
             {
                 throw new InvalidOperationException(
@@ -266,6 +268,7 @@ namespace SoulsLike.Entities.Character.Components
             animator.SetTrigger(triggerHash);
         }
 
+        //todo: move this static method to ext or static utilities.  
         private static int GetRightAttackTrigger(AttackType attackType)
         {
             return attackType switch
@@ -282,6 +285,7 @@ namespace SoulsLike.Entities.Character.Components
             };
         }
 
+        //todo: remove this
         private static int GetLeftAttackTrigger(AttackType attackType)
         {
             return attackType switch
@@ -361,8 +365,8 @@ namespace SoulsLike.Entities.Character.Components
             BeginRootMotionAction();
             animator.SetTrigger(ParriedTrigger);
         }
-
-        public void PlayCriticalAttack(HandMode handMode)
+        
+        public void PlayCriticalAttack()
         {
             SetGroundedOverride(true);
             BeginRootMotionAction();

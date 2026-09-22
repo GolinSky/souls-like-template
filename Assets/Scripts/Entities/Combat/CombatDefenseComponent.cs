@@ -7,10 +7,15 @@ using VContainer.Unity;
 
 namespace SoulsLike.Entities.Combat
 {
+    //todo: why it is not component inherited - only naming is right
     public sealed class CombatDefenseComponent : MonoBehaviour, IEntityComponent, IInitializable, IDisposable
     {
+        //todo: move to data if can be tuned.
         private const float DEFAULT_GUARD_ANGLE = 120f;
 
+        public event Action<MeleeHitResult> OnHitResolved;
+        
+        //todo: all serialized field must be in Data 
         [Header("Guard")]
         [SerializeField, Range(0f, 360f)] private float guardAngle = DEFAULT_GUARD_ANGLE;
         [SerializeField, Min(0f)] private float guardBreakDurationSeconds = 1.5f;
@@ -29,19 +34,20 @@ namespace SoulsLike.Entities.Combat
 
         private Entity _entity;
         private IHealthComponent _health;
+        
+        //todo: why don't use Getters with private set to reduce space of states code in this class
         private float _currentPoise;
         private float _currentStance;
-        private float _poiseRecoveryDelayRemaining;
-        private float _guardBreakRemaining;
-        private float _criticalOpportunityRemaining;
+        private float _poiseRecoveryDelayRemaining;//todo: replace with itimer 
+        private float _guardBreakRemaining;//todo: replace with itimer 
+        private float _criticalOpportunityRemaining;//todo: replace with itimer 
         private bool _isBlocking;
         private bool _isParryWindowActive;
         private bool _isHyperArmorActive;
         private float _hyperArmorPoiseBonus;
         private bool _canBeInterrupted = true;
 
-        public event Action<MeleeHitResult> OnHitResolved;
-
+        
         public bool IsBlocking => _isBlocking;
         public bool IsParryWindowActive => _isParryWindowActive;
         public bool IsGuardBroken => _guardBreakRemaining > 0f;
@@ -49,12 +55,10 @@ namespace SoulsLike.Entities.Combat
         public bool IsInCriticalState { get; private set; }
         public bool HasCriticalOpportunity { get; private set; }
         public bool IsParryStunned { get; private set; }
-        public bool CanBeInterrupted => _canBeInterrupted;
         public float CurrentPoise => _currentPoise;
-        public float CurrentStance => _currentStance;
 
         [Inject]
-        public void Construct(Entity entity, IHealthComponent health)
+        public void Construct(Entity entity, IHealthComponent health)//todo: direct access for IHealthComponent .not modular.. investigate if axis of change is the same 
         {
             _entity = entity;
             _health = health;
@@ -64,7 +68,8 @@ namespace SoulsLike.Entities.Combat
         {
             _currentPoise = maxPoise;
             _currentStance = maxStance;
-            _entity.RegisterComponent(this);
+            _entity.RegisterComponent(this);//todo: can we inject CombatDefenseComponent while building binding in vcontainer layer 
+                //todo: this gives more modularity for reusing this component for test
         }
 
         public void Dispose()
@@ -72,8 +77,10 @@ namespace SoulsLike.Entities.Combat
             _entity.UnRegisterComponent(this);
         }
 
+        //todo: rename - follow crying architecture rule 
         public void SetBlocking(bool isBlocking)
         {
+            //todo:revisit this not readable condition
             _isBlocking = isBlocking
                 && !IsGuardBroken
                 && !HasCriticalOpportunity
@@ -94,7 +101,7 @@ namespace SoulsLike.Entities.Combat
         {
             _isHyperArmorActive = isActive;
             _hyperArmorPoiseBonus = isActive ? Mathf.Max(0f, poiseBonus) : 0f;
-            _canBeInterrupted = isActive ? canBeInterrupted : true;
+            _canBeInterrupted = !isActive || canBeInterrupted;
         }
 
         public void SetHitReaction(bool isActive)
@@ -152,12 +159,14 @@ namespace SoulsLike.Entities.Combat
                 return true;
             }
 
-            return Vector3.Angle(transform.forward, toAttacker) <= guardAngle * 0.5f;
+            return Vector3.Angle(transform.forward, toAttacker) <= guardAngle * 0.5f;//todo: magic number. made local const
         }
 
-        public bool ApplyStanceDamage(float damage)
+    
+        public bool TryApplyStanceDamage(float damage)
         {
-            if (damage <= 0f || maxStance <= 0f)
+            AssertDamage(damage);
+            if (maxStance <= 0f) 
             {
                 return false;
             }
@@ -174,7 +183,9 @@ namespace SoulsLike.Entities.Combat
 
         public bool ApplyPoiseDamage(float damage)
         {
-            if (damage <= 0f || maxPoise <= 0f || !_canBeInterrupted)
+            AssertDamage(damage);
+
+            if (maxPoise <= 0f || !_canBeInterrupted)
             {
                 return false;
             }
@@ -199,6 +210,8 @@ namespace SoulsLike.Entities.Combat
 
         public void TickRecovery(float deltaTime)
         {
+            //todo: deltaTime - what must happen that delta time can be <=0. delta time can be 0 if timescale == 0. in this case make it more explicit
+            //todo: otherwise if deltaTime can be <=0 - make assertation . don't make noise in core logic condition 
             if (deltaTime <= 0f || !_health.Stats.IsAlive)
             {
                 return;
@@ -229,9 +242,7 @@ namespace SoulsLike.Entities.Combat
 
             if (_poiseRecoveryDelayRemaining > 0f)
             {
-                _poiseRecoveryDelayRemaining = Mathf.Max(
-                    0f,
-                    _poiseRecoveryDelayRemaining - deltaTime);
+                _poiseRecoveryDelayRemaining = Mathf.Max(0f, _poiseRecoveryDelayRemaining - deltaTime);
                 return;
             }
 
@@ -251,9 +262,17 @@ namespace SoulsLike.Entities.Combat
             _guardBreakRemaining = 0f;
         }
 
+        //todo: strange logic here - why this class contains this event action unless it hides ResolveMeleeHitCommand
         public void PublishHitResolved(in MeleeHitResult result)
         {
             OnHitResolved?.Invoke(result);
+        }
+        
+        private void AssertDamage(float damage)
+        {
+            Debug.Assert(damage <= 0, $"damage({damage}) can not equals 0 or below 0");
+            //todo: decide throw exception or just use assertation - Fast Fall 
+            //todo: remove this assert - rework damage - dmg is 0 when we have iframes - it is not clear here
         }
     }
 }

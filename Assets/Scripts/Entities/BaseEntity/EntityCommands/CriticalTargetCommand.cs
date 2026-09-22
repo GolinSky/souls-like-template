@@ -2,7 +2,6 @@ using SoulsLike.Entities.Character.Components.Health;
 using SoulsLike.Entities.Character.Components.Equipment;
 using SoulsLike.Entities.Combat;
 using SoulsLike.Entities.Enemy;
-using SoulsLike.Items;
 using UnityEngine;
 
 namespace SoulsLike.Entities.BaseEntity.EntityCommands

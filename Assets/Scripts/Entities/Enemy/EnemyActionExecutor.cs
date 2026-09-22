@@ -17,24 +17,29 @@ namespace SoulsLike.Entities.Enemy
         private const float TURN_45_DURATION_SECONDS = 0.6667f;
         private const float TURN_90_AND_180_DURATION_SECONDS = 1f;
         private const float TURN_RETRY_DELAY_SECONDS = 0.35f;
-        private static readonly int SPEED = Animator.StringToHash("Speed");
-        private static readonly int MOVE_X = Animator.StringToHash("MoveX");
-        private static readonly int MOVE_Y = Animator.StringToHash("MoveY");
-        private static readonly int HIT_FRONT_TRIGGER = Animator.StringToHash("HitFront");
-        private static readonly int HIT_BACK_TRIGGER = Animator.StringToHash("HitBack");
-        private static readonly int HIT_LEFT_TRIGGER = Animator.StringToHash("HitLeft");
-        private static readonly int HIT_RIGHT_TRIGGER = Animator.StringToHash("HitRight");
-        private static readonly int BLOCKED_TRIGGER = Animator.StringToHash("Blocked");
-        private static readonly int GUARD_BROKEN_TRIGGER = Animator.StringToHash("GuardBroken");
-        private static readonly int PARRIED_TRIGGER = Animator.StringToHash("Parried");
-        private static readonly int POISE_STAGGERED_TRIGGER = Animator.StringToHash("PoiseStaggered");
-        private static readonly int STANCE_BROKEN_TRIGGER = Animator.StringToHash("StanceBroken");
-        private static readonly int CRITICAL_HIT_ONE_HAND_TRIGGER = Animator.StringToHash("CriticalHitOneHand");
-        private static readonly int CRITICAL_HIT_ONE_HAND_DIE_TRIGGER = Animator.StringToHash("CriticalHitOneHandDie");
-        private static readonly int CRITICAL_HIT_TWO_HAND_TRIGGER = Animator.StringToHash("CriticalHitTwoHand");
-        private static readonly int CRITICAL_HIT_TWO_HAND_DIE_TRIGGER = Animator.StringToHash("CriticalHitTwoHandDie");
-        private static readonly int GET_UP_TRIGGER = Animator.StringToHash("GetUp");
+        
+        private static readonly int Speed = Animator.StringToHash("Speed");
+        private static readonly int MoveX = Animator.StringToHash("MoveX");
+        private static readonly int MoveY = Animator.StringToHash("MoveY");
+        private static readonly int HitFrontTrigger = Animator.StringToHash("HitFront");
+        private static readonly int HitBackTrigger = Animator.StringToHash("HitBack");
+        private static readonly int HitLeftTrigger = Animator.StringToHash("HitLeft");
+        private static readonly int HitRightTrigger = Animator.StringToHash("HitRight");
+        private static readonly int BlockedTrigger = Animator.StringToHash("Blocked");
+        private static readonly int GuardBrokenTrigger = Animator.StringToHash("GuardBroken");
+        private static readonly int ParriedTrigger = Animator.StringToHash("Parried");
+        private static readonly int PoiseStaggeredTrigger = Animator.StringToHash("PoiseStaggered");
+        private static readonly int StanceBrokenTrigger = Animator.StringToHash("StanceBroken");
+        private static readonly int CriticalHitOneHandTrigger = Animator.StringToHash("CriticalHitOneHand");
+        private static readonly int CriticalHitOneHandDieTrigger = Animator.StringToHash("CriticalHitOneHandDie");
+        private static readonly int CriticalHitTwoHandTrigger = Animator.StringToHash("CriticalHitTwoHand");
+        private static readonly int CriticalHitTwoHandDieTrigger = Animator.StringToHash("CriticalHitTwoHandDie");
+        private static readonly int GetUpTrigger = Animator.StringToHash("GetUp");
 
+        public event System.Action<EnemyMove> ActionStarted;
+        public event System.Action<EnemyMove> ActionCompleted;
+        public event System.Action<EnemyInterruptReason> Interrupted;
+        
         [SerializeField] private Animator animator;
         [SerializeField] private EnemyNavigationMotor motor;
         [SerializeField] private EnemyActor actor;
@@ -77,9 +82,7 @@ namespace SoulsLike.Entities.Enemy
             or EnemyExecutionMode.CriticalVictim
             or EnemyExecutionMode.GetUp
             or EnemyExecutionMode.Death;
-        public event System.Action<EnemyMove> ActionStarted;
-        public event System.Action<EnemyMove> ActionCompleted;
-        public event System.Action<EnemyInterruptReason> Interrupted;
+
 
         public float CurrentTurnSpeed => Phase switch
         {
@@ -118,7 +121,27 @@ namespace SoulsLike.Entities.Enemy
                 actor.Moveset.WeaponId);
             meleeHitbox.OnHitResolved += OnMeleeHitResolved;
             _defense.OnHitResolved += OnDefenseHitResolved;
-            _isInitialized = true;
+            _isInitialized = true;//todo: if we need this - it is bad - get rid of it 
+        }
+        
+        private void OnDestroy()
+        {
+            if (!_isInitialized)
+            {
+                return;
+            }
+
+            Interrupt(EnemyInterruptReason.Despawned);
+            meleeHitbox.OnHitResolved -= OnMeleeHitResolved;
+            _defense.OnHitResolved -= OnDefenseHitResolved;
+        }
+
+        private void OnDisable()
+        {
+            if (_isInitialized)
+            {
+                Interrupt(EnemyInterruptReason.Disabled);
+            }
         }
 
         public bool TryStart(EnemyMove move)
@@ -242,15 +265,15 @@ namespace SoulsLike.Entities.Enemy
             float dt = Time.deltaTime;
             if (dt > 0f)
             {
-                animator.SetFloat(SPEED, planarVelocity.magnitude, 0.12f, dt);
-                animator.SetFloat(MOVE_X, planarVelocity.x, 0.12f, dt);
-                animator.SetFloat(MOVE_Y, planarVelocity.z, 0.12f, dt);
+                animator.SetFloat(Speed, planarVelocity.magnitude, 0.12f, dt);
+                animator.SetFloat(MoveX, planarVelocity.x, 0.12f, dt);
+                animator.SetFloat(MoveY, planarVelocity.z, 0.12f, dt);
             }
             else
             {
-                animator.SetFloat(SPEED, planarVelocity.magnitude);
-                animator.SetFloat(MOVE_X, planarVelocity.x);
-                animator.SetFloat(MOVE_Y, planarVelocity.z);
+                animator.SetFloat(Speed, planarVelocity.magnitude);
+                animator.SetFloat(MoveX, planarVelocity.x);
+                animator.SetFloat(MoveY, planarVelocity.z);
             }
         }
 
@@ -488,7 +511,7 @@ namespace SoulsLike.Entities.Enemy
             else
             {
                 _recoveryRequested = true;
-                animator.SetTrigger(GET_UP_TRIGGER);
+                animator.SetTrigger(GetUpTrigger);
             }
         }
 
@@ -682,22 +705,23 @@ namespace SoulsLike.Entities.Enemy
             return handMode switch
             {
                 HandMode.OneHanded => lethal
-                    ? CRITICAL_HIT_ONE_HAND_DIE_TRIGGER
-                    : CRITICAL_HIT_ONE_HAND_TRIGGER,
+                    ? CriticalHitOneHandDieTrigger
+                    : CriticalHitOneHandTrigger,
                 HandMode.TwoHanded => lethal
-                    ? CRITICAL_HIT_TWO_HAND_DIE_TRIGGER
-                    : CRITICAL_HIT_TWO_HAND_TRIGGER,
-                _ => throw new System.ArgumentOutOfRangeException(nameof(handMode), handMode, null)
+                    ? CriticalHitTwoHandDieTrigger
+                    : CriticalHitTwoHandTrigger,
+                _ => throw new System.ArgumentOutOfRangeException(nameof(handMode), handMode, null)//todo:handMode is only using to throw exception. remove handmode args from here and outer methods 
             };
         }
 
         private void ResetCriticalTriggers()
         {
-            animator.ResetTrigger(CRITICAL_HIT_ONE_HAND_TRIGGER);
-            animator.ResetTrigger(CRITICAL_HIT_ONE_HAND_DIE_TRIGGER);
-            animator.ResetTrigger(CRITICAL_HIT_TWO_HAND_TRIGGER);
-            animator.ResetTrigger(CRITICAL_HIT_TWO_HAND_DIE_TRIGGER);
-            animator.ResetTrigger(GET_UP_TRIGGER);
+            //todo: reset triggers means we have poor animator state machine architecture in animator mecanium. investigate
+            animator.ResetTrigger(CriticalHitOneHandTrigger);
+            animator.ResetTrigger(CriticalHitOneHandDieTrigger);
+            animator.ResetTrigger(CriticalHitTwoHandTrigger);
+            animator.ResetTrigger(CriticalHitTwoHandDieTrigger);
+            animator.ResetTrigger(GetUpTrigger);
         }
 
         private void OnMeleeHitResolved(MeleeHitResult result)
@@ -742,47 +766,27 @@ namespace SoulsLike.Entities.Enemy
                 _ => DefenderReaction.None
             };
 
-        private enum DefenderReaction { None, Authored, Forced }
+        private enum DefenderReaction { None, Authored, Forced }//todo: why enum declaration is placed in the middle of the class???
 
         private static int GetHitTrigger(in MeleeHitResult result)
         {
             return result.Type switch
             {
-                MeleeHitResultType.Blocked => BLOCKED_TRIGGER,
-                MeleeHitResultType.GuardBroken => GUARD_BROKEN_TRIGGER,
-                MeleeHitResultType.Parried => PARRIED_TRIGGER,
-                MeleeHitResultType.PoiseStaggered => POISE_STAGGERED_TRIGGER,
-                MeleeHitResultType.StanceBroken => STANCE_BROKEN_TRIGGER,
+                MeleeHitResultType.Blocked => BlockedTrigger,
+                MeleeHitResultType.GuardBroken => GuardBrokenTrigger,
+                MeleeHitResultType.Parried => ParriedTrigger,
+                MeleeHitResultType.PoiseStaggered => PoiseStaggeredTrigger,
+                MeleeHitResultType.StanceBroken => StanceBrokenTrigger,
                 _ => result.Direction switch
                 {
-                    HitDirection.Front => HIT_FRONT_TRIGGER,
-                    HitDirection.Back => HIT_BACK_TRIGGER,
-                    HitDirection.Left => HIT_LEFT_TRIGGER,
-                    HitDirection.Right => HIT_RIGHT_TRIGGER,
+                    HitDirection.Front => HitFrontTrigger,
+                    HitDirection.Back => HitBackTrigger,
+                    HitDirection.Left => HitLeftTrigger,
+                    HitDirection.Right => HitRightTrigger,
                     _ => throw new System.ArgumentOutOfRangeException(
                         nameof(result.Direction), result.Direction, null)
                 }
             };
-        }
-
-        private void OnDestroy()
-        {
-            if (!_isInitialized)
-            {
-                return;
-            }
-
-            Interrupt(EnemyInterruptReason.Despawned);
-            meleeHitbox.OnHitResolved -= OnMeleeHitResolved;
-            _defense.OnHitResolved -= OnDefenseHitResolved;
-        }
-
-        private void OnDisable()
-        {
-            if (_isInitialized)
-            {
-                Interrupt(EnemyInterruptReason.Disabled);
-            }
         }
     }
 }
