@@ -67,18 +67,5 @@ namespace SoulsLike.Items
             scaling,
             skillName,
             skillFocusCost);
-
-        public void ValidateDefinition()
-        {
-            if (itemId == ItemId.None)
-            {
-                throw new InvalidOperationException("Weapon definition requires a non-None ItemId.");
-            }
-
-            if (attackSfx == null)
-            {
-                throw new InvalidOperationException($"Weapon '{itemId}' requires attack SFX.");
-            }
-        }
     }
 }

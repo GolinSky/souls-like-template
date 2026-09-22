@@ -1,0 +1,12 @@
+[
+  "{\"timestamp\":\"2026-09-14T11:51:22.593449Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"unknown feature key in config: rmcp_client\"},\"target\":\"codex_features\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.609033Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"unknown feature key in config: rmcp_client\"},\"target\":\"codex_features\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.620783Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"unknown feature key in config: rmcp_client\"},\"target\":\"codex_features\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.630492Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"unknown feature key in config: rmcp_client\"},\"target\":\"codex_features\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.632049Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"ignoring interface.defaultPrompt: maximum of 3 prompts is supported\",\"path\":\"file:///C:/Users/golin/.codex/plugins/cache/agy-plugin-codex/agy/1.3.0/.codex-plugin/plugin.json\"},\"target\":\"codex_core_plugins::manifest\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.634464Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"unknown feature key in config: rmcp_client\"},\"target\":\"codex_features\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.641540Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"ignoring interface.defaultPrompt: maximum of 3 prompts is supported\",\"path\":\"file:///C:/Users/golin/.codex/plugins/cache/agy-plugin-codex/agy/1.3.0/.codex-plugin/plugin.json\"},\"target\":\"codex_core_plugins::manifest\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.643269Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"unknown feature key in config: rmcp_client\"},\"target\":\"codex_features\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.659412Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/\"},\"target\":\"codex_skills::interface\"}\n",
+  "{\"timestamp\":\"2026-09-14T11:51:22.659457Z\",\"level\":\"WARN\",\"fields\":{\"message\":\"ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/\"},\"target\":\"codex_skills::interface\"}\n"
+]

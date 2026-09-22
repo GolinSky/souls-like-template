@@ -30,6 +30,10 @@ namespace SoulsLike.Ui.Equipment
         [SerializeField] private List<EquipmentSlotUI> quickItemSlots = new();
 
         [Header("Zone 3: Item Inspector Card")]
+        [SerializeField] private LoreCardUi loreCardUi;
+        [SerializeField] private TMP_Text selectedSlotText;
+        [SerializeField] private TMP_Text selectedItemNameText;
+        [SerializeField] private TMP_Text loadoutSummaryText;
         [SerializeField] private Image inspectorItemIcon;
         [SerializeField] private TMP_Text inspectorItemName;
         [SerializeField] private TMP_Text inspectorItemCategory;
@@ -66,27 +70,31 @@ namespace SoulsLike.Ui.Equipment
 
         public void AssignPresenter(IEquipmentPresenter presenter)
         {
-            _presenter = presenter ?? throw new ArgumentNullException(nameof(presenter));
+            _presenter = presenter;
         }
 
         public override void Show()
         {
             base.Show();
-            _slotsById[EquipmentSlotId.RightHand1].Select();
+            (_selectedSlot != null
+                ? _selectedSlot
+                : _slotsById[EquipmentSlotId.RightHand1]).Select();
         }
 
         public void RefreshSlots(IReadOnlyDictionary<EquipmentSlotId, InventoryItemViewData> items)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
-
+            int equippedCount = 0;
             foreach (KeyValuePair<EquipmentSlotId, EquipmentSlotUI> pair in _slotsById)
             {
                 items.TryGetValue(pair.Key, out InventoryItemViewData item);
                 pair.Value.Bind(pair.Key, item);
+                if (item != null)
+                {
+                    equippedCount++;
+                }
             }
+
+            loadoutSummaryText.text = $"{equippedCount} equipped · 28 slots";
         }
 
         public void DisplaySlot(
@@ -94,10 +102,15 @@ namespace SoulsLike.Ui.Equipment
             InventoryItemViewData item,
             CharacterAttributeStats attributes)
         {
+            string slotName = EquipmentSlotCatalog.GetDisplayName(slotId);
+            selectedSlotText.text = slotName;
+            selectedItemNameText.text = item == null ? "Empty slot" : item.DisplayName;
+
             if (item == null)
             {
+                loreCardUi.DisplayEmpty(slotName, _slotsById[slotId].EmptyIcon);
                 inspectorItemIcon.enabled = false;
-                inspectorItemName.text = $"[Empty {EquipmentSlotCatalog.GetDisplayName(slotId)}]";
+                inspectorItemName.text = $"[Empty {slotName}]";
                 inspectorItemCategory.text = "-";
                 inspectorSkillName.text = "-";
                 inspectorSkillFpCost.text = "-";
@@ -112,6 +125,7 @@ namespace SoulsLike.Ui.Equipment
                 return;
             }
 
+            loreCardUi.Display(item);
             ItemStatSnapshot stats = item.Stats;
             inspectorItemIcon.sprite = item.Icon;
             inspectorItemIcon.enabled = item.Icon != null;
@@ -141,11 +155,6 @@ namespace SoulsLike.Ui.Equipment
 
         public void ShowPicker(IReadOnlyList<InventoryItemViewData> candidates)
         {
-            if (candidates == null)
-            {
-                throw new ArgumentNullException(nameof(candidates));
-            }
-
             ClearPicker();
             inventoryPickerOverlay.SetActive(true);
             comparisonPanel.SetActive(true);
@@ -186,13 +195,12 @@ namespace SoulsLike.Ui.Equipment
         protected override void Awake()
         {
             base.Awake();
-            ValidateReferences();
             BuildSlotMap();
             ConfigureSlotNavigation();
             inventoryPickerOverlay.SetActive(false);
             comparisonPanel.SetActive(false);
             screenTitleText.text = "EQUIPMENT";
-            actionPromptsText.text = "Select   Back   Remove   Switch Display";
+            actionPromptsText.text = "Select   Back   Unequip";
         }
 
         private void OnDestroy()
@@ -284,23 +292,23 @@ namespace SoulsLike.Ui.Equipment
         private void HandleSlotFocused(EquipmentSlotUI slot)
         {
             _selectedSlot = slot;
-            RequirePresenter().FocusSlot(slot.SlotId);
+            _presenter.FocusSlot(slot.SlotId);
         }
 
         private void HandleSlotSubmitted(EquipmentSlotUI slot)
         {
             _selectedSlot = slot;
-            RequirePresenter().SubmitSlot(slot.SlotId);
+            _presenter.SubmitSlot(slot.SlotId);
         }
 
         private void HandleCandidateFocused(InventorySlotUI slot)
         {
-            RequirePresenter().FocusCandidate(slot.CurrentItem.EntryId);
+            _presenter.FocusCandidate(slot.CurrentItem.EntryId);
         }
 
         private void HandleCandidateSubmitted(InventorySlotUI slot)
         {
-            RequirePresenter().SubmitCandidate(slot.CurrentItem.EntryId);
+            _presenter.SubmitCandidate(slot.CurrentItem.EntryId);
         }
 
         private void ClearPicker()
@@ -313,39 +321,6 @@ namespace SoulsLike.Ui.Equipment
             }
 
             _pickerSlots.Clear();
-        }
-
-        private IEquipmentPresenter RequirePresenter()
-        {
-            return _presenter ?? throw new InvalidOperationException(
-                $"{nameof(EquipmentUi)} requires a presenter before use.");
-        }
-
-        private void ValidateReferences()
-        {
-            if (screenTitleText == null
-                || playerSummaryText == null
-                || equipmentGridContainer == null
-                || inventoryPickerOverlay == null
-                || inventoryPickerGridContainer == null
-                || comparisonPanel == null
-                || inventoryPickerSlotPrefab == null
-                || characterStatsUi == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(EquipmentUi)} '{name}' has missing structural references.");
-            }
-
-            if (rightHandSlots.Count != 3
-                || leftHandSlots.Count != 3
-                || ammoSlots.Count != 4
-                || armorSlots.Count != 4
-                || talismanSlots.Count != 4
-                || quickItemSlots.Count != 10)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(EquipmentUi)} '{name}' has an invalid equipment-slot topology.");
-            }
         }
 
         private static string FormatScaling(SoulsLike.Items.ScalingGrade grade)

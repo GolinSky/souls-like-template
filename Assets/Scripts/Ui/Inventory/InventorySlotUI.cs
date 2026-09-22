@@ -39,25 +39,9 @@ namespace SoulsLike.Ui.Inventory
         public event Action<InventorySlotUI> SlotSelected;
         public event Action<InventorySlotUI> SlotSubmitted;
 
-        private void Awake()
-        {
-            if (backgroundBox == null
-                || focusFrame == null
-                || equippedBadgeBox == null
-                || unmetRequirementOverlay == null
-                || itemIcon == null
-                || quantityText == null
-                || equippedBadgeText == null
-                || ashOfWarIcon == null)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(InventorySlotUI)} '{name}' has missing serialized references.");
-            }
-        }
-
         public void Bind(InventoryItemViewData item)
         {
-            CurrentItem = item ?? throw new ArgumentNullException(nameof(item));
+            CurrentItem = item;
 
             itemIcon.sprite = item.Icon;
             itemIcon.enabled = item.Icon != null;
@@ -91,11 +75,6 @@ namespace SoulsLike.Ui.Inventory
 
         public void Select()
         {
-            if (EventSystem.current == null)
-            {
-                throw new InvalidOperationException("Inventory UI requires an active EventSystem.");
-            }
-
             EventSystem.current.SetSelectedGameObject(gameObject);
         }
 

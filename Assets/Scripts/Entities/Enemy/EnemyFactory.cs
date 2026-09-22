@@ -1,172 +1,80 @@
 using System;
-using SoulsLike.Components.Visibility;
-using SoulsLike.Entities.BaseEntity;
-using SoulsLike.Entities.BaseEntity.EntityCommands;
-using SoulsLike.Entities.Character;
-using SoulsLike.Entities.Character.Components.Health;
-using SoulsLike.Entities.Combat;
-using SoulsLike.Extensions;
-using SoulsLike.Factory;
-using SoulsLike.Items;
-using SoulsLike.Services.IdGeneration;
 using SoulsLike.Services.Navigation;
-using SoulsLike.Entities.Ladder;
+using SoulsLike.Services.VContainer;
 using UnityEngine;
 using UnityEngine.AI;
-using VContainer;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Enemy
 {
-    public sealed class EnemyFactory : BaseFactory
+    public sealed class EnemyFactory
     {
+        private readonly LifetimeScope _parentScope;
+        private readonly EnemyScopeInstaller _enemyScopePrefab;
         private readonly INavMeshService _navMeshService;
 
-        public EnemyFactory(IObjectResolver resolver, INavMeshService navMeshService)
-            : base(resolver)
+        public EnemyFactory(
+            LifetimeScope parentScope,
+            EnemyScopeInstaller enemyScopePrefab,
+            INavMeshService navMeshService)
         {
+            _parentScope = parentScope;
+            _enemyScopePrefab = enemyScopePrefab;
             _navMeshService = navMeshService;
         }
 
-        public EnemyActor CreateEnemy(EnemySpawnPoint spawn, EnemyGroupCoordinator groupCoordinator)
+        public EnemyActor CreateEnemy(
+            EnemySpawner spawn,
+            EnemyCatalog.Definition definition,
+            EnemyGroupCoordinator groupCoordinator)
         {
-            EnemyActor prefab = spawn.EnemyPrefab;
-            if (prefab == null)
-            {
-                throw new InvalidOperationException(
-                    $"Enemy spawn point '{spawn.name}' requires an enemy prefab.");
-            }
+            return CreateEnemy(
+                spawn.transform.position,
+                spawn.transform.rotation,
+                definition,
+                groupCoordinator,
+                spawn.BuildPatrolPositions(),
+                spawn.RandomSeedOffset,
+                spawn.name);
+        }
 
+        public EnemyActor CreateEnemy(
+            Vector3 position,
+            Quaternion rotation,
+            EnemyCatalog.Definition definition,
+            EnemyGroupCoordinator groupCoordinator,
+            Vector3[] patrolPositions = null,
+            int randomSeedOffset = 0,
+            string spawnName = null)
+        {
+            EnemyActor prefab = definition.EnemyPrefab;
             NavMeshAgent prefabAgent = prefab.NavMeshAgent;
             NavMeshQueryFilter queryFilter = new()
             {
                 agentTypeID = prefabAgent.agentTypeID,
                 areaMask = prefabAgent.areaMask
             };
-            bool hasSpawnPosition = _navMeshService.TrySamplePosition(
-                spawn.transform.position,
-                prefabAgent.radius,
-                queryFilter,
-                out NavMeshHit spawnHit);
+            bool hasSpawnPosition = _navMeshService.TrySamplePosition(position, prefabAgent.radius, queryFilter, out NavMeshHit spawnHit);
             if (!hasSpawnPosition)
             {
-                hasSpawnPosition = _navMeshService.TrySampleNearestPosition(
-                    spawn.transform.position,
-                    queryFilter,
-                    out spawnHit);
+                hasSpawnPosition = _navMeshService.TrySampleNearestPosition(position, queryFilter, out spawnHit);
             }
 
             if (!hasSpawnPosition)
             {
-                throw new InvalidOperationException(
-                    $"No compatible baked NavMesh could be found for enemy spawn point "
-                    + $"'{spawn.name}'.");
+                string locationLabel = string.IsNullOrEmpty(spawnName) ? position.ToString() : $"'{spawnName}'";
+                throw new InvalidOperationException($"No compatible baked NavMesh could be found for enemy spawn point {locationLabel}.");
             }
 
-            EnemyActivationTrigger[] activationTriggers =
-                prefab.GetComponentsInChildren<EnemyActivationTrigger>(true);
-            if (activationTriggers.Length > 1)
-            {
-                throw new InvalidOperationException(
-                    $"Enemy prefab '{prefab.name}' may contain only one {nameof(EnemyActivationTrigger)}.");
-            }
+            EnemySpawnData spawnData = new(spawnHit.position, rotation, patrolPositions ?? Array.Empty<Vector3>(), randomSeedOffset);
+            EnemyScopeInstaller scope = _parentScope.CreateChildFromPrefab(_enemyScopePrefab);
 
-            bool hasActivationTrigger = activationTriggers.Length == 1;
-            long entityId = RootScope.Container
-                .Resolve<IUniqueIdGenerator>()
-                .GenerateUniqueId();
-
-            LifetimeScope scope = RootScope.CreateChild(builder =>
-            {
-                Func<IObjectResolver, Transform> actorTransform =
-                    resolver => resolver.Resolve<EnemyActor>().transform;
-
-                builder.RegisterEntitySystemExt(EntityType.Enemy, entityId);
-                builder.RegisterComponentInNewPrefab(prefab, Lifetime.Scoped)
-                    .UnderTransform(resolver => resolver.Resolve<LifetimeScope>().transform)
-                    .WithParameter(spawnHit.position)
-                    .WithParameter(spawn.transform.rotation)
-                    .WithParameter(spawn.BuildPatrolPositions())
-                    .WithParameter(spawn.RandomSeedOffset)
-                    .AsSelf();
-                builder.RegisterComponentInHierarchy<ViewEntity>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.RegisterComponentInHierarchy<TargetLockNode>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf();
-
-                builder.RegisterInstance(spawn.HealthData).AsImplementedInterfaces().AsSelf();
-                builder.RegisterInstance(spawn.BehaviourProfile);
-                builder.RegisterInstance(spawn.Moveset);
-                builder.RegisterInstance(groupCoordinator);
-                    
-                builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
-                builder.RegisterComponentInHierarchy<HealthComponent>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.RegisterComponentInHierarchy<CombatDefenseComponent>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.RegisterComponentInHierarchy<VisibilityComponent>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.RegisterComponentInHierarchy<EnemyHealthUiComponent>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-
-                builder.RegisterScriptableObject<WeaponDatabase>();
-
-                builder.RegisterComponentInHierarchy<EnemyNavigationMotor>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.RegisterComponentInHierarchy<LadderClimber>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.RegisterComponentInHierarchy<EnemyActionExecutor>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.RegisterComponentInHierarchy<MeleeHitboxController>()
-                    .UnderTransform(actorTransform)
-                    .AsSelf();
-                if (hasActivationTrigger)
-                {
-                    builder.RegisterComponentInHierarchy<EnemyActivationTrigger>()
-                        .UnderTransform(actorTransform)
-                        .AsSelf();
-                }
-
-                builder.Register<ApplyDamageCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<ResolveMeleeHitCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<CriticalTargetCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<TargetingCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<EnemyPerception>(Lifetime.Singleton).AsSelf();
-                builder.Register<EnemyRandomStreams>(Lifetime.Singleton).AsSelf();
-                builder.Register<EnemyActionSelector>(Lifetime.Singleton).AsSelf();
-                builder.Register<EnemyController>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-            }, $"{prefab.name}_LifetimeRoot");
-
-            EnemyActor actor = scope.Container.Resolve<EnemyActor>();
+            EnemyActor actor = UnityEngine.Object.Instantiate(prefab, scope.transform, true);
             actor.name = $"{prefab.name}_Instance";
-            actor.AttachLifetimeRoot(scope.gameObject);
+            actor.StageSpawn(spawnData);
+            scope.ConfigureEnemy(definition, groupCoordinator);
+            scope.gameObject.SetActive(true);
+            scope.BuildOnce();
             return actor;
         }
     }

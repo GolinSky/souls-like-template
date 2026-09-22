@@ -1,23 +1,23 @@
 using System.Collections.Generic;
 using SoulsLike.Entities.BaseEntity;
 using SoulsLike.Items;
-using SoulsLike.Ui.PlayerHud;
-using TMPro;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace SoulsLike.Editor
 {
     public static class GroundItemPrefabBuilder
     {
-        private const string SHADER_PATH = "Assets/Shaders/GroundItemAdditive.shader";
+        private const string SHADER_PATH = "Assets/Art/Shaders/GroundItemAdditive.shader";
         private const string MATERIAL_FOLDER = "Assets/Art/Materials/GroundItems";
-        private const string STRAND_MATERIAL_PATH = MATERIAL_FOLDER + "/GroundItemGold.mat";
-        private const string GLOW_MATERIAL_PATH = MATERIAL_FOLDER + "/GroundItemGroundGlow.mat";
-        private const string PREFAB_PATH = "Assets/Prefabs/Item/GroundItem.prefab";
-        private const string LEGACY_PREFAB_PATH = "Assets/Prefabs/Item/Sphere.prefab";
-        private const string HUD_PREFAB_PATH = "Assets/Prefabs/Ui/PlayerHud/PlayerHudUi.prefab";
+        private const string WHITE_MATERIAL_PATH = MATERIAL_FOLDER + "/GroundItemWhite.mat";
+        private const string WHITE_GLOW_MATERIAL_PATH = MATERIAL_FOLDER + "/GroundItemWhiteGlow.mat";
+        private const string BLUE_MATERIAL_PATH = MATERIAL_FOLDER + "/GroundItemBlue.mat";
+        private const string BLUE_GLOW_MATERIAL_PATH = MATERIAL_FOLDER + "/GroundItemBlueGlow.mat";
+        private const string GOLD_MATERIAL_PATH = MATERIAL_FOLDER + "/GroundItemGold.mat";
+        private const string GOLD_GLOW_MATERIAL_PATH = MATERIAL_FOLDER + "/GroundItemGroundGlow.mat";
+        private const string PREFAB_PATH = "Assets/Prefabs/Models/Item/GroundItem.prefab";
+        private const string LEGACY_PREFAB_PATH = "Assets/Prefabs/Models/Item/Sphere.prefab";
 
         [MenuItem("Tools/SoulsLike/Build Ground Item")]
         public static void Build()
@@ -26,38 +26,77 @@ namespace SoulsLike.Editor
             EnsureFolder("Assets/Art/Materials", "GroundItems");
 
             Shader shader = AssetDatabase.LoadAssetAtPath<Shader>(SHADER_PATH);
-            Material strandMaterial = CreateMaterial(
-                STRAND_MATERIAL_PATH,
+            if (shader == null)
+            {
+                Debug.LogError($"GroundItemAdditive shader not found at {SHADER_PATH}");
+                return;
+            }
+
+            Material whiteMaterial = CreateMaterial(
+                WHITE_MATERIAL_PATH,
+                shader,
+                new Color(1.4f, 1.5f, 1.65f, 0.95f),
+                5.0f,
+                0f,
+                0.008f);
+
+            Material whiteGlowMaterial = CreateMaterial(
+                WHITE_GLOW_MATERIAL_PATH,
+                shader,
+                new Color(1.2f, 1.3f, 1.45f, 0.55f),
+                2.5f,
+                1f,
+                0f);
+
+            CreateMaterial(
+                BLUE_MATERIAL_PATH,
+                shader,
+                new Color(0.4f, 0.8f, 1.8f, 0.95f),
+                5.0f,
+                0f,
+                0.008f);
+
+            CreateMaterial(
+                BLUE_GLOW_MATERIAL_PATH,
+                shader,
+                new Color(0.35f, 0.65f, 1.5f, 0.55f),
+                2.5f,
+                1f,
+                0f);
+
+            CreateMaterial(
+                GOLD_MATERIAL_PATH,
                 shader,
                 new Color(1.35f, 0.72f, 0.14f, 0.9f),
-                5.5f,
-                0f);
-            Material glowMaterial = CreateMaterial(
-                GLOW_MATERIAL_PATH,
+                5.0f,
+                0f,
+                0.008f);
+
+            CreateMaterial(
+                GOLD_GLOW_MATERIAL_PATH,
                 shader,
                 new Color(1.1f, 0.55f, 0.08f, 0.55f),
-                3.5f,
-                1f);
+                2.5f,
+                1f,
+                0f);
 
-            BuildGroundItemPrefab(strandMaterial, glowMaterial);
+            BuildGroundItemPrefab(whiteMaterial, whiteGlowMaterial);
             BuildLegacyPrefabVariant();
-            AddAcquisitionPanelToHud();
             AssetDatabase.SaveAssets();
+            Debug.Log("GroundItem and Sphere prefabs built successfully.");
         }
 
         private static void BuildLegacyPrefabVariant()
         {
-            GameObject groundItemPrefab =
-                AssetDatabase.LoadAssetAtPath<GameObject>(PREFAB_PATH);
-            GameObject instance =
-                (GameObject)PrefabUtility.InstantiatePrefab(groundItemPrefab);
+            GameObject groundItemPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PREFAB_PATH);
+            GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(groundItemPrefab);
             instance.name = "Sphere";
             PrefabUtility.SaveAsPrefabAsset(instance, LEGACY_PREFAB_PATH);
             Object.DestroyImmediate(instance);
         }
 
         private static void BuildGroundItemPrefab(
-            Material strandMaterial,
+            Material mainMaterial,
             Material glowMaterial)
         {
             var root = new GameObject("GroundItem");
@@ -70,62 +109,42 @@ namespace SoulsLike.Editor
             root.AddComponent<ViewEntity>();
             Transform anchor = CreateChild(root.transform, "InteractionAnchor");
             anchor.localPosition = new Vector3(0f, 0.45f, 0f);
+
             Transform visualRoot = CreateChild(root.transform, "VFX");
             GroundItemVfx vfx = visualRoot.gameObject.AddComponent<GroundItemVfx>();
 
             var renderers = new List<Renderer>();
+
+            // 1. Ground contact glow: subtle circular pool directly on floor
             MeshRenderer groundGlow = CreateGroundGlow(visualRoot, glowMaterial);
             renderers.Add(groundGlow);
 
-            Vector3[][] strandPoints =
-            {
-                new[] { new Vector3(-0.22f, 0.02f, 0.04f), new Vector3(-0.15f, 0.27f, 0.01f), new Vector3(-0.2f, 0.58f, 0.02f), new Vector3(-0.12f, 0.92f, 0f) },
-                new[] { new Vector3(-0.08f, 0.01f, -0.1f), new Vector3(-0.03f, 0.34f, -0.06f), new Vector3(-0.07f, 0.72f, -0.03f), new Vector3(0f, 1.2f, 0f) },
-                new[] { new Vector3(0.05f, 0.01f, 0.08f), new Vector3(0.09f, 0.29f, 0.04f), new Vector3(0.03f, 0.64f, 0.03f), new Vector3(0.12f, 1.03f, 0f) },
-                new[] { new Vector3(0.19f, 0.01f, -0.03f), new Vector3(0.16f, 0.22f, 0f), new Vector3(0.23f, 0.46f, 0.02f), new Vector3(0.18f, 0.77f, 0f) },
-                new[] { new Vector3(-0.01f, 0.02f, 0.2f), new Vector3(0.02f, 0.18f, 0.14f), new Vector3(-0.04f, 0.42f, 0.09f), new Vector3(0.03f, 0.68f, 0.03f) }
-            };
+            // 2. Core glowing point: small intense orb sitting on the ground
+            MeshRenderer corePoint = CreateCorePoint(visualRoot, mainMaterial);
+            renderers.Add(corePoint);
 
-            for (int index = 0; index < strandPoints.Length; index++)
-            {
-                LineRenderer strand = CreateStrand(
-                    visualRoot,
-                    $"SpectralStrand_{index + 1}",
-                    strandMaterial,
-                    strandPoints[index],
-                    0.018f + index * 0.003f);
-                renderers.Add(strand);
-            }
+            // 3. Core soft halo: camera-facing soft billboard glow around the core
+            MeshRenderer coreGlow = CreateCoreGlow(visualRoot, glowMaterial);
+            renderers.Add(coreGlow);
 
-            ParticleSystem upwardMotes = CreateMotes(
-                visualRoot,
-                "UpwardMotes",
-                strandMaterial,
-                false);
-            ParticleSystem orbitMotes = CreateMotes(
-                visualRoot,
-                "OrbitMotes",
-                strandMaterial,
-                true);
-            ParticleSystem pickupFlash = CreatePickupFlash(
-                visualRoot,
-                strandMaterial);
-            renderers.Add(upwardMotes.GetComponent<ParticleSystemRenderer>());
-            renderers.Add(orbitMotes.GetComponent<ParticleSystemRenderer>());
+            // 4. Vertical light beam: thin vertical beam ~0.75m rising from ground, brightest at base
+            LineRenderer verticalBeam = CreateVerticalBeam(visualRoot, mainMaterial);
+            renderers.Add(verticalBeam);
+
+            // 5. Subtle vertical wisp: gentle wavy wisp rising alongside beam
+            LineRenderer verticalWisp = CreateVerticalWisp(visualRoot, mainMaterial);
+            renderers.Add(verticalWisp);
+
+            // 6. Ambient sparkles: a few tiny particles shimmering around the vertical beam
+            ParticleSystem ambientSparkles = CreateAmbientSparkles(visualRoot, glowMaterial);
+            renderers.Add(ambientSparkles.GetComponent<ParticleSystemRenderer>());
+
+            // 7. Pickup flash: clean burst played on collection
+            ParticleSystem pickupFlash = CreatePickupFlash(visualRoot, glowMaterial);
             renderers.Add(pickupFlash.GetComponent<ParticleSystemRenderer>());
 
-            ConfigureGroundItem(
-                groundItem,
-                collider,
-                anchor,
-                vfx);
-            ConfigureVfx(
-                vfx,
-                visualRoot,
-                upwardMotes,
-                orbitMotes,
-                pickupFlash,
-                renderers);
+            ConfigureGroundItem(groundItem, collider, anchor, vfx);
+            ConfigureVfx(vfx, ambientSparkles, pickupFlash, renderers);
 
             PrefabUtility.SaveAsPrefabAsset(root, PREFAB_PATH);
             Object.DestroyImmediate(root);
@@ -141,7 +160,8 @@ namespace SoulsLike.Editor
             glow.transform.SetParent(parent, false);
             glow.transform.localPosition = new Vector3(0f, 0.015f, 0f);
             glow.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-            glow.transform.localScale = new Vector3(1.25f, 1.25f, 1f);
+            glow.transform.localScale = new Vector3(0.32f, 0.32f, 1f);
+
             MeshRenderer renderer = glow.GetComponent<MeshRenderer>();
             renderer.sharedMaterial = material;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -149,70 +169,181 @@ namespace SoulsLike.Editor
             return renderer;
         }
 
-        private static LineRenderer CreateStrand(
+        private static MeshRenderer CreateCorePoint(
             Transform parent,
-            string objectName,
-            Material material,
-            Vector3[] points,
-            float width)
+            Material material)
         {
-            Transform strandTransform = CreateChild(parent, objectName);
-            LineRenderer strand = strandTransform.gameObject.AddComponent<LineRenderer>();
-            strand.useWorldSpace = false;
-            strand.alignment = LineAlignment.View;
-            strand.textureMode = LineTextureMode.Stretch;
-            strand.sharedMaterial = material;
-            strand.positionCount = points.Length;
-            strand.SetPositions(points);
-            strand.startWidth = width;
-            strand.endWidth = width * 0.35f;
-            strand.numCapVertices = 3;
-            strand.numCornerVertices = 3;
-            strand.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            strand.receiveShadows = false;
-            return strand;
+            GameObject core = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            core.name = "CorePoint";
+            Object.DestroyImmediate(core.GetComponent<Collider>());
+            core.transform.SetParent(parent, false);
+            core.transform.localPosition = new Vector3(0f, 0.035f, 0f);
+            core.transform.localScale = new Vector3(0.065f, 0.065f, 0.065f);
+
+            MeshRenderer renderer = core.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            return renderer;
         }
 
-        private static ParticleSystem CreateMotes(
+        private static MeshRenderer CreateCoreGlow(
             Transform parent,
-            string objectName,
-            Material material,
-            bool orbit)
+            Material material)
         {
-            Transform particleTransform = CreateChild(parent, objectName);
-            var particleSystem = particleTransform.gameObject.AddComponent<ParticleSystem>();
+            GameObject halo = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            halo.name = "CoreGlow";
+            Object.DestroyImmediate(halo.GetComponent<Collider>());
+            halo.transform.SetParent(parent, false);
+            halo.transform.localPosition = new Vector3(0f, 0.04f, 0f);
+            halo.transform.localRotation = Quaternion.identity;
+            halo.transform.localScale = new Vector3(0.14f, 0.14f, 1f);
+
+            MeshRenderer renderer = halo.GetComponent<MeshRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
+            return renderer;
+        }
+
+        private static LineRenderer CreateVerticalBeam(
+            Transform parent,
+            Material material)
+        {
+            Transform beamTransform = CreateChild(parent, "VerticalBeam");
+            LineRenderer beam = beamTransform.gameObject.AddComponent<LineRenderer>();
+            beam.useWorldSpace = false;
+            beam.alignment = LineAlignment.View;
+            beam.textureMode = LineTextureMode.Stretch;
+            beam.sharedMaterial = material;
+            beam.positionCount = 2;
+            beam.SetPositions(new[]
+            {
+                new Vector3(0f, 0.02f, 0f),
+                new Vector3(0f, 0.75f, 0f)
+            });
+            beam.startWidth = 0.035f;
+            beam.endWidth = 0.008f;
+
+            var gradient = new Gradient();
+            gradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(Color.white, 0f),
+                    new GradientColorKey(new Color(0.9f, 0.95f, 1f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(1.0f, 0f),
+                    new GradientAlphaKey(0.75f, 0.35f),
+                    new GradientAlphaKey(0.35f, 0.7f),
+                    new GradientAlphaKey(0.0f, 1.0f)
+                });
+            beam.colorGradient = gradient;
+
+            beam.numCapVertices = 3;
+            beam.numCornerVertices = 3;
+            beam.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            beam.receiveShadows = false;
+            return beam;
+        }
+
+        private static LineRenderer CreateVerticalWisp(
+            Transform parent,
+            Material material)
+        {
+            Transform wispTransform = CreateChild(parent, "VerticalWisp");
+            LineRenderer wisp = wispTransform.gameObject.AddComponent<LineRenderer>();
+            wisp.useWorldSpace = false;
+            wisp.alignment = LineAlignment.View;
+            wisp.textureMode = LineTextureMode.Stretch;
+            wisp.sharedMaterial = material;
+            wisp.positionCount = 4;
+            wisp.SetPositions(new[]
+            {
+                new Vector3(0f, 0.02f, 0f),
+                new Vector3(0.006f, 0.22f, 0.002f),
+                new Vector3(-0.005f, 0.44f, -0.002f),
+                new Vector3(0.002f, 0.68f, 0f)
+            });
+            wisp.startWidth = 0.050f;
+            wisp.endWidth = 0.015f;
+
+            var gradient = new Gradient();
+            gradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(Color.white, 0f),
+                    new GradientColorKey(new Color(0.85f, 0.92f, 1f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(0.65f, 0f),
+                    new GradientAlphaKey(0.45f, 0.4f),
+                    new GradientAlphaKey(0.0f, 1.0f)
+                });
+            wisp.colorGradient = gradient;
+
+            wisp.numCapVertices = 3;
+            wisp.numCornerVertices = 3;
+            wisp.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            wisp.receiveShadows = false;
+            return wisp;
+        }
+
+        private static ParticleSystem CreateAmbientSparkles(
+            Transform parent,
+            Material material)
+        {
+            Transform sparklesTransform = CreateChild(parent, "AmbientSparkles");
+            var particleSystem = sparklesTransform.gameObject.AddComponent<ParticleSystem>();
+
             ParticleSystem.MainModule main = particleSystem.main;
             main.loop = true;
             main.playOnAwake = true;
-            main.startLifetime = orbit
-                ? new ParticleSystem.MinMaxCurve(1f, 1.8f)
-                : new ParticleSystem.MinMaxCurve(0.7f, 1.5f);
-            main.startSpeed = orbit
-                ? new ParticleSystem.MinMaxCurve(0.01f, 0.04f)
-                : new ParticleSystem.MinMaxCurve(0.05f, 0.22f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.025f, 0.065f);
+            main.startLifetime = new ParticleSystem.MinMaxCurve(1.5f, 2.5f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.02f, 0.08f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.025f, 0.050f);
             main.startColor = new ParticleSystem.MinMaxGradient(
-                new Color(1f, 0.55f, 0.08f, 0.45f),
-                new Color(1f, 0.92f, 0.35f, 1f));
-            main.maxParticles = orbit ? 24 : 50;
+                new Color(1f, 1f, 1f, 0.95f),
+                new Color(0.85f, 0.92f, 1f, 0.8f));
+            main.maxParticles = 10;
             main.simulationSpace = ParticleSystemSimulationSpace.Local;
 
             ParticleSystem.EmissionModule emission = particleSystem.emission;
-            emission.rateOverTime = orbit ? 11f : 22f;
+            emission.rateOverTime = 5f;
 
             ParticleSystem.ShapeModule shape = particleSystem.shape;
             shape.enabled = true;
-            shape.shapeType = ParticleSystemShapeType.Sphere;
-            shape.radius = orbit ? 0.42f : 0.32f;
-            shape.radiusThickness = orbit ? 1f : 0.5f;
+            shape.shapeType = ParticleSystemShapeType.Box;
+            shape.scale = new Vector3(0.12f, 0.55f, 0.12f);
+            shape.position = new Vector3(0f, 0.32f, 0f);
 
-            if (orbit)
-            {
-                ParticleSystem.VelocityOverLifetimeModule velocity = particleSystem.velocityOverLifetime;
-                velocity.enabled = true;
-                velocity.orbitalY = 1.2f;
-                velocity.radial = -0.08f;
-            }
+            ParticleSystem.ColorOverLifetimeModule colorOverLifetime = particleSystem.colorOverLifetime;
+            colorOverLifetime.enabled = true;
+            var colorGradient = new Gradient();
+            colorGradient.SetKeys(
+                new[]
+                {
+                    new GradientColorKey(Color.white, 0f),
+                    new GradientColorKey(new Color(0.9f, 0.95f, 1f), 1f)
+                },
+                new[]
+                {
+                    new GradientAlphaKey(0f, 0f),
+                    new GradientAlphaKey(1.0f, 0.2f),
+                    new GradientAlphaKey(0.9f, 0.7f),
+                    new GradientAlphaKey(0f, 1.0f)
+                });
+            colorOverLifetime.color = colorGradient;
+
+            ParticleSystem.SizeOverLifetimeModule sizeOverLifetime = particleSystem.sizeOverLifetime;
+            sizeOverLifetime.enabled = true;
+            var sizeCurve = new AnimationCurve();
+            sizeCurve.AddKey(0f, 0.2f);
+            sizeCurve.AddKey(0.45f, 1.0f);
+            sizeCurve.AddKey(1f, 0f);
+            sizeOverLifetime.size = new ParticleSystem.MinMaxCurve(1f, sizeCurve);
 
             ParticleSystemRenderer renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
             renderer.renderMode = ParticleSystemRenderMode.Billboard;
@@ -228,26 +359,30 @@ namespace SoulsLike.Editor
         {
             Transform flashTransform = CreateChild(parent, "PickupFlash");
             var particleSystem = flashTransform.gameObject.AddComponent<ParticleSystem>();
+
             ParticleSystem.MainModule main = particleSystem.main;
             main.loop = false;
             main.playOnAwake = false;
-            main.duration = 0.2f;
+            main.duration = 0.25f;
             main.startLifetime = new ParticleSystem.MinMaxCurve(0.15f, 0.3f);
-            main.startSpeed = new ParticleSystem.MinMaxCurve(0.4f, 1.1f);
-            main.startSize = new ParticleSystem.MinMaxCurve(0.06f, 0.16f);
-            main.startColor = new Color(1f, 0.9f, 0.35f, 1f);
-            main.maxParticles = 20;
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.3f, 0.9f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.03f, 0.08f);
+            main.startColor = new Color(1.2f, 1.3f, 1.5f, 1f);
+            main.maxParticles = 16;
+            main.simulationSpace = ParticleSystemSimulationSpace.Local;
 
             ParticleSystem.EmissionModule emission = particleSystem.emission;
             emission.rateOverTime = 0f;
-            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 18) });
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 14) });
 
             ParticleSystem.ShapeModule shape = particleSystem.shape;
             shape.enabled = true;
             shape.shapeType = ParticleSystemShapeType.Sphere;
-            shape.radius = 0.12f;
+            shape.radius = 0.08f;
+            shape.position = new Vector3(0f, 0.1f, 0f);
 
             ParticleSystemRenderer renderer = particleSystem.GetComponent<ParticleSystemRenderer>();
+            renderer.renderMode = ParticleSystemRenderMode.Billboard;
             renderer.sharedMaterial = material;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             renderer.receiveShadows = false;
@@ -261,14 +396,11 @@ namespace SoulsLike.Editor
             GroundItemVfx vfx)
         {
             var serialized = new SerializedObject(groundItem);
-            serialized.FindProperty("rewardType").enumValueIndex =
-                (int)GroundItemRewardType.Item;
-            serialized.FindProperty("itemId").enumValueIndex =
-                (int)ItemId.GoldenRuneSmall;
+            serialized.FindProperty("rewardType").enumValueIndex = (int)GroundItemRewardType.Item;
+            serialized.FindProperty("itemId").enumValueIndex = (int)ItemId.GoldenRuneSmall;
             serialized.FindProperty("quantity").intValue = 1;
             serialized.FindProperty("currencyAmount").intValue = 200;
-            serialized.FindProperty("saveIdentifier").stringValue =
-                "ground-item-golden-rune-small";
+            serialized.FindProperty("saveIdentifier").stringValue = "ground-item-golden-rune-small";
             serialized.FindProperty("interactionCollider").objectReferenceValue = collider;
             serialized.FindProperty("interactionAnchor").objectReferenceValue = anchor;
             serialized.FindProperty("pickupVfx").objectReferenceValue = vfx;
@@ -278,159 +410,27 @@ namespace SoulsLike.Editor
 
         private static void ConfigureVfx(
             GroundItemVfx vfx,
-            Transform visualRoot,
-            ParticleSystem upwardMotes,
-            ParticleSystem orbitMotes,
+            ParticleSystem ambientSparkles,
             ParticleSystem pickupFlash,
             IReadOnlyList<Renderer> renderers)
         {
             var serialized = new SerializedObject(vfx);
-            serialized.FindProperty("visualRoot").objectReferenceValue = visualRoot;
             SerializedProperty particles = serialized.FindProperty("ambientParticles");
-            particles.arraySize = 2;
-            particles.GetArrayElementAtIndex(0).objectReferenceValue = upwardMotes;
-            particles.GetArrayElementAtIndex(1).objectReferenceValue = orbitMotes;
+            particles.arraySize = 1;
+            particles.GetArrayElementAtIndex(0).objectReferenceValue = ambientSparkles;
+
             serialized.FindProperty("pickupFlash").objectReferenceValue = pickupFlash;
+            serialized.FindProperty("dissolveDuration").floatValue = 0.45f;
+
             SerializedProperty rendererProperty = serialized.FindProperty("renderers");
             rendererProperty.arraySize = renderers.Count;
             for (int index = 0; index < renderers.Count; index++)
             {
-                rendererProperty.GetArrayElementAtIndex(index).objectReferenceValue =
-                    renderers[index];
+                rendererProperty.GetArrayElementAtIndex(index).objectReferenceValue = renderers[index];
             }
+
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(vfx);
-        }
-
-        private static void AddAcquisitionPanelToHud()
-        {
-            GameObject root = PrefabUtility.LoadPrefabContents(HUD_PREFAB_PATH);
-            try
-            {
-                Transform existing = root.transform.Find("ItemAcquisitionPanel");
-                if (existing != null)
-                {
-                    Object.DestroyImmediate(existing.gameObject);
-                }
-
-                GameObject panelObject = CreateUiObject(
-                    "ItemAcquisitionPanel",
-                    root.transform,
-                    typeof(CanvasGroup),
-                    typeof(Image),
-                    typeof(ItemAcquisitionPanel));
-                RectTransform panelRect = panelObject.GetComponent<RectTransform>();
-                panelRect.anchorMin = new Vector2(0.5f, 0f);
-                panelRect.anchorMax = new Vector2(0.5f, 0f);
-                panelRect.pivot = new Vector2(0.5f, 0f);
-                panelRect.anchoredPosition = new Vector2(0f, 135f);
-                panelRect.sizeDelta = new Vector2(540f, 92f);
-                Image background = panelObject.GetComponent<Image>();
-                background.color = new Color(0.025f, 0.02f, 0.015f, 0.82f);
-                background.raycastTarget = false;
-
-                Image icon = CreateImage(panelObject.transform, "Icon");
-                RectTransform iconRect = icon.rectTransform;
-                iconRect.anchorMin = new Vector2(0f, 0.5f);
-                iconRect.anchorMax = new Vector2(0f, 0.5f);
-                iconRect.pivot = new Vector2(0f, 0.5f);
-                iconRect.anchoredPosition = new Vector2(18f, 0f);
-                iconRect.sizeDelta = new Vector2(60f, 60f);
-                icon.preserveAspect = true;
-                icon.raycastTarget = false;
-
-                TextMeshProUGUI itemName = CreateText(
-                    panelObject.transform,
-                    "ItemName",
-                    28f,
-                    TextAlignmentOptions.MidlineLeft,
-                    new Color(0.95f, 0.88f, 0.7f, 1f));
-                RectTransform nameRect = itemName.rectTransform;
-                nameRect.anchorMin = new Vector2(0f, 0f);
-                nameRect.anchorMax = new Vector2(1f, 1f);
-                nameRect.offsetMin = new Vector2(96f, 8f);
-                nameRect.offsetMax = new Vector2(-100f, -8f);
-
-                TextMeshProUGUI quantity = CreateText(
-                    panelObject.transform,
-                    "Quantity",
-                    26f,
-                    TextAlignmentOptions.MidlineRight,
-                    new Color(1f, 0.75f, 0.25f, 1f));
-                RectTransform quantityRect = quantity.rectTransform;
-                quantityRect.anchorMin = new Vector2(1f, 0f);
-                quantityRect.anchorMax = new Vector2(1f, 1f);
-                quantityRect.pivot = new Vector2(1f, 0.5f);
-                quantityRect.anchoredPosition = new Vector2(-22f, 0f);
-                quantityRect.sizeDelta = new Vector2(90f, 0f);
-
-                ItemAcquisitionPanel panel =
-                    panelObject.GetComponent<ItemAcquisitionPanel>();
-                var panelSerialized = new SerializedObject(panel);
-                panelSerialized.FindProperty("canvasGroup").objectReferenceValue =
-                    panelObject.GetComponent<CanvasGroup>();
-                panelSerialized.FindProperty("icon").objectReferenceValue = icon;
-                panelSerialized.FindProperty("itemNameText").objectReferenceValue = itemName;
-                panelSerialized.FindProperty("quantityText").objectReferenceValue = quantity;
-                panelSerialized.ApplyModifiedPropertiesWithoutUndo();
-
-                PlayerHudUi hud = root.GetComponent<PlayerHudUi>();
-                var hudSerialized = new SerializedObject(hud);
-                hudSerialized.FindProperty("acquisitionPanel").objectReferenceValue = panel;
-                hudSerialized.ApplyModifiedPropertiesWithoutUndo();
-                EditorUtility.SetDirty(hud);
-                EditorUtility.SetDirty(panel);
-
-                PrefabUtility.SaveAsPrefabAsset(root, HUD_PREFAB_PATH);
-            }
-            finally
-            {
-                PrefabUtility.UnloadPrefabContents(root);
-            }
-        }
-
-        private static GameObject CreateUiObject(
-            string objectName,
-            Transform parent,
-            params System.Type[] componentTypes)
-        {
-            var types = new List<System.Type> { typeof(RectTransform) };
-            types.AddRange(componentTypes);
-            var result = new GameObject(objectName, types.ToArray());
-            result.transform.SetParent(parent, false);
-            return result;
-        }
-
-        private static Image CreateImage(Transform parent, string objectName)
-        {
-            return CreateUiObject(
-                    objectName,
-                    parent,
-                    typeof(CanvasRenderer),
-                    typeof(Image))
-                .GetComponent<Image>();
-        }
-
-        private static TextMeshProUGUI CreateText(
-            Transform parent,
-            string objectName,
-            float fontSize,
-            TextAlignmentOptions alignment,
-            Color color)
-        {
-            TextMeshProUGUI text = CreateUiObject(
-                    objectName,
-                    parent,
-                    typeof(CanvasRenderer),
-                    typeof(TextMeshProUGUI))
-                .GetComponent<TextMeshProUGUI>();
-            text.font = TMP_Settings.defaultFontAsset;
-            text.fontSize = fontSize;
-            text.alignment = alignment;
-            text.color = color;
-            text.raycastTarget = false;
-            text.enableWordWrapping = false;
-            return text;
         }
 
         private static Material CreateMaterial(
@@ -438,7 +438,8 @@ namespace SoulsLike.Editor
             Shader shader,
             Color tint,
             float intensity,
-            float radial)
+            float radial,
+            float wobble)
         {
             Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material == null)
@@ -453,8 +454,8 @@ namespace SoulsLike.Editor
 
             material.SetColor("_Tint", tint);
             material.SetFloat("_Intensity", intensity);
-            material.SetFloat("_PulseSpeed", 6.28f);
-            material.SetFloat("_Wobble", radial > 0f ? 0f : 0.018f);
+            material.SetFloat("_PulseSpeed", 3.14f);
+            material.SetFloat("_Wobble", wobble);
             material.SetFloat("_Radial", radial);
             material.SetFloat("_Dissolve", 0f);
             material.renderQueue = 3100;

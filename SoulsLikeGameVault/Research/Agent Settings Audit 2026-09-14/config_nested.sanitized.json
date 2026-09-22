@@ -1,0 +1,2728 @@
+{
+  "id": 3,
+  "result": {
+    "config": {
+      "model": "gpt-6-astra",
+      "review_model": null,
+      "model_context_window": null,
+      "model_auto_compact_token_limit": "<redacted present>",
+      "model_auto_compact_token_limit_scope": "<redacted present>",
+      "model_provider": null,
+      "approval_policy": null,
+      "approvals_reviewer": "user",
+      "sandbox_mode": null,
+      "sandbox_workspace_write": null,
+      "forced_chatgpt_workspace_id": null,
+      "forced_login_method": null,
+      "web_search": "live",
+      "tools": null,
+      "instructions": null,
+      "developer_instructions": null,
+      "compact_prompt": null,
+      "model_reasoning_effort": "xhigh",
+      "model_reasoning_summary": null,
+      "model_verbosity": null,
+      "service_tier": null,
+      "analytics": null,
+      "apps": null,
+      "browser_use": null,
+      "computer_use": null,
+      "desktop": {
+        "appearanceTheme": "dark",
+        "conversationDetailMode": "STEPS_COMMANDS",
+        "enabled-reasoning-efforts": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "ultra",
+          "persistent",
+          "max"
+        ],
+        "open-in-target-preferences": {
+          "global": "fileManager"
+        },
+        "keepRemoteControlAwakeWhilePluggedIn": true,
+        "avatar-overlay-mascot-width-px": 80,
+        "show-context-window-usage": true,
+        "ambient-suggestions-enabled": true,
+        "followUpQueueMode": "queue",
+        "selected-avatar-id": "codex"
+      },
+      "hide_agent_reasoning": false,
+      "personality": "pragmatic",
+      "permissions": null,
+      "shell_environment_policy": {
+        "inherit": null,
+        "ignore_default_excludes": null,
+        "exclude": null,
+        "set": {
+          "NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S": "<redacted value>"
+        },
+        "include_only": null,
+        "filters": null,
+        "experimental_use_profile": null
+      },
+      "include_permissions_instructions": true,
+      "tool_output_token_limit": "<redacted present>",
+      "mcp_oauth_callback_port": null,
+      "experimental_realtime_ws_backend_prompt": null,
+      "check_for_update_on_startup": null,
+      "project_doc_max_bytes": 32768,
+      "show_raw_agent_reasoning": null,
+      "project_root_markers": [
+        ".git"
+      ],
+      "disable_paste_burst": null,
+      "experimental_realtime_ws_base_url": null,
+      "cli_auth_credentials_store": "<redacted present>",
+      "experimental_realtime_ws_model": null,
+      "apps_mcp_product_sku": null,
+      "otel": null,
+      "hooks": {
+        "PreToolUse": [],
+        "PermissionRequest": [],
+        "PostToolUse": [],
+        "PreCompact": [],
+        "PostCompact": [],
+        "SessionStart": [],
+        "SessionEnd": [],
+        "UserPromptSubmit": [],
+        "SubagentStart": [],
+        "SubagentStop": [],
+        "Stop": [],
+        "Interrupt": [],
+        "state": {
+          "browser@openai-bundled:plugin.json#hooks[0]:stop:0:0": {
+            "trusted_hash": "sha256:317a07045dfc95aef2e80c55428a2f817e2768be867e3b1ef29a73da8636ae7f"
+          },
+          "chrome@openai-bundled:plugin.json#hooks[0]:stop:0:0": {
+            "trusted_hash": "sha256:317a07045dfc95aef2e80c55428a2f817e2768be867e3b1ef29a73da8636ae7f"
+          },
+          "computer-use@openai-bundled:plugin.json#hooks[0]:stop:0:0": {
+            "trusted_hash": "sha256:317a07045dfc95aef2e80c55428a2f817e2768be867e3b1ef29a73da8636ae7f"
+          }
+        }
+      },
+      "feedback": null,
+      "project_doc_fallback_filenames": [],
+      "log_dir": null,
+      "profiles": {},
+      "experimental_realtime_start_instructions": null,
+      "memories": null,
+      "tui": {
+        "notifications": true,
+        "notification_method": "auto",
+        "notification_condition": "unfocused",
+        "animations": true,
+        "whimsy": true,
+        "show_tooltips": true,
+        "auto_recap": true,
+        "disable_paste_burst": null,
+        "vim_mode_default": false,
+        "question_esc_back": true,
+        "raw_output_mode": false,
+        "alternate_screen": "auto",
+        "status_line": [
+          "model-with-reasoning",
+          "current-dir",
+          "model",
+          "reasoning",
+          "project-name",
+          "git-branch",
+          "run-state",
+          "permissions",
+          "approval-mode",
+          "context-remaining",
+          "context-used",
+          "weekly-limit",
+          "codex-version",
+          "context-window-size",
+          "fast-mode",
+          "task-progress"
+        ],
+        "status_line_use_colors": true,
+        "terminal_title": null,
+        "theme": null,
+        "pet": null,
+        "pet_anchor": "composer",
+        "session_picker_view": null,
+        "resume_cwd": null,
+        "keymap": {
+          "global": {
+            "open_agents": null,
+            "open_transcript": null,
+            "open_external_editor": null,
+            "copy": null,
+            "clear_terminal": null,
+            "submit": null,
+            "queue": null,
+            "toggle_shortcuts": null,
+            "toggle_vim_mode": null,
+            "toggle_fast_mode": null,
+            "toggle_raw_output": null,
+            "toggle_side_conversation": null
+          },
+          "chat": {
+            "toggle_voice_mute": null,
+            "interrupt_turn": null,
+            "decrease_reasoning_effort": null,
+            "increase_reasoning_effort": null,
+            "previous_permission_mode": null,
+            "next_permission_mode": null,
+            "edit_queued_message": null,
+            "prompt_stack_back": null,
+            "skip_question": null
+          },
+          "composer": {
+            "submit": null,
+            "queue": null,
+            "toggle_shortcuts": null,
+            "history_search_previous": null,
+            "history_search_next": null
+          },
+          "editor": {
+            "insert_newline": null,
+            "move_left": null,
+            "move_right": null,
+            "move_up": null,
+            "move_down": null,
+            "move_word_left": null,
+            "move_word_right": null,
+            "move_line_start": null,
+            "move_line_end": null,
+            "delete_backward": null,
+            "delete_forward": null,
+            "delete_backward_word": null,
+            "delete_forward_word": null,
+            "kill_line_start": null,
+            "kill_whole_line": null,
+            "kill_line_end": null,
+            "yank": null
+          },
+          "vim_normal": {
+            "enter_insert": null,
+            "append_after_cursor": null,
+            "append_line_end": null,
+            "insert_line_start": null,
+            "open_line_below": null,
+            "open_line_above": null,
+            "enter_replace_mode": null,
+            "move_left": null,
+            "move_right": null,
+            "move_up": null,
+            "move_down": null,
+            "move_word_forward": null,
+            "move_word_backward": null,
+            "move_word_end": null,
+            "move_line_start": null,
+            "move_line_end": null,
+            "find_forward": null,
+            "find_backward": null,
+            "till_forward": null,
+            "till_backward": null,
+            "jump_top": null,
+            "jump_bottom": null,
+            "delete_char": null,
+            "replace_char": null,
+            "repeat_last_change": null,
+            "substitute_char": null,
+            "delete_to_line_end": null,
+            "change_to_line_end": null,
+            "yank_line": null,
+            "paste_after": null,
+            "start_delete_operator": null,
+            "start_yank_operator": null,
+            "start_change_operator": null,
+            "undo": null,
+            "redo": null,
+            "cancel_operator": null
+          },
+          "vim_operator": {
+            "delete_line": null,
+            "yank_line": null,
+            "motion_left": null,
+            "motion_right": null,
+            "motion_up": null,
+            "motion_down": null,
+            "motion_word_forward": null,
+            "motion_word_backward": null,
+            "motion_word_end": null,
+            "motion_line_start": null,
+            "motion_line_end": null,
+            "motion_find_forward": null,
+            "motion_find_backward": null,
+            "motion_till_forward": null,
+            "motion_till_backward": null,
+            "motion_jump_top": null,
+            "motion_jump_bottom": null,
+            "select_inner_text_object": null,
+            "select_around_text_object": null,
+            "cancel": null
+          },
+          "vim_search": {
+            "forward": null,
+            "backward": null,
+            "next": null,
+            "previous": null
+          },
+          "vim_text_object": {
+            "word": null,
+            "big_word": null,
+            "parentheses": null,
+            "brackets": null,
+            "braces": null,
+            "double_quote": null,
+            "single_quote": null,
+            "backtick": null,
+            "cancel": null
+          },
+          "pager": {
+            "scroll_up": null,
+            "scroll_down": null,
+            "page_up": null,
+            "page_down": null,
+            "half_page_up": null,
+            "half_page_down": null,
+            "jump_top": null,
+            "jump_bottom": null,
+            "close": null,
+            "close_transcript": null
+          },
+          "list": {
+            "move_up": null,
+            "move_down": null,
+            "move_left": null,
+            "move_right": null,
+            "page_up": null,
+            "page_down": null,
+            "jump_top": null,
+            "jump_bottom": null,
+            "accept": null,
+            "cancel": null
+          },
+          "agents": {
+            "resume": null,
+            "search": null,
+            "new_task": null,
+            "rename": null,
+            "stop": null,
+            "toggle_grouping": null
+          },
+          "approval": {
+            "open_fullscreen": null,
+            "open_thread": null,
+            "approve": null,
+            "approve_for_session": null,
+            "approve_for_prefix": null,
+            "deny": null,
+            "decline": null,
+            "cancel": null
+          }
+        },
+        "model_availability_nux": {
+          "gpt-6-astra": 4,
+          "gpt-5.5": 2
+        },
+        "terminal_resize_reflow_max_rows": null
+      },
+      "windows": {
+        "sandbox": "elevated",
+        "sandbox_private_desktop": null
+      },
+      "mcp_servers": {
+        "serena": {
+          "command": "uvx",
+          "args": [
+            "-p",
+            "3.13",
+            "--from",
+            "serena-agent==1.7.0",
+            "serena",
+            "start-mcp-server",
+            "--context",
+            "codex",
+            "--project-from-cwd",
+            "--enable-web-dashboard",
+            "false"
+          ],
+          "env": {
+            "SERENA_HOME": "<redacted value>",
+            "PYTHONUTF8": "<redacted value>"
+          },
+          "environment_id": "local",
+          "enabled": true,
+          "startup_timeout_sec": 60.0,
+          "tool_timeout_sec": 120.0
+        },
+        "graphify": {
+          "command": "uvx",
+          "args": [
+            "--from",
+            "graphifyy[mcp]==0.9.54",
+            "graphify-mcp",
+            "graphify-out/graph.json"
+          ],
+          "env": {
+            "GRAPHIFY_QUERY_LOG_DISABLE": "<redacted value>"
+          },
+          "environment_id": "local",
+          "enabled": false,
+          "startup_timeout_sec": 45.0,
+          "tool_timeout_sec": 60.0,
+          "default_tools_approval_mode": "approve",
+          "enabled_tools": [
+            "query_graph",
+            "get_node",
+            "get_neighbors",
+            "god_nodes",
+            "graph_stats",
+            "shortest_path"
+          ]
+        },
+        "soulslike-vault": {
+          "command": "C:\\Program Files\\nodejs\\node.exe",
+          "args": [
+            "C:\\Users\\golin\\AppData\\Local\\AI-Tools\\mcpvault\\0.16.0\\node_modules\\@bitbonsai\\mcpvault\\dist\\server.js",
+            "F:\\Private\\SoulsLikeTemplate\\SoulsLikeGameVault"
+          ],
+          "environment_id": "local",
+          "enabled": true,
+          "tool_timeout_sec": null
+        },
+        "github": {
+          "url": "https://api.githubcopilot.com/mcp/",
+          "bearer_token_env_var": "<redacted present>",
+          "environment_id": "local",
+          "enabled": false,
+          "tool_timeout_sec": null
+        },
+        "context-mode": {
+          "command": "context-mode",
+          "args": [],
+          "environment_id": "local",
+          "enabled": true,
+          "tool_timeout_sec": null
+        },
+        "unityMCP": {
+          "command": "C:\\Users\\golin\\.local\\bin\\uvx.exe",
+          "args": [
+            "--from",
+            "mcpforunityserver==9.7.1",
+            "mcp-for-unity",
+            "--transport",
+            "stdio"
+          ],
+          "env": {
+            "SystemRoot": "<redacted value>"
+          },
+          "environment_id": "local",
+          "enabled": false,
+          "startup_timeout_sec": 60.0,
+          "tool_timeout_sec": null
+        },
+        "deepwiki": {
+          "url": "https://mcp.deepwiki.com/mcp",
+          "environment_id": "local",
+          "enabled": true,
+          "tool_timeout_sec": null
+        },
+        "unity": {
+          "command": "unity",
+          "args": [
+            "mcp"
+          ],
+          "environment_id": "local",
+          "enabled": true,
+          "tool_timeout_sec": null
+        },
+        "penpot": {
+          "url": "https://design.penpot.app/mcp/stream?<redacted-query>",
+          "environment_id": "local",
+          "enabled": true,
+          "tool_timeout_sec": null
+        },
+        "node_repl": {
+          "command": "C:\\Users\\golin\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\a708e72b10c27b59\\bin\\node_repl.exe",
+          "args": [],
+          "env": {
+            "BROWSER_USE_CODEX_APP_VERSION": "<redacted value>",
+            "NODE_REPL_TRUSTED_CODE_PATHS": "<redacted value>",
+            "BROWSER_USE_TINYSKY_ENABLED": "<redacted value>",
+            "NODE_REPL_TRUSTED_SERVICES": "<redacted value>",
+            "SKY_CUA_NATIVE_PIPE": "<redacted value>",
+            "SKY_CUA_NATIVE_PIPE_DIRECTORY": "<redacted value>",
+            "NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS": "<redacted value>",
+            "CODEX_HOME": "<redacted value>",
+            "NODE_REPL_NODE_PATH": "<redacted value>",
+            "BROWSER_USE_AVAILABLE_BACKENDS": "<redacted value>",
+            "BROWSER_USE_CODEX_APP_BUILD_FLAVOR": "<redacted value>",
+            "CODEX_CLI_PATH": "<redacted value>",
+            "NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER": "<redacted value>",
+            "NODE_REPL_NODE_MODULE_DIRS": "<redacted value>",
+            "NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME": "<redacted value>"
+          },
+          "environment_id": "local",
+          "enabled": true,
+          "startup_timeout_sec": 120.0,
+          "tool_timeout_sec": null
+        },
+        "context7": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@upstash/context7-mcp"
+          ],
+          "env_vars": [
+            "CONTEXT7_API_KEY"
+          ],
+          "environment_id": "local",
+          "enabled": true,
+          "tool_timeout_sec": null
+        },
+        "obsidian": {
+          "url": "http://127.0.0.1:27123/mcp/",
+          "http_headers": {
+            "Authorization": "<redacted value>"
+          },
+          "environment_id": "local",
+          "enabled": false,
+          "tool_timeout_sec": null
+        },
+        "context": {
+          "command": "context",
+          "args": [
+            "serve"
+          ],
+          "environment_id": "local",
+          "enabled": true,
+          "tool_timeout_sec": null
+        },
+        "cv_filesystem": {
+          "command": "npx",
+          "args": [
+            "-y",
+            "@modelcontextprotocol/server-filesystem@2026.8.31",
+            "F:\\CvCreationProject"
+          ],
+          "environment_id": "local",
+          "enabled": true,
+          "tool_timeout_sec": null
+        }
+      },
+      "auto_review": null,
+      "js_repl_node_path": null,
+      "include_apps_instructions": true,
+      "allow_login_shell": true,
+      "orchestrator": null,
+      "agents": {
+        "enabled": true,
+        "max_concurrent_threads_per_session": 4,
+        "max_depth": null,
+        "default_subagent_model": "gpt-5.6-terra",
+        "default_subagent_reasoning_effort": "high",
+        "job_max_runtime_seconds": null,
+        "interrupt_message": true
+      },
+      "allow_symlinked_codex_home": null,
+      "background_terminal_max_timeout": 300000,
+      "experimental_use_unified_exec_tool": null,
+      "js_repl_node_module_dirs": null,
+      "tool_suggest": null,
+      "goals": null,
+      "mcp_oauth_callback_url": null,
+      "features": {
+        "network_proxy": null,
+        "js_repl": false,
+        "multi_agent": true,
+        "rmcp_client": true,
+        "auth_elicitation": true,
+        "background_paginated_rollout_migration": false,
+        "mcp_2026_07_28": false,
+        "memories": false,
+        "mentions_v2": true,
+        "remote_control": false,
+        "remote_plugin": true,
+        "tool_suggest": true,
+        "windows_sandbox_service": false
+      },
+      "mcp_oauth_credentials_store": "<redacted present>",
+      "default_permissions": null,
+      "experimental_compact_prompt_file": null,
+      "profile": null,
+      "openai_base_url": null,
+      "file_opener": "vscode",
+      "realtime": null,
+      "model_providers": {},
+      "chatgpt_base_url": "https://chatgpt.com/backend-api/",
+      "oss_provider": null,
+      "mcp_optional_startup_grace_ms": null,
+      "model_catalog_json": null,
+      "plan_mode_reasoning_effort": null,
+      "experimental_realtime_webrtc_call_base_url": null,
+      "experimental_realtime_ws_startup_context": null,
+      "thread_unload_delay_secs": null,
+      "skills": null,
+      "ghost_snapshot": null,
+      "include_collaboration_mode_instructions": true,
+      "projects": {
+        "c:\\users\\golin\\documents\\codex\\2026-08-14\\inventory-and-equipment-system-change-creation": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-09-07\\cv-creation-plan-write-a-plan": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\iss": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-29\\assets-art-animation-noweaponanimator-controller-x20": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-13\\th": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-25\\realtime-voice-chat-2": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-5": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-20\\c": {
+          "trust_level": "trusted"
+        },
+        "f:\\private\\mirrormultiplayertemplate": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-2": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-25\\realtime-voice-chat": {
+          "trust_level": "trusted"
+        },
+        "f:\\cvcreationproject": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-09-02\\read-attached-md-and-implement-plan": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-20\\ground-runes-and-interaction-system": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\cam": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-09-05\\elden-ring-style-ladder-feature-a": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\healthcomponent-consumestamina-x20": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-29\\scene-division-changes-for-default-location": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-3": {
+          "trust_level": "trusted"
+        },
+        "f:\\kevuru\\r2r-project-r2r-project": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-07-31\\realtime-voice-chat": {
+          "trust_level": "trusted"
+        },
+        "f:\\private\\soulsliketemplate": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-09-01\\smop": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-4": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-20\\ene": {
+          "trust_level": "trusted"
+        },
+        "f:\\private\\prospector-game": {
+          "trust_level": "trusted"
+        },
+        "f:\\private\\empire-at-war": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-17\\realtime-voice-chat": {
+          "trust_level": "trusted"
+        },
+        "c:\\windows\\system32": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-6": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-7": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-29\\bak": {
+          "trust_level": "trusted"
+        },
+        "f:\\private\\blessing-of-ichor": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-9": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-8": {
+          "trust_level": "trusted"
+        },
+        "c:\\users\\golin\\documents\\codex\\2026-08-29\\nav": {
+          "trust_level": "trusted"
+        }
+      },
+      "audio": null,
+      "notice": null,
+      "model_instructions_file": null,
+      "suppress_unstable_features_warning": null,
+      "notify": [
+        "C:\\Users\\golin\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\a708e72b10c27b59\\bin\\node_modules\\@oai\\sky\\bin\\windows\\codex-computer-use.exe",
+        "turn-ended"
+      ],
+      "responses_api_metadata": null,
+      "experimental_thread_store_endpoint": null,
+      "include_environment_context": true,
+      "history": {
+        "persistence": "save-all",
+        "max_bytes": null
+      },
+      "plugins": {
+        "chrome@openai-bundled": {
+          "enabled": true
+        },
+        "google-drive@openai-curated": {
+          "enabled": true
+        },
+        "documents@openai-primary-runtime": {
+          "enabled": true
+        },
+        "agy@agy-plugin-codex": {
+          "enabled": true
+        },
+        "template-creator@openai-primary-runtime": {
+          "enabled": true
+        },
+        "visualize@openai-bundled": {
+          "enabled": true
+        },
+        "github@openai-curated": {
+          "enabled": true
+        },
+        "computer-use@openai-bundled": {
+          "enabled": true
+        },
+        "browser@openai-bundled": {
+          "enabled": true
+        },
+        "unified-computer-use@openai-bundled": {
+          "enabled": true
+        },
+        "sites@openai-bundled": {
+          "enabled": true
+        },
+        "pdf@openai-primary-runtime": {
+          "enabled": true
+        },
+        "spreadsheets@openai-primary-runtime": {
+          "enabled": true
+        },
+        "presentations@openai-primary-runtime": {
+          "enabled": true
+        },
+        "codex-app-tools@openai-bundled": {
+          "enabled": true
+        }
+      },
+      "sqlite_home": null,
+      "marketplaces": {
+        "openai-bundled": {
+          "last_updated": null,
+          "last_revision": null,
+          "source_type": "local",
+          "source": "\\\\?\\C:\\Users\\golin\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled",
+          "ref": null,
+          "sparse_paths": null
+        },
+        "openai-primary-runtime": {
+          "last_updated": null,
+          "last_revision": null,
+          "source_type": "local",
+          "source": "\\\\?\\C:\\Users\\golin\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime",
+          "ref": null,
+          "sparse_paths": null
+        },
+        "agy-plugin-codex": {
+          "last_updated": null,
+          "last_revision": null,
+          "source_type": "git",
+          "source": "https://github.com/Vit129/agy-plugin-codex.git",
+          "ref": "main",
+          "sparse_paths": null
+        }
+      },
+      "experimental_thread_store": null
+    },
+    "origins": {
+      "plugins.unified-computer-use@openai-bundled.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "hooks.state.computer-use@openai-bundled:plugin.json#hooks[0]:stop:0:0.trusted_hash": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.soulslike-vault.args.0": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_NODE_MODULE_DIRS": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.soulslike-vault.args.1": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.serena.env.SERENA_HOME": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "plugins.spreadsheets@openai-primary-runtime.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.13": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.args.10": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "desktop.ambient-suggestions-enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "model_reasoning_effort": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.11": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.14": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-09-07\\cv-creation-plan-write-a-plan.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.context7.args.0": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.soulslike-vault.command": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "desktop.show-context-window-usage": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.args.3": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.node_repl.command": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.open-in-target-preferences.global": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\iss.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.context.args.0": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.penpot.url": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.SKY_CUA_NATIVE_PIPE": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.obsidian.http_headers.Authorization": "<redacted present>",
+      "hooks.state.chrome@openai-bundled:plugin.json#hooks[0]:stop:0:0.trusted_hash": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.BROWSER_USE_CODEX_APP_VERSION": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.BROWSER_USE_CODEX_APP_BUILD_FLAVOR": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.sites@openai-bundled.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "shell_environment_policy.set.NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-29\\bak.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.enabled-reasoning-efforts.5": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.12": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.enabled-reasoning-efforts.2": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.command": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.serena.args.7": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-14\\inventory-and-equipment-system-change-creation.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.args.1": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-25\\realtime-voice-chat.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-7.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.1": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.args.1": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.graphify.enabled_tools.4": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "hooks.state.browser@openai-bundled:plugin.json#hooks[0]:stop:0:0.trusted_hash": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "marketplaces.agy-plugin-codex.ref": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_TRUSTED_SERVICES": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.args.2": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "marketplaces.agy-plugin-codex.source_type": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_TRUSTED_CODE_PATHS": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.f:\\private\\soulsliketemplate.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-09-02\\read-attached-md-and-implement-plan.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.BROWSER_USE_TINYSKY_ENABLED": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.github.url": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.github.bearer_token_env_var": "<redacted present>",
+      "plugins.agy@agy-plugin-codex.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-3.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.model_availability_nux.gpt-6-astra": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "agents.enabled": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.node_repl.startup_timeout_sec": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "agents.default_subagent_reasoning_effort": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "tui.status_line.3": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.args.0": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.obsidian.enabled": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "agents.default_subagent_model": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "plugins.google-drive@openai-curated.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-8.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.enabled-reasoning-efforts.4": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.args.1": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-5.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-29\\assets-art-animation-noweaponanimator-controller-x20.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-20\\c.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.obsidian.url": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.context7.command": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.cv_filesystem.args.0": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.keepRemoteControlAwakeWhilePluggedIn": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.args.8": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "projects.f:\\private\\blessing-of-ichor.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-2.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "personality": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.computer-use@openai-bundled.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.context7.env_vars.0": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.args.4": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_NODE_PATH": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.8": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.CODEX_CLI_PATH": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.startup_timeout_sec": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.f:\\private\\mirrormultiplayertemplate.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.args.3": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.enabled-reasoning-efforts.0": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.7": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.pdf@openai-primary-runtime.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.cv_filesystem.args.1": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.f:\\kevuru\\r2r-project-r2r-project.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.enabled": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "features.js_repl": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-6.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.enabled_tools.1": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "projects.c:\\windows\\system32.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unity.command": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.unity.args.0": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-13\\th.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.conversationDetailMode": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.enabled": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "notify.0": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.args.0": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.env.GRAPHIFY_QUERY_LOG_DISABLE": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "marketplaces.openai-bundled.source_type": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "windows.sandbox": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.args.2": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.selected-avatar-id": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.10": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.cv_filesystem.command": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.avatar-overlay-mascot-width-px.$serde_json::private::Number": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.command": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.0": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.f:\\cvcreationproject.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "features.multi_agent": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.serena.args.2": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "projects.f:\\private\\empire-at-war.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.enabled-reasoning-efforts.3": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.2": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.default_tools_approval_mode": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.graphify.tool_timeout_sec": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-25\\realtime-voice-chat-2.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.browser@openai-bundled.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.args.5": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "features.rmcp_client": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.args.4": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.startup_timeout_sec": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "model": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.enabled_tools.0": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.serena.args.9": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "tui.status_line.4": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.enabled_tools.5": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.cv_filesystem.args.2": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-17\\realtime-voice-chat.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.enabled-reasoning-efforts.1": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.context-mode.command": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.unityMCP.env.SystemRoot": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "approvals_reviewer": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.visualize@openai-bundled.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.command": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "plugins.template-creator@openai-primary-runtime.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\healthcomponent-consumestamina-x20.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\cam.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "notify.1": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-07-31\\realtime-voice-chat.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.chrome@openai-bundled.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.model_availability_nux.gpt-5.5": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-29\\scene-division-changes-for-default-location.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.CODEX_HOME": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.enabled-reasoning-efforts.6": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.SKY_CUA_NATIVE_PIPE_DIRECTORY": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.args.6": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.serena.args.0": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.node_repl.env.BROWSER_USE_AVAILABLE_BACKENDS": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.5": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.deepwiki.url": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line_use_colors": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.documents@openai-primary-runtime.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-09-01\\smop.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "marketplaces.openai-primary-runtime.source_type": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "web_search": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "marketplaces.agy-plugin-codex.source": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.presentations@openai-primary-runtime.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.enabled_tools.3": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.serena.tool_timeout_sec": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "agents.max_concurrent_threads_per_session": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "agents.interrupt_message": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "plugins.codex-app-tools@openai-bundled.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.f:\\private\\prospector-game.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "marketplaces.openai-primary-runtime.source": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.6": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.startup_timeout_sec": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "tui.status_line.9": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.serena.env.PYTHONUTF8": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "marketplaces.openai-bundled.source": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-09-05\\elden-ring-style-ladder-feature-a.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "tui.status_line.15": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-20\\ground-runes-and-interaction-system.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.args.3": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-4.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-9.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "plugins.github@openai-curated.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.context.command": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.appearanceTheme": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.context7.args.1": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-20\\ene.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "desktop.followUpQueueMode": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.graphify.enabled_tools.2": {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945"
+      },
+      "mcp_servers.github.enabled": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "mcp_servers.node_repl.env.NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      },
+      "projects.c:\\users\\golin\\documents\\codex\\2026-08-29\\nav.trust_level": {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a"
+      }
+    },
+    "layers": [
+      {
+        "name": {
+          "type": "project",
+          "dotCodexFolder": "F:\\Private\\SoulsLikeTemplate\\.codex"
+        },
+        "version": "sha256:724f04240ee483c1b72a80a73291919182cd96d2e008ff0868e3d97057dbc945",
+        "config": {
+          "mcp_servers": {
+            "unity": {
+              "command": "unity",
+              "args": [
+                "mcp"
+              ]
+            },
+            "serena": {
+              "command": "uvx",
+              "args": [
+                "-p",
+                "3.13",
+                "--from",
+                "serena-agent==1.7.0",
+                "serena",
+                "start-mcp-server",
+                "--context",
+                "codex",
+                "--project-from-cwd",
+                "--enable-web-dashboard",
+                "false"
+              ],
+              "startup_timeout_sec": 60,
+              "tool_timeout_sec": 120,
+              "env": {
+                "SERENA_HOME": "<redacted value>",
+                "PYTHONUTF8": "<redacted value>"
+              }
+            },
+            "soulslike-vault": {
+              "command": "C:\\Program Files\\nodejs\\node.exe",
+              "args": [
+                "C:\\Users\\golin\\AppData\\Local\\AI-Tools\\mcpvault\\0.16.0\\node_modules\\@bitbonsai\\mcpvault\\dist\\server.js",
+                "F:\\Private\\SoulsLikeTemplate\\SoulsLikeGameVault"
+              ]
+            },
+            "obsidian": {
+              "url": "http://127.0.0.1:27123/mcp/",
+              "http_headers": {
+                "Authorization": "<redacted value>"
+              },
+              "enabled": false
+            },
+            "graphify": {
+              "command": "uvx",
+              "args": [
+                "--from",
+                "graphifyy[mcp]==0.9.54",
+                "graphify-mcp",
+                "graphify-out/graph.json"
+              ],
+              "enabled": false,
+              "enabled_tools": [
+                "query_graph",
+                "get_node",
+                "get_neighbors",
+                "god_nodes",
+                "graph_stats",
+                "shortest_path"
+              ],
+              "default_tools_approval_mode": "approve",
+              "startup_timeout_sec": 45,
+              "tool_timeout_sec": 60,
+              "env": {
+                "GRAPHIFY_QUERY_LOG_DISABLE": "<redacted value>"
+              }
+            },
+            "unityMCP": {
+              "enabled": false
+            }
+          },
+          "features": {
+            "multi_agent": true
+          },
+          "agents": {
+            "enabled": true,
+            "max_concurrent_threads_per_session": 4,
+            "default_subagent_model": "gpt-5.6-terra",
+            "default_subagent_reasoning_effort": "high",
+            "interrupt_message": true
+          }
+        }
+      },
+      {
+        "name": {
+          "type": "user",
+          "file": "C:\\Users\\golin\\.codex\\config.toml",
+          "profile": null
+        },
+        "version": "sha256:29f5ec5544fc8da1da4b57cf5da37b8707f208c0734dd0815478e7ed97d12a6a",
+        "config": {
+          "web_search": "live",
+          "model": "gpt-6-astra",
+          "model_reasoning_effort": "xhigh",
+          "personality": "pragmatic",
+          "approvals_reviewer": "user",
+          "notify": [
+            "C:\\Users\\golin\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\a708e72b10c27b59\\bin\\node_modules\\@oai\\sky\\bin\\windows\\codex-computer-use.exe",
+            "turn-ended"
+          ],
+          "projects": {
+            "c:\\windows\\system32": {
+              "trust_level": "trusted"
+            },
+            "f:\\private\\mirrormultiplayertemplate": {
+              "trust_level": "trusted"
+            },
+            "f:\\private\\blessing-of-ichor": {
+              "trust_level": "trusted"
+            },
+            "f:\\private\\empire-at-war": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-07-31\\realtime-voice-chat": {
+              "trust_level": "trusted"
+            },
+            "f:\\private\\soulsliketemplate": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-13\\th": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-14\\inventory-and-equipment-system-change-creation": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-17\\realtime-voice-chat": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-20\\c": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-20\\ground-runes-and-interaction-system": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-20\\ene": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-25\\realtime-voice-chat": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-25\\realtime-voice-chat-2": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-2": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\iss": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\cam": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-3": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-4": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-5": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-6": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-7": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-8": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\summarize-this-report-9": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-28\\healthcomponent-consumestamina-x20": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-29\\assets-art-animation-noweaponanimator-controller-x20": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-29\\scene-division-changes-for-default-location": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-29\\nav": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-08-29\\bak": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-09-01\\smop": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-09-02\\read-attached-md-and-implement-plan": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-09-05\\elden-ring-style-ladder-feature-a": {
+              "trust_level": "trusted"
+            },
+            "c:\\users\\golin\\documents\\codex\\2026-09-07\\cv-creation-plan-write-a-plan": {
+              "trust_level": "trusted"
+            },
+            "f:\\cvcreationproject": {
+              "trust_level": "trusted"
+            },
+            "f:\\private\\prospector-game": {
+              "trust_level": "trusted"
+            },
+            "f:\\kevuru\\r2r-project-r2r-project": {
+              "trust_level": "trusted"
+            }
+          },
+          "tui": {
+            "status_line": [
+              "model-with-reasoning",
+              "current-dir",
+              "model",
+              "reasoning",
+              "project-name",
+              "git-branch",
+              "run-state",
+              "permissions",
+              "approval-mode",
+              "context-remaining",
+              "context-used",
+              "weekly-limit",
+              "codex-version",
+              "context-window-size",
+              "fast-mode",
+              "task-progress"
+            ],
+            "status_line_use_colors": true,
+            "model_availability_nux": {
+              "gpt-5.5": 2,
+              "gpt-6-astra": 4
+            }
+          },
+          "windows": {
+            "sandbox": "elevated"
+          },
+          "marketplaces": {
+            "openai-bundled": {
+              "source_type": "local",
+              "source": "\\\\?\\C:\\Users\\golin\\.codex\\.tmp\\bundled-marketplaces\\openai-bundled"
+            },
+            "openai-primary-runtime": {
+              "source_type": "local",
+              "source": "\\\\?\\C:\\Users\\golin\\.cache\\codex-runtimes\\codex-primary-runtime\\plugins\\openai-primary-runtime"
+            },
+            "agy-plugin-codex": {
+              "source_type": "git",
+              "source": "https://github.com/Vit129/agy-plugin-codex.git",
+              "ref": "main"
+            }
+          },
+          "plugins": {
+            "documents@openai-primary-runtime": {
+              "enabled": true
+            },
+            "spreadsheets@openai-primary-runtime": {
+              "enabled": true
+            },
+            "presentations@openai-primary-runtime": {
+              "enabled": true
+            },
+            "google-drive@openai-curated": {
+              "enabled": true
+            },
+            "github@openai-curated": {
+              "enabled": true
+            },
+            "pdf@openai-primary-runtime": {
+              "enabled": true
+            },
+            "template-creator@openai-primary-runtime": {
+              "enabled": true
+            },
+            "visualize@openai-bundled": {
+              "enabled": true
+            },
+            "sites@openai-bundled": {
+              "enabled": true
+            },
+            "computer-use@openai-bundled": {
+              "enabled": true
+            },
+            "chrome@openai-bundled": {
+              "enabled": true
+            },
+            "browser@openai-bundled": {
+              "enabled": true
+            },
+            "codex-app-tools@openai-bundled": {
+              "enabled": true
+            },
+            "agy@agy-plugin-codex": {
+              "enabled": true
+            },
+            "unified-computer-use@openai-bundled": {
+              "enabled": true
+            }
+          },
+          "mcp_servers": {
+            "node_repl": {
+              "args": [],
+              "command": "C:\\Users\\golin\\AppData\\Local\\OpenAI\\Codex\\runtimes\\cua_node\\a708e72b10c27b59\\bin\\node_repl.exe",
+              "startup_timeout_sec": 120.0,
+              "env": {
+                "NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS": "<redacted value>",
+                "NODE_REPL_NODE_MODULE_DIRS": "<redacted value>",
+                "NODE_REPL_NODE_PATH": "<redacted value>",
+                "NODE_REPL_TRUSTED_CODE_PATHS": "<redacted value>",
+                "CODEX_HOME": "<redacted value>",
+                "BROWSER_USE_AVAILABLE_BACKENDS": "<redacted value>",
+                "BROWSER_USE_TINYSKY_ENABLED": "<redacted value>",
+                "NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER": "<redacted value>",
+                "NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME": "<redacted value>",
+                "BROWSER_USE_CODEX_APP_BUILD_FLAVOR": "<redacted value>",
+                "BROWSER_USE_CODEX_APP_VERSION": "<redacted value>",
+                "NODE_REPL_TRUSTED_SERVICES": "<redacted value>",
+                "SKY_CUA_NATIVE_PIPE": "<redacted value>",
+                "SKY_CUA_NATIVE_PIPE_DIRECTORY": "<redacted value>",
+                "CODEX_CLI_PATH": "<redacted value>"
+              }
+            },
+            "context-mode": {
+              "command": "context-mode"
+            },
+            "unityMCP": {
+              "command": "C:\\Users\\golin\\.local\\bin\\uvx.exe",
+              "args": [
+                "--from",
+                "mcpforunityserver==9.7.1",
+                "mcp-for-unity",
+                "--transport",
+                "stdio"
+              ],
+              "startup_timeout_sec": 60.0,
+              "env": {
+                "SystemRoot": "<redacted value>"
+              }
+            },
+            "context": {
+              "command": "context",
+              "args": [
+                "serve"
+              ]
+            },
+            "deepwiki": {
+              "url": "https://mcp.deepwiki.com/mcp"
+            },
+            "github": {
+              "url": "https://api.githubcopilot.com/mcp/",
+              "bearer_token_env_var": "<redacted present>",
+              "enabled": false
+            },
+            "context7": {
+              "command": "npx",
+              "args": [
+                "-y",
+                "@upstash/context7-mcp"
+              ],
+              "env_vars": [
+                "CONTEXT7_API_KEY"
+              ]
+            },
+            "cv_filesystem": {
+              "command": "npx",
+              "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem@2026.8.31",
+                "F:\\CvCreationProject"
+              ]
+            },
+            "penpot": {
+              "url": "https://design.penpot.app/mcp/stream?<redacted-query>"
+            }
+          },
+          "desktop": {
+            "ambient-suggestions-enabled": true,
+            "conversationDetailMode": "STEPS_COMMANDS",
+            "appearanceTheme": "dark",
+            "show-context-window-usage": true,
+            "keepRemoteControlAwakeWhilePluggedIn": true,
+            "followUpQueueMode": "queue",
+            "selected-avatar-id": "codex",
+            "avatar-overlay-mascot-width-px": {
+              "$serde_json::private::Number": "80"
+            },
+            "enabled-reasoning-efforts": [
+              "low",
+              "medium",
+              "high",
+              "xhigh",
+              "ultra",
+              "persistent",
+              "max"
+            ],
+            "open-in-target-preferences": {
+              "global": "fileManager"
+            }
+          },
+          "features": {
+            "rmcp_client": true,
+            "js_repl": false,
+            "multi_agent": true
+          },
+          "shell_environment_policy": {
+            "set": {
+              "NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S": "<redacted value>"
+            }
+          },
+          "hooks": {
+            "state": {
+              "browser@openai-bundled:plugin.json#hooks[0]:stop:0:0": {
+                "trusted_hash": "sha256:317a07045dfc95aef2e80c55428a2f817e2768be867e3b1ef29a73da8636ae7f"
+              },
+              "chrome@openai-bundled:plugin.json#hooks[0]:stop:0:0": {
+                "trusted_hash": "sha256:317a07045dfc95aef2e80c55428a2f817e2768be867e3b1ef29a73da8636ae7f"
+              },
+              "computer-use@openai-bundled:plugin.json#hooks[0]:stop:0:0": {
+                "trusted_hash": "sha256:317a07045dfc95aef2e80c55428a2f817e2768be867e3b1ef29a73da8636ae7f"
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": {
+          "type": "system",
+          "file": "C:\\ProgramData\\OpenAI\\Codex\\config.toml"
+        },
+        "version": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "config": {}
+      }
+    ]
+  }
+}

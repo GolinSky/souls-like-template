@@ -18,10 +18,12 @@ frontmatter, wikilinks, folder layout, and naming conventions.
 Do not restructure the vault unless the active user request explicitly asks
 for it. Never edit `.obsidian` without an explicit Obsidian configuration request.
 
-For task context, resolve `Agent Guide/Agent Context Registry.md` by exact
+For task context, resolve `Meta/Agent Context Registry.md` by exact
 context key or concrete task signals. For a named plan, issue, research package,
 or implementation record, first load the registered workflow/index context,
-then locate the exact named note only inside its lifecycle folder. Execute a plan
+then locate the exact named note only inside its lifecycle folder. Completed issues
+live in `History/Closed Issues`, completed plans in `History/Completed Plans`,
+and records in `History/Records`; preserve their closure decisions. Execute a plan
 only when the user explicitly names it and its status is `ready` or `in-progress`.
 
 Do not assume a file rename updates incoming links. For renames of

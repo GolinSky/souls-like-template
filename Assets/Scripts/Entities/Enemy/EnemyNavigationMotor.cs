@@ -18,6 +18,7 @@ namespace SoulsLike.Entities.Enemy
 
         private bool _rootMotionActive;
         private bool _hasDestination;
+        private float _baseSpeed;
         private readonly RaycastHit[] _groundProbeHits = new RaycastHit[GROUND_PROBE_HIT_CAPACITY];
 
         public Vector3 WorldVelocity { get; private set; }
@@ -25,6 +26,7 @@ namespace SoulsLike.Entities.Enemy
 
         public void Initialize()
         {
+            _baseSpeed = agent.speed;
             agent.updatePosition = false;
             agent.updateRotation = false;
             if (!agent.Warp(transform.position))
@@ -34,6 +36,22 @@ namespace SoulsLike.Entities.Enemy
             }
 
             Stop();
+        }
+
+        public void SetSpeed(float speed)
+        {
+            if (agent.isActiveAndEnabled)
+            {
+                agent.speed = speed;
+            }
+        }
+
+        public void ResetSpeed()
+        {
+            if (agent.isActiveAndEnabled)
+            {
+                agent.speed = _baseSpeed;
+            }
         }
 
         public void SetDestination(Vector3 position)
@@ -103,6 +121,30 @@ namespace SoulsLike.Entities.Enemy
             WorldVelocity = Time.deltaTime > 0f
                 ? (transform.position - before) / Time.deltaTime
                 : Vector3.zero;
+        }
+
+        public void ApplyRootMotionRotation(
+            Quaternion deltaRotation,
+            float targetYaw,
+            float direction)
+        {
+            float yawDelta = Mathf.Abs(Mathf.DeltaAngle(0f, deltaRotation.eulerAngles.y));
+            float remainingYaw = Mathf.DeltaAngle(transform.eulerAngles.y, targetYaw);
+            float directionSign = Mathf.Sign(direction);
+            if (Mathf.Abs(remainingYaw) >= 179.999f)
+            {
+                remainingYaw = Mathf.Abs(remainingYaw) * directionSign;
+            }
+
+            if (yawDelta > 0f && remainingYaw * directionSign > 0f)
+            {
+                float appliedYaw = Mathf.Min(yawDelta, Mathf.Abs(remainingYaw)) * directionSign;
+                transform.rotation = Quaternion.AngleAxis(appliedYaw, Vector3.up) * transform.rotation;
+            }
+            if (agent.isActiveAndEnabled && agent.isOnNavMesh)
+            {
+                agent.nextPosition = transform.position;
+            }
         }
 
         public void ApplyPlatformDisplacement(Vector3 displacement)
@@ -204,20 +246,6 @@ namespace SoulsLike.Entities.Enemy
                 transform.rotation,
                 targetRotation,
                 degreesPerSecond * deltaTime);
-        }
-
-        public void FaceImmediately(Vector3 position)
-        {
-            Vector3 direction = position - transform.position;
-            direction.y = 0f;
-            if (direction.sqrMagnitude <= VELOCITY_EPSILON)
-            {
-                return;
-            }
-
-            transform.rotation = Quaternion.LookRotation(
-                direction.normalized,
-                Vector3.up);
         }
 
         public void Rotate(float degrees, float deltaTime)

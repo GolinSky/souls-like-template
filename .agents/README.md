@@ -8,7 +8,7 @@ Project skill packages are sibling directories under `.agents/skills`. Custom Co
 - `.codex/config.toml` is the canonical Codex MCP server and multi-agent-defaults file.
 - `.codex/agents/*.toml` narrows a role's model, sandbox, workflow, and tools.
 - `.agents/skills/*` contains reusable workflows. Upstream Graphify references remain upstream workflow material, not SoulsLike policy.
-- `SoulsLikeGameVault/Agent Guide/Agent Context Registry.md` is the curated allow-list for exact-key and task-signal context discovery; it is not a general vault directory index.
+- `SoulsLikeGameVault/Meta/Agent Context Registry.md` is the curated allow-list for exact-key and task-signal context discovery; it is not a general vault directory index.
 
 ## Generated Graphify state
 

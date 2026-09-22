@@ -1,0 +1,29 @@
+[
+  {
+    "scenario": "root",
+    "exit": 0,
+    "global_instructions": true,
+    "project_instructions": true,
+    "project_end_marker": true,
+    "rendered_chars": 63791,
+    "json_type": "list"
+  },
+  {
+    "scenario": "nested",
+    "exit": 0,
+    "global_instructions": true,
+    "project_instructions": true,
+    "project_end_marker": true,
+    "rendered_chars": 63983,
+    "json_type": "list"
+  },
+  {
+    "scenario": "outside",
+    "exit": 0,
+    "global_instructions": true,
+    "project_instructions": false,
+    "project_end_marker": false,
+    "rendered_chars": 30541,
+    "json_type": "list"
+  }
+]

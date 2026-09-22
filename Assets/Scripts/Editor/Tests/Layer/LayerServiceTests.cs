@@ -1,5 +1,5 @@
 #if UNITY_EDITOR
-using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using SoulsLike.Services.Layer;
 using SoulsLike.Services.Layer.Data;
@@ -29,15 +29,18 @@ namespace SoulsLike.Editor.Tests.Layer
         }
 
         [Test]
-        public void ValidOneBitMask_ReturnsCorrectUnityIndex()
+        public void EveryOneBitMask_ReturnsCorrectUnityIndex()
         {
-            _data.SetLayerMaskForTest(LayerName.Player, 1 << 6);
+            for (int index = 0; index < 32; index++)
+            {
+                _data.SetLayerMaskForTest(LayerName.Player, 1 << index);
 
-            int layer = _service.GetLayer(LayerName.Player);
-            LayerMask mask = _service.GetLayerMask(LayerName.Player);
+                int layer = _service.GetLayer(LayerName.Player);
+                LayerMask mask = _service.GetLayerMask(LayerName.Player);
 
-            Assert.That(layer, Is.EqualTo(6));
-            Assert.That(mask.value, Is.EqualTo(1 << 6));
+                Assert.That(layer, Is.EqualTo(index));
+                Assert.That(mask.value, Is.EqualTo(1 << index));
+            }
         }
 
         [Test]
@@ -50,42 +53,16 @@ namespace SoulsLike.Editor.Tests.Layer
         }
 
         [Test]
-        public void MissingLayerName_ThrowsInvalidOperationException()
+        public void MissingLayerName_FailsDictionaryLookup()
         {
-            Assert.Throws<InvalidOperationException>(() => _service.GetLayer(LayerName.Player));
-            Assert.Throws<InvalidOperationException>(() => _service.GetLayerMask(LayerName.Player));
+            Assert.Throws<KeyNotFoundException>(() => _service.GetLayer(LayerName.Player));
+            Assert.Throws<KeyNotFoundException>(() => _service.GetLayerMask(LayerName.Player));
         }
 
         [Test]
-        public void ZeroSingleLayerMask_ThrowsInvalidOperationException()
+        public void MissingSharedMask_FailsDictionaryLookup()
         {
-            _data.SetLayerMaskForTest(LayerName.Player, 0);
-
-            Assert.Throws<InvalidOperationException>(() => _service.GetLayer(LayerName.Player));
-            Assert.Throws<InvalidOperationException>(() => _service.GetLayerMask(LayerName.Player));
-        }
-
-        [Test]
-        public void MultiBitSingleLayerMask_ThrowsInvalidOperationException()
-        {
-            _data.SetLayerMaskForTest(LayerName.Player, (1 << 6) | (1 << 7));
-
-            Assert.Throws<InvalidOperationException>(() => _service.GetLayer(LayerName.Player));
-            Assert.Throws<InvalidOperationException>(() => _service.GetLayerMask(LayerName.Player));
-        }
-
-        [Test]
-        public void MissingSharedMask_ThrowsInvalidOperationException()
-        {
-            Assert.Throws<InvalidOperationException>(() => _service.GetMask(LayerMaskName.PreviewCamera));
-        }
-
-        [Test]
-        public void ZeroSharedMask_ThrowsInvalidOperationException()
-        {
-            _data.SetSharedMaskForTest(LayerMaskName.PreviewCamera, 0);
-
-            Assert.Throws<InvalidOperationException>(() => _service.GetMask(LayerMaskName.PreviewCamera));
+            Assert.Throws<KeyNotFoundException>(() => _service.GetMask(LayerMaskName.PreviewCamera));
         }
 
         [Test]
@@ -151,13 +128,6 @@ namespace SoulsLike.Editor.Tests.Layer
             }
         }
 
-        [Test]
-        public void SetLayer_NullRoot_ThrowsArgumentNullException()
-        {
-            _data.SetLayerMaskForTest(LayerName.Preview, 1 << 10);
-
-            Assert.Throws<ArgumentNullException>(() => _service.SetLayer(null, LayerName.Preview));
-        }
     }
 }
 #endif

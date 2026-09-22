@@ -66,33 +66,7 @@ namespace SoulsLike.Entities.Ladder
                 return;
             }
 
-            if (ladder.StartsLocked)
-            {
-                if (string.IsNullOrWhiteSpace(ladder.SaveIdentifier))
-                {
-                    throw new InvalidOperationException(
-                        $"Locked ladder '{ladder.name}' requires a stable {nameof(LadderView.SaveIdentifier)}.");
-                }
-
-                foreach (LadderView registered in _entities.Keys)
-                {
-                    if (registered.StartsLocked
-                        && registered.SaveIdentifier == ladder.SaveIdentifier)
-                    {
-                        throw new InvalidOperationException(
-                            $"Locked ladder id '{ladder.SaveIdentifier}' is duplicated by "
-                            + $"'{registered.name}' and '{ladder.name}'.");
-                    }
-                }
-            }
-
             ViewEntity viewEntity = ladder.GetComponent<ViewEntity>();
-            if (viewEntity == null)
-            {
-                throw new InvalidOperationException(
-                    $"Ladder '{ladder.name}' requires {nameof(ViewEntity)} on its root.");
-            }
-
             long id = _idGenerator.GenerateUniqueId();
             viewEntity.Construct(id, EntityType.Ladder);
             Entity entity = new(id, _entityLocator, EntityType.Ladder);

@@ -1,7 +1,6 @@
 using SoulsLike.Services.Repository;
 using UnityEngine;
 using VContainer;
-using InvalidOperationException = System.InvalidOperationException;
 
 namespace SoulsLike.Extensions
 {
@@ -17,10 +16,6 @@ namespace SoulsLike.Extensions
                 if (_mappingData == null)
                 {
                     _mappingData = AssetService.Load<AssetMappingData>("AssetMappingData");
-                    if (_mappingData == null)
-                    {
-                        Debug.LogWarning("[VContainerExt] AssetMappingData not found in Addressables under key 'AssetMappingData'. Falling back to exact class names.");
-                    }
                 }
                 return _mappingData;
             }
@@ -30,7 +25,7 @@ namespace SoulsLike.Extensions
             where TImpl : Object
         {
             var className = typeof(TImpl).Name;
-            var key = MappingData != null ? MappingData.GetScriptableObjectKey(className) : className;
+            var key = MappingData.GetScriptableObjectKey(className);
             return RegisterScriptableObjectInternal<TImpl>(builder, key);
         }
 
@@ -47,12 +42,6 @@ namespace SoulsLike.Extensions
             where TImpl : Object
         {
             var instance = AssetService.Load<TImpl>(key);
-            if (instance == null)
-            {
-                throw new InvalidOperationException(
-                    $"Required addressable asset '{key}' for {typeof(TImpl).Name} was not found.");
-            }
-
             return builder.RegisterInstance(instance).AsSelf();
         }
     }

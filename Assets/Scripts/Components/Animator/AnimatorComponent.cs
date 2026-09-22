@@ -80,7 +80,7 @@ namespace SoulsLike.Entities.Character.Components
         private static readonly int LadderKickTrigger = Animator.StringToHash("LadderKick");
         private static readonly int LadderDrinkTrigger = Animator.StringToHash("LadderDrink");
         private static readonly int LadderUnlockTrigger = Animator.StringToHash("LadderUnlock");
-        private static readonly int OneHandedFreeLocomotionState = Animator.StringToHash("OneHandedLayer.FreeLocomotion");
+        private static readonly int FreeLocomotionState = Animator.StringToHash("FreeLocomotion");
         private static readonly int GraceRestIdleState = Animator.StringToHash("GraceRestIdle");
         private const string ONE_HANDED_LAYER = "OneHandedLayer";
         private const string TWO_HANDED_LAYER = "TwoHandedLayer";
@@ -380,7 +380,8 @@ namespace SoulsLike.Entities.Character.Components
         public void CompleteDeathAnimation()
         {
             _isDeathAnimationPlaying = false;
-            animator.Play(OneHandedFreeLocomotionState, GetRequiredLayerIndex(ONE_HANDED_LAYER), 0.0f);
+            animator.ResetTrigger(DeathTrigger);
+            animator.Play(FreeLocomotionState, GetRequiredLayerIndex(ONE_HANDED_LAYER), 0.0f);
             SetActionLayerWeights(animator.GetBool(AnimIdMoving));
         }
         

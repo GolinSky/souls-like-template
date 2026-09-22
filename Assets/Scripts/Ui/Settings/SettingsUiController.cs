@@ -136,6 +136,26 @@ namespace SoulsLike.Ui.Settings
             RenderDraft();
         }
 
+        public void OnOptionValueChanged(SettingsOptionId optionId, int value)
+        {
+            switch (optionId)
+            {
+                case SettingsOptionId.Resolution:
+                    SetResolution(value);
+                    break;
+                case SettingsOptionId.WindowMode:
+                    SetWindowMode(value);
+                    break;
+                case SettingsOptionId.Quality:
+                    SetQualityLevel(value);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(optionId), optionId, null);
+            }
+
+            RenderDraft();
+        }
+
         public void OnOptionAction(SettingsOptionId optionId)
         {
             switch (optionId)
@@ -249,7 +269,38 @@ namespace SoulsLike.Ui.Settings
 
         private void RenderDraft()
         {
-            _settingsUi.Render(_settingsService.Draft, _activeTab);
+            _settingsUi.Render(
+                _settingsService.Draft,
+                _activeTab,
+                _settingsService.AvailableDisplayModes,
+                _settingsService.Capabilities);
+        }
+
+        private void SetResolution(int index)
+        {
+            IReadOnlyList<DisplayModeData> modes = _settingsService.AvailableDisplayModes;
+            if (index >= 0 && index < modes.Count)
+            {
+                _settingsService.Draft.Graphics.DisplayMode = SettingsDataUtility.Copy(modes[index]);
+            }
+        }
+
+        private void SetWindowMode(int index)
+        {
+            IReadOnlyList<FullScreenMode> modes = SettingsUi.GetAvailableWindowModes(_settingsService.Capabilities.SupportsExclusiveFullscreen);
+            if (index >= 0 && index < modes.Count)
+            {
+                _settingsService.Draft.Graphics.WindowMode = modes[index];
+            }
+        }
+
+        private void SetQualityLevel(int index)
+        {
+            string[] names = QualitySettings.names;
+            if (names != null && index >= 0 && index < names.Length)
+            {
+                _settingsService.Draft.Graphics.QualityLevelName = names[index];
+            }
         }
 
         private void CycleWindowMode()

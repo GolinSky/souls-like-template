@@ -1,0 +1,14 @@
+--- a/.codex/config.toml
++++ b/.codex/config.toml
+@@ -70,2 +70,11 @@
+ default_subagent_reasoning_effort = "high"
+ interrupt_message = true
++
++# Windows project scope: retain personal skills for other repositories.
++[[skills.config]]
++path = "C:/Users/golin/.agents/skills/graphify"
++enabled = false
++
++[[skills.config]]
++path = "C:/Users/golin/.codex/skills/unity-mcp-skill"
++enabled = false

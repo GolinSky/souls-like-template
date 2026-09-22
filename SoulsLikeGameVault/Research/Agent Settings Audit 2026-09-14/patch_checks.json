@@ -1,0 +1,27 @@
+[
+  {
+    "patch": "01-remove-unknown-rmcp-feature.patch",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "patch": "02-repair-probuilder-command-reference.patch",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "patch": "03-scope-competing-personal-skills.patch",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "patch": "04-exclude-cv-filesystem-from-soulslike.patch",
+    "exit": 0,
+    "stderr": ""
+  },
+  {
+    "patch": "05-correct-role-isolation-documentation.patch",
+    "exit": 0,
+    "stderr": ""
+  }
+]

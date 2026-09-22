@@ -14,8 +14,13 @@ aliases:
 tags:
   - status/needs-review
   - research/audit
+updated: 2026-09-14
 ---
 # Interaction System Architecture & Audit Report
+
+## Evidence Reconciliation — 2026-09-14
+
+The pre-migration analysis and proposed fixes below describe an earlier implementation. Current interaction discovery uses `IEntityLocator` and target-owned commands; use [[Knowledge/Architecture/Systems/Entity Locator System]] for the maintained contract. The old sections labelled current are historical, and cannot authorize repeating that migration. The documentation issue is completed: [[History/Closed Issues/Architecture And Roll Issue Notes Contain Superseded Evidence]].
 
 > [!warning] Validation status — stale audit
 > Current `InteractionController` uses `_entityLocator.TryGetEntity(...)` and `IInteractableCommand`; the older `GetComponentInParent<IInteractable>()` description is no longer the controller's current behavior. `GroundItem`, `LadderEndpoint`, and `GraceView` still expose legacy interaction surfaces, so the migration is incomplete. Treat this note as research evidence, not current architecture.

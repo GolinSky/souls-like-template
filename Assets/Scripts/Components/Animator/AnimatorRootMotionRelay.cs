@@ -21,10 +21,6 @@ namespace SoulsLike.Entities.Character.Components
         private void Awake()
         {
             _animator = GetComponent<Animator>();
-            if (_animator == null)
-            {
-                throw new InvalidOperationException($"{name} requires an Animator.");
-            }
         }
 
         public void Initialize(Character character, MovementComponent movementComponent)
@@ -58,11 +54,6 @@ namespace SoulsLike.Entities.Character.Components
             if (!_initialized)
             {
                 return;
-            }
-
-            if (_animator == null)
-            {
-                throw new InvalidOperationException($"{name} root motion relay is not initialized.");
             }
 
             if (_traversalBlocked)

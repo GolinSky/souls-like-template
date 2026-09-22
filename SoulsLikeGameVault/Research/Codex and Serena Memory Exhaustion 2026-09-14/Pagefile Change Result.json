@@ -1,0 +1,21 @@
+﻿{
+    "Success":  true,
+    "CompletedAt":  "2026-09-14T16:52:27.1576537+03:00",
+    "Setting":  {
+                    "Name":  "d:\\pagefile.sys",
+                    "InitialSize":  0,
+                    "MaximumSize":  0
+                },
+    "PagingFiles":  [
+                        "d:\\pagefile.sys 0 0"
+                    ],
+    "CurrentUsage":  [
+                         {
+                             "Name":  "D:\\pagefile.sys",
+                             "AllocatedBaseSize":  16384,
+                             "CurrentUsage":  226,
+                             "PeakUsage":  227
+                         }
+                     ],
+    "Activation":  "Configured for system-managed sizing on D:. Restart Windows to apply startup settings; no restart was initiated."
+}

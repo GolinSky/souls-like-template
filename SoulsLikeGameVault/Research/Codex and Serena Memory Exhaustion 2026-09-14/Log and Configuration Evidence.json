@@ -1,0 +1,1105 @@
+{
+  "collected_local": "2026-09-14T16:15:49.473170+03:00",
+  "timezone": "Europe/Kyiv UTC+03:00",
+  "scope": "Read-only incident investigation; evidence exports only",
+  "serena": [
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-131013_3516.txt",
+      "size_bytes": 510576,
+      "sha256": "4c884809ad165071be31d2aecb008e45e744834c6af8c0e7172ba55fb5455df3",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:10:14,032 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=3516, parent process id=8396; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 13:10:14,571 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-131018_17072.txt",
+      "size_bytes": 351802,
+      "sha256": "2410def90471dcf9a3c96232961bd2a665f6a001e2bfd089e4ec485ee8cf2fe1",
+      "before_reboot": true,
+      "restore_line_count": 143,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:10:18,397 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=17072, parent process id=24248; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 13:10:19,279 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135130_31312.txt",
+      "size_bytes": 15002,
+      "sha256": "a670eb6c4f7b02b3279efd47fe104a25f4c4342edaf9868d13be21810b3ed88c",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:51:30,175 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=31312, parent process id=28780; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          47,
+          "INFO  2026-09-14 13:51:30,669 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135227_32280.txt",
+      "size_bytes": 452380,
+      "sha256": "c144115187a77f408ae74c175d60297b781bf8d6cfd10ca261d2aec86c22aabc",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:52:27,351 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=32280, parent process id=30740; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 13:52:28,064 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135227_33116.txt",
+      "size_bytes": 319834,
+      "sha256": "27c5f74832c46b2855c0a19bbcb0ef1150fab7ad56973920f4f19f13b1f2de5e",
+      "before_reboot": true,
+      "restore_line_count": 112,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:52:27,608 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=33116, parent process id=33780; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 13:52:28,205 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135231_37300.txt",
+      "size_bytes": 11922,
+      "sha256": "1b79c993110dbe627d29f67d8f69d27eba54151057ff05a0caad7bdf7f65938c",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:52:32,269 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=37300, parent process id=37232; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          47,
+          "INFO  2026-09-14 13:52:32,950 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135323_41388.txt",
+      "size_bytes": 510827,
+      "sha256": "a125f02a0169cd31ae82d5c96278cc019641fd7a976a61dd31bdeeacc521d769",
+      "before_reboot": true,
+      "restore_line_count": 204,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:53:23,811 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=41388, parent process id=40244; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 13:53:24,704 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135641_40388.txt",
+      "size_bytes": 382078,
+      "sha256": "5e9d02972137da3b8b51fb7c7ef7bce75e57bcb5545129484dfcfa2937928f67",
+      "before_reboot": true,
+      "restore_line_count": 162,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:56:41,322 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=40388, parent process id=2152; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 13:56:41,809 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135739_42780.txt",
+      "size_bytes": 530481,
+      "sha256": "97003e70a8a943ffc1e2403f5f81666c4a60deb5fb8c806cb5f9404d2f0119f1",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:57:39,513 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=42780, parent process id=36356; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          47,
+          "INFO  2026-09-14 13:57:40,018 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135802_43384.txt",
+      "size_bytes": 331229,
+      "sha256": "b8ac1c0e2a43390fb3eccd15c1b686c9068e561b945ee24c70d21f82e34cae38",
+      "before_reboot": true,
+      "restore_line_count": 130,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:58:02,149 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=43384, parent process id=5348; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 13:58:02,666 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135835_36660.txt",
+      "size_bytes": 508503,
+      "sha256": "ac64370aefb78701e1b6f44604c73932bbe22f33dca88600679887713b590124",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:58:35,326 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=36660, parent process id=29232; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 13:58:36,076 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-135840_45816.txt",
+      "size_bytes": 11747,
+      "sha256": "fa15113a7e4e20e6bb16f49dbcc51c894a0c4b7944e24288785bd7037c8be5cb",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 13:58:40,297 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=45816, parent process id=45684; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 13:58:40,969 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-141258_45844.txt",
+      "size_bytes": 11747,
+      "sha256": "591ec4b62534294bf0818567df544955d579aaa16cbd9b60b59d2f11b66b5776",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:12:58,780 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=45844, parent process id=27772; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 14:12:59,581 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-141336_42184.txt",
+      "size_bytes": 15292,
+      "sha256": "40f502e4e2988cde6ea136147e74f517273585fa8cb26f1e7270a20a6efa9565",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:13:36,567 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=42184, parent process id=38868; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 14:13:37,055 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-141504_37496.txt",
+      "size_bytes": 452380,
+      "sha256": "f0b38b53fd66329d34a0a6896c229e566772b75ba13d83f99254fe09eea1008a",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:15:04,434 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=37496, parent process id=33864; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 14:15:05,108 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-142814_42048.txt",
+      "size_bytes": 9636,
+      "sha256": "bcd801df99f66aeedbd25de8382b7691e54e0adc6db41fb44db2dd0eaffcc562",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:28:14,458 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=42048, parent process id=34900; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-142830_43248.txt",
+      "size_bytes": 15292,
+      "sha256": "bbe5ee5c5f889b53071b02027b0fb7b7437dfe86ca8878c24d8c103d7f0e3ec2",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:28:30,190 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=43248, parent process id=45352; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          47,
+          "INFO  2026-09-14 14:28:30,644 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-143835_35860.txt",
+      "size_bytes": 11747,
+      "sha256": "bfa2fe48ffe14f0910681700d84c6fd70ba52c25e212cb1a772c24f62c9e6ed0",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:38:36,023 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=35860, parent process id=37724; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 14:38:36,531 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144018_38572.txt",
+      "size_bytes": 15292,
+      "sha256": "8ffdf481db96407d61f7ba85b2971760aa842f62dfb1bc60769c747da2e5f381",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:40:18,977 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=38572, parent process id=37004; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 14:40:19,488 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144145_9068.txt",
+      "size_bytes": 549960,
+      "sha256": "c1237d9a44e99cd0469b600132939e243515a26d9b0c10e7b29a7748c8f170ff",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:41:45,787 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=9068, parent process id=45820; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 14:41:46,843 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144209_48484.txt",
+      "size_bytes": 324591,
+      "sha256": "30c3e737589b297c26f3ce881a4b65eeafbfbfacdb28374bbce17fa27b9cd027",
+      "before_reboot": true,
+      "restore_line_count": 126,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:42:09,721 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=48484, parent process id=48180; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 14:42:10,281 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144241_52088.txt",
+      "size_bytes": 11747,
+      "sha256": "298964325f0f66cc2726b5d375d106b3176064a695bfd8bed87baeb90cd72ba5",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:42:41,953 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=52088, parent process id=51908; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 14:42:42,520 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144337_9032.txt",
+      "size_bytes": 452378,
+      "sha256": "8bb1320222612c7bf4392e159c39f5fc1c58ba8bce9e5da55ac46c1bab20dfd3",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:43:37,595 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=9032, parent process id=30840; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          50,
+          "INFO  2026-09-14 14:43:38,065 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144507_48196.txt",
+      "size_bytes": 7971,
+      "sha256": "bf3534e60e796e82365e5b7bc3a4a0fc2f97d33395a407d09488ff60ce8b8f43",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:45:07,354 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=48196, parent process id=49512; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144533_29180.txt",
+      "size_bytes": 11747,
+      "sha256": "eb61d8b294945d809bd2c18fb01987ce13f9e578495f4b1f930b12133cc3b235",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:45:34,027 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=29180, parent process id=48240; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 14:45:34,744 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144537_51912.txt",
+      "size_bytes": 368900,
+      "sha256": "a32a29084d9295c77846bf8d07be970f69c21956a44998cdba678322d70ea801",
+      "before_reboot": true,
+      "restore_line_count": 154,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:45:37,554 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=51912, parent process id=45328; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 14:45:38,482 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144540_49084.txt",
+      "size_bytes": 15292,
+      "sha256": "43fa3ce2b4620ccefa2548c32a4d13222c0c3d97b99a62e521df4d0dbd553d73",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:45:40,230 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=49084, parent process id=50952; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 14:45:41,304 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-144621_46492.txt",
+      "size_bytes": 9281,
+      "sha256": "ac7ccc03fc62b63a3f3a3bd2a365496bf3c35ce8cc036ab093d5340bb9d3113f",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 14:46:21,694 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=46492, parent process id=53396; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-151553_35936.txt",
+      "size_bytes": 452380,
+      "sha256": "8975ddc4f09994244e64cb6ab60562336bf077ed056eb0f2cafafbd2696581f0",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:15:53,230 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=35936, parent process id=48112; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 15:15:53,721 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153448_4176.txt",
+      "size_bytes": 9634,
+      "sha256": "319126c0551b1cfe5feef74145b0507adc89d5a6cf368bb60a04b4e1d3321f96",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:34:48,611 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=4176, parent process id=36476; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153654_52284.txt",
+      "size_bytes": 809017,
+      "sha256": "18f5519df9886addb17cbc8a2a3178e896832aa5b8789a5e4b3e25995e067ebd",
+      "before_reboot": true,
+      "restore_line_count": 191,
+      "oom_line_count": 45,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,341 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=52284, parent process id=46336; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 15:36:56,579 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": [
+        [
+          993,
+          "INFO  2026-09-14 15:37:27,452 [LSP-stdout-reader:csharp] solidlsp.language_servers.csharp_language_server:window_log_message:549 - LSP: [solution/open] [LanguageServerProjectLoader] Restoring Unity.Addressables.Editor.csproj: Unhandled exception. Microsoft.Build.Framework.InternalErrorException: MSB0001: Internal MSBuild Error: One or more errors occurred. (MSB0001: Internal MSBuild Error: One or more errors occurred. (MSB0001: Internal MSBuild Error: Exception of type 'System.OutOfMemoryException' was thrown."
+        ]
+      ]
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153655_54732.txt",
+      "size_bytes": 519442,
+      "sha256": "1dc6a4fd8d5e5280f6cc8e69dbebadc53a91cf87a2a60aa865e305910d49434e",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 12,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,676 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=54732, parent process id=42604; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 15:36:57,283 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": [
+        [
+          477,
+          "INFO  2026-09-14 15:37:51,474 [LSP-stdout-reader:csharp] solidlsp.language_servers.csharp_language_server:window_log_message:549 - LSP: [solution/open] [LanguageServerProjectLoader] Restoring Unity.ProBuilder.csproj: System.AggregateException: One or more errors occurred. (Exception of type 'System.OutOfMemoryException' was thrown.)"
+        ]
+      ]
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153655_55712.txt",
+      "size_bytes": 246271,
+      "sha256": "d702f3e0a24ebb6d3b5792aa23422f3a48c0e7bac93ac9aa0eef9b72035a1f7c",
+      "before_reboot": true,
+      "restore_line_count": 75,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,895 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=55712, parent process id=51836; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          52,
+          "INFO  2026-09-14 15:36:58,047 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153655_56756.txt",
+      "size_bytes": 199248,
+      "sha256": "3eab8fb3b53304c46152e892dfedafcef8b50de05ade202fd2913b3c7213009f",
+      "before_reboot": true,
+      "restore_line_count": 7,
+      "oom_line_count": 7,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,961 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=56756, parent process id=56620; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          52,
+          "INFO  2026-09-14 15:36:58,099 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": [
+        [
+          493,
+          "INFO  2026-09-14 15:37:27,449 [LSP-stdout-reader:csharp] solidlsp.language_servers.csharp_language_server:window_log_message:549 - LSP: [solution/open] [LanguageServerProjectLoader] Restoring Unity.VisualEffectGraph.Editor.csproj: System.OutOfMemoryException: Insufficient memory to continue the execution of the program."
+        ]
+      ]
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153655_56768.txt",
+      "size_bytes": 130401,
+      "sha256": "e1b0f66df9a45cd91c271cc21dde63e0bd697a90f27aa7d9141ef56ed133ecd4",
+      "before_reboot": true,
+      "restore_line_count": 1,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,721 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=56768, parent process id=56032; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 15:36:57,623 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153655_56836.txt",
+      "size_bytes": 704250,
+      "sha256": "0a5fa862eac47d8d917e1b279a182567c975ec5386da6b71c21d4aa2af66454b",
+      "before_reboot": true,
+      "restore_line_count": 73,
+      "oom_line_count": 46,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,960 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=56836, parent process id=56488; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          52,
+          "INFO  2026-09-14 15:36:58,230 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": [
+        [
+          658,
+          "INFO  2026-09-14 15:37:48,409 [LSP-stdout-reader:csharp] solidlsp.language_servers.csharp_language_server:window_log_message:549 - LSP: [solution/open] [LanguageServerProjectLoader] Restoring Unity.Mathematics.csproj: Unhandled exception. Microsoft.Build.Framework.InternalErrorException: MSB0001: Internal MSBuild Error: One or more errors occurred. (MSB0001: Internal MSBuild Error: One or more errors occurred. (MSB0001: Internal MSBuild Error: Exception of type 'System.OutOfMemoryException' was thrown."
+        ]
+      ]
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153655_57096.txt",
+      "size_bytes": 641440,
+      "sha256": "98dddf47ff157931cc189baa5a9de9c7d119ee182cc11d86502641765d6ea9f6",
+      "before_reboot": true,
+      "restore_line_count": 203,
+      "oom_line_count": 34,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,795 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=57096, parent process id=56420; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          52,
+          "INFO  2026-09-14 15:36:57,589 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": [
+        [
+          479,
+          "INFO  2026-09-14 15:37:27,439 [LSP-stdout-reader:csharp] solidlsp.language_servers.csharp_language_server:window_log_message:549 - LSP: [solution/open] [LanguageServerProjectLoader] Restoring Unity.ShaderGraph.Editor.csproj: MSBUILD : error :  ---> System.OutOfMemoryException: Exception of type 'System.OutOfMemoryException' was thrown. [F:\\Private\\SoulsLikeTemplate\\Unity.ShaderGraph.Editor.csproj]"
+        ]
+      ]
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153655_57212.txt",
+      "size_bytes": 157057,
+      "sha256": "4de378e92efb70b9c50a12a3def5e0073da976fe4370424ccd6338c4e727b674",
+      "before_reboot": true,
+      "restore_line_count": 9,
+      "oom_line_count": 1,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,797 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=57212, parent process id=57068; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          52,
+          "INFO  2026-09-14 15:36:57,557 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": [
+        [
+          495,
+          "INFO  2026-09-14 15:37:27,992 [LSP-stdout-reader:csharp] solidlsp.language_servers.csharp_language_server:window_log_message:549 - LSP: [solution/open] [LanguageServerProjectLoader] Restoring Unity.Timeline.Editor.csproj: MSBUILD : error :     System.OutOfMemoryException: Exception of type 'System.OutOfMemoryException' was thrown. [F:\\Private\\SoulsLikeTemplate\\Unity.Timeline.Editor.csproj]"
+        ]
+      ]
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153655_57288.txt",
+      "size_bytes": 130998,
+      "sha256": "584a2b694d73f38749e03032026cc9c5d0f5218ab38cbe148603657c8257f811",
+      "before_reboot": true,
+      "restore_line_count": 1,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:36:55,783 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=57288, parent process id=57164; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          52,
+          "INFO  2026-09-14 15:36:57,556 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-153728_64712.txt",
+      "size_bytes": 102805,
+      "sha256": "5264510cb8b383ceb1b47b1e201a99a0ce262c205eda5865564a06696e405244",
+      "before_reboot": true,
+      "restore_line_count": 0,
+      "oom_line_count": 4,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 15:37:28,871 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=64712, parent process id=64676; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          52,
+          "INFO  2026-09-14 15:37:29,937 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": [
+        [
+          320,
+          "ERROR 2026-09-14 15:37:48,329 [LSP-stdout-reader:csharp] solidlsp.language_servers.csharp_language_server:window_log_message:549 - LSP: [solution/open] [LanguageServerProjectLoader] Error while loading F:\\Private\\SoulsLikeTemplate\\Unity.UnifiedRayTracing.Runtime.Player.csproj: Exception thrown: System.OutOfMemoryException: Exception of type 'System.OutOfMemoryException' was thrown."
+        ]
+      ]
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-160702_25444.txt",
+      "size_bytes": 452380,
+      "sha256": "fa5409794b1088950455914b4bcf5efb3c7fb16cefdf1b918eea1cf71aefdfb2",
+      "before_reboot": false,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 16:07:02,142 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=25444, parent process id=25412; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 16:07:02,966 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-160834_28392.txt",
+      "size_bytes": 380457,
+      "sha256": "926030e3774ee50b827e0badd112d5fb991bae6e8cabf12e13717e78643f018e",
+      "before_reboot": false,
+      "restore_line_count": 161,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 16:08:35,013 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=28392, parent process id=28332; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 16:08:35,528 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-160838_29408.txt",
+      "size_bytes": 452380,
+      "sha256": "dece308b01deed8eb98b01398677fb61886ccdf5dd628a4232a7f45afe771316",
+      "before_reboot": false,
+      "restore_line_count": 203,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 16:08:38,287 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=29408, parent process id=29384; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          53,
+          "INFO  2026-09-14 16:08:39,312 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    },
+    {
+      "path": "F:\\Private\\SoulsLikeTemplate\\.serena\\home\\logs\\2026-09-14\\mcp_20260914-160840_30320.txt",
+      "size_bytes": 11747,
+      "sha256": "21eaaf42addb639a01ba0b291a480ca8c13dead16fe99b2e4de482ab60ce14cf",
+      "before_reboot": false,
+      "restore_line_count": 0,
+      "oom_line_count": 0,
+      "launch_evidence": [
+        [
+          6,
+          "INFO  2026-09-14 16:08:41,229 [MainThread] serena.agent:__init__:635 - Starting Serena server (version=1.7.0, process id=30320, parent process id=30252; language backend=LSP); Python version=3.13.1, platform=Windows-11-10.0.26200-SP0"
+        ],
+        [
+          55,
+          "INFO  2026-09-14 16:08:42,069 [StartLS:csharp] solidlsp.ls_process:_start:519 - Starting language server process via command: ['C:\\\\Program Files\\\\dotnet\\\\dotnet.EXE', '.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\roslyn-language-server.win-x64.5.5.0-2.26078.4\\\\Microsoft.CodeAnalysis.LanguageServer.dll', '--logLevel=Information', '--extensionLogDirectory=.serena\\\\home\\\\language_servers\\\\static\\\\CSharpLanguageServer\\\\logs', '--stdio']"
+        ]
+      ],
+      "first_oom_evidence": []
+    }
+  ],
+  "desktop": {
+    "files": [
+      {
+        "path": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-0.log",
+        "size_bytes": 10485603,
+        "first_timestamp": "2026-09-14T10:07:03.782Z",
+        "last_timestamp": "2026-09-14T10:08:54.104Z",
+        "import_response_count": 31391,
+        "error_categories": {}
+      },
+      {
+        "path": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "size_bytes": 10470183,
+        "first_timestamp": "2026-09-14T10:08:54.107Z",
+        "last_timestamp": "2026-09-14T12:50:18.849Z",
+        "import_response_count": 22591,
+        "error_categories": {
+          "[electron-message-handler] Received turn/started for unknown conversation": 60,
+          "[electron-message-handler] Received turn/completed for unknown conversation": 45,
+          "[electron-message-handler] Received item/started for unknown conversation": 1377,
+          "[electron-message-handler] Received item/completed for unknown conversation": 1377,
+          "[electron-message-handler] Conversation state not found": 518,
+          "[electron-message-handler] Request failed": 53,
+          "[electron-message-handler] [desktop-notifications][global-error] ResizeObserver loop completed with undelivered notifications.": 5,
+          "[electron-message-handler] No promise for request ID": 21,
+          "[electron-message-handler] Failed to load config requirements": 8,
+          "[electron-message-handler] Received app server error": 1,
+          "[electron-message-handler] Failed to load config": 1,
+          "errorCode=EPIPE": 2
+        }
+      },
+      {
+        "path": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-2.log",
+        "size_bytes": 10485624,
+        "first_timestamp": "2026-09-14T10:01:53.653Z",
+        "last_timestamp": "2026-09-14T10:03:41.082Z",
+        "import_response_count": 31394,
+        "error_categories": {}
+      },
+      {
+        "path": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-3.log",
+        "size_bytes": 10485600,
+        "first_timestamp": "2026-09-14T10:03:41.084Z",
+        "last_timestamp": "2026-09-14T10:05:17.862Z",
+        "import_response_count": 31382,
+        "error_categories": {}
+      },
+      {
+        "path": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-4.log",
+        "size_bytes": 10485636,
+        "first_timestamp": "2026-09-14T10:05:17.864Z",
+        "last_timestamp": "2026-09-14T10:07:03.779Z",
+        "import_response_count": 31393,
+        "error_categories": {}
+      }
+    ],
+    "nine_startup_burst": [
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31104,
+        "text": "2026-09-14T12:36:48.835Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09fbd-5355-7632-be4b-cd1cacfd6a7a"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31122,
+        "text": "2026-09-14T12:36:48.841Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09fc1-06b5-7412-902f-739b0dc50c57"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31133,
+        "text": "2026-09-14T12:36:48.845Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09fbd-7941-71d3-b5b3-f5d0af6d465c"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31181,
+        "text": "2026-09-14T12:36:48.858Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09fd2-d184-7a62-8790-441cd2134328"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31243,
+        "text": "2026-09-14T12:36:48.937Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09fc5-686c-7661-ad73-113133b87be6"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31254,
+        "text": "2026-09-14T12:36:48.941Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09f96-8fd1-74f0-9743-f03c88dbb152"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31267,
+        "text": "2026-09-14T12:36:48.943Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09f91-580b-71b2-b947-25a96d332956"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31292,
+        "text": "2026-09-14T12:36:48.949Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09f9b-7aeb-7c10-b96e-0cb8f7258b3c"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31389,
+        "text": "2026-09-14T12:36:48.992Z info [AppServerConnection] mcp_server_startup_status_updated error=null failureReason=null hostId=local server=serena status=starting threadId=01a09f90-473a-7793-af2f-1c751c56461d"
+      }
+    ],
+    "queue_expiry_samples": [
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31571,
+        "text": "2026-09-14T12:43:55.085Z error [electron-message-handler] Request failed conversationId=01a04ca6-aff8-7363-bbdd-1b8b0aaa5eb8 durationMs=15003 error={\"code\":-32001,\"message\":\"App server request expired while queued\"} failureReason=null id=e353740f-9024-4244-96cd-04652a28e923 method=thread/read pendingCountAfter=17 priority=background queueWaitMs=0 rendererWebContentsId=1 rendererWindowAppearance=primary rendererWindowFocused=true rendererWindowId=1 rendererWindowVisible=true source=thread_hydration spanId=null timeoutMs=15000 traceId=null"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31573,
+        "text": "2026-09-14T12:44:08.650Z error [electron-message-handler] Request failed conversationId=none durationMs=27493 error={\"code\":-32001,\"message\":\"App server request expired while queued\"} failureReason=null id=9f013087-054d-4533-88ff-d4389510d069 method=model/list pendingCountAfter=16 priority=background queueWaitMs=0 rendererWebContentsId=1 rendererWindowAppearance=primary rendererWindowFocused=true rendererWindowId=1 rendererWindowVisible=true source=models spanId=null timeoutMs=0 traceId=null"
+      },
+      {
+        "file": "C:\\Users\\golin\\AppData\\Local\\Codex\\Logs\\2026\\09\\14\\codex-desktop-84d059e2-953b-434e-88e1-02a6f1b9a530-23108-t0-i1-095358-1.log",
+        "line": 31574,
+        "text": "2026-09-14T12:44:08.651Z error [electron-message-handler] Request failed conversationId=none durationMs=30010 error={\"code\":-32001,\"message\":\"App server request expired while queued\"} failureReason=null id=14bbb90d-3512-43b3-b2a5-eab0f3e01012 method=model/list pendingCountAfter=7 priority=background queueWaitMs=0 rendererWebContentsId=2 rendererWindowAppearance=avatarOverlay rendererWindowFocused=false rendererWindowId=2 rendererWindowVisible=true source=models spanId=null timeoutMs=0 traceId=null"
+      }
+    ],
+    "queue_expiry_count": 38
+  },
+  "settings": {
+    "F:\\Private\\SoulsLikeTemplate\\.codex\\config.toml": {
+      "features": {
+        "multi_agent": true
+      },
+      "agents": {
+        "enabled": true,
+        "max_concurrent_threads_per_session": 4,
+        "default_subagent_model": "gpt-5.6-terra",
+        "default_subagent_reasoning_effort": "high",
+        "interrupt_message": true
+      },
+      "serena": {
+        "command": "uvx",
+        "args": [
+          "-p",
+          "3.13",
+          "--from",
+          "serena-agent==1.7.0",
+          "serena",
+          "start-mcp-server",
+          "--context",
+          "codex",
+          "--project-from-cwd",
+          "--enable-web-dashboard",
+          "false"
+        ],
+        "startup_timeout_sec": 60,
+        "tool_timeout_sec": 120,
+        "env": {
+          "SERENA_HOME": ".serena/home",
+          "PYTHONUTF8": "1"
+        }
+      },
+      "server_enabled_flags": {
+        "unity": true,
+        "serena": true,
+        "soulslike-vault": true,
+        "obsidian": false,
+        "graphify": false,
+        "unityMCP": false
+      }
+    },
+    "C:\\Users\\golin\\.codex\\config.toml": {
+      "features": {
+        "rmcp_client": true,
+        "js_repl": false,
+        "multi_agent": true
+      },
+      "agents": null,
+      "serena": null,
+      "server_enabled_flags": {
+        "node_repl": true,
+        "context-mode": true,
+        "unityMCP": true,
+        "context": true,
+        "deepwiki": true,
+        "github": false,
+        "context7": true,
+        "cv_filesystem": true,
+        "penpot": true
+      }
+    }
+  },
+  "roles": {
+    "context-curator.toml": {
+      "mcp_overrides": {},
+      "agents": {
+        "enabled": false
+      }
+    },
+    "csharp-worker.toml": {
+      "mcp_overrides": {},
+      "agents": {
+        "enabled": false
+      }
+    },
+    "graph-explorer.toml": {
+      "mcp_overrides": {
+        "graphify": true,
+        "unity": false,
+        "serena": false,
+        "soulslike-vault": false,
+        "obsidian": false,
+        "unityMCP": false
+      },
+      "agents": {
+        "enabled": false
+      }
+    },
+    "unity-architect.toml": {
+      "mcp_overrides": {},
+      "agents": {
+        "enabled": false
+      }
+    },
+    "unity-operator.toml": {
+      "mcp_overrides": {},
+      "agents": {
+        "enabled": false
+      }
+    },
+    "unity-profiler.toml": {
+      "mcp_overrides": {},
+      "agents": {
+        "enabled": false
+      }
+    },
+    "unity-reviewer.toml": {
+      "mcp_overrides": {},
+      "agents": {
+        "enabled": false
+      }
+    },
+    "unity-test-runner.toml": {
+      "mcp_overrides": {},
+      "agents": {
+        "enabled": false
+      }
+    }
+  }
+}

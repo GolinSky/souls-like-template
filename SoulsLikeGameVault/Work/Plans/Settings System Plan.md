@@ -6,7 +6,7 @@ domains:
   - ui
 status: draft
 authority: advisory
-updated: 2026-09-07
+updated: 2026-09-14
 aliases:
   - ELDEN_RING_STYLE_SETTINGS_SYSTEM_PLAN
 tags:
@@ -14,6 +14,10 @@ tags:
   - status/draft
 ---
 # Elden Ring–Style Settings System — Detailed Architecture and Implementation Plan
+
+## Current Scope — 2026-09-14
+
+This draft is a reference design, not a from-scratch implementation checklist. `SettingsService` and `SettingsUiController` already implement the coordinator, editing, and display-confirmation paths. Review the existing source before selecting remaining work. [[Work/Issues/Settings Apply Hides Persistence Failures]] remains open: a failed save must be distinguishable from successful Apply and preserve a recoverable draft. Retaining the last valid save file is tracked separately by [[Work/Issues/Save Writes Can Replace The Last Valid File With Partial Data]]. No plan execution or closure is implied by this reconciliation.
 
 > **Project:** SoulsLikeTemplate  
 > **Target:** Unity 6.x, VContainer, Addressables, Input System, project MVP UI conventions  

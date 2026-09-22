@@ -1,186 +1,60 @@
 using System;
-using SoulsLike;
-using SoulsLike.Entities.BaseEntity;
-using SoulsLike.Entities.BaseEntity.EntityCommands;
-using SoulsLike.Entities.Combat;
-using SoulsLike.Entities.Character.Components;
-using SoulsLike.Entities.Character.Components.Attack;
-using SoulsLike.Entities.Character.Components.Equipment;
-using SoulsLike.Entities.Character.Components.Health;
-using SoulsLike.Entities.Character.Components.Inventory;
-using SoulsLike.Entities.Character.Components.Movement;
-using SoulsLike.Entities.Character.Input;
-using SoulsLike.Extensions;
-using SoulsLike.Factory;
-using SoulsLike.Interactions;
-using SoulsLike.Ui.LockOn;
-using SoulsLike.Ui.PlayerHud;
-using SoulsLike.Items;
-using SoulsLike.Entities.Ladder;
-using SoulsLike.Services.IdGeneration;
-using SoulsLike.Ui.Inventory;
-using SoulsLike.Ui.Equipment;
-using SoulsLike.Ui.Interaction;
-using SoulsLike.Ui.PauseNavigation;
+using SoulsLike.Services.Repository;
+using SoulsLike.Services.VContainer;
 using UnityEngine;
-using VContainer;
 using VContainer.Unity;
 
 namespace SoulsLike.Entities.Character
 {
-    public class CharacterFactory : BaseFactory, IDisposable
+    public class CharacterFactory : IDisposable
     {
-        private const string CHARACTER_PREFAB_KEY = nameof(Character);//todo: if character class will be renamed - const value will be changed too and prefab load will be fucked up 
-        private readonly IUniqueIdGenerator _uniqueIdGenerator;
+        private const string CHARACTER_PREFAB_KEY = "Character";
 
-        private LifetimeScope _characterScope;
+        private readonly LifetimeScope _parentScope;
+        private readonly CharacterScopeInstaller _characterScopePrefab;
+        private readonly IAssetService _assetService;
 
-        public CharacterFactory(IObjectResolver resolver, IUniqueIdGenerator uniqueIdGenerator) : base(resolver)
+        private CharacterScopeInstaller _characterScope;
+
+        public CharacterFactory(
+            LifetimeScope parentScope,
+            CharacterScopeInstaller characterScopePrefab,
+            IAssetService assetService)
         {
-            _uniqueIdGenerator = uniqueIdGenerator;
+            _parentScope = parentScope;
+            _characterScopePrefab = characterScopePrefab;
+            _assetService = assetService;
         }
 
         public Character CreateCharacter(Vector3? spawnPosition = null)
         {
-            GameObject prefab = AssetService.LoadPrefab(CHARACTER_PREFAB_KEY);
-            if (prefab == null)
+            if (_characterScope != null)
             {
-                throw new InvalidOperationException(
-                    $"Character prefab for Addressables key '{CHARACTER_PREFAB_KEY}' was not found.");
+                throw new InvalidOperationException("A local player is already created for this factory.");
             }
 
-            //todo: don't create go of character inside of this scope
-            GameObject instance = UnityEngine.Object.Instantiate(prefab);
+            GameObject prefab = _assetService.LoadPrefab(CHARACTER_PREFAB_KEY);
+            CharacterScopeInstaller scope = _parentScope.CreateChildFromPrefab(_characterScopePrefab);
+            GameObject instance = UnityEngine.Object.Instantiate(prefab, scope.transform, true);
             instance.name = $"{nameof(Character)}_Instance";
-            if (spawnPosition.HasValue)
-            {
-                instance.transform.position = spawnPosition.Value;
-            }
-
-            Character character = GetRequiredComponent<Character>(instance);
-            
-            //todo: add it dynamically in RootScope.CreateChild
-            ViewEntity viewEntity = instance.GetComponent<ViewEntity>();
-            if (viewEntity == null)
-            {
-                viewEntity = instance.AddComponent<ViewEntity>();
-            }
-
-            TargetLockNode targetLockNode = GetRequiredComponentInChildren<TargetLockNode>(instance);
-            PlayerMeleeCombatRelay meleeCombatRelay =
-                GetRequiredComponent<PlayerMeleeCombatRelay>(instance);
-            CriticalAttackController criticalAttackController =
-                GetRequiredComponent<CriticalAttackController>(instance);
-
-            AnimatorComponent animatorComponent = GetRequiredComponent<AnimatorComponent>(instance);
-            CharacterAudioComponent audioComponent = GetRequiredComponentInChildren<CharacterAudioComponent>(instance);
-            AttackComponent attackComponent = GetRequiredComponent<AttackComponent>(instance);
-            MovementComponent movementComponent = GetRequiredComponent<MovementComponent>(instance);
-            EquipmentComponent equipmentComponent = GetRequiredComponent<EquipmentComponent>(instance);
-            EquipmentPresentation equipmentPresentation =
-                GetRequiredComponent<EquipmentPresentation>(instance);
-            InventoryComponent inventoryComponent = GetRequiredComponent<InventoryComponent>(instance);
-            HealthComponent healthComponent = GetRequiredComponent<HealthComponent>(instance);
-            CombatDefenseComponent combatDefense = GetRequiredComponent<CombatDefenseComponent>(instance);
-            LadderClimber ladderClimber = GetRequiredComponent<LadderClimber>(instance);
-            animatorComponent.ConfigureCharacter(character, movementComponent);
-            long entityId = _uniqueIdGenerator.GenerateUniqueId();
-
-            _characterScope = RootScope.CreateChild(builder =>
-            {
-                builder.RegisterEntitySystemExt(EntityType.Player, entityId);
-                builder.RegisterComponent(viewEntity).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(targetLockNode).AsSelf();
-                builder.Register<InteractionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<GroundItemCollectionCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<ApplyDamageCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<ResolveMeleeHitCommand>(Lifetime.Singleton)
-                    .AsSelf()
-                    .AsImplementedInterfaces();
-                builder.Register<TargetingCommand>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-
-                builder.RegisterComponent(character).AsSelf().AsImplementedInterfaces();
-                builder.RegisterScriptableObject<CharacterData>();
-
-                builder.Register<AnimatorModel>(Lifetime.Singleton).AsSelf();
-                builder.RegisterComponent(animatorComponent).AsSelf().AsImplementedInterfaces();
-                builder.RegisterScriptableObject<CharacterAudioData>();
-                builder.RegisterComponent(audioComponent).AsSelf().AsImplementedInterfaces();
-
-                builder.RegisterComponent(attackComponent).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(meleeCombatRelay).AsSelf();
-                builder.RegisterComponent(criticalAttackController).AsSelf().AsImplementedInterfaces();
-
-                builder.Register<MovementModel>(Lifetime.Singleton).AsSelf();
-                builder.RegisterScriptableObject<MovementData>().As<IMovementData>();
-                builder.RegisterComponent(movementComponent).AsSelf().AsImplementedInterfaces();
-
-                builder.Register<EquipmentModel>(Lifetime.Singleton).AsSelf();
-                builder.RegisterComponent(equipmentComponent).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(equipmentPresentation).AsSelf();
-
-                builder.RegisterScriptableObject<InventoryData>();
-                builder.RegisterScriptableObject<ItemDatabase>();
-                builder.RegisterScriptableObject<WeaponDatabase>();
-                builder.RegisterScriptableObject<ShieldDatabase>();
-                builder.RegisterScriptableObject<ConsumableDatabase>();
-                builder.Register<ItemCatalog>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<InventoryModel>(Lifetime.Singleton).AsSelf();
-                builder.RegisterComponent(inventoryComponent).AsSelf().AsImplementedInterfaces();
-
-                builder.RegisterScriptableObject<HealthData>();
-                builder.Register<CharacterHealthData>(Lifetime.Singleton).As<IHealthData>();
-                builder.Register<HealthModel>(Lifetime.Singleton).AsSelf();
-                builder.RegisterComponent(healthComponent).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(combatDefense).AsSelf().AsImplementedInterfaces();
-                builder.RegisterComponent(ladderClimber).AsSelf().AsImplementedInterfaces();
-                builder.Register<PlayerHudUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<LockOnUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<InventoryUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<EquipmentUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<SystemUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<PauseNavigationUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-
-                builder.Register<PlayerInputReader>(Lifetime.Singleton).AsSelf();
-                builder.Register<InteractionController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<InteractionUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-                builder.Register<PlayerController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();
-            });
-
-            instance.transform.SetParent(_characterScope.transform, true);
-
+            Character character = instance.GetComponent<Character>();
+            character.StageSpawn(spawnPosition);
+            scope.gameObject.SetActive(true);
+            scope.BuildOnce();
+            _characterScope = scope;
             return character;
         }
 
         public void Dispose()
         {
-            _characterScope.Dispose();
-        }
-
-        private static TComponent GetRequiredComponent<TComponent>(GameObject instance)
-            where TComponent : Component
-        {
-            TComponent component = instance.GetComponent<TComponent>();
-            if (component == null)
+            if (_characterScope == null)
             {
-                throw new InvalidOperationException(
-                    $"Character prefab requires a {typeof(TComponent).Name} component.");
+                return;
             }
 
-            return component;
-        }
-
-        private static TComponent GetRequiredComponentInChildren<TComponent>(GameObject instance)
-            where TComponent : Component
-        {
-            TComponent component = instance.GetComponentInChildren<TComponent>(true);
-            if (component == null)
-            {
-                throw new InvalidOperationException(
-                    $"Character prefab requires a {typeof(TComponent).Name} component.");
-            }
-
-            return component;
+            CharacterScopeInstaller scope = _characterScope;
+            _characterScope = null;
+            scope.Dispose();
         }
     }
 }

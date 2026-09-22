@@ -1,0 +1,129 @@
+var path = "Assets/Prefabs/Ui/Equipment/EquipmentUi.prefab";
+var root = UnityEditor.PrefabUtility.LoadPrefabContents(path);
+try
+{
+    UnityEngine.Color C(string hex) { UnityEngine.ColorUtility.TryParseHtmlString(hex, out var c); return c; }
+    var primary = C("#E6E1CE"); var secondary = C("#ADAFA0"); var gold = C("#C9B67C");
+    var cinzel = UnityEditor.AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>("Assets/Art/Fonts/Cinzel/Cinzel[wght] SDF.asset");
+    var garamond = UnityEditor.AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>("Assets/Art/Fonts/EBGaramond/EBGaramond SDF.asset");
+    var inter = UnityEditor.AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>("Assets/Art/Fonts/Inter/Inter SDF.asset");
+    void Rect(UnityEngine.Transform t, float x, float y, float w, float h)
+    {
+        var r = (UnityEngine.RectTransform)t;
+        r.anchorMin = r.anchorMax = r.pivot = new UnityEngine.Vector2(0, 1);
+        r.anchoredPosition = new UnityEngine.Vector2(x, -y);
+        r.sizeDelta = new UnityEngine.Vector2(w, h); r.localScale = UnityEngine.Vector3.one;
+    }
+    void Style(TMPro.TMP_Text t, TMPro.TMP_FontAsset font, float size, UnityEngine.Color color, TMPro.TextAlignmentOptions align = TMPro.TextAlignmentOptions.TopLeft)
+    {
+        t.font = font; t.fontSharedMaterial = font.material; t.fontStyle = TMPro.FontStyles.Normal;
+        t.fontWeight = TMPro.FontWeight.Regular; t.fontSize = size; t.enableAutoSizing = false;
+        t.alignment = align; t.color = color; t.margin = UnityEngine.Vector4.zero; t.raycastTarget = false;
+    }
+    UnityEngine.UI.Image Image(UnityEngine.Transform parent, string name, float x, float y, float w, float h, UnityEngine.Color color)
+    {
+        var child = parent.Find(name);
+        if (child == null) { child = new UnityEngine.GameObject(name, typeof(UnityEngine.RectTransform), typeof(UnityEngine.UI.Image)).transform; child.SetParent(parent, false); }
+        Rect(child, x, y, w, h); var image = child.GetComponent<UnityEngine.UI.Image>(); image.color = color; image.raycastTarget = false; return image;
+    }
+    TMPro.TMP_Text Text(UnityEngine.Transform parent, string name, string value, float x, float y, float w, float h, TMPro.TMP_FontAsset font, float size, UnityEngine.Color color)
+    {
+        var child = parent.Find(name);
+        if (child == null) { child = new UnityEngine.GameObject(name, typeof(UnityEngine.RectTransform), typeof(TMPro.TextMeshProUGUI)).transform; child.SetParent(parent, false); }
+        Rect(child, x, y, w, h); var t = child.GetComponent<TMPro.TMP_Text>(); Style(t, font, size, color); t.text = value; return t;
+    }
+    void DisableLayouts(UnityEngine.Transform parent)
+    {
+        foreach (var layout in parent.GetComponentsInChildren<UnityEngine.UI.LayoutGroup>(true)) layout.enabled = false;
+        foreach (var fitter in parent.GetComponentsInChildren<UnityEngine.UI.ContentSizeFitter>(true)) fitter.enabled = false;
+    }
+    var bg = root.transform.Find("BackgroundCenterFade").GetComponent<UnityEngine.UI.Image>();
+    bg.color = C("#171916"); bg.transform.SetAsFirstSibling();
+    root.transform.Find("BackgroundVignette").GetComponent<UnityEngine.UI.Image>().color = new UnityEngine.Color(1,1,1,0.65f);
+    Image(root.transform, "HeaderRule", 64, 108, 1792, 1, new UnityEngine.Color(0.52f,0.55f,0.46f,0.35f));
+    var header = root.transform.Find("HeaderBar");
+    Style(header.Find("TittleText").GetComponent<TMPro.TMP_Text>(), cinzel, 40, primary, TMPro.TextAlignmentOptions.Left);
+    var summary = header.Find("PlayerSummaryText").GetComponent<TMPro.TMP_Text>();
+    Rect(summary.transform, 1320, 20, 472, 32); Style(summary, inter, 16, secondary, TMPro.TextAlignmentOptions.Right);
+    var grid = root.transform.Find("MainContentPanel/EquipmentGridPanel");
+    grid.Find("GridTitle").gameObject.SetActive(false);
+    var selectedSlot = grid.GetComponentsInChildren<TMPro.TMP_Text>(true).Single(t=>t.name=="SelectedSlotText");
+    var selectedName = grid.GetComponentsInChildren<TMPro.TMP_Text>(true).Single(t=>t.name=="SelectedItemNameText");
+    var count = grid.GetComponentsInChildren<TMPro.TMP_Text>(true).Single(t=>t.name=="LoadoutSummaryText");
+    Rect(selectedSlot.transform,0,0,584,24); Style(selectedSlot,inter,16,secondary); selectedSlot.text="RIGHT HAND ARMAMENT 1";
+    Rect(selectedName.transform,0,24,584,44); Style(selectedName,cinzel,28,primary); selectedName.text="Empty slot";
+    Rect(count.transform,0,80,584,24); Style(count,inter,14,secondary); count.text="0 equipped · 28 slots";
+    foreach (var slot in root.GetComponentsInChildren<SoulsLike.Ui.Equipment.EquipmentSlotUI>(true))
+    {
+        var border = slot.GetComponent<MPUIKIT.MPImage>(); border.StrokeWidth=1; border.OutlineWidth=0;
+        var fill=(UnityEngine.RectTransform)slot.transform.Find("SlotBackground"); Rect(fill,1,1,86,86);
+        fill.GetComponent<UnityEngine.UI.Image>().color=C("#272B23");
+        var so = new UnityEditor.SerializedObject(slot);
+        so.FindProperty("normalBorderColor").colorValue=C("#858B76"); so.FindProperty("selectedBorderColor").colorValue=gold;
+        var focus=(MPUIKIT.MPImage)so.FindProperty("selectionHighlight").objectReferenceValue;
+        var badge=((UnityEngine.GameObject)so.FindProperty("equippedBadge").objectReferenceValue).GetComponent<TMPro.TMP_Text>();
+        Rect(badge.transform,4,3,20,20); Style(badge,inter,14,gold);
+        var quantity=(TMPro.TMP_Text)so.FindProperty("quantityText").objectReferenceValue;
+        Rect(quantity.transform,56,64,24,20); Style(quantity,inter,14,primary,TMPro.TextAlignmentOptions.BottomRight);
+        var lockText=((UnityEngine.GameObject)so.FindProperty("lockOverlay").objectReferenceValue).GetComponentInChildren<TMPro.TMP_Text>(true);
+        Style(lockText,inter,12,secondary,TMPro.TextAlignmentOptions.Center); lockText.text="Locked";
+        // The runtime toggles this existing parent; its glow and focus boundary stay independent of hit bounds.
+        Image(focus.transform,"FocusTop",16,16,88,2,gold);
+        Image(focus.transform,"FocusBottom",16,102,88,2,gold);
+        Image(focus.transform,"FocusLeft",16,18,2,84,gold);
+        Image(focus.transform,"FocusRight",102,18,2,84,gold);
+        so.ApplyModifiedPropertiesWithoutUndo();
+        UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(slot);
+    }
+    var lore=root.GetComponentInChildren<SoulsLike.Ui.Inventory.LoreCardUi>(true);
+    DisableLayouts(lore.transform);
+    var loreBg=lore.transform.Find("LoreBg").GetComponent<MPUIKIT.MPImage>(); loreBg.enabled=true; loreBg.color=C("#20231D"); loreBg.StrokeWidth=0; loreBg.OutlineWidth=0;
+    var ls=lore.transform.Find("ScrollView"); Rect(ls,32,32,584,736);
+    var lv=ls.Find("Viewport"); Rect(lv,0,0,584,736);
+    var lc=lv.Find("Content"); Rect(lc,0,0,584,736);
+    var title=lc.Find("LoreTitle").GetComponent<TMPro.TMP_Text>(); Rect(title.transform,0,24,432,64); Style(title,cinzel,40,primary);
+    Rect(lc.Find("LoreArtwork"),464,16,120,120); lc.Find("LoreArtwork").GetComponent<UnityEngine.UI.Image>().preserveAspect=true;
+    Image(lc,"LoreDivider",0,146,584,1,new UnityEngine.Color(0.52f,0.55f,0.46f,0.25f));
+    var body=lc.Find("LoreBodyText").GetComponent<TMPro.TMP_Text>(); Rect(body.transform,0,192,584,520); Style(body,garamond,24,primary);
+    body.textWrappingMode=TMPro.TextWrappingModes.Normal;
+    lore.DisplayEmpty("Right Hand Armament 1",root.GetComponentsInChildren<SoulsLike.Ui.Equipment.EquipmentSlotUI>(true)[0].EmptyIcon);
+    var stats=root.GetComponentInChildren<SoulsLike.Ui.Inventory.CharacterStatsUi>(true);
+    DisableLayouts(stats.transform);
+    var statBg=Image(stats.transform,"EquipmentStatsBackground",0,0,464,800,C("#20231D")); statBg.transform.SetAsFirstSibling();
+    var ss=stats.transform.Find("StatsPanel/ScrollView"); Rect(ss,32,32,400,736);
+    var sv=ss.Find("Viewport"); Rect(sv,0,0,400,736);
+    var sc=sv.Find("Content"); Rect(sc,0,0,400,736);
+    var sh=sc.Find("Header").GetComponent<TMPro.TMP_Text>(); Rect(sh.transform,0,0,400,44); Style(sh,cinzel,28,primary);
+    var attrs=sc.Find("AttributesBlock"); Rect(attrs,0,80,400,256);
+    int index=0;
+    foreach (UnityEngine.Transform row in attrs)
+    {
+        Rect(row,0,index++*32,400,32);
+        foreach (var t in row.GetComponentsInChildren<TMPro.TMP_Text>(true)) { bool label=t.name=="Label"; Rect(t.transform,label?0:288,0,label?280:112,32); Style(t,garamond,24,label?secondary:primary,label?TMPro.TextAlignmentOptions.Left:TMPro.TextAlignmentOptions.Right); if(!label)t.text="—"; }
+    }
+    var power=sc.Find("EquippedPowerBlock"); Rect(power,0,384,400,96);
+    var ph=power.Find("Header").GetComponent<TMPro.TMP_Text>(); Rect(ph.transform,0,0,400,32); Style(ph,garamond,24,gold); ph.text="Attack power";
+    var powerRows=new[]{power.Find("Row_R1"),power.Find("Row_L1")}; index=0;
+    foreach (var row in powerRows)
+    {
+        Rect(row,0,32+index*32,400,32);
+        foreach(var t in row.GetComponentsInChildren<TMPro.TMP_Text>(true)) { bool label=t.name=="Label"; Rect(t.transform,label?0:184,0,label?184:216,32); Style(t,garamond,24,label?secondary:primary,label?TMPro.TextAlignmentOptions.Left:TMPro.TextAlignmentOptions.Right); t.text=label?(index==0?"Right hand 1":"Left hand 1"):"—"; }
+        index++;
+    }
+    var load=sc.Find("LoadPoiseBlock"); Rect(load,0,536,400,120);
+    Text(load,"EquipmentLoadLabel","Equip load",0,0,184,32,garamond,24,secondary);
+    var loadValue=load.Find("EquipLoadText").GetComponent<TMPro.TMP_Text>(); Rect(loadValue.transform,184,0,216,32); Style(loadValue,garamond,24,primary,TMPro.TextAlignmentOptions.Right); loadValue.text="—";
+    var poise=load.Find("Row_Poise"); Rect(poise,0,80,400,32);
+    foreach(var t in poise.GetComponentsInChildren<TMPro.TMP_Text>(true)) { bool label=t.name=="Label"; Rect(t.transform,label?0:288,0,label?280:112,32); Style(t,garamond,24,label?secondary:primary,label?TMPro.TextAlignmentOptions.Left:TMPro.TextAlignmentOptions.Right); if(!label)t.text="—"; }
+    Image(sc,"AttackDivider",0,360,400,1,new UnityEngine.Color(0.52f,0.55f,0.46f,0.25f));
+    Image(sc,"LoadDivider",0,512,400,1,new UnityEngine.Color(0.52f,0.55f,0.46f,0.25f));
+    var footer=root.transform.Find("BottomActionBar"); footer.GetComponent<MPUIKIT.MPImage>().enabled=false; Rect(footer,64,968,1792,80);
+    Image(footer,"FooterRule",0,-6,1792,1,new UnityEngine.Color(0.52f,0.55f,0.46f,0.35f));
+    Text(footer,"EquipmentInstruction","Select a slot to change equipment",0,0,1000,32,garamond,24,secondary);
+    var action=footer.Find("ActionPromptsText").GetComponent<TMPro.TMP_Text>(); Rect(action.transform,0,44,1400,36); Style(action,garamond,24,primary); action.text="Select   Back   Unequip";
+    foreach(var t in root.GetComponentsInChildren<UnityEngine.Transform>(true)) if(UnityEditor.PrefabUtility.IsPartOfPrefabInstance(t)) { UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(t); foreach(var c in t.GetComponents<UnityEngine.Component>()) UnityEditor.PrefabUtility.RecordPrefabInstancePropertyModifications(c); }
+    UnityEditor.PrefabUtility.SaveAsPrefabAsset(root,path);
+    UnityEditor.AssetDatabase.SaveAssets();
+    return "Saved final Equipment instance presentation.";
+}
+finally { UnityEditor.PrefabUtility.UnloadPrefabContents(root); }

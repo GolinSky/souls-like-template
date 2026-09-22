@@ -129,6 +129,7 @@ namespace SoulsLike.Tests.EnemyRuntime
         [TestCase("CircleLeft")]
         [TestCase("CircleRight")]
         [TestCase("Retreat")]
+        [TestCase("WalkBack")]
         [TestCase("Guard")]
         [TestCase("Attack")]
         public void CombatMovementResultsAreExplicit(string movement)
@@ -234,8 +235,24 @@ namespace SoulsLike.Tests.EnemyRuntime
         private static void SetPrivateField(Type type, object instance, string name, object value) =>
             type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(instance, value);
 
-        private static Type GetRequiredType(string typeName) =>
-            Type.GetType($"{typeName}, Assembly-CSharp")
-            ?? throw new InvalidOperationException($"Type '{typeName}' was not loaded.");
+        private static Type GetRequiredType(string typeName)
+        {
+            Type direct = Type.GetType(typeName);
+            if (direct != null)
+            {
+                return direct;
+            }
+
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Type type = assembly.GetType(typeName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            throw new InvalidOperationException($"Type '{typeName}' was not loaded.");
+        }
     }
 }

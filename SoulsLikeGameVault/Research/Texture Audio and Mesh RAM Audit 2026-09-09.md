@@ -40,7 +40,7 @@ Static audit of the current working tree at `7e7b1ebe`: TextureImporter, AudioIm
 - `Assets/Settings/Data/AmbienceData.asset:15`, `Assets/Scripts/Services/Audio/AmbienceSystem.cs`, and `Assets/Scripts/Utilities/Extensions/VContainerExt.cs`.
 - `Assets/ThirdParty/LeartesStudios/FantasyCastle/HDRP/Art/Textures/` and `Art/Meshes/`.
 - `Assets/Art/DefaultLocation/Colliders/` and `Assets/Scenes/DefaultLocation/`.
-- [[History/Implementation Records/DefaultLocation Memory Optimization Phase 4 Asset Residency]] and [[Work/Plans/DefaultLocation Memory Optimization]].
+- [[History/Records/DefaultLocation Memory Optimization Phase 4 Asset Residency]] and [[Work/Plans/DefaultLocation Memory Optimization]].
 
 ### Evidence and Findings
 

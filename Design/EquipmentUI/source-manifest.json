@@ -1,0 +1,82 @@
+{
+  "runId": "equipment-2026-09-14-a",
+  "assets": [
+    {
+      "name": "Weapon",
+      "source": "Source/EquipmentEmptyWeapon.png",
+      "generation": "built-in image_gen",
+      "prompt": "Create one original empty WEAPON slot category symbol for a restrained solemn dark-fantasy equipment interface. Single broad medieval straight sword, diagonal from lower-left pommel to upper-right blade tip, strong simple hilt and blade silhouette. Flat muted warm-grey / antique pewter shallow worn engraving, extremely minimal internal detail, NO shine, monochrome matte symbol. This is a quiet category ghost, not a detailed loot illustration. Transparent RGBA PNG square 512x512 requested, actual real alpha background with no checkerboard pixels. One centered complete unclipped silhouette occupies 76% of longest canvas dimension, generous uniform transparent margin, recognizable when full image displayed at 48 or 64px. Opaque symbol interior; UI will lower opacity later. Soft upper-left lighting, near-flat low contrast. Only the sword; no frame, tile, shadow, badge, glow, text, lettering, logo, watermark, environment, ground plane, extra weapon, or decorative filigree.",
+      "alphaRepair": false
+    },
+    {
+      "name": "Shield",
+      "source": "Source/EquipmentEmptyShield-final.png",
+      "generation": "built-in image_gen",
+      "prompt": "A single isolated One plain medieval heater SHIELD seen straight-on, broad simple shield silhouette, shallow rim and one very subtle center ridge. Create a quiet empty equipment slot symbol for a dark fantasy videogame inventory. A simplified broad iconic silhouette, flat subdued grey pewter color, two or three shallow engraved details only. Matte warm grey, minimal highlights and visual noise. Completely transparent background. Deliver an RGBA PNG with alpha zero everywhere outside the object, including all interior holes. Center the complete object on a square canvas with generous 14% empty transparent margin on every side. Simple symbol readable at 48px. No text or border, no shadow, no background or surface of any kind.",
+      "alphaRepair": false,
+      "regeneratedForAlpha": true
+    },
+    {
+      "name": "Flask",
+      "source": "Source/EquipmentEmptyFlask-final.png",
+      "generation": "built-in image_gen",
+      "prompt": "A single isolated One stoppered medieval FLASK, rounded broad bottle body, short distinct narrow neck and stopper, plain body with two minimal engraved bands. Create a quiet empty equipment slot symbol for a dark fantasy videogame inventory. A simplified broad iconic silhouette, flat subdued grey pewter color, two or three shallow engraved details only. Matte warm grey, minimal highlights and visual noise. Completely transparent background. Deliver an RGBA PNG with alpha zero everywhere outside the object, including all interior holes. Center the complete object on a square canvas with generous 14% empty transparent margin on every side. Simple symbol readable at 48px. No text or border, no shadow, no background or surface of any kind.",
+      "alphaRepair": false,
+      "regeneratedForAlpha": true
+    },
+    {
+      "name": "Ring",
+      "source": "Source/EquipmentEmptyRing-final.png",
+      "generation": "built-in image_gen",
+      "prompt": "A single isolated One TALISMAN RING, thick circular finger ring band seen front-on with a small plain oval bezel at the top. Clearly visible large central transparent opening. A ring, not a pendant or necklace. Create a quiet empty equipment slot symbol for a dark fantasy videogame inventory. A simplified broad iconic silhouette, flat subdued grey pewter color, two or three shallow engraved details only. Matte warm grey, minimal highlights and visual noise. Completely transparent background. Deliver an RGBA PNG with alpha zero everywhere outside the object, including all interior holes. Center the complete object on a square canvas with generous 14% empty transparent margin on every side. Simple symbol readable at 48px. No text or border, no shadow, no background or surface of any kind.",
+      "alphaRepair": false,
+      "regeneratedForAlpha": true
+    },
+    {
+      "name": "Head",
+      "source": "Source/EquipmentEmptyHead-final.png",
+      "generation": "built-in image_gen",
+      "prompt": "A single isolated One medieval HEAD ARMOR helmet in slight three-quarter view facing right, closed simple visor with one narrow slit, clear dome and neck silhouette. Create a quiet empty equipment slot symbol for a dark fantasy videogame inventory. A simplified broad iconic silhouette, flat subdued grey pewter color, two or three shallow engraved details only. Matte warm grey, minimal highlights and visual noise. Completely transparent background. Deliver an RGBA PNG with alpha zero everywhere outside the object, including all interior holes. Center the complete object on a square canvas with generous 14% empty transparent margin on every side. Simple symbol readable at 48px. No text or border, no shadow, no background or surface of any kind.",
+      "alphaRepair": false,
+      "regeneratedForAlpha": true
+    },
+    {
+      "name": "Chest",
+      "source": "Source/EquipmentEmptyChest-final.png",
+      "generation": "built-in image_gen",
+      "prompt": "A single isolated One CHEST ARMOR cloth tunic silhouette seen front-on, broad shoulders, short sleeves, shaped simple torso and straight lower hem, shallow folds only. No head, hands, legs or body inside. Create a quiet empty equipment slot symbol for a dark fantasy videogame inventory. A simplified broad iconic silhouette, flat subdued grey pewter color, two or three shallow engraved details only. Matte warm grey, minimal highlights and visual noise. Completely transparent background. Deliver an RGBA PNG with alpha zero everywhere outside the object, including all interior holes. Center the complete object on a square canvas with generous 14% empty transparent margin on every side. Simple symbol readable at 48px. No text or border, no shadow, no background or surface of any kind.",
+      "alphaRepair": false,
+      "regeneratedForAlpha": true
+    },
+    {
+      "name": "Arms",
+      "source": "Source/EquipmentEmptyArms-transparent.png",
+      "generation": "built-in image_gen",
+      "prompt": "Create one original empty equipment slot category symbol for a restrained solemn dark-fantasy UI. One ARMS ARMOR gauntlet silhouette, single gloved hand with a short broad wrist cuff and closed fingers pointing downward, front view. No bare skin, no arm. Match the supporting sword reference's matte warm grey / antique pewter value range and quiet shallow worn engraving. Near-flat monochrome icon, extremely minimal internal detail, no shiny highlight. Symbol must be simple and readable as a quiet empty-slot ghost when displayed at 48 or 64px. Square 512x512 transparent RGBA PNG requested, actual real alpha, no painted checkerboard. Centered complete silhouette occupying 76% of longest canvas dimension, transparent breathing room, opaque symbol interior; opacity will be controlled by UI. Soft upper-left light. Only the symbol, no frame, tile, shadow, badge, glow, text, lettering, logo, watermark, environment, ground plane or decorative filigree. Reference image is supporting STYLE only, never include the sword.",
+      "alphaRepair": true
+    },
+    {
+      "name": "Legs",
+      "source": "Source/EquipmentEmptyLegs-final.png",
+      "generation": "built-in image_gen",
+      "prompt": "A single isolated One LEGS ARMOR greaves silhouette: a matched joined composition of two plain lower-leg guards with simple boots, front view. No torso or body. Create a quiet empty equipment slot symbol for a dark fantasy videogame inventory. A simplified broad iconic silhouette, flat subdued grey pewter color, two or three shallow engraved details only. Matte warm grey, minimal highlights and visual noise. Completely transparent background. Deliver an RGBA PNG with alpha zero everywhere outside the object, including all interior holes. Center the complete object on a square canvas with generous 14% empty transparent margin on every side. Simple symbol readable at 48px. No text or border, no shadow, no background or surface of any kind.",
+      "alphaRepair": false,
+      "regeneratedForAlpha": true
+    },
+    {
+      "name": "Arrow",
+      "source": "Source/EquipmentEmptyArrow.png",
+      "generation": "built-in image_gen",
+      "prompt": "Create one original empty equipment slot category symbol for a restrained solemn dark-fantasy UI. One ARROW ammunition silhouette, a single long straight wooden shaft with simple pointed triangular arrowhead and clear feather fletching, diagonal lower-left to upper-right. Match the supporting sword reference's matte warm grey / antique pewter value range and quiet shallow worn engraving. Near-flat monochrome icon, extremely minimal internal detail, no shiny highlight. Symbol must be simple and readable as a quiet empty-slot ghost when displayed at 48 or 64px. Square 512x512 transparent RGBA PNG requested, actual real alpha, no painted checkerboard. Centered complete silhouette occupying 76% of longest canvas dimension, transparent breathing room, opaque symbol interior; opacity will be controlled by UI. Soft upper-left light. Only the symbol, no frame, tile, shadow, badge, glow, text, lettering, logo, watermark, environment, ground plane or decorative filigree. Reference image is supporting STYLE only, never include the sword.",
+      "alphaRepair": false
+    },
+    {
+      "name": "Bolt",
+      "source": "Source/EquipmentEmptyBolt-final.png",
+      "generation": "built-in image_gen",
+      "prompt": "A single isolated One CROSSBOW BOLT ammunition silhouette, short thick shaft with a broad pyramidal tip and stubby fletching, diagonal lower-left to upper-right. Proportions distinctly shorter and heavier than a bow arrow. Create a quiet empty equipment slot symbol for a dark fantasy videogame inventory. A simplified broad iconic silhouette, flat subdued grey pewter color, two or three shallow engraved details only. Matte warm grey, minimal highlights and visual noise. Completely transparent background. Deliver an RGBA PNG with alpha zero everywhere outside the object, including all interior holes. Center the complete object on a square canvas with generous 14% empty transparent margin on every side. Simple symbol readable at 48px. No text or border, no shadow, no background or surface of any kind.",
+      "alphaRepair": false,
+      "regeneratedForAlpha": true
+    }
+  ]
+}

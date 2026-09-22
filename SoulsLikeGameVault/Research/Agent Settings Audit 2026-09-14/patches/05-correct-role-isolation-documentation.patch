@@ -1,0 +1,10 @@
+--- a/.codex/agents/README.md
++++ b/.codex/agents/README.md
+@@ -22,5 +22,6 @@
+ - Keep the parent/orchestrator on GPT-5.6 Sol High as the final decision-maker.
+ - Each child has `[agents] enabled = false` so it cannot recursively create more subagents.
+-- Only the MCP server required by the role is enabled. This reduces tool-selection noise and accidental cross-role work.
++- Role files inherit unspecified MCP servers and connector capabilities; only explicit overrides narrow them. Inspect the spawned role's available tools before relying on isolation.
++- Role sandbox settings are defaults. Parent turn permission overrides can take precedence, so `sandbox_mode = "read-only"` alone does not establish a read-only runtime.
+ - `graph_explorer` is now an actual Graphify specialist. If you intentionally do not want Graphify, rename it to `code_explorer`, disable Graphify, and remove Graphify from the description.
+ - Project skill packages live under `.agents/skills`. Each agent TOML names its required workflow skill; the parent handoff names only applicable conditional/domain skills.

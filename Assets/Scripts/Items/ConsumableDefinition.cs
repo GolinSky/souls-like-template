@@ -15,13 +15,5 @@ namespace SoulsLike.Items
         public ItemUseType UseType => useType;
         public float EffectAmount => effectAmount;
         public float DurationSeconds => durationSeconds;
-
-        public void ValidateDefinition()
-        {
-            if (itemId == ItemId.None)
-            {
-                throw new InvalidOperationException("Consumable definition requires a non-None ItemId.");
-            }
-        }
     }
 }

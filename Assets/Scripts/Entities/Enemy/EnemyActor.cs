@@ -14,14 +14,14 @@ namespace SoulsLike.Entities.Enemy
         [SerializeField] private Animator animator;
         [SerializeField] private MeleeHitboxController meleeHitbox;
         private Vector3[] _patrolPoints = { };
-        private GameObject _lifetimeRoot;
-        private bool _hasLifetimeRoot;
+        private IEnemyDespawnHandler _despawnHandler;
         private bool _isDespawned;
         
         
         [FormerlySerializedAs("<NavMeshAgent>k__BackingField")]
         [SerializeField] private NavMeshAgent navMeshAgent;
 
+        public Transform Transform => transform;
         public NavMeshAgent NavMeshAgent => navMeshAgent;
         public EnemyBehaviourProfile BehaviourProfile { get; private set; }
         public WeaponMovesetDefinition Moveset { get; private set; }
@@ -36,36 +36,21 @@ namespace SoulsLike.Entities.Enemy
         public void Construct(
             Entity entity,
             EnemyBehaviourProfile behaviourProfile,
-            WeaponMovesetDefinition moveset)
+            WeaponMovesetDefinition moveset,
+            IEnemyDespawnHandler despawnHandler)
         {
             Entity = entity;
             BehaviourProfile = behaviourProfile;
             Moveset = moveset;
+            _despawnHandler = despawnHandler;
         }
 
-        [Inject]
-        public void ConfigureSpawn(
-            Vector3 homePosition,
-            Quaternion rotation,
-            Vector3[] patrolPoints,
-            int randomSeedOffset)
+        public void StageSpawn(EnemySpawnData spawnData)
         {
-            transform.SetPositionAndRotation(homePosition, rotation);
-            HomePosition = homePosition;
-            _patrolPoints = patrolPoints;
-            RandomSeedOffset = randomSeedOffset;
-        }
-
-        public void AttachLifetimeRoot(GameObject lifetimeRoot)
-        {
-            if (_hasLifetimeRoot)
-            {
-                throw new InvalidOperationException(
-                    $"{nameof(EnemyActor)} lifetime root is already attached.");
-            }
-
-            _lifetimeRoot = lifetimeRoot;
-            _hasLifetimeRoot = true;
+            transform.SetPositionAndRotation(spawnData.Position, spawnData.Rotation);
+            HomePosition = spawnData.Position;
+            _patrolPoints = spawnData.PatrolPoints;
+            RandomSeedOffset = spawnData.RandomSeedOffset;
         }
 
         public void Despawn()
@@ -82,7 +67,7 @@ namespace SoulsLike.Entities.Enemy
             }
             finally
             {
-                Destroy(_lifetimeRoot);
+                _despawnHandler.Despawn();
             }
         }
     }

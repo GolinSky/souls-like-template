@@ -7,7 +7,7 @@ domains:
   - agent-skills
 status: in-progress
 authority: advisory
-updated: 2026-09-08
+updated: 2026-09-14
 aliases:
   - ProBuilder AI Level Prototyping Plan
 tags:
@@ -453,8 +453,8 @@ Assets/Editor/Automation/AgentTestSafetyCommands.cs
 .agents/skills/soulslike-context/SKILL.md
 .agents/skills/soulslike-unity-assets/SKILL.md
 .agents/skills/soulslike-validation/SKILL.md
-SoulsLikeGameVault/Agent Guide/Agent Context Registry.md
-SoulsLikeGameVault/Templates/Plan Template.md
+SoulsLikeGameVault/Meta/Agent Context Registry.md
+SoulsLikeGameVault/Meta/Templates/Plan Template.md
 ```
 
 Use current exact context keys, and inspect relevant local player/camera/navigation/layer assets before dimension or gameplay decisions. No global scans of generated build/cache folders are necessary. Targeted inspection of the installed ProBuilder/Pipeline package API is allowed when needed; do not edit package-cache contents.
@@ -476,7 +476,7 @@ Do not spawn a new agent role, change models, or alter the existing orchestratio
 
 The implementing agent can resolve package compatibility, actual command schemas, material selection, and source locations through inspection; these do not require another vague planning round. Stop only for a concrete unresolved boundary such as permission to save an unrelated dirty scene, a necessary extra dependency upgrade, ambiguous ownership of existing content, or an incompatible package/API combination.
 
-This plan remains `draft` until reviewed. Move it to `ready` only when the target scope and installation choices are accepted. Execute only when the user requests execution, following the current repository's lifecycle policy. [R1][R5]
+This plan is `in-progress` under the authorization recorded in Local Execution. That decision supersedes the original draft wording. Preserve the recorded test restriction; recheck completed package, skill, and fixture work before selecting any remaining phase. [R1][R5]
 
 ### Ready-to-use execution brief
 
@@ -491,9 +491,9 @@ Research date: **2026-09-08**. URLs below identify reviewed source locations; br
 - **[R1] Repository policy:** [AGENTS.md](https://github.com/GolinSky/souls-like-template/blob/main/AGENTS.md). Observed content blob SHA: `5e48adb84bda0cb9d253cfb14266d82faf15aff1`.
 - **[R2] Editor version:** [ProjectVersion.txt](https://github.com/GolinSky/souls-like-template/blob/main/ProjectSettings/ProjectVersion.txt). Blob SHA: `550b6e8a8cfda4d88fd49e3b42006ceb45fbbd68`.
 - **[R3] Package dependencies:** [manifest.json](https://github.com/GolinSky/souls-like-template/blob/main/Packages/manifest.json). Blob SHA: `bc0d38cdcce7674c498725386bbbe191673c4649`. The local resolved lockfile was not inspected during this planning task.
-- **[R4] Context and existing skills:** [Agent Context Registry](https://github.com/GolinSky/souls-like-template/blob/main/SoulsLikeGameVault/Agent%20Guide/Agent%20Context%20Registry.md), [soulslike-context](https://github.com/GolinSky/souls-like-template/blob/main/.agents/skills/soulslike-context/SKILL.md), [soulslike-unity-assets](https://github.com/GolinSky/souls-like-template/blob/main/.agents/skills/soulslike-unity-assets/SKILL.md), and [.agents/skills listing](https://github.com/GolinSky/souls-like-template/tree/main/.agents/skills).
-- **[R5] Plan structure/lifecycle:** [Plan Template.md](https://github.com/GolinSky/souls-like-template/blob/main/SoulsLikeGameVault/Templates/Plan%20Template.md).
-- **[R6] Vault naming/storage:** [Vault Guide.md](https://github.com/GolinSky/souls-like-template/blob/main/SoulsLikeGameVault/Agent%20Guide/Vault%20Guide.md).
+- **[R4] Context and existing skills:** [[Meta/Agent Context Registry|Agent Context Registry]], [soulslike-context](https://github.com/GolinSky/souls-like-template/blob/main/.agents/skills/soulslike-context/SKILL.md), [soulslike-unity-assets](https://github.com/GolinSky/souls-like-template/blob/main/.agents/skills/soulslike-unity-assets/SKILL.md), and [.agents/skills listing](https://github.com/GolinSky/souls-like-template/tree/main/.agents/skills).
+- **[R5] Plan structure/lifecycle:** [[Meta/Templates/Plan Template|Plan Template]].
+- **[R6] Vault naming/storage:** [[Meta/Vault Guide|Vault Guide]].
 - **[R7] Existing Pipeline extension:** [AgentTestSafetyCommands.cs](https://github.com/GolinSky/souls-like-template/blob/main/Assets/Editor/Automation/AgentTestSafetyCommands.cs). Blob SHA: `c84a7c667c35953d11fa45fb2ca4eaa5b86af39c`.
 
 ### External primary sources

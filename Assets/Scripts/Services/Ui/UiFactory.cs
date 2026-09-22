@@ -1,4 +1,5 @@
 ﻿using SoulsLike.Factory;
+using SoulsLike.Services.Repository;
 using SoulsLike.Ui.Base;
 using UnityEngine;
 using VContainer;
@@ -9,7 +10,7 @@ namespace SoulsLike.Services
 {
     public class UiFactory: BaseFactory
     {
-        public UiFactory(IObjectResolver resolver): base(resolver)
+        public UiFactory(IObjectResolver resolver, IAssetService assetService): base(resolver, assetService)
         {
         }
         
@@ -19,7 +20,7 @@ namespace SoulsLike.Services
         {
             var uiInstance = CreateUiInstance<TUi>(parent);
 
-            var childScope = RootScope.CreateChild(builder =>
+            RootScope.CreateChild(builder =>
             {
                 builder.RegisterComponentInHierarchy<TUi>().AsImplementedInterfaces(); 
             });
@@ -36,10 +37,6 @@ namespace SoulsLike.Services
                 if (_mappingData == null)
                 {
                     _mappingData = AssetService.Load<AssetMappingData>("AssetMappingData");
-                    if (_mappingData == null)
-                    {
-                        Debug.LogError("[UiFactory] AssetMappingData is null! Failed to load mapping data asset.");
-                    }
                 }
                 return _mappingData;
             }
@@ -48,21 +45,9 @@ namespace SoulsLike.Services
         private TUi CreateUiInstance<TUi>(Transform parent)
         {
             var className = typeof(TUi).Name;
-            var mapping = MappingData;
-            var addressableKey = className;
-            if (mapping != null)
-            {
-                addressableKey = mapping.GetUiKey(className);
-            }
-            else
-            {
-                Debug.LogError($"[UiFactory] MappingData is missing while creating UI instance for {className}!");
-            }
+            var addressableKey = MappingData.GetUiKey(className);
 
             var prefab = AssetService.Load<GameObject>(addressableKey);
-            if (prefab == null)
-                throw new Exception($"UI prefab for Addressables key '{addressableKey}' not found.");
-
             var instance = Object.Instantiate(prefab, parent);
             instance.name = $"{className}_Instance";
 

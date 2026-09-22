@@ -53,20 +53,7 @@ namespace SoulsLike.Entities.Combat
                 ?? throw new InvalidOperationException(
                     "A melee attack requires an active weapon item ID.");
             WeaponRuntime weaponRuntime = _attackComponent.ActiveWeaponRuntime;
-            if (weaponRuntime == null)
-            {
-                throw new InvalidOperationException(
-                    $"Weapon '{weaponId}' requires {nameof(WeaponRuntime)}.");
-            }
-
             _activeHitbox = weaponRuntime.MeleeHitbox;
-            if (_activeHitbox == null)
-            {
-                throw new InvalidOperationException(
-                    $"Weapon '{weaponId}' runtime requires a serialized " +
-                    $"{nameof(MeleeHitboxController)} reference.");
-            }
-
             CombatProfile combatProfile = _attackComponent.ActiveCombatProfile;
             float multiplier = actionId == CharacterActionId.HeavyAttack
                 ? combatProfile.HeavyAttackMultiplier

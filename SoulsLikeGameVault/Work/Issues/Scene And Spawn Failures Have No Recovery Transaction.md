@@ -5,7 +5,7 @@ domains: [scenes, spawn, lifecycle]
 status: open
 authority: evidence
 priority: medium
-updated: 2026-09-08
+updated: 2026-09-14
 source_commit: 30e5f953d4fe5824f3923c5628b3dc8748e10a1a
 verification: static source; runtime not reproduced
 aliases: []
@@ -13,6 +13,10 @@ tags: [work/issue, status/open, audit/architecture]
 ---
 
 # Scene And Spawn Failures Have No Recovery Transaction
+
+## Current Scope — 2026-09-14
+
+The remaining review concerns pending-spawn consumption and persistence before character initialization succeeds. Service-level rollback, automatic retry, and a recovery destination were deliberately excluded by [[History/Records/Scene Loading Model State and Fail Fast Policy]]. Earlier recovery proposals below are historical options, not approved requirements. Review spawn commit/consumption ordering while preserving the accepted fail-fast policy. This issue remains open; no new failure injection was performed.
 
 ## Issue Contract
 
@@ -42,7 +46,7 @@ MEDIUM — lifecycle correctness/availability. Evidence is static; failure-injec
 
 ### Hypotheses
 
-Ordering and absent failure ownership are source-confirmed. Actual load/DI failure outcomes, leaked handles, and retry behavior require local tests. This extends failure handling rather than duplicating [[Work/Issues/Scene Transitions Allow Concurrent Load Operations]] or [[Work/Issues/Respawn Assumes The Last Grace Is In The Current Scene]].
+Ordering and absent failure ownership are source-confirmed. Actual load/DI failure outcomes, leaked handles, and retry behavior require local tests. This extends failure handling rather than duplicating [[Work/Issues/Rejected Scene Transition Can Overwrite Pending Spawn Intent]] or [[Work/Issues/Respawn Assumes The Last Grace Is In The Current Scene]].
 
 ### Open Questions
 

@@ -7,13 +7,17 @@ domains:
   - scenes
 status: in-progress
 authority: advisory
-updated: 2026-09-08
+updated: 2026-09-14
 source_commit: 3925ea83
 tags:
   - work/plan
   - status/in-progress
 ---
 # DefaultLocation Memory Optimization
+
+## Issue Closure and Remaining Plan Scope — 2026-09-14
+
+[[History/Closed Issues/DefaultLocation Memory and Rendering Issues]] is completed by explicit user decision. The plan remains `in-progress` for its separately recorded optimization and measurement work; unchecked scenarios are not blockers to the issue closure and must not reopen it automatically. Historical Editor measurements are not a new current-loader or Player validation result. No optimization or profiling is executed by this documentation change.
 
 ## Plan Contract
 
@@ -23,7 +27,7 @@ Make DefaultLocation safe to author and load on the audited 32 GB RAM / 12 GB VR
 
 ### Source Research and Decisions
 
-Evidence: [[Work/Issues/DefaultLocation Memory and Rendering Issues]]. Audit date: 2026-09-07; Unity 6000.3.11f1, HDRP 17.3.0, Addressables 2.9.1.
+Evidence: [[History/Closed Issues/DefaultLocation Memory and Rendering Issues]]. Audit date: 2026-09-07; Unity 6000.3.11f1, HDRP 17.3.0, Addressables 2.9.1.
 
 The crash log confirms a native `VertexData` allocation failure after the zone scenes load. The current system is near its commit limit. Existing loaded meshes total about 1.12 GiB, while textures and render textures each total about 0.4 GiB. Those object totals do not explain the entire Editor process footprint and cannot be added to OS commit as separate costs.
 
@@ -129,13 +133,13 @@ Unity's current HDRP guidance favors SRP Batcher/GPU Resident Drawer and warns t
 
 ### Phase 6 — Bound loading and then consider spatial streaming
 
-**Latest user decision (2026-09-08):** supersedes the sequential/rollback experiment below. Runtime loading state belongs in `SceneModel`; dependencies load concurrently and the main scene starts only after all succeed. Failure cleanup is explicitly removed: throw on the first observed failure and fix the defect, with no recovery guarantee for outstanding native operations. This choice preserves final residency but does not bound temporary dependency-loading peaks. Historical comparison/rollback checklist results below describe `a57cd2e2`; they are not current behavior. See [[History/Implementation Records/Scene Loading Model State and Fail Fast Policy]]. Live memory/build-layout validation remains outstanding.
+**Latest user decision (2026-09-08):** supersedes the sequential/rollback experiment below. Runtime loading state belongs in `SceneModel`; dependencies load concurrently and the main scene starts only after all succeed. Failure cleanup is explicitly removed: throw on the first observed failure and fix the defect, with no recovery guarantee for outstanding native operations. This choice preserves final residency but does not bound temporary dependency-loading peaks. Historical comparison/rollback checklist results below describe `a57cd2e2`; they are not current behavior. See [[History/Records/Scene Loading Model State and Fail Fast Policy]]. Live memory/build-layout validation remains outstanding.
 
-Execution started on 2026-09-08. **Measurement gate blocked:** the read-only preflight found 64.59/65.81 GiB system commit, only 1.23 GiB (1.9%) headroom, with a clean ElevatorDemo scene open. No live loading comparison, test run, Play Mode session, or build was started. The bounded source experiment is tracked in [[History/Implementation Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]]; it is not an accepted memory optimization until the controlled comparison passes.
+Execution started on 2026-09-08. **Measurement gate blocked:** the read-only preflight found 64.59/65.81 GiB system commit, only 1.23 GiB (1.9%) headroom, with a clean ElevatorDemo scene open. No live loading comparison, test run, Play Mode session, or build was started. The bounded source experiment is tracked in [[History/Records/DefaultLocation Memory Optimization Phase 6 Bounded Loading]]; it is not an accepted memory optimization until the controlled comparison passes.
 
 - [ ] First compare the existing nine-way concurrent dependency load with sequential loading or a small concurrency limit. This targets the peak; all ten scenes will still be resident at completion.
 - [x] Implemented a sequential dependency-loading **source experiment**, preserving all-ten-scene residency and dependency-plus-target progress. The controlled memory comparison above is still required before accepting it as a memory optimization.
-- [x] Added explicit reverse-order failure cleanup and a single in-flight service transition after executable baseline reproduction confirmed overlapping Loading requests and unreleased partial loads. The service owns completion/cleanup; overlapping requests fault; there is no cancellation or automatic retry. A successful Loading scene remains for recovery. Ten isolated source-linked control-flow checks pass; actual Unity handle/recovery behavior is still unverified. The broader pending-spawn mutation before service admission remains open in [[Work/Issues/Scene Transitions Allow Concurrent Load Operations]].
+- [x] Added explicit reverse-order failure cleanup and a single in-flight service transition after executable baseline reproduction confirmed overlapping Loading requests and unreleased partial loads. The service owns completion/cleanup; overlapping requests fault; there is no cancellation or automatic retry. A successful Loading scene remains for recovery. Ten isolated source-linked control-flow checks pass; actual Unity handle/recovery behavior is still unverified. The broader pending-spawn mutation before service admission remains open in [[Work/Issues/Rejected Scene Transition Can Overwrite Pending Spawn Intent]].
 - [ ] Inspect a current Addressables build layout for shared material/mesh/texture duplication. The scene group uses Pack Separately; that alone does not prove duplication. Existing August build reports predate the current zoning and are not validation.
 
   Freshness inspection completed: all available local build products/layouts are from August 19 and contain none of the current location scene group/scenes. The current ten-scene group/schema dates from August 31. Building a current layout is deferred until memory headroom permits; legacy duplicate records cannot answer this item.

@@ -19,11 +19,12 @@ namespace SoulsLike.Ui.Cheats
         IGameStateObserver
     {
         private const float HIT_DAMAGE = 20f;
+        private const float ENEMY_SPAWN_DISTANCE = 3.0f;
 
         private readonly IInputService _inputService;
         private readonly IGameStateNotifier _gameStateNotifier;
         private readonly IEntityLocator _entityLocator;
-        private readonly EnemyEncounterSystem _enemyEncounterSystem;
+        private readonly EnemyService _enemyService;
         private readonly GraceSystem _graceSystem;
         private readonly List<IEntity> _entities = new();
 
@@ -35,19 +36,44 @@ namespace SoulsLike.Ui.Cheats
         public bool IsPlayerInvincible => TryGetPlayer(out IEntity player, false)
             && GetApplyDamageCommand(player).IsCheatInvulnerable;
 
+        public IReadOnlyList<EnemyId> AvailableEnemyIds
+        {
+            get
+            {
+                if (_enemyService != null && _enemyService.Catalog != null)
+                {
+                    List<EnemyId> ids = new();
+                    foreach (var entry in _enemyService.Catalog.Definitions)
+                    {
+                        if (entry != null && entry.Key != EnemyId.Unassigned && !ids.Contains(entry.Key))
+                        {
+                            ids.Add(entry.Key);
+                        }
+                    }
+
+                    if (ids.Count > 0)
+                    {
+                        return ids;
+                    }
+                }
+
+                return new[] { EnemyId.ErikaMelee, EnemyId.BackstabDummy, EnemyId.RiposteDummy };
+            }
+        }
+
         public CheatsUiController(
             IUiService uiService,
             IInputService inputService,
             IGameStateNotifier gameStateNotifier,
             IEntityLocator entityLocator,
-            EnemyEncounterSystem enemyEncounterSystem,
+            EnemyService enemyService,
             GraceSystem graceSystem)
             : base(uiService)
         {
             _inputService = inputService;
             _gameStateNotifier = gameStateNotifier;
             _entityLocator = entityLocator;
-            _enemyEncounterSystem = enemyEncounterSystem;
+            _enemyService = enemyService;
             _graceSystem = graceSystem;
         }
 
@@ -157,7 +183,79 @@ namespace SoulsLike.Ui.Cheats
 
         public void RespawnEnemies()
         {
-            _enemyEncounterSystem.RespawnEnemies();
+            _enemyService.RespawnEnemies();
+        }
+
+        public void SpawnEnemy(EnemyId enemyId)
+        {
+            if (enemyId == EnemyId.Unassigned)
+            {
+                Debug.LogWarning("Cheats cannot spawn enemy with Unassigned EnemyId.");
+                return;
+            }
+
+            if (!TryGetPlayer(out IEntity player))
+            {
+                return;
+            }
+
+            if (!player.TryGetComponent(out TargetingCommand targeting))
+            {
+                Debug.LogWarning("Cheats cannot spawn enemy because player entity is missing TargetingCommand.");
+                return;
+            }
+
+            TargetingSnapshot snapshot = targeting.Read();
+            Vector3 forward = snapshot.Forward;
+            forward.y = 0f;
+            if (forward.sqrMagnitude < 0.0001f)
+            {
+                forward = Vector3.forward;
+            }
+            else
+            {
+                forward.Normalize();
+            }
+
+            Vector3 spawnPosition = snapshot.Position + forward * ENEMY_SPAWN_DISTANCE;
+            Quaternion spawnRotation = Quaternion.LookRotation(-forward, Vector3.up);
+
+            _enemyService.SpawnEnemy(enemyId, spawnPosition, spawnRotation);
+        }
+
+        public void SpawnEnemy(string enemyTypeOrId)
+        {
+            if (string.IsNullOrWhiteSpace(enemyTypeOrId))
+            {
+                Debug.LogWarning("Enemy type/id string cannot be null or empty.");
+                return;
+            }
+
+            if (Enum.TryParse(enemyTypeOrId, true, out EnemyId parsedId))
+            {
+                SpawnEnemy(parsedId);
+                return;
+            }
+
+            if (int.TryParse(enemyTypeOrId, out int rawId) && Enum.IsDefined(typeof(EnemyId), (EnemyId)rawId))
+            {
+                SpawnEnemy((EnemyId)rawId);
+                return;
+            }
+
+            Debug.LogWarning($"Unknown enemy type/id '{enemyTypeOrId}'.");
+        }
+
+        public void SpawnEnemy(int enemyId)
+        {
+            if (Enum.IsDefined(typeof(EnemyId), (EnemyId)enemyId))
+            {
+                SpawnEnemy((EnemyId)enemyId);
+            }
+            else
+            {
+                Debug.LogWarning($"Unknown numeric enemy ID '{enemyId}'.");
+            }
         }
 
         public void OnGameStateChanged(GameState newState)

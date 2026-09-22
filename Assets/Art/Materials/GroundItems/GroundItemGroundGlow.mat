@@ -26,8 +26,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _Dissolve: 0
-    - _Intensity: 3.5
-    - _PulseSpeed: 6.28
+    - _Intensity: 2.5
+    - _PulseSpeed: 3.14
     - _Radial: 1
     - _Wobble: 0
     m_Colors:

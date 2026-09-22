@@ -37,23 +37,5 @@ namespace SoulsLike.Items
 
             return equipmentGroups.Contains(group);
         }
-
-        public void ValidateDefinition()
-        {
-            if (itemId == ItemId.None)
-            {
-                throw new InvalidOperationException("Item definition requires a non-None ItemId.");
-            }
-
-            if (string.IsNullOrWhiteSpace(displayName))
-            {
-                throw new InvalidOperationException($"Item definition '{itemId}' requires a display name.");
-            }
-
-            if (maxStack < 1)
-            {
-                throw new InvalidOperationException($"Item definition '{itemId}' requires MaxStack >= 1.");
-            }
-        }
     }
 }

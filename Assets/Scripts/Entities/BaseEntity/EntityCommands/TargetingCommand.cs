@@ -1,6 +1,6 @@
 using SoulsLike.Components.Visibility;
-using SoulsLike.Entities.Character;
 using SoulsLike.Entities.Character.Components.Health;
+using SoulsLike.Entities.Character.Components.Targeting;
 using UnityEngine;
 
 namespace SoulsLike.Entities.BaseEntity.EntityCommands
@@ -9,7 +9,7 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
     {
         private readonly Entity _entity;
         private readonly ViewEntity _viewEntity;
-        private readonly TargetLockNode _lockNode;
+        private readonly TargetLockComponent _lockNode;
         private readonly IHealthComponent _health;
         private readonly VisibilityComponent _visibilityComponent;
 
@@ -17,7 +17,7 @@ namespace SoulsLike.Entities.BaseEntity.EntityCommands
         public bool IsAlive => _health.Stats.IsAlive;
         public bool IsVisible => _visibilityComponent == null || _visibilityComponent.IsVisible;
 
-        public TargetingCommand(Entity entity, ViewEntity viewEntity, TargetLockNode lockNode, IHealthComponent health)
+        public TargetingCommand(Entity entity, ViewEntity viewEntity, TargetLockComponent lockNode, IHealthComponent health)
             : base(entity)
         {
             _entity = entity;

@@ -24,3 +24,7 @@ Do not spawn subagents.
 
 [agents]
 enabled = false
+
+[mcp_servers.serena]
+url = "http://127.0.0.1:9121/mcp"
+enabled = false

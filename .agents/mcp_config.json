@@ -8,7 +8,7 @@
       ]
     },
     "unity": {
-      "command": "unity",
+      "command": "C:\\Users\\golin\\AppData\\Local\\Unity\\bin\\unity.exe",
       "args": [
         "mcp",
         "--project-path",

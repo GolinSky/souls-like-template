@@ -49,7 +49,7 @@ namespace SoulsLike.Entities.Character.Components.Inventory
 
         public void SetAffinity(string affinityId)
         {
-            AffinityId = affinityId ?? throw new ArgumentNullException(nameof(affinityId));
+            AffinityId = affinityId;
         }
     }
 

@@ -26,10 +26,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _Dissolve: 0
-    - _Intensity: 5.5
-    - _PulseSpeed: 6.28
+    - _Intensity: 5
+    - _PulseSpeed: 3.14
     - _Radial: 0
-    - _Wobble: 0.018
+    - _Wobble: 0.008
     m_Colors:
     - _Tint: {r: 1.35, g: 0.72, b: 0.14, a: 0.9}
   m_BuildTextureStacks: []

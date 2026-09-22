@@ -93,7 +93,6 @@ namespace SoulsLike.Services.Settings
 
         public void Preview(SettingsSection section)
         {
-            EnsureEditing();
             ValidateSection(_draft, section);
 
             switch (section)
@@ -116,7 +115,6 @@ namespace SoulsLike.Services.Settings
 
         public void ResetSection(SettingsSection section)
         {
-            EnsureEditing();
             GameSettingsData defaults = _defaultsData.CreateCopy();
             Validate(defaults);
 
@@ -141,7 +139,6 @@ namespace SoulsLike.Services.Settings
 
         public SettingsApplyResult Apply()
         {
-            EnsureEditing();
             var candidate = SettingsDataUtility.Copy(_draft);
             Validate(candidate);
             ApplySafeSections(candidate);
@@ -160,21 +157,11 @@ namespace SoulsLike.Services.Settings
 
         public void ConfirmPendingDisplayChange()
         {
-            if (_pendingCandidate == null)
-            {
-                throw new InvalidOperationException("There is no pending display change to confirm.");
-            }
-
             Commit(_pendingCandidate);
         }
 
         public void RevertPendingDisplayChange()
         {
-            if (_pendingCandidate == null)
-            {
-                throw new InvalidOperationException("There is no pending display change to revert.");
-            }
-
             _pendingCandidate.Graphics.WindowMode = _pendingBaseline.Graphics.WindowMode;
             _pendingCandidate.Graphics.DisplayMode = SettingsDataUtility.Copy(_pendingBaseline.Graphics.DisplayMode);
             _graphicsSettingsApplier.Apply(_pendingCandidate.Graphics);
@@ -183,8 +170,6 @@ namespace SoulsLike.Services.Settings
 
         public void CancelEdit()
         {
-            EnsureEditing();
-
             if (_pendingCandidate != null)
             {
                 _graphicsSettingsApplier.Apply(_pendingBaseline.Graphics);
@@ -265,16 +250,11 @@ namespace SoulsLike.Services.Settings
         private void Validate(GameSettingsData settings)
         {
             settings.SchemaVersion = SettingsSchema.CURRENT_VERSION;
-            settings.Audio ??= new SoulsLike.Services.Audio.Data.AudioSettingsData();
-            settings.Camera ??= new CameraSettingsData();
-            settings.Graphics ??= new GraphicsSettingsData();
-            settings.Controls ??= new ControlsSettingsData();
 
             settings.Audio.MasterVolume = settings.Audio.MasterVolume;
             settings.Audio.MusicVolume = settings.Audio.MusicVolume;
             settings.Audio.SfxVolume = settings.Audio.SfxVolume;
             settings.Camera.Sensitivity = Mathf.Clamp01(settings.Camera.Sensitivity);
-            settings.Controls.BindingOverridesJson ??= string.Empty;
             ValidateGraphics(settings.Graphics);
         }
 
@@ -283,22 +263,17 @@ namespace SoulsLike.Services.Settings
             switch (section)
             {
                 case SettingsSection.Audio:
-                    settings.Audio ??= new SoulsLike.Services.Audio.Data.AudioSettingsData();
                     settings.Audio.MasterVolume = settings.Audio.MasterVolume;
                     settings.Audio.MusicVolume = settings.Audio.MusicVolume;
                     settings.Audio.SfxVolume = settings.Audio.SfxVolume;
                     break;
                 case SettingsSection.Camera:
-                    settings.Camera ??= new CameraSettingsData();
                     settings.Camera.Sensitivity = Mathf.Clamp01(settings.Camera.Sensitivity);
                     break;
                 case SettingsSection.Graphics:
-                    settings.Graphics ??= new GraphicsSettingsData();
                     ValidateGraphics(settings.Graphics);
                     break;
                 case SettingsSection.Controls:
-                    settings.Controls ??= new ControlsSettingsData();
-                    settings.Controls.BindingOverridesJson ??= string.Empty;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(section), section, null);
@@ -321,7 +296,7 @@ namespace SoulsLike.Services.Settings
             }
 
             IReadOnlyList<DisplayModeData> modes = AvailableDisplayModes;
-            if (graphics.DisplayMode == null || graphics.DisplayMode.Width <= 0 || graphics.DisplayMode.Height <= 0)
+            if (graphics.DisplayMode.Width <= 0 || graphics.DisplayMode.Height <= 0)
             {
                 graphics.DisplayMode = SettingsDataUtility.Copy(modes[0]);
             }
@@ -376,14 +351,6 @@ namespace SoulsLike.Services.Settings
             }
 
             return closest;
-        }
-
-        private void EnsureEditing()
-        {
-            if (!IsEditing)
-            {
-                throw new InvalidOperationException("No settings edit session is active.");
-            }
         }
     }
 }

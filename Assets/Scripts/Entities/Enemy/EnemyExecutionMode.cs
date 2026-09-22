@@ -4,6 +4,7 @@ namespace SoulsLike.Entities.Enemy
     {
         Locomotion,
         Action,
+        Turn,
         Reaction,
         CriticalVictim,
         GetUp,

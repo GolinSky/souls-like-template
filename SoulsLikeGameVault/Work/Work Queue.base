@@ -2,14 +2,51 @@ filters:
   and:
     - file.inFolder("Work")
     - type == "plan" || type == "issue"
+    - status != "done"
+    - status != "superseded"
+    - status != "archived"
 views:
   - type: table
-    name: Active Work
+    name: Draft Plans
     filters:
       and:
-        - status != "done"
-        - status != "superseded"
-        - status != "archived"
+        - type == "plan"
+        - status == "draft"
+    order:
+      - file.name
+      - domains
+      - status
+      - updated
+  - type: table
+    name: Executable Plans
+    filters:
+      and:
+        - type == "plan"
+        - status == "ready" || status == "in-progress"
+    groupBy:
+      property: status
+      direction: ASC
+    order:
+      - file.name
+      - domains
+      - status
+      - updated
+  - type: table
+    name: Open Issues
+    filters:
+      and:
+        - type == "issue"
+    groupBy:
+      property: priority
+      direction: ASC
+    order:
+      - file.name
+      - domains
+      - status
+      - priority
+      - updated
+  - type: table
+    name: All Active Work
     groupBy:
       property: status
       direction: ASC
@@ -19,16 +56,4 @@ views:
       - domains
       - status
       - priority
-      - updated
-  - type: table
-    name: Completed Work
-    filters:
-      or:
-        - status == "done"
-        - status == "superseded"
-    order:
-      - file.name
-      - type
-      - domains
-      - status
       - updated

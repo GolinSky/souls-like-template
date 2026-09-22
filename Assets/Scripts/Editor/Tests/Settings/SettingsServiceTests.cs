@@ -122,6 +122,53 @@ namespace SoulsLike.Editor.Tests.Settings
             Assert.That(input.ClearCalls, Is.EqualTo(1));
         }
 
+        [TestCase(-0.5f, 0f)]
+        [TestCase(1.5f, 1f)]
+        public void Preview_ClampsDynamicCameraSensitivity(float sensitivity, float expected)
+        {
+            SettingsService service = CreateService(new FakeSaveService(), new FakeInputService(), out _);
+            service.Initialize();
+            service.BeginEdit();
+            service.Draft.Camera.Sensitivity = sensitivity;
+
+            service.Preview(SettingsSection.Camera);
+
+            Assert.That(service.Draft.Camera.Sensitivity, Is.EqualTo(expected));
+        }
+
+        [TestCase(0, 0, 1920, 1080)]
+        [TestCase(2400, 1400, 2560, 1440)]
+        public void Preview_AdaptsGraphicsToCurrentHardware(
+            int width, int height, int expectedWidth, int expectedHeight)
+        {
+            SettingsService service = CreateService(new FakeSaveService(), new FakeInputService(), out _);
+            service.Initialize();
+            service.BeginEdit();
+            service.Draft.Graphics.WindowMode = FullScreenMode.ExclusiveFullScreen;
+            service.Draft.Graphics.DisplayMode.Width = width;
+            service.Draft.Graphics.DisplayMode.Height = height;
+            service.Draft.Graphics.QualityLevelName = "Unknown quality preset";
+
+            service.Preview(SettingsSection.Graphics);
+
+            Assert.That(service.Draft.Graphics.WindowMode, Is.EqualTo(FullScreenMode.FullScreenWindow));
+            Assert.That(service.Draft.Graphics.DisplayMode.Width, Is.EqualTo(expectedWidth));
+            Assert.That(service.Draft.Graphics.DisplayMode.Height, Is.EqualTo(expectedHeight));
+            Assert.That(service.Draft.Graphics.QualityLevelName,
+                Is.EqualTo(QualitySettings.names[QualitySettings.GetQualityLevel()]));
+        }
+
+        [Test]
+        public void Preview_MissingRequiredCameraSettingsFailsAtUse()
+        {
+            SettingsService service = CreateService(new FakeSaveService(), new FakeInputService(), out _);
+            service.Initialize();
+            service.BeginEdit();
+            service.Draft.Camera = null;
+
+            Assert.Throws<NullReferenceException>(() => service.Preview(SettingsSection.Camera));
+        }
+
         private SettingsService CreateService(
             FakeSaveService save,
             FakeInputService input,

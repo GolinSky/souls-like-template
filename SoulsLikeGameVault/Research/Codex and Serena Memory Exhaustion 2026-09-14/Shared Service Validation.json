@@ -1,0 +1,56 @@
+{
+  "started": "2026-09-14T17:02:17.977907+03:00",
+  "before": {
+    "root_pid": 39592,
+    "roslyn_pids": [
+      36708
+    ],
+    "all_roslyn_pids": [
+      36708
+    ],
+    "tree_private_mib": 1964.7,
+    "restore_starts": 199,
+    "project_open_log_lines": 0
+  },
+  "two_clients": [
+    {
+      "tool": "get_symbols_overview",
+      "seconds": 0.16,
+      "text": "{\"Namespace\": [{\"SoulsLike.Services.Settings\": {\"Class\": [\"SettingsService\"]}}]}"
+    },
+    {
+      "tool": "find_symbol",
+      "seconds": 0.16,
+      "text": "[{\"name_path\": \"SoulsLike.Entities.Character/CharacterFactory\", \"kind\": \"Class\", \"relative_path\": \"Assets/Scripts/Entities/Character/CharacterFactory.cs\", \"body_location\": {\"start_line\": 30, \"end_line\": 187}}]"
+    }
+  ],
+  "during": {
+    "root_pid": 39592,
+    "roslyn_pids": [
+      36708
+    ],
+    "all_roslyn_pids": [
+      36708
+    ],
+    "tree_private_mib": 1964.7,
+    "restore_starts": 199,
+    "project_open_log_lines": 0
+  },
+  "after_client_b_disconnect": {
+    "tool": "find_referencing_symbols",
+    "seconds": 2.34,
+    "text": "{\"Assets\\\\Scripts\\\\Orchestrators\\\\Core\\\\CoreGameOrchestrator.cs\": {\"Class\": [{\"name_path\": \"SoulsLike.Services/CoreGameOrchestrator\", \"body_location\": {\"start_line\": 24, \"end_line\": 218}, \"content_around_reference\": \"...  28:        private readonly IGameOrchestrator _gameOrchestrator;\\n  >  29:        private readonly CharacterFactory _characterFactory;\\n...  30:        private readonly CharacterSpawnService _characterSpawnService;\"}], \"Method\": [{\"name_path\": \"SoulsLike.Services/CoreGameOrchestrator/CoreGameOrchestrator\", \"body_location\": {\"start_line\": 40, \"end_line\": 52}, \"content_around_reference\": \"...  41:            IGameOrchestrator gameOrchestrator,\\n  >  42:            CharacterFactory characterFactory,\\n...  43:            CharacterSpawnService characterSpawnService,\"}]}, \"Assets\\\\Scripts\\\\Services\\\\VContainer\\\\CoreScope.cs\": {\"Method\": [{\"name_path\": \"SoulsLike/CoreScope/Configure\", \"body_location\": {\"start_line\": 32, \"end_line\": 60}, \"content_around_reference\": \"...  55:            builder.Register<SettingsUiController>(Lifetime.Singleton).AsSelf().AsImplementedInterfaces();\\n  >  56:            builder.Register<CharacterFactory>(Lifetime.Singleton);\\n...  57:            builder.Register<NavMeshService>(Lifetime.Singleton).As<INavMeshService>();\"}]}}"
+  },
+  "after": {
+    "root_pid": 39592,
+    "roslyn_pids": [
+      36708
+    ],
+    "all_roslyn_pids": [
+      36708
+    ],
+    "tree_private_mib": 1979.9,
+    "restore_starts": 199,
+    "project_open_log_lines": 0
+  }
+}

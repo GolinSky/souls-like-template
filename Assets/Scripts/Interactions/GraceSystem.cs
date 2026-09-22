@@ -57,13 +57,13 @@ namespace SoulsLike.Interactions
             {
                 _characterSpawnService.RegisterGracePosition(
                     graceView.GraceId,
-                    graceView.InteractionAnchor.position);
+                    graceView.GetGroundSpawnPosition());
             }
 
             if (_characterSpawnService.TryGetPendingGrace(out GraceId graceId))
             {
                 GraceView graceView = graceViews.Single(view => view.GraceId == graceId);
-                _characterSpawnService.ResolvePendingGrace(graceView.InteractionAnchor.position);
+                _characterSpawnService.ResolvePendingGrace(graceView.GetGroundSpawnPosition());
             }
         }
         

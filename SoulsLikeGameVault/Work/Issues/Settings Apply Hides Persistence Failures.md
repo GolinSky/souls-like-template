@@ -70,4 +70,4 @@ When resolved, set `status: done`, link the implementation record, and update af
 
 Audit: [[Research/Architecture and Systems Audit 2026-09-07]].
 
-Related: [[Architecture/Systems/Settings System]].
+Related: [[Knowledge/Architecture/Systems/Settings System]].

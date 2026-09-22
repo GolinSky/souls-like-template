@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using SoulsLike.Model;
 using UnityEngine;
@@ -17,15 +16,10 @@ namespace SoulsLike.Items
         public ItemDefinition GetRequired(ItemId itemId)
         {
             EnsureIndex();
-            if (!_itemsById.TryGetValue(itemId, out ItemDefinition definition))
-            {
-                throw new KeyNotFoundException($"Item database does not contain '{itemId}'.");
-            }
-
-            return definition;
+            return _itemsById[itemId];
         }
 
-        public void ValidateDatabase()
+        public void RebuildIndex()
         {
             _itemsById = BuildIndex();
         }
@@ -43,17 +37,7 @@ namespace SoulsLike.Items
             var result = new Dictionary<ItemId, ItemDefinition>();
             foreach (ItemDefinition definition in items)
             {
-                if (definition == null)
-                {
-                    throw new InvalidOperationException($"Item database '{name}' contains a null definition.");
-                }
-
-                definition.ValidateDefinition();
-                if (!result.TryAdd(definition.ItemId, definition))
-                {
-                    throw new InvalidOperationException(
-                        $"Item database '{name}' contains duplicate ItemId '{definition.ItemId}'.");
-                }
+                result.Add(definition.ItemId, definition);
             }
 
             return result;

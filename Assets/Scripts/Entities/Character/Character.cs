@@ -47,8 +47,7 @@ namespace SoulsLike.Entities.Character
 
         [Header("Aim Settings")]
         [SerializeField, Min(0.1f)] private float aimTargetDistance = 100f;
-
-        private AttackComponent _attackComponent;
+        private AttackComponent _attackComponent;
         private readonly CharacterActionStateMachine _actionStateMachine = new CharacterActionStateMachine();
         private ItemCatalog _itemCatalog;
         private IEntityLocator _entityLocator;
@@ -57,6 +56,7 @@ namespace SoulsLike.Entities.Character
         private PlayerMeleeCombatRelay _meleeCombatRelay;
         private CriticalAttackController _criticalAttackController;
         private CharacterData _characterData;
+        private CharacterAttributeStats _attributes;
         private int _heldCurrency;
         private bool _isDeathAnimationPlaying;
         private UniTaskCompletionSource<bool> _graceTransitionCompletionSource;
@@ -74,7 +74,7 @@ namespace SoulsLike.Entities.Character
         public InventoryComponent InventoryComponent => inventoryComponent;
         public HealthStats HealthStats => healthComponent.Stats;
         public int HeldCurrency => _heldCurrency;
-        public CharacterAttributeStats Attributes => _characterData.Attributes;
+        public CharacterAttributeStats Attributes => _attributes;
         public bool IsInputBlocked => _actionStateMachine.IsInputBlocked;
         public bool IsInLadderOperation => ladderClimber.IsBusy;
         public bool CanStartLadder => healthComponent.Stats.IsAlive
@@ -91,6 +91,7 @@ namespace SoulsLike.Entities.Character
         public CharacterAction.State CurrentActionState => _actionStateMachine.CurrentState;
         public event Action OnDeathAnimationCompleted;
         public event Action<int> CurrencyChanged;
+        public event Action<CharacterAttributeStats> AttributesChanged;
 
         [Inject]
         public void Configure(
@@ -113,7 +114,17 @@ namespace SoulsLike.Entities.Character
             _combatDefense = combatDefense;
             _meleeCombatRelay = meleeCombatRelay;
             _criticalAttackController = criticalAttackController;
+            _attributes = characterData.Attributes;
             _heldCurrency = characterData.StartingCurrency;
+            animatorComponent.ConfigureCharacter(this, movementComponent);
+        }
+
+        public void StageSpawn(Vector3? spawnPosition)
+        {
+            if (spawnPosition.HasValue)
+            {
+                transform.position = spawnPosition.Value;
+            }
         }
 
         public void Initialize()
@@ -242,6 +253,11 @@ namespace SoulsLike.Entities.Character
 
         public void CompleteDeathAnimation()
         {
+            _isDeathAnimationPlaying = false;
+            _combatDefense.SetBlocking(false);
+            _combatDefense.SetHitReaction(false);
+            _combatDefense.SetParryStunned(false);
+            _actionStateMachine.Clear();
             animatorComponent.CompleteDeathAnimation();
             SetInputBlocked(false);
         }
@@ -726,6 +742,28 @@ namespace SoulsLike.Entities.Character
         {
             _heldCurrency = checked(_heldCurrency + amount);
             CurrencyChanged?.Invoke(_heldCurrency);
+        }
+
+        public void SpendCurrency(int amount)
+        {
+            if (amount <= 0)
+            {
+                return;
+            }
+
+            _heldCurrency = checked(_heldCurrency - amount);
+            CurrencyChanged?.Invoke(_heldCurrency);
+        }
+
+        public void LevelUp(CharacterAttributeStats newAttributes, int runesSpent)
+        {
+            if (runesSpent > 0)
+            {
+                SpendCurrency(runesSpent);
+            }
+
+            _attributes = newAttributes;
+            AttributesChanged?.Invoke(_attributes);
         }
 
         public void Revive(float health) => healthComponent.ApplyAuthoritativeStats(

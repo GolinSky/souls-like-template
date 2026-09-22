@@ -117,8 +117,24 @@ namespace SoulsLike.Tests.EnemyRuntime
             Assert.That(hitWindowType.GetProperty("TrackingEnd"), Is.Not.Null);
         }
 
-        private static Type GetRequiredType(string typeName) =>
-            Type.GetType($"{typeName}, Assembly-CSharp")
-            ?? throw new InvalidOperationException($"Type '{typeName}' was not loaded.");
+        private static Type GetRequiredType(string typeName)
+        {
+            Type direct = Type.GetType(typeName);
+            if (direct != null)
+            {
+                return direct;
+            }
+
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Type type = assembly.GetType(typeName);
+                if (type != null)
+                {
+                    return type;
+                }
+            }
+
+            throw new InvalidOperationException($"Type '{typeName}' was not loaded.");
+        }
     }
 }

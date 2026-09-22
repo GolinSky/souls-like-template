@@ -21,6 +21,7 @@ namespace SoulsLike.Entities.Enemy
         IDisposable
     {
         private const float FACING_ANGLE = 20f;
+        private const float COMBAT_FACING_SPEED = 120f;
 
         private readonly EnemyActor _actor;
         private readonly EnemyNavigationMotor _motor;
@@ -58,6 +59,8 @@ namespace SoulsLike.Entities.Enemy
         private bool _hasStartedAttack;
         private bool _deathAnimationStarted;
         private bool _despawned;
+        private EnemyCombatMovement? _committedSpacingMovement;
+        private float _spacingCommitmentUntil;
 
         public EnemyController(
             EnemyActor actor,
@@ -227,6 +230,14 @@ namespace SoulsLike.Entities.Enemy
                 return;
             }
 
+            if (_executor.IsTurnRunning)
+            {
+                _motor.Stop();
+                _executor.SetLocomotion(Vector3.zero);
+                _executor.Tick(now);
+                return;
+            }
+
             if (_executor.BlocksDecisions)
             {
                 _motor.Stop();
@@ -238,6 +249,11 @@ namespace SoulsLike.Entities.Enemy
             _executor.SetLocomotion(_motor.LocalVelocity);
 
             TickContinuousGoal(now, deltaTime);
+            if (_executor.IsTurnRunning)
+            {
+                return;
+            }
+
             if (now < _nextDecisionTime)
             {
                 return;
@@ -406,10 +422,16 @@ namespace SoulsLike.Entities.Enemy
                         return;
                     }
 
+                    float approachSpeed = distance > 4f
+                        ? _actor.BehaviourProfile.CombatRunSpeed
+                        : _actor.BehaviourProfile.CombatWalkSpeed;
+                    _motor.SetSpeed(approachSpeed);
                     MoveTo(BiasCombatDestinationTowardHome(targetPosition));
                     return;
+                case EnemyCombatMovement.WalkBack:
                 case EnemyCombatMovement.Retreat:
                     _postActionDecisionUntil = 0f;
+                    _motor.SetSpeed(_actor.BehaviourProfile.CombatWalkSpeed);
                     MoveTo(BiasCombatDestinationTowardHome(
                         _actor.transform.position
                         + (toTarget.sqrMagnitude > 0f
@@ -419,7 +441,8 @@ namespace SoulsLike.Entities.Enemy
                     return;
                 case EnemyCombatMovement.CircleLeft:
                 case EnemyCombatMovement.CircleRight:
-                    CircleCombatTarget(combatTarget, toTarget, movement, now);
+                    _motor.SetSpeed(_actor.BehaviourProfile.CombatWalkSpeed);
+                    CircleCombatTarget(toTarget, movement);
                     return;
                 case EnemyCombatMovement.Attack:
                     _motor.Stop();
@@ -428,23 +451,37 @@ namespace SoulsLike.Entities.Enemy
                         return;
                     }
 
+                    float attackFacingTolerance = _actor.BehaviourProfile.AttackFacingAngle;
+                    if (angle > attackFacingTolerance)
+                    {
+                        float signedAngle = Vector3.SignedAngle(_actor.transform.forward, toTarget, Vector3.up);
+                        float turnInPlaceThreshold = _actor.BehaviourProfile.TurnInPlaceAngleThreshold;
+                        if (turnInPlaceThreshold > 0f
+                            && Mathf.Abs(signedAngle) >= turnInPlaceThreshold
+                            && _executor.TryPlayTurn(signedAngle, now))
+                        {
+                            return;
+                        }
+
+                        Face(combatTarget, COMBAT_FACING_SPEED, Time.deltaTime);
+                        return;
+                    }
+
                     if (_actor.BehaviourProfile.UsesPressureSlot
                         && !_groupCoordinator.TryAcquirePressureSlot(_actor, now))
                     {
+                        _motor.SetSpeed(_actor.BehaviourProfile.CombatWalkSpeed);
                         CircleCombatTarget(
-                            combatTarget,
                             toTarget,
                             _randomStreams.NextMovementBool()
                                 ? EnemyCombatMovement.CircleLeft
-                                : EnemyCombatMovement.CircleRight,
-                            now);
+                                : EnemyCombatMovement.CircleRight);
                         return;
                     }
 
                     if (_executor.TryStart(move))
                     {
                         _committedAttackPoint = combatTarget;
-                        FaceImmediately(combatTarget);
                         return;
                     }
 
@@ -470,6 +507,7 @@ namespace SoulsLike.Entities.Enemy
             move = null;
             if (!hasLineOfSight)
             {
+                _committedSpacingMovement = null;
                 move = _actionSelector.Choose(
                     _actor.Moveset.Moves,
                     distance,
@@ -485,11 +523,26 @@ namespace SoulsLike.Entities.Enemy
 
             if (distance < _actor.BehaviourProfile.PreferredRangeMin)
             {
-                return EnemyCombatMovement.Retreat;
+                if (now < _spacingCommitmentUntil
+                    && (_committedSpacingMovement is EnemyCombatMovement.WalkBack
+                        or EnemyCombatMovement.CircleLeft
+                        or EnemyCombatMovement.CircleRight))
+                {
+                    return _committedSpacingMovement.Value;
+                }
+
+                _committedSpacingMovement = _randomStreams.NextMovementBool()
+                    ? EnemyCombatMovement.WalkBack
+                    : (_randomStreams.NextMovementBool()
+                        ? EnemyCombatMovement.CircleLeft
+                        : EnemyCombatMovement.CircleRight);
+                _spacingCommitmentUntil = now + _actor.BehaviourProfile.SpacingCommitmentSeconds;
+                return _committedSpacingMovement.Value;
             }
 
             if (!_actionSelector.IsWithinAnyMoveRange(_actor.Moveset.Moves, distance))
             {
+                _committedSpacingMovement = null;
                 return EnemyCombatMovement.Approach;
             }
 
@@ -503,19 +556,32 @@ namespace SoulsLike.Entities.Enemy
                 now);
             if (move != null)
             {
+                _committedSpacingMovement = null;
                 return EnemyCombatMovement.Attack;
             }
 
+            if (now < _spacingCommitmentUntil && _committedSpacingMovement.HasValue)
+            {
+                return _committedSpacingMovement.Value;
+            }
+
+            EnemyCombatMovement chosenSpacing;
             if (angle > FACING_ANGLE)
             {
-                return _randomStreams.NextMovementBool()
+                chosenSpacing = _randomStreams.NextMovementBool()
                     ? EnemyCombatMovement.CircleLeft
                     : EnemyCombatMovement.CircleRight;
             }
+            else
+            {
+                chosenSpacing = _randomStreams.NextMovementBool()
+                    ? EnemyCombatMovement.CircleLeft
+                    : EnemyCombatMovement.Hold;
+            }
 
-            return _randomStreams.NextMovementBool()
-                ? EnemyCombatMovement.CircleLeft
-                : EnemyCombatMovement.Hold;
+            _committedSpacingMovement = chosenSpacing;
+            _spacingCommitmentUntil = now + _actor.BehaviourProfile.SpacingCommitmentSeconds;
+            return chosenSpacing;
         }
 
         private bool CanStartAttack(float now)
@@ -556,14 +622,11 @@ namespace SoulsLike.Entities.Enemy
         }
 
         private void CircleCombatTarget(
-            Vector3 combatTarget,
             Vector3 toTarget,
-            EnemyCombatMovement movement,
-            float now)
+            EnemyCombatMovement movement)
         {
-            Face(combatTarget, 360f);
             Vector3 side = Vector3.Cross(Vector3.up, toTarget.normalized);
-            if (movement == EnemyCombatMovement.CircleRight)
+            if (movement == EnemyCombatMovement.CircleLeft)
             {
                 side = -side;
             }
@@ -655,7 +718,36 @@ namespace SoulsLike.Entities.Enemy
                             now,
                             out EnemyMemory memory))
                     {
-                        Face(memory.LastKnownLockPoint, 360f, deltaTime);
+                        Vector3 lockTarget = memory.LastKnownLockPoint;
+                        Vector3 toLock = lockTarget - _actor.transform.position;
+                        toLock.y = 0f;
+                        float distance = toLock.magnitude;
+                        bool spacingMovementActive = now < _spacingCommitmentUntil
+                            && (_committedSpacingMovement is EnemyCombatMovement.WalkBack
+                                or EnemyCombatMovement.CircleLeft
+                                or EnemyCombatMovement.CircleRight);
+                        if (toLock.sqrMagnitude > 0.01f)
+                        {
+                            float signedAngle = Vector3.SignedAngle(_actor.transform.forward, toLock, Vector3.up);
+                            float turnInPlaceThreshold = _actor.BehaviourProfile.TurnInPlaceAngleThreshold;
+                            if (!_executor.IsActionRunning && !_executor.IsHitReactionRunning && !_executor.IsTurnRunning
+                                && _motor.WorldVelocity.sqrMagnitude < 0.05f
+                                && !spacingMovementActive
+                                && distance >= _actor.BehaviourProfile.PreferredRangeMin
+                                && turnInPlaceThreshold > 0f
+                                && Mathf.Abs(signedAngle) >= turnInPlaceThreshold)
+                            {
+                                if (_executor.TryPlayTurn(signedAngle, now))
+                                {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!_executor.IsTurnRunning)
+                        {
+                            Face(memory.LastKnownLockPoint, COMBAT_FACING_SPEED, deltaTime);
+                        }
                     }
                     break;
                 case EnemyGoal.Investigate:
@@ -757,6 +849,7 @@ namespace SoulsLike.Entities.Enemy
             }
 
             _motor.Stop();
+            _motor.ResetSpeed();
             _groupCoordinator.ReleasePressureSlot(_actor);
             EnterGoal(EnemyGoal.ReturnHome);
             MoveTo(_actor.HomePosition);
@@ -897,6 +990,13 @@ namespace SoulsLike.Entities.Enemy
                     _firstAttackReadyTime = 0f;
                 }
             }
+            else
+            {
+                _committedSpacingMovement = null;
+                _spacingCommitmentUntil = 0f;
+                _motor.ResetSpeed();
+            }
+
             if (goal == EnemyGoal.Search)
             {
                 _searchUntil = Time.time + _actor.BehaviourProfile.SearchSeconds;
@@ -1035,16 +1135,6 @@ namespace SoulsLike.Entities.Enemy
             }
 
             _motor.Face(position, turnSpeed, deltaTime);
-        }
-
-        private void FaceImmediately(Vector3 position)
-        {
-            if (_actor.BehaviourProfile.LocksFacing)
-            {
-                return;
-            }
-
-            _motor.FaceImmediately(position);
         }
 
         private void Rotate(float degrees, float deltaTime)

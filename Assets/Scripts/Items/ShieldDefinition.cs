@@ -31,13 +31,5 @@ namespace SoulsLike.Items
             default,
             string.Empty,
             0);
-
-        public void ValidateDefinition()
-        {
-            if (itemId == ItemId.None)
-            {
-                throw new InvalidOperationException("Shield definition requires a non-None ItemId.");
-            }
-        }
     }
 }

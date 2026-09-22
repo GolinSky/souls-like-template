@@ -15,12 +15,6 @@ namespace SoulsLike.Items
                     $"{nameof(AnimationProfile)} requires an equipped right-hand weapon.");
             }
 
-            if (Controller == null)
-            {
-                throw new System.InvalidOperationException(
-                    $"Animation profile '{name}' is missing its right-hand controller.");
-            }
-
             return Controller;
         }
     }

@@ -8,9 +8,11 @@
       ]
     },
     "unity": {
-      "command": "unity",
+      "command": "C:\\Users\\golin\\AppData\\Local\\Unity\\bin\\unity.exe",
       "args": [
-        "mcp"
+        "mcp",
+        "--project-path",
+        "F:\\Private\\SoulsLikeTemplate"
       ]
     }
   }

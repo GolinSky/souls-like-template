@@ -171,6 +171,10 @@ namespace SoulsLike.Editor.Tests.EnemyHealth
 
             public Camera GetMainCamera() => null;
 
+            public void GenerateImpulse(Vector3 position, Vector3 velocity)
+            {
+            }
+
             public void ApplySettings(CameraSettingsData settings)
             {
             }

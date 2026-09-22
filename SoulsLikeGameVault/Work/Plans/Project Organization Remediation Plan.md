@@ -17,21 +17,23 @@ tags:
 
 **Status**: Ready for Review / Staged  
 **Domain**: Project Architecture / Asset Pipeline  
-**Source Specification**: [[Architecture/Project Organization|Project Organization]]  
-**Related Guides**: [[Guides/UI/UI Code Build Guide|UI Code Build Guide]], [[Agent Guide/Agent Context Registry|Agent Context Registry]]  
+**Source Specification**: [[Knowledge/Architecture/Project Organization|Project Organization]]
+
+**Related Guides**: [[Knowledge/Guides/UI/UI Code Build Guide|UI Code Build Guide]], [[Meta/Agent Context Registry|Agent Context Registry]]
+
 
 ---
 
 ## 1. Executive Summary
 
-A comprehensive audit was performed comparing the current repository state of `Assets/` against the type-first organization rules defined in [[Architecture/Project Organization|Project Organization]].
+A comprehensive audit was performed comparing the current repository state of `Assets/` against the type-first organization rules defined in [[Knowledge/Architecture/Project Organization|Project Organization]].
 
 ### Overall Assessment
 - **Conforming Areas**: Addressables structure (`AddressableAssetsData/`), Plugin isolation (`Plugins/`), minimal Resources bootstrap (`Resources/DOTweenSettings.asset`), visual asset root name (`Art/`), and UI prefab feature groupings (`Prefabs/Ui/`).
 - **Major Deviations**:
   1. **Unauthorized Root Directories**: Standalone `Assets/Editor`, `Assets/Tests`, `Assets/Shaders`, and `Assets/Temp` exist at the root level instead of within their designated type trees.
   2. **Flat / Unstructured `Prefabs/` Hierarchy**: Root subfolders (`Prefabs/Character/`, `Prefabs/Enemy/`, `Prefabs/Item/`, `Prefabs/Shields/`, `Prefabs/Swords/`, `Prefabs/Camera/`, `Prefabs/VContainer/`) bypass the required 3-tier division (`Prefabs/Models/`, `Prefabs/Ui/`, `Prefabs/View/`).
-  3. **Scripts Subsystem Gaps & Misplaced Folders**: `Assets/Scripts` contains non-standard root folders (`Controllers/`, `Interactions/`, `Items/`, `Model/`, `Orchestrators/`, `Utilities/`). Additionally, the extensive `Scripts/Ui/` tree (governed by [[Guides/UI/UI Code Build Guide|UI Code Build Guide]]) is omitted from `Project Organization.md`.
+  3. **Scripts Subsystem Gaps & Misplaced Folders**: `Assets/Scripts` contains non-standard root folders (`Controllers/`, `Interactions/`, `Items/`, `Model/`, `Orchestrators/`, `Utilities/`). Additionally, the extensive `Scripts/Ui/` tree (governed by [[Knowledge/Guides/UI/UI Code Build Guide|UI Code Build Guide]]) is omitted from `Project Organization.md`.
   4. **Settings Domain Organization**: Root-level HDRP profile assets and unnested configuration folders (`Settings/Enemy/`, `Settings/Items/`) deviate from the documented `Settings/Data/` and `Settings/Render Pipelines/` hierarchy.
   5. **Missing / Undocumented Root Types**: `Assets/Audio/` exists as a clean type-first root but is missing from `PROJECT_ORGANIZATION.md`. Conversely, `Assets/Sandbox/` is documented in the specification but has not yet been established on disk (with prototype scenes residing in `Assets/Scenes/WorkShop/`).
 
@@ -144,7 +146,7 @@ The specification dictates: `Components/`, `Entities/`, `Services/`, `Editor/`, 
 6. **`Assets/Scripts/Utilities/` (`EditorSerialization/`, `Extensions/`, `Timer/`)**:
    - Contains generic utility helpers. Standard in C# projects, but absent from the `PROJECT_ORGANIZATION.md` specification.
 7. **Specification Gap for `Assets/Scripts/Ui/`**:
-   - `Assets/Scripts/Ui/` contains 18 modular feature subfolders (`Base`, `Equipment`, `Inventory`, `MainMenu`, `PauseNavigation`, `PlayerHud`, `Travel`, etc.) adhering strictly to [[Guides/UI/UI Code Build Guide|UI Code Build Guide]].
+   - `Assets/Scripts/Ui/` contains 18 modular feature subfolders (`Base`, `Equipment`, `Inventory`, `MainMenu`, `PauseNavigation`, `PlayerHud`, `Travel`, etc.) adhering strictly to [[Knowledge/Guides/UI/UI Code Build Guide|UI Code Build Guide]].
    - `PROJECT_ORGANIZATION.md` currently does not list `Scripts/Ui/` in its directory breakdown.
 8. **Decentralized `Editor/` Folders**:
    - `Assets/Scripts/Ui/Base/Editor/` (`CustomButtonEditor.cs`, `CustomButtonHierarchyMenu.cs`, `CustomButtonToggleEditor.cs`).
@@ -235,10 +237,10 @@ graph TD
 ---
 
 ### Phase 1: Specification & Documentation Alignment
-**Goal**: Update [[Architecture/Project Organization|Project Organization]] so that valid domain structures are properly documented before making destructive filesystem changes.
+**Goal**: Update [[Knowledge/Architecture/Project Organization|Project Organization]] so that valid domain structures are properly documented before making destructive filesystem changes.
 
 - [ ] Add `Audio/` (`Assets/Audio/AmbienceMusic/`, `Sfx/`) as a standard type-first root folder.
-- [ ] Add `Scripts/Ui/` (`Assets/Scripts/Ui/<FeatureName>/`) to the `Scripts/` specification hierarchy, cross-referencing [[Guides/UI/UI Code Build Guide|UI Code Build Guide]].
+- [ ] Add `Scripts/Ui/` (`Assets/Scripts/Ui/<FeatureName>/`) to the `Scripts/` specification hierarchy, cross-referencing [[Knowledge/Guides/UI/UI Code Build Guide|UI Code Build Guide]].
 - [ ] Add `Scripts/Utilities/` (`EditorSerialization/`, `Extensions/`, `Timer/`) to the `Scripts/` specification hierarchy.
 - [ ] Clarify sub-domain `Editor/` folder rules (allow colocated `Scripts/Ui/.../Editor/` or mandate central `Scripts/Editor/`).
 - [ ] Document `Art/Fonts/` and `Settings/Enemy/`, `Settings/Items/` (or standardize their sub-paths).

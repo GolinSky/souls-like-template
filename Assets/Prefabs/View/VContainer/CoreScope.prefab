@@ -49,3 +49,9 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   cameraService: {fileID: 0}
+  graceSystem: {fileID: 0}
+  enemyService: {fileID: 0}
+  characterScopePrefab: {fileID: 4094485961562877707, guid: 560cf3aede8136e4ba287943e88e13d2, type: 3}
+  enemyScopePrefab: {fileID: 9135650520872018953, guid: ad80232070429d64fb1af30b59167e78, type: 3}
+  playerSpawnPositionProvider: {fileID: 0}
+  elevatorViews: []
